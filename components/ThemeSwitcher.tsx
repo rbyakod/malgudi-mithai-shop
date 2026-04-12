@@ -7,6 +7,7 @@ const THEMES: { id: Theme; label: string }[] = [
   { id: "navy", label: "Evening Navy" },
   { id: "sage", label: "Minimal Sage" },
   { id: "mindbox", label: "MindBox" },
+  { id: "myblue", label: "My Blue" },
 ];
 
 export function ThemeSwitcher() {

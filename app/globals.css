@@ -117,6 +117,35 @@
   --t-noise-opacity: 0.035;
 }
 
+/* ---- Theme: My Blue (Walmart deep-navy / spark yellow) ---- */
+
+[data-theme="myblue"] {
+  --t-bg-page: #d6e2f4;
+  --t-bg-card: #e4ecf8;
+  --t-bg-accent: #c5d5ed;
+  --t-bg-dark: #041E42;
+  --t-bg-darker: #021432;
+  --t-primary: #0053e2;
+  --t-primary-hover: #0043b8;
+  --t-gold: #FFC220;
+  --t-gold-hover: #e6ad10;
+  --t-text-primary: #041E42;
+  --t-text-heading: #041E42;
+  --t-text-secondary: #2d4a6e;
+  --t-text-info: #3b5a7a;
+  --t-text-muted: #5a7a9a;
+  --t-text-breadcrumb: #8aa4be;
+  --t-text-light: #d6e2f4;
+  --t-text-light-muted: #8aa4be;
+  --t-border-card: #b0c4de;
+  --t-border-input: #a0b8d4;
+  --t-border-image: #b0c4de;
+  --t-gradient-gold: #0053e2;
+  --t-orb-secondary: #FFC220;
+  --t-grid-opacity: 0;
+  --t-noise-opacity: 0;
+}
+
 /* ---- Tailwind v4 theme tokens ---- */
 
 @theme inline {

@@ -8,11 +8,11 @@ import {
   ReactNode,
 } from "react";
 
-export type Theme = "festive" | "navy" | "sage" | "mindbox";
+export type Theme = "festive" | "navy" | "sage" | "mindbox" | "myblue";
 
 const STORAGE_KEY = "mithai-theme";
 const DEFAULT_THEME: Theme = "festive";
-const VALID_THEMES: Theme[] = ["festive", "navy", "sage", "mindbox"];
+const VALID_THEMES: Theme[] = ["festive", "navy", "sage", "mindbox", "myblue"];
 
 const ThemeContext = createContext<{
   theme: Theme;

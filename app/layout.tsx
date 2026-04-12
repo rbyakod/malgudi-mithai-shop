@@ -20,7 +20,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("mithai-theme");if(t&&["festive","navy","sage","mindbox"].indexOf(t)!==-1)document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`
+            __html: `(function(){try{var t=localStorage.getItem("mithai-theme");if(t&&["festive","navy","sage","mindbox","myblue"].indexOf(t)!==-1)document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`
           }}
         />
       </head>
