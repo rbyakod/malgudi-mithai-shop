@@ -1,0 +1,350 @@
+"use client";
+
+import Image from "next/image";
+import { Header } from "@/components/Header";
+import { useCart } from "@/context/CartContext";
+
+type Category =
+  | "all"
+  | "classic"
+  | "dryfruit"
+  | "bengali"
+  | "sugarfree"
+  | "seasonal";
+
+type Sweet = {
+  id: string;
+  name: string;
+  description: string;
+  pricePerUnit: string;
+  tags: string[];
+  category: Category;
+  image: string;
+  isBestseller?: boolean;
+  isNew?: boolean;
+};
+
+const sweets: Sweet[] = [
+  {
+    id: "kaju-katli-royale",
+    name: "Kaju Katli Royale",
+    description: "Silky cashew fudge with saffron and silver vark.",
+    pricePerUnit: "₹699 / 500g",
+    tags: ["Cashew", "Festive", "Gift box friendly"],
+    category: "dryfruit",
+    image: "/images/kaju-katli.jpg",
+    isBestseller: true,
+  },
+  {
+    id: "motichoor-laddoo",
+    name: "Motichoor Laddoo",
+    description: "Melt‑in‑mouth boondi laddoos roasted in desi ghee.",
+    pricePerUnit: "₹549 / 500g",
+    tags: ["Laddoo", "Festive"],
+    category: "classic",
+    image: "/images/motichoor-laddoo.jpg",
+    isBestseller: true,
+  },
+  {
+    id: "gulab-jamun-classic",
+    name: "Gulab Jamun Classic",
+    description: "Khoya dumplings in a warm cardamom‑rose syrup.",
+    pricePerUnit: "₹499 / 6 pcs",
+    tags: ["Syrup sweets", "Party favourite"],
+    category: "classic",
+    image: "/images/gulab-jamun.jpg",
+    isBestseller: true,
+  },
+  {
+    id: "besan-laddoo",
+    name: "Besan Laddoo",
+    description: "Slow‑roasted besan with ghee and crushed dry fruits.",
+    pricePerUnit: "₹499 / 500g",
+    tags: ["Laddoo"],
+    category: "classic",
+    image: "/images/besan-laddoo.jpg",
+  },
+  {
+    id: "rasgulla-bengali",
+    name: "Kolkata Rasgulla",
+    description: "Soft chhena balls soaked in light sugar syrup.",
+    pricePerUnit: "₹399 / 6 pcs",
+    tags: ["Bengali", "Syrup sweets"],
+    category: "bengali",
+    image: "/images/rasgulla.jpg",
+  },
+  {
+    id: "rasmalai",
+    name: "Saffron Rasmalai",
+    description: "Soft patties in chilled saffron‑pistachio rabdi.",
+    pricePerUnit: "₹699 / 6 pcs",
+    tags: ["Bengali", "Dessert"],
+    category: "bengali",
+    image: "/images/rasmalai.jpg",
+  },
+  {
+    id: "sugarfree-kaju",
+    name: "Sugar‑free Kaju Bites",
+    description: "Stevia‑sweetened cashew bites for mindful indulgence.",
+    pricePerUnit: "₹749 / 400g",
+    tags: ["Sugar‑free", "Dry fruit"],
+    category: "sugarfree",
+    image: "/images/sugarfree-kaju.jpg",
+    isNew: true,
+  },
+  {
+    id: "badam-barfi",
+    name: "Badam Barfi",
+    description: "Rich almond fudge with a hint of cardamom.",
+    pricePerUnit: "₹799 / 500g",
+    tags: ["Dry fruit", "Festive"],
+    category: "dryfruit",
+    image: "/images/badam-barfi.jpg",
+  },
+  {
+    id: "mango-peda",
+    name: "Alphonso Mango Peda",
+    description: "Seasonal peda infused with real Alphonso pulp.",
+    pricePerUnit: "₹599 / 400g",
+    tags: ["Seasonal", "Mango"],
+    category: "seasonal",
+    image: "/images/mango-peda.jpg",
+    isNew: true,
+  },
+  {
+    id: "pista-roll",
+    name: "Pista Roll",
+    description: "Layered pistachio and kaju roll with vark.",
+    pricePerUnit: "₹849 / 500g",
+    tags: ["Dry fruit", "Gift box friendly"],
+    category: "dryfruit",
+    image: "/images/pista-roll.jpg",
+  },
+];
+
+const categories: { id: Category; label: string }[] = [
+  { id: "all", label: "All sweets" },
+  { id: "classic", label: "Classics" },
+  { id: "dryfruit", label: "Dry fruit" },
+  { id: "bengali", label: "Bengali" },
+  { id: "sugarfree", label: "Sugar‑free" },
+  { id: "seasonal", label: "Seasonal specials" },
+];
+
+export default function SweetsCatalogPage() {
+  const { addItem } = useCart();
+  const activeCategory: Category = "all";
+
+  const filtered =
+    activeCategory === "all"
+      ? sweets
+      : sweets.filter((s) => s.category === activeCategory);
+
+  return (
+    <div className="min-h-screen bg-[#fdf7f0] text-[#1b0b07]">
+      <Header />
+      <div className="mx-auto max-w-6xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
+        <div className="mb-6 flex items-baseline justify-between gap-4">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.2em] text-[#b94b4b]">
+              Our menu
+            </p>
+            <h1 className="mt-1 text-2xl font-semibold text-[#1b0b07] sm:text-3xl">
+              Sweets & mithai catalog
+            </h1>
+            <p className="mt-2 max-w-xl text-xs text-[#7a4f42] sm:text-sm">
+              Explore our full range of classic mithai, dry fruit specials,
+              Bengali favourites, sugar‑free options, and seasonal creations,
+              all handcrafted in small batches.
+            </p>
+          </div>
+          <div className="hidden text-xs text-[#7a4f42] sm:block">
+            <p className="font-semibold text-[#5c372c]">
+              Same‑day delivery (Bengaluru)
+            </p>
+            <p>Cut‑off 3 PM for guaranteed delivery.</p>
+          </div>
+        </div>
+
+        <div className="mb-6 flex flex-wrap gap-2 text-xs">
+          {categories.map((cat) => {
+            const isActive = cat.id === activeCategory;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                className={[
+                  "rounded-full border px-4 py-1.5 font-medium transition",
+                  isActive
+                    ? "border-[#b94b4b] bg-[#b94b4b] text-[#fdf7f0]"
+                    : "border-[#e5cbb2] bg-[#fefaf5] text-[#5c372c] hover:border-[#b94b4b]/60",
+                ].join(" ")}
+                aria-pressed={isActive}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="grid gap-8 md:grid-cols-[minmax(0,3fr)_minmax(0,1.4fr)]">
+          <section aria-label="Sweets catalog" className="space-y-4">
+            <div className="flex items-center justify-between text-xs text-[#7a4f42]">
+              <p>
+                Showing{" "}
+                <span className="font-semibold text-[#5c372c]">
+                  {filtered.length}
+                </span>{" "}
+                of {sweets.length} sweets
+              </p>
+              <div className="flex items-center gap-2">
+                <label htmlFor="sort" className="sr-only">
+                  Sort by
+                </label>
+                <select
+                  id="sort"
+                  name="sort"
+                  className="rounded-full border border-[#e5cbb2] bg-[#fefaf5] px-3 py-1.5 text-[11px] text-[#5c372c] outline-none focus:ring-2 focus:ring-[#b94b4b]/30"
+                  defaultValue="bestsellers"
+                >
+                  <option value="bestsellers">Sort: Featured</option>
+                  <option value="price-asc">Price: Low to high</option>
+                  <option value="price-desc">Price: High to low</option>
+                  <option value="new">New first</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((sweet) => (
+                <article
+                  key={sweet.id}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-[#f0d7bf] bg-[#fefaf5] shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                >
+                  <a
+                    href={`/sweets/${sweet.id}`}
+                    className="relative block h-40 w-full overflow-hidden bg-[#f7e0c9]"
+                  >
+                    <Image
+                      src={sweet.image}
+                      alt={sweet.name}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 90vw"
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                    />
+                    {(sweet.isBestseller || sweet.isNew) && (
+                      <div className="absolute left-3 top-3 flex gap-2">
+                        {sweet.isBestseller && (
+                          <span className="rounded-full bg-[#1b0b07]/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#fdf7f0]">
+                            Bestseller
+                          </span>
+                        )}
+                        {sweet.isNew && (
+                          <span className="rounded-full bg-[#f0b35c] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#1b0b07]">
+                            New
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </a>
+                  <div className="flex flex-1 flex-col gap-2 p-4">
+                    <h2 className="text-sm font-semibold text-[#3b221b]">
+                      {sweet.name}
+                    </h2>
+                    <p className="text-xs leading-relaxed text-[#7a4f42]">
+                      {sweet.description}
+                    </p>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {sweet.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-[#f7e0c9] px-2 py-0.5 text-[10px] font-medium text-[#7a4f42]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="mt-3 flex items-center justify-between">
+                      <p className="text-sm font-semibold text-[#b94b4b]">
+                        {sweet.pricePerUnit}
+                      </p>
+                      <button
+                        className="rounded-full bg-[#1b0b07] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#fdf7f0] transition hover:bg-[#3b221b]"
+                        onClick={() =>
+                          addItem(
+                            {
+                              id: sweet.id,
+                              name: sweet.name,
+                              priceLabel: sweet.pricePerUnit,
+                              image: sweet.image,
+                            },
+                            1
+                          )
+                        }
+                      >
+                        Add to cart
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <aside
+            aria-label="Filters and gifting information"
+            className="space-y-6 rounded-3xl border border-[#f0d7bf] bg-[#fefaf5] p-5"
+          >
+            <div>
+              <h2 className="text-sm font-semibold text-[#3b221b]">
+                Filter by occasion
+              </h2>
+              <p className="mt-1 text-[11px] text-[#7a4f42]">
+                Looking for Diwali hampers, Rakhi boxes, or corporate gifting?
+                Start here.
+              </p>
+              <div className="mt-3 grid gap-2 text-[11px]">
+                <button className="flex items-center justify-between rounded-xl border border-[#e5cbb2] bg-white px-3 py-2 text-left text-[#5c372c] hover:border-[#b94b4b]/70">
+                  <span>Daily sweets</span>
+                  <span className="text-[10px] text-[#7a4f42]">For home</span>
+                </button>
+                <button className="flex items-center justify-between rounded-xl border border-[#e5cbb2] bg-white px-3 py-2 text-left text-[#5c372c] hover:border-[#b94b4b]/70">
+                  <span>Festive gifting</span>
+                  <span className="text-[10px] text-[#7a4f42]">Diwali, Rakhi</span>
+                </button>
+                <button className="flex items-center justify-between rounded-xl border border-[#e5cbb2] bg-white px-3 py-2 text-left text-[#5c372c] hover:border-[#b94b4b]/70">
+                  <span>Corporate hampers</span>
+                  <span className="text-[10px] text-[#7a4f42]">Bulk orders</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="border-t border-[#f0d7bf] pt-4 text-[11px] text-[#7a4f42]">
+              <h2 className="text-sm font-semibold text-[#3b221b]">
+                Storage & shelf life
+              </h2>
+              <ul className="mt-2 list-disc space-y-1 pl-4">
+                <li>Most sweets stay fresh 2–4 days at room temperature.</li>
+                <li>Refrigerate Bengali sweets and cream‑based desserts.</li>
+                <li>Refer to individual packs for exact shelf life.</li>
+              </ul>
+            </div>
+
+            <div className="border-t border-[#f0d7bf] pt-4 text-[11px] text-[#7a4f42]">
+              <h2 className="text-sm font-semibold text-[#3b221b]">
+                Need help choosing?
+              </h2>
+              <p className="mt-1">
+                WhatsApp our team for custom recommendations based on your
+                occasion, budget, and dietary preferences.
+              </p>
+              <button className="mt-3 w-full rounded-full bg-[#b94b4b] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#fdf7f0] hover:bg-[#a23f3f]">
+                Chat on WhatsApp
+              </button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  );
+}
