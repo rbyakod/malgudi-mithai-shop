@@ -67,7 +67,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
                 </span>
               )}
               {sweet.isNew && (
-                <span className="absolute left-4 top-4 rounded-full bg-gold px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-primary">
+                <span className="absolute left-4 top-4 rounded-full bg-gold px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-on-gold">
                   New
                 </span>
               )}
@@ -122,11 +122,11 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
             </div>
 
             <div className="flex flex-wrap items-center gap-4 text-[11px]">
-              <div className="inline-flex items-center gap-2 rounded-full border border-border-input bg-white px-3 py-1.5 text-text-secondary">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border-input bg-bg-control px-3 py-1.5 text-text-secondary">
                 <span className="h-2 w-2 rounded-full bg-primary" />
                 Ships in 1–2 days
               </div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-border-input bg-white px-3 py-1.5 text-text-secondary">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border-input bg-bg-control px-3 py-1.5 text-text-secondary">
                 <span className="h-2 w-2 rounded-full bg-gold" />
                 Fresh, small‑batch mithai
               </div>
@@ -150,7 +150,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
                     onChange={(e) =>
                       setQty(Math.max(1, Number(e.target.value) || 1))
                     }
-                    className="mt-1 w-24 rounded-lg border border-border-input bg-white px-3 py-2 text-xs text-text-heading outline-none ring-primary/20 focus:ring-2"
+                    className="mt-1 w-24 rounded-lg border border-border-input bg-bg-control px-3 py-2 text-xs text-text-heading outline-none ring-primary/20 focus:ring-2"
                   />
                 </div>
                 <div>
@@ -163,7 +163,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
                   <input
                     id="message"
                     name="message"
-                    className="mt-1 w-full rounded-lg border border-border-input bg-white px-3 py-2 text-xs text-text-heading outline-none ring-primary/20 focus:ring-2 sm:w-72"
+                    className="mt-1 w-full rounded-lg border border-border-input bg-bg-control px-3 py-2 text-xs text-text-heading outline-none ring-primary/20 focus:ring-2 sm:w-72"
                     placeholder="e.g. Happy Diwali from the Sharma family"
                   />
                 </div>
@@ -187,7 +187,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
                 >
                   Add to cart
                 </button>
-                <button className="rounded-full border border-border-input bg-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary hover:border-primary/70">
+                <button className="rounded-full border border-border-input bg-bg-control px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary hover:border-primary/70">
                   Add to Diwali hamper
                 </button>
                 <p className="text-[11px] text-text-muted">
@@ -261,7 +261,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
             <div className="flex flex-col gap-2 text-[11px] sm:text-xs">
               <a
                 href="https://wa.me/919876543210"
-                className="inline-flex items-center justify-center rounded-full bg-gold px-5 py-2 font-semibold uppercase tracking-[0.16em] text-text-primary hover:bg-gold-hover"
+                className="inline-flex items-center justify-center rounded-full bg-gold px-5 py-2 font-semibold uppercase tracking-[0.16em] text-text-on-gold hover:bg-gold-hover"
               >
                 Chat on WhatsApp
               </a>

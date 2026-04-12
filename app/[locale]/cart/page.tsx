@@ -81,7 +81,7 @@ export default function CartPage() {
                             Number(e.target.value) || 1
                           )
                         }
-                        className="w-16 rounded-lg border border-border-input bg-white px-2 py-1 text-[11px] text-text-heading outline-none ring-primary/20 focus:ring-2"
+                        className="w-16 rounded-lg border border-border-input bg-bg-control px-2 py-1 text-[11px] text-text-heading outline-none ring-primary/20 focus:ring-2"
                       />
                     </div>
                   </div>

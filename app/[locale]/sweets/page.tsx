@@ -240,7 +240,7 @@ export default function SweetsCatalogPage() {
                           </span>
                         )}
                         {sweet.isNew && (
-                          <span className="rounded-full bg-gold px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-primary">
+                          <span className="rounded-full bg-gold px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-on-gold">
                             New
                           </span>
                         )}
@@ -304,15 +304,15 @@ export default function SweetsCatalogPage() {
                 Start here.
               </p>
               <div className="mt-3 grid gap-2 text-[11px]">
-                <button className="flex items-center justify-between rounded-xl border border-border-input bg-white px-3 py-2 text-left text-text-secondary hover:border-primary/70">
+                <button className="flex items-center justify-between rounded-xl border border-border-input bg-bg-control px-3 py-2 text-left text-text-secondary hover:border-primary/70">
                   <span>Daily sweets</span>
                   <span className="text-[10px] text-text-muted">For home</span>
                 </button>
-                <button className="flex items-center justify-between rounded-xl border border-border-input bg-white px-3 py-2 text-left text-text-secondary hover:border-primary/70">
+                <button className="flex items-center justify-between rounded-xl border border-border-input bg-bg-control px-3 py-2 text-left text-text-secondary hover:border-primary/70">
                   <span>Festive gifting</span>
                   <span className="text-[10px] text-text-muted">Diwali, Rakhi</span>
                 </button>
-                <button className="flex items-center justify-between rounded-xl border border-border-input bg-white px-3 py-2 text-left text-text-secondary hover:border-primary/70">
+                <button className="flex items-center justify-between rounded-xl border border-border-input bg-bg-control px-3 py-2 text-left text-text-secondary hover:border-primary/70">
                   <span>Corporate hampers</span>
                   <span className="text-[10px] text-text-muted">Bulk orders</span>
                 </button>
