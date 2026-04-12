@@ -3,6 +3,7 @@ import type {Metadata} from "next";
 import "./globals.css";
 import {CartProvider} from "@/context/CartContext";
 import {ThemeProvider} from "@/context/ThemeContext";
+import {PageBackground} from "@/components/PageBackground";
 
 export const metadata: Metadata = {
   title: "Malgudi Sweets",
@@ -25,6 +26,7 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
+          <PageBackground />
           <CartProvider>{children}</CartProvider>
         </ThemeProvider>
       </body>

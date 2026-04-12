@@ -25,6 +25,9 @@
   --t-border-input: #e5cbb2;
   --t-border-image: #f3d2ae;
   --t-gradient-gold: #f6c66a;
+  --t-orb-secondary: #e8a87c;
+  --t-grid-opacity: 0;
+  --t-noise-opacity: 0;
 }
 
 /* ---- Theme: Evening Navy ---- */
@@ -51,6 +54,9 @@
   --t-border-input: #e2e8f0;
   --t-border-image: #cbd5e1;
   --t-gradient-gold: #63b3ed;
+  --t-orb-secondary: #93c5fd;
+  --t-grid-opacity: 0;
+  --t-noise-opacity: 0;
 }
 
 /* ---- Theme: Minimal Sage ---- */
@@ -77,6 +83,9 @@
   --t-border-input: #e2ebe0;
   --t-border-image: #d4dece;
   --t-gradient-gold: #a3c48f;
+  --t-orb-secondary: #86efac;
+  --t-grid-opacity: 0;
+  --t-noise-opacity: 0;
 }
 
 /* ---- Theme: MindBox (indigo / electric violet / teal) ---- */
@@ -103,6 +112,9 @@
   --t-border-input: #cccbe8;
   --t-border-image: #cccbe8;
   --t-gradient-gold: #5b3ffa;
+  --t-orb-secondary: #a855f7;
+  --t-grid-opacity: 0.25;
+  --t-noise-opacity: 0.035;
 }
 
 /* ---- Tailwind v4 theme tokens ---- */
@@ -139,4 +151,85 @@ body {
   background: var(--t-bg-page);
   color: var(--t-text-primary);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ---- Animated background orbs ---- */
+
+@keyframes orb-drift-1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, -20px) scale(1.05); }
+}
+@keyframes orb-drift-2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-25px, 15px) scale(1.08); }
+}
+@keyframes orb-drift-3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(20px, 25px) scale(1.03); }
+}
+
+.page-bg__orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+}
+.page-bg__orb--1 {
+  width: clamp(280px, 45vw, 650px);
+  height: clamp(280px, 45vw, 650px);
+  background: radial-gradient(circle, var(--t-primary) 0%, transparent 70%);
+  top: -8%;
+  left: -8%;
+  opacity: 0.18;
+  animation: orb-drift-1 12s ease-in-out infinite alternate;
+}
+.page-bg__orb--2 {
+  width: clamp(200px, 35vw, 500px);
+  height: clamp(200px, 35vw, 500px);
+  background: radial-gradient(circle, var(--t-gold) 0%, transparent 70%);
+  bottom: 8%;
+  right: -5%;
+  opacity: 0.22;
+  animation: orb-drift-2 14s ease-in-out infinite alternate;
+}
+.page-bg__orb--3 {
+  width: clamp(150px, 25vw, 350px);
+  height: clamp(150px, 25vw, 350px);
+  background: radial-gradient(circle, var(--t-orb-secondary) 0%, transparent 70%);
+  top: 38%;
+  right: 15%;
+  opacity: 0.16;
+  animation: orb-drift-3 16s ease-in-out infinite alternate;
+}
+
+/* ---- MindBox: animated grid background ---- */
+
+.page-bg__grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--t-border-card) 1px, transparent 1px),
+    linear-gradient(90deg, var(--t-border-card) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: var(--t-grid-opacity);
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 0%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 0%, black 40%, transparent 100%);
+}
+
+/* ---- MindBox: noise texture overlay ---- */
+
+.page-bg__noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: var(--t-noise-opacity);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-bg__orb { animation: none !important; }
 }

@@ -78,12 +78,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-bg-page text-text-primary">
-      {/* Background accents */}
-      <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute -left-32 top-0 h-64 w-64 rounded-full bg-[radial-gradient(circle_at_center,_var(--t-gradient-gold),_transparent_60%)] opacity-70 blur-3xl" />
-        <div className="absolute bottom-0 right-[-4rem] h-80 w-80 rounded-full bg-[radial-gradient(circle_at_center,_var(--t-primary),_transparent_60%)] opacity-60 blur-3xl" />
-      </div>
-
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-16 pt-4 sm:px-6 lg:px-8">
         <Header />
 
