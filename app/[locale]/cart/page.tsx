@@ -10,7 +10,7 @@ export default function CartPage() {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-bg-page text-text-primary">
+    <div className="relative z-10 min-h-screen text-text-primary">
       <Header />
       <div className="mx-auto max-w-4xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-semibold text-text-primary sm:text-3xl">

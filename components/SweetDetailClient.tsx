@@ -27,7 +27,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
   const [qty, setQty] = useState(1);
 
   return (
-    <div className="min-h-screen bg-bg-page text-text-primary">
+    <div className="relative z-10 min-h-screen text-text-primary">
       <Header />
       <div className="mx-auto max-w-5xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
         <nav

@@ -141,7 +141,7 @@ export default function SweetsCatalogPage() {
       : sweets.filter((s) => s.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-bg-page text-text-primary">
+    <div className="relative z-10 min-h-screen text-text-primary">
       <Header />
       <div className="mx-auto max-w-6xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-baseline justify-between gap-4">

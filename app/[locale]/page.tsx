@@ -77,7 +77,7 @@ export default function HomePage() {
   const t = useTranslations("Home");
 
   return (
-    <div className="min-h-screen bg-bg-page text-text-primary">
+    <div className="relative z-10 min-h-screen text-text-primary">
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-16 pt-4 sm:px-6 lg:px-8">
         <Header />
 

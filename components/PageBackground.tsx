@@ -2,10 +2,7 @@
 
 export function PageBackground() {
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
-    >
+    <div aria-hidden="true" className="page-bg">
       <div className="page-bg__orb page-bg__orb--1" />
       <div className="page-bg__orb page-bg__orb--2" />
       <div className="page-bg__orb page-bg__orb--3" />
