@@ -141,25 +141,25 @@ export default function SweetsCatalogPage() {
       : sweets.filter((s) => s.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-[#fdf7f0] text-[#1b0b07]">
+    <div className="min-h-screen bg-bg-page text-text-primary">
       <Header />
       <div className="mx-auto max-w-6xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-baseline justify-between gap-4">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.2em] text-[#b94b4b]">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-primary">
               Our menu
             </p>
-            <h1 className="mt-1 text-2xl font-semibold text-[#1b0b07] sm:text-3xl">
+            <h1 className="mt-1 text-2xl font-semibold text-text-primary sm:text-3xl">
               Sweets & mithai catalog
             </h1>
-            <p className="mt-2 max-w-xl text-xs text-[#7a4f42] sm:text-sm">
+            <p className="mt-2 max-w-xl text-xs text-text-muted sm:text-sm">
               Explore our full range of classic mithai, dry fruit specials,
               Bengali favourites, sugar‑free options, and seasonal creations,
               all handcrafted in small batches.
             </p>
           </div>
-          <div className="hidden text-xs text-[#7a4f42] sm:block">
-            <p className="font-semibold text-[#5c372c]">
+          <div className="hidden text-xs text-text-muted sm:block">
+            <p className="font-semibold text-text-secondary">
               Same‑day delivery (Bengaluru)
             </p>
             <p>Cut‑off 3 PM for guaranteed delivery.</p>
@@ -176,8 +176,8 @@ export default function SweetsCatalogPage() {
                 className={[
                   "rounded-full border px-4 py-1.5 font-medium transition",
                   isActive
-                    ? "border-[#b94b4b] bg-[#b94b4b] text-[#fdf7f0]"
-                    : "border-[#e5cbb2] bg-[#fefaf5] text-[#5c372c] hover:border-[#b94b4b]/60",
+                    ? "border-primary bg-primary text-text-light"
+                    : "border-border-input bg-bg-card text-text-secondary hover:border-primary/60",
                 ].join(" ")}
                 aria-pressed={isActive}
               >
@@ -189,10 +189,10 @@ export default function SweetsCatalogPage() {
 
         <div className="grid gap-8 md:grid-cols-[minmax(0,3fr)_minmax(0,1.4fr)]">
           <section aria-label="Sweets catalog" className="space-y-4">
-            <div className="flex items-center justify-between text-xs text-[#7a4f42]">
+            <div className="flex items-center justify-between text-xs text-text-muted">
               <p>
                 Showing{" "}
-                <span className="font-semibold text-[#5c372c]">
+                <span className="font-semibold text-text-secondary">
                   {filtered.length}
                 </span>{" "}
                 of {sweets.length} sweets
@@ -204,7 +204,7 @@ export default function SweetsCatalogPage() {
                 <select
                   id="sort"
                   name="sort"
-                  className="rounded-full border border-[#e5cbb2] bg-[#fefaf5] px-3 py-1.5 text-[11px] text-[#5c372c] outline-none focus:ring-2 focus:ring-[#b94b4b]/30"
+                  className="rounded-full border border-border-input bg-bg-card px-3 py-1.5 text-[11px] text-text-secondary outline-none focus:ring-2 focus:ring-primary/30"
                   defaultValue="bestsellers"
                 >
                   <option value="bestsellers">Sort: Featured</option>
@@ -219,11 +219,11 @@ export default function SweetsCatalogPage() {
               {filtered.map((sweet) => (
                 <article
                   key={sweet.id}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-[#f0d7bf] bg-[#fefaf5] shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-border-card bg-bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-md"
                 >
                   <a
                     href={`/sweets/${sweet.id}`}
-                    className="relative block h-40 w-full overflow-hidden bg-[#f7e0c9]"
+                    className="relative block h-40 w-full overflow-hidden bg-bg-accent"
                   >
                     <Image
                       src={sweet.image}
@@ -235,12 +235,12 @@ export default function SweetsCatalogPage() {
                     {(sweet.isBestseller || sweet.isNew) && (
                       <div className="absolute left-3 top-3 flex gap-2">
                         {sweet.isBestseller && (
-                          <span className="rounded-full bg-[#1b0b07]/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#fdf7f0]">
+                          <span className="rounded-full bg-bg-darker/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-light">
                             Bestseller
                           </span>
                         )}
                         {sweet.isNew && (
-                          <span className="rounded-full bg-[#f0b35c] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#1b0b07]">
+                          <span className="rounded-full bg-gold px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-primary">
                             New
                           </span>
                         )}
@@ -248,28 +248,28 @@ export default function SweetsCatalogPage() {
                     )}
                   </a>
                   <div className="flex flex-1 flex-col gap-2 p-4">
-                    <h2 className="text-sm font-semibold text-[#3b221b]">
+                    <h2 className="text-sm font-semibold text-text-heading">
                       {sweet.name}
                     </h2>
-                    <p className="text-xs leading-relaxed text-[#7a4f42]">
+                    <p className="text-xs leading-relaxed text-text-muted">
                       {sweet.description}
                     </p>
                     <div className="mt-1 flex flex-wrap gap-1">
                       {sweet.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full bg-[#f7e0c9] px-2 py-0.5 text-[10px] font-medium text-[#7a4f42]"
+                          className="rounded-full bg-bg-accent px-2 py-0.5 text-[10px] font-medium text-text-muted"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
                     <div className="mt-3 flex items-center justify-between">
-                      <p className="text-sm font-semibold text-[#b94b4b]">
+                      <p className="text-sm font-semibold text-primary">
                         {sweet.pricePerUnit}
                       </p>
                       <button
-                        className="rounded-full bg-[#1b0b07] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#fdf7f0] transition hover:bg-[#3b221b]"
+                        className="rounded-full bg-bg-darker px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-light transition hover:bg-text-heading"
                         onClick={() =>
                           addItem(
                             {
@@ -293,34 +293,34 @@ export default function SweetsCatalogPage() {
 
           <aside
             aria-label="Filters and gifting information"
-            className="space-y-6 rounded-3xl border border-[#f0d7bf] bg-[#fefaf5] p-5"
+            className="space-y-6 rounded-3xl border border-border-card bg-bg-card p-5"
           >
             <div>
-              <h2 className="text-sm font-semibold text-[#3b221b]">
+              <h2 className="text-sm font-semibold text-text-heading">
                 Filter by occasion
               </h2>
-              <p className="mt-1 text-[11px] text-[#7a4f42]">
+              <p className="mt-1 text-[11px] text-text-muted">
                 Looking for Diwali hampers, Rakhi boxes, or corporate gifting?
                 Start here.
               </p>
               <div className="mt-3 grid gap-2 text-[11px]">
-                <button className="flex items-center justify-between rounded-xl border border-[#e5cbb2] bg-white px-3 py-2 text-left text-[#5c372c] hover:border-[#b94b4b]/70">
+                <button className="flex items-center justify-between rounded-xl border border-border-input bg-white px-3 py-2 text-left text-text-secondary hover:border-primary/70">
                   <span>Daily sweets</span>
-                  <span className="text-[10px] text-[#7a4f42]">For home</span>
+                  <span className="text-[10px] text-text-muted">For home</span>
                 </button>
-                <button className="flex items-center justify-between rounded-xl border border-[#e5cbb2] bg-white px-3 py-2 text-left text-[#5c372c] hover:border-[#b94b4b]/70">
+                <button className="flex items-center justify-between rounded-xl border border-border-input bg-white px-3 py-2 text-left text-text-secondary hover:border-primary/70">
                   <span>Festive gifting</span>
-                  <span className="text-[10px] text-[#7a4f42]">Diwali, Rakhi</span>
+                  <span className="text-[10px] text-text-muted">Diwali, Rakhi</span>
                 </button>
-                <button className="flex items-center justify-between rounded-xl border border-[#e5cbb2] bg-white px-3 py-2 text-left text-[#5c372c] hover:border-[#b94b4b]/70">
+                <button className="flex items-center justify-between rounded-xl border border-border-input bg-white px-3 py-2 text-left text-text-secondary hover:border-primary/70">
                   <span>Corporate hampers</span>
-                  <span className="text-[10px] text-[#7a4f42]">Bulk orders</span>
+                  <span className="text-[10px] text-text-muted">Bulk orders</span>
                 </button>
               </div>
             </div>
 
-            <div className="border-t border-[#f0d7bf] pt-4 text-[11px] text-[#7a4f42]">
-              <h2 className="text-sm font-semibold text-[#3b221b]">
+            <div className="border-t border-border-card pt-4 text-[11px] text-text-muted">
+              <h2 className="text-sm font-semibold text-text-heading">
                 Storage & shelf life
               </h2>
               <ul className="mt-2 list-disc space-y-1 pl-4">
@@ -330,15 +330,15 @@ export default function SweetsCatalogPage() {
               </ul>
             </div>
 
-            <div className="border-t border-[#f0d7bf] pt-4 text-[11px] text-[#7a4f42]">
-              <h2 className="text-sm font-semibold text-[#3b221b]">
+            <div className="border-t border-border-card pt-4 text-[11px] text-text-muted">
+              <h2 className="text-sm font-semibold text-text-heading">
                 Need help choosing?
               </h2>
               <p className="mt-1">
                 WhatsApp our team for custom recommendations based on your
                 occasion, budget, and dietary preferences.
               </p>
-              <button className="mt-3 w-full rounded-full bg-[#b94b4b] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#fdf7f0] hover:bg-[#a23f3f]">
+              <button className="mt-3 w-full rounded-full bg-primary px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-light hover:bg-primary-hover">
                 Chat on WhatsApp
               </button>
             </div>
