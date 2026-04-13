@@ -1,7 +1,0 @@
-{
-  "defaultModel": "claude-3.7-sonnet",
-  "allowShell": true,
-  "allowFilesystem": true,
-  "allowNetwork": false,
-  "autoMemory": true
-}
