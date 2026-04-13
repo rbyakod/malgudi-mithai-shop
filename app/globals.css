@@ -1,9 +1,11 @@
-@import "tailwindcss";
+@import "tailwindcss/index.css";
 
 /* ---- Theme: Festive Saffron (default) ---- */
 
 :root,
 [data-theme="festive"] {
+  --font-geist-sans: "Avenir Next", "Segoe UI", Inter, Arial, sans-serif;
+  --font-geist-mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace;
   --t-bg-page: #f0e4d4;
   --t-bg-card: #f7ece0;
   --t-bg-accent: #f7e0c9;
@@ -137,9 +139,10 @@
   --t-noise-opacity: 0.035;
 }
 
-/* ---- Theme: My Blue (Walmart deep-navy / spark yellow) ---- */
+/* ---- Theme: Malgudi Blue v2 ---- */
 
-[data-theme="myblue"] {
+[data-theme="myblue"],
+[data-theme="mblue2"] {
   --t-bg-page: #041e42;
   --t-bg-card: #0a2b57;
   --t-bg-accent: #12386d;
@@ -168,6 +171,74 @@
   --t-orb-gold-opacity: 0;
   --t-orb-secondary-opacity: 0;
   --t-grid-opacity: 0;
+  --t-noise-opacity: 0;
+}
+
+/* ---- Theme: Coinbase Blue ---- */
+
+[data-theme="coinbase"] {
+  --t-bg-page: #0b1120;
+  --t-bg-card: #111b35;
+  --t-bg-accent: #172445;
+  --t-bg-control: #1d2d52;
+  --t-bg-dark: #0b1120;
+  --t-bg-darker: #070d19;
+  --t-primary: #1652f0;
+  --t-primary-hover: #0f43cc;
+  --t-gold: #8ec5ff;
+  --t-gold-hover: #66aafc;
+  --t-text-primary: #edf4ff;
+  --t-text-heading: #f8fbff;
+  --t-text-on-gold: #08111f;
+  --t-text-secondary: #ccd9f3;
+  --t-text-info: #adc0e6;
+  --t-text-muted: #7f97c4;
+  --t-text-breadcrumb: #6178a3;
+  --t-text-light: #f8fbff;
+  --t-text-light-muted: #ccd9f3;
+  --t-border-card: #223561;
+  --t-border-input: #31497d;
+  --t-border-image: #29406f;
+  --t-gradient-gold: #1652f0;
+  --t-orb-secondary: #8ec5ff;
+  --t-orb-primary-opacity: 0.2;
+  --t-orb-gold-opacity: 0.08;
+  --t-orb-secondary-opacity: 0.12;
+  --t-grid-opacity: 0;
+  --t-noise-opacity: 0;
+}
+
+/* ---- Theme: IBM Grid ---- */
+
+[data-theme="ibm"] {
+  --t-bg-page: #f4f4f4;
+  --t-bg-card: #ffffff;
+  --t-bg-accent: #edf4ff;
+  --t-bg-control: #f8faff;
+  --t-bg-dark: #1f1f1f;
+  --t-bg-darker: #161616;
+  --t-primary: #0f62fe;
+  --t-primary-hover: #0353e9;
+  --t-gold: #8a3ffc;
+  --t-gold-hover: #6929c4;
+  --t-text-primary: #161616;
+  --t-text-heading: #161616;
+  --t-text-on-gold: #ffffff;
+  --t-text-secondary: #393939;
+  --t-text-info: #525252;
+  --t-text-muted: #6f6f6f;
+  --t-text-breadcrumb: #8d8d8d;
+  --t-text-light: #ffffff;
+  --t-text-light-muted: #dde1e6;
+  --t-border-card: #d0d7e2;
+  --t-border-input: #b8c5d6;
+  --t-border-image: #ccd4df;
+  --t-gradient-gold: #0f62fe;
+  --t-orb-secondary: #8a3ffc;
+  --t-orb-primary-opacity: 0;
+  --t-orb-gold-opacity: 0;
+  --t-orb-secondary-opacity: 0;
+  --t-grid-opacity: 0.11;
   --t-noise-opacity: 0;
 }
 
@@ -205,11 +276,22 @@
 
 /* ---- Base ---- */
 
+html {
+  background: var(--t-bg-page);
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--t-bg-page);
   color: var(--t-text-primary);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
   overflow-x: hidden;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--t-primary) 28%, transparent);
+  color: var(--t-text-heading);
 }
 
 /* ---- Animated background orbs ---- */

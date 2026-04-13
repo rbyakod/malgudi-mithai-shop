@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import {Header} from "@/components/Header";
 import {useTranslations} from "next-intl";
@@ -136,6 +134,7 @@ export default function HomePage() {
                       src="/images/hero-mithai-box.jpg"
                       alt="Assorted Indian sweets in a premium gift box"
                       fill
+                      loading="eager"
                       sizes="(min-width: 1024px) 420px, (min-width: 768px) 50vw, 90vw"
                       className="object-cover"
                     />
@@ -165,7 +164,7 @@ export default function HomePage() {
           <section
             id="menu"
             aria-labelledby="bestsellers-heading"
-            className="space-y-6"
+            className="scroll-mt-52 space-y-6 md:scroll-mt-40"
           >
             <div className="flex items-baseline justify-between gap-4">
               <div>
@@ -230,7 +229,7 @@ export default function HomePage() {
           <section
             id="occasions"
             aria-labelledby="occasions-heading"
-            className="space-y-6"
+            className="scroll-mt-52 space-y-6 md:scroll-mt-40"
           >
             <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
@@ -269,8 +268,9 @@ export default function HomePage() {
 
           {/* Why people love us */}
           <section
+            id="corporate"
             aria-labelledby="why-heading"
-            className="grid gap-10 rounded-3xl bg-bg-darker px-6 py-10 text-text-light md:grid-cols-[1.1fr_0.9fr]"
+            className="scroll-mt-52 grid gap-10 rounded-3xl bg-bg-darker px-6 py-10 text-text-light md:grid-cols-[1.1fr_0.9fr] md:scroll-mt-40"
           >
             <div className="space-y-4">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
@@ -341,7 +341,6 @@ export default function HomePage() {
 
           {/* Corporate */}
           <section
-            id="corporate"
             aria-labelledby="corporate-heading"
             className="grid gap-8 md:grid-cols-[1.1fr_0.9fr]"
           >

@@ -4,6 +4,10 @@ import "./globals.css";
 import {CartProvider} from "@/context/CartContext";
 import {ThemeProvider} from "@/context/ThemeContext";
 import {PageBackground} from "@/components/PageBackground";
+import {DEFAULT_THEME, THEMES} from "@/lib/themes";
+
+const validThemes = THEMES.map((theme) => theme.id);
+const initialThemeScript = `(function(){try{var valid=${JSON.stringify(validThemes)};var stored=localStorage.getItem("mithai-theme");var aliases={myblue:"mblue2"};var normalized=(stored&&aliases[stored])||stored||${JSON.stringify(DEFAULT_THEME)};if(valid.indexOf(normalized)!==-1){document.documentElement.setAttribute("data-theme",normalized);if(stored!==normalized){localStorage.setItem("mithai-theme",normalized);}}}catch(e){}})()`;
 
 export const metadata: Metadata = {
   title: "Malgudi Sweets",
@@ -20,7 +24,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("mithai-theme");if(t&&["festive","navy","sage","mindbox","myblue"].indexOf(t)!==-1)document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`
+            __html: initialThemeScript
           }}
         />
       </head>

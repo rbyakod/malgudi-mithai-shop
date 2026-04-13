@@ -216,7 +216,7 @@ export default function SweetsCatalogPage() {
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((sweet) => (
+              {filtered.map((sweet, index) => (
                 <article
                   key={sweet.id}
                   className="group flex flex-col overflow-hidden rounded-2xl border border-border-card bg-bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-md"
@@ -229,6 +229,7 @@ export default function SweetsCatalogPage() {
                       src={sweet.image}
                       alt={sweet.name}
                       fill
+                      loading={index < 2 ? "eager" : undefined}
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 90vw"
                       className="object-cover transition duration-500 group-hover:scale-105"
                     />
