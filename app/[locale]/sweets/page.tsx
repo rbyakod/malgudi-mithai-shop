@@ -1,8 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { useCart } from "@/context/CartContext";
+
+function parsePrice(label: string): number {
+  const match = label.replace(/,/g, "").match(/[\d.]+/);
+  return match ? parseFloat(match[0]) : 0;
+}
 
 type Category =
   | "all"
@@ -118,7 +124,7 @@ const sweets: Sweet[] = [
     pricePerUnit: "₹849 / 500g",
     tags: ["Dry fruit", "Gift box friendly"],
     category: "dryfruit",
-    image: "/images/pista-roll.jpg",
+    image: "/images/ista-roll.jpg",
   },
 ];
 
@@ -133,12 +139,26 @@ const categories: { id: Category; label: string }[] = [
 
 export default function SweetsCatalogPage() {
   const { addItem } = useCart();
-  const activeCategory: Category = "all";
+  const [activeCategory, setActiveCategory] = useState<Category>("all");
+  const [sortBy, setSortBy] = useState<string>("bestsellers");
 
   const filtered =
     activeCategory === "all"
       ? sweets
       : sweets.filter((s) => s.category === activeCategory);
+
+  const sorted = [...filtered].sort((a, b) => {
+    switch (sortBy) {
+      case "price-asc":
+        return parsePrice(a.pricePerUnit) - parsePrice(b.pricePerUnit);
+      case "price-desc":
+        return parsePrice(b.pricePerUnit) - parsePrice(a.pricePerUnit);
+      case "new":
+        return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
+      default:
+        return (b.isBestseller ? 1 : 0) - (a.isBestseller ? 1 : 0);
+    }
+  });
 
   return (
     <div className="relative z-10 min-h-screen text-text-primary">
@@ -146,10 +166,10 @@ export default function SweetsCatalogPage() {
       <div className="mx-auto max-w-6xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-baseline justify-between gap-4">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.2em] text-primary">
+            <p className="text-xs font-medium tracking-wide text-primary">
               Our menu
             </p>
-            <h1 className="mt-1 text-2xl font-semibold text-text-primary sm:text-3xl">
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
               Sweets & mithai catalog
             </h1>
             <p className="mt-2 max-w-xl text-xs text-text-muted sm:text-sm">
@@ -173,6 +193,7 @@ export default function SweetsCatalogPage() {
               <button
                 key={cat.id}
                 type="button"
+                onClick={() => setActiveCategory(cat.id)}
                 className={[
                   "rounded-full border px-4 py-1.5 font-medium transition",
                   isActive
@@ -193,7 +214,7 @@ export default function SweetsCatalogPage() {
               <p>
                 Showing{" "}
                 <span className="font-semibold text-text-secondary">
-                  {filtered.length}
+                  {sorted.length}
                 </span>{" "}
                 of {sweets.length} sweets
               </p>
@@ -205,7 +226,8 @@ export default function SweetsCatalogPage() {
                   id="sort"
                   name="sort"
                   className="rounded-full border border-border-input bg-bg-card px-3 py-1.5 text-[11px] text-text-secondary outline-none focus:ring-2 focus:ring-primary/30"
-                  defaultValue="bestsellers"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
                 >
                   <option value="bestsellers">Sort: Featured</option>
                   <option value="price-asc">Price: Low to high</option>
@@ -216,10 +238,10 @@ export default function SweetsCatalogPage() {
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((sweet, index) => (
+              {sorted.map((sweet, index) => (
                 <article
                   key={sweet.id}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-border-card bg-bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-border-card bg-bg-card shadow-card transition hover:-translate-y-1 hover:shadow-card-hover"
                 >
                   <a
                     href={`/sweets/${sweet.id}`}
@@ -236,12 +258,12 @@ export default function SweetsCatalogPage() {
                     {(sweet.isBestseller || sweet.isNew) && (
                       <div className="absolute left-3 top-3 flex gap-2">
                         {sweet.isBestseller && (
-                          <span className="rounded-full bg-bg-darker/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-light">
+                          <span className="rounded-full bg-bg-darker/85 px-2.5 py-1 text-[10px] font-semibold text-text-light">
                             Bestseller
                           </span>
                         )}
                         {sweet.isNew && (
-                          <span className="rounded-full bg-gold px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-on-gold">
+                          <span className="rounded-full bg-gold px-2.5 py-1 text-[10px] font-semibold text-text-on-gold">
                             New
                           </span>
                         )}
@@ -265,12 +287,12 @@ export default function SweetsCatalogPage() {
                         </span>
                       ))}
                     </div>
-                    <div className="mt-3 flex items-center justify-between">
+                    <div className="mt-auto flex items-center justify-between pt-3">
                       <p className="text-sm font-semibold text-primary">
                         {sweet.pricePerUnit}
                       </p>
                       <button
-                        className="rounded-full bg-bg-darker px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-light transition hover:bg-text-heading"
+                        className="rounded-full bg-bg-darker px-3 py-1.5 text-xs font-semibold text-text-light transition hover:bg-text-heading"
                         onClick={() =>
                           addItem(
                             {
@@ -339,7 +361,7 @@ export default function SweetsCatalogPage() {
                 WhatsApp our team for custom recommendations based on your
                 occasion, budget, and dietary preferences.
               </p>
-              <button className="mt-3 w-full rounded-full bg-primary px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-light hover:bg-primary-hover">
+              <button className="mt-3 w-full rounded-full bg-primary px-4 py-2 text-xs font-semibold text-text-light hover:bg-primary-hover">
                 Chat on WhatsApp
               </button>
             </div>

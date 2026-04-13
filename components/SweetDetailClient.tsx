@@ -62,12 +62,12 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
                 className="object-cover"
               />
               {sweet.isBestseller && (
-                <span className="absolute left-4 top-4 rounded-full bg-bg-darker/85 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-light">
+                <span className="absolute left-4 top-4 rounded-full bg-bg-darker/85 px-3 py-1.5 text-[10px] font-semibold text-text-light">
                   Bestseller
                 </span>
               )}
               {sweet.isNew && (
-                <span className="absolute left-4 top-4 rounded-full bg-gold px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-on-gold">
+                <span className="absolute left-4 top-4 rounded-full bg-gold px-3 py-1.5 text-[10px] font-semibold text-text-on-gold">
                   New
                 </span>
               )}
@@ -96,10 +96,10 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
             className="flex flex-col gap-4 rounded-3xl border border-border-card bg-bg-card p-5 shadow-sm"
           >
             <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-primary">
+              <p className="text-xs font-medium tracking-wide text-primary">
                 Malgudi Sweets
               </p>
-              <h1 className="mt-1 text-2xl font-semibold text-text-primary sm:text-3xl">
+              <h1 className="mt-1 text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
                 {sweet.name}
               </h1>
               <p className="mt-2 text-xs text-text-muted sm:text-sm">
@@ -171,7 +171,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
 
               <div className="flex flex-wrap items-center gap-3">
                 <button
-                  className="rounded-full bg-bg-darker px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-text-light shadow-sm transition hover:bg-text-heading"
+                  className="rounded-full bg-bg-darker px-6 py-2.5 text-sm font-semibold text-text-light shadow-sm transition hover:bg-text-heading"
                   type="button"
                   onClick={() =>
                     addItem(
@@ -187,7 +187,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
                 >
                   Add to cart
                 </button>
-                <button className="rounded-full border border-border-input bg-bg-control px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary hover:border-primary/70">
+                <button className="rounded-full border border-border-input bg-bg-control px-6 py-2.5 text-sm font-semibold text-text-secondary hover:border-primary/70">
                   Add to Diwali hamper
                 </button>
                 <p className="text-[11px] text-text-muted">
@@ -246,7 +246,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">
+              <p className="text-xs font-medium tracking-wide text-gold">
                 Bulk & gifting
               </p>
               <h2 className="mt-1 text-sm font-semibold sm:text-base">
@@ -261,7 +261,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
             <div className="flex flex-col gap-2 text-[11px] sm:text-xs">
               <a
                 href="https://wa.me/919876543210"
-                className="inline-flex items-center justify-center rounded-full bg-gold px-5 py-2 font-semibold uppercase tracking-[0.16em] text-text-on-gold hover:bg-gold-hover"
+                className="inline-flex items-center justify-center rounded-full bg-gold px-5 py-2 text-sm font-semibold text-text-on-gold hover:bg-gold-hover"
               >
                 Chat on WhatsApp
               </a>

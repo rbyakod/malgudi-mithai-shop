@@ -1,0 +1,233 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "MS MALGUDI SWEETS Modern mithai for every celebration" [ref=e8] [cursor=pointer]:
+            - /url: /en#top
+            - generic [ref=e9]: MS
+            - generic [ref=e10]:
+              - paragraph [ref=e11]: MALGUDI SWEETS
+              - paragraph [ref=e12]: Modern mithai for every celebration
+          - generic [ref=e13]:
+            - button "Design System Festive Saffron" [ref=e15]:
+              - generic [ref=e16]:
+                - generic [ref=e17]: Design System
+                - generic [ref=e18]: Festive Saffron
+            - link "Cart" [ref=e24] [cursor=pointer]:
+              - /url: /en/cart
+              - generic [ref=e25]: Cart
+            - combobox [ref=e26]:
+              - option "English" [selected]
+              - option "Español"
+              - option "Français"
+              - option "हिन्दी"
+              - option "ಕನ್ನಡ"
+              - option "தமிழ்"
+              - option "తెలుగు"
+              - option "বাংলা"
+              - option "मराठी"
+              - option "ગુજરાતી"
+        - generic [ref=e27]:
+          - navigation [ref=e28]:
+            - link "Menu" [ref=e29] [cursor=pointer]:
+              - /url: /en#menu
+            - link "All sweets" [ref=e30] [cursor=pointer]:
+              - /url: /en/sweets
+            - link "Occasions" [ref=e31] [cursor=pointer]:
+              - /url: /en#occasions
+            - link "Corporate" [ref=e32] [cursor=pointer]:
+              - /url: /en#corporate
+          - link "Order now" [ref=e33] [cursor=pointer]:
+            - /url: /en/sweets
+    - generic [ref=e34]:
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - paragraph [ref=e37]: Our menu
+          - heading "Sweets & mithai catalog" [level=1] [ref=e38]
+          - paragraph [ref=e39]: Explore our full range of classic mithai, dry fruit specials, Bengali favourites, sugar‑free options, and seasonal creations, all handcrafted in small batches.
+        - generic [ref=e40]:
+          - paragraph [ref=e41]: Same‑day delivery (Bengaluru)
+          - paragraph [ref=e42]: Cut‑off 3 PM for guaranteed delivery.
+      - generic [ref=e43]:
+        - button "All sweets" [pressed] [ref=e44]
+        - button "Classics" [ref=e45]
+        - button "Dry fruit" [ref=e46]
+        - button "Bengali" [ref=e47]
+        - button "Sugar‑free" [ref=e48]
+        - button "Seasonal specials" [ref=e49]
+      - generic [ref=e50]:
+        - region "Sweets catalog" [ref=e51]:
+          - generic [ref=e52]:
+            - paragraph [ref=e53]: Showing 10 of 10 sweets
+            - generic [ref=e54]:
+              - generic [ref=e55]: Sort by
+              - combobox "Sort by" [ref=e56]:
+                - 'option "Sort: Featured" [selected]'
+                - 'option "Price: Low to high"'
+                - 'option "Price: High to low"'
+                - option "New first"
+          - generic [ref=e57]:
+            - article [ref=e58]:
+              - link "Kaju Katli Royale Bestseller" [ref=e59] [cursor=pointer]:
+                - /url: /sweets/kaju-katli-royale
+                - img "Kaju Katli Royale" [ref=e60]
+                - generic [ref=e62]: Bestseller
+              - generic [ref=e63]:
+                - heading "Kaju Katli Royale" [level=2] [ref=e64]
+                - paragraph [ref=e65]: Silky cashew fudge with saffron and silver vark.
+                - generic [ref=e66]:
+                  - generic [ref=e67]: Cashew
+                  - generic [ref=e68]: Festive
+                  - generic [ref=e69]: Gift box friendly
+                - generic [ref=e70]:
+                  - paragraph [ref=e71]: ₹699 / 500g
+                  - button "Add to cart" [ref=e72]
+            - article [ref=e73]:
+              - link "Motichoor Laddoo Bestseller" [ref=e74] [cursor=pointer]:
+                - /url: /sweets/motichoor-laddoo
+                - img "Motichoor Laddoo" [ref=e75]
+                - generic [ref=e77]: Bestseller
+              - generic [ref=e78]:
+                - heading "Motichoor Laddoo" [level=2] [ref=e79]
+                - paragraph [ref=e80]: Melt‑in‑mouth boondi laddoos roasted in desi ghee.
+                - generic [ref=e81]:
+                  - generic [ref=e82]: Laddoo
+                  - generic [ref=e83]: Festive
+                - generic [ref=e84]:
+                  - paragraph [ref=e85]: ₹549 / 500g
+                  - button "Add to cart" [ref=e86]
+            - article [ref=e87]:
+              - link "Gulab Jamun Classic Bestseller" [ref=e88] [cursor=pointer]:
+                - /url: /sweets/gulab-jamun-classic
+                - img "Gulab Jamun Classic" [ref=e89]
+                - generic [ref=e91]: Bestseller
+              - generic [ref=e92]:
+                - heading "Gulab Jamun Classic" [level=2] [ref=e93]
+                - paragraph [ref=e94]: Khoya dumplings in a warm cardamom‑rose syrup.
+                - generic [ref=e95]:
+                  - generic [ref=e96]: Syrup sweets
+                  - generic [ref=e97]: Party favourite
+                - generic [ref=e98]:
+                  - paragraph [ref=e99]: ₹499 / 6 pcs
+                  - button "Add to cart" [ref=e100]
+            - article [ref=e101]:
+              - link "Besan Laddoo" [ref=e102] [cursor=pointer]:
+                - /url: /sweets/besan-laddoo
+                - img "Besan Laddoo" [ref=e103]
+              - generic [ref=e104]:
+                - heading "Besan Laddoo" [level=2] [ref=e105]
+                - paragraph [ref=e106]: Slow‑roasted besan with ghee and crushed dry fruits.
+                - generic [ref=e108]: Laddoo
+                - generic [ref=e109]:
+                  - paragraph [ref=e110]: ₹499 / 500g
+                  - button "Add to cart" [ref=e111]
+            - article [ref=e112]:
+              - link "Kolkata Rasgulla" [ref=e113] [cursor=pointer]:
+                - /url: /sweets/rasgulla-bengali
+                - img "Kolkata Rasgulla" [ref=e114]
+              - generic [ref=e115]:
+                - heading "Kolkata Rasgulla" [level=2] [ref=e116]
+                - paragraph [ref=e117]: Soft chhena balls soaked in light sugar syrup.
+                - generic [ref=e118]:
+                  - generic [ref=e119]: Bengali
+                  - generic [ref=e120]: Syrup sweets
+                - generic [ref=e121]:
+                  - paragraph [ref=e122]: ₹399 / 6 pcs
+                  - button "Add to cart" [ref=e123]
+            - article [ref=e124]:
+              - link "Saffron Rasmalai" [ref=e125] [cursor=pointer]:
+                - /url: /sweets/rasmalai
+                - img "Saffron Rasmalai" [ref=e126]
+              - generic [ref=e127]:
+                - heading "Saffron Rasmalai" [level=2] [ref=e128]
+                - paragraph [ref=e129]: Soft patties in chilled saffron‑pistachio rabdi.
+                - generic [ref=e130]:
+                  - generic [ref=e131]: Bengali
+                  - generic [ref=e132]: Dessert
+                - generic [ref=e133]:
+                  - paragraph [ref=e134]: ₹699 / 6 pcs
+                  - button "Add to cart" [ref=e135]
+            - article [ref=e136]:
+              - link "Sugar‑free Kaju Bites New" [ref=e137] [cursor=pointer]:
+                - /url: /sweets/sugarfree-kaju
+                - img "Sugar‑free Kaju Bites" [ref=e138]
+                - generic [ref=e140]: New
+              - generic [ref=e141]:
+                - heading "Sugar‑free Kaju Bites" [level=2] [ref=e142]
+                - paragraph [ref=e143]: Stevia‑sweetened cashew bites for mindful indulgence.
+                - generic [ref=e144]:
+                  - generic [ref=e145]: Sugar‑free
+                  - generic [ref=e146]: Dry fruit
+                - generic [ref=e147]:
+                  - paragraph [ref=e148]: ₹749 / 400g
+                  - button "Add to cart" [ref=e149]
+            - article [ref=e150]:
+              - link "Badam Barfi" [ref=e151] [cursor=pointer]:
+                - /url: /sweets/badam-barfi
+                - img "Badam Barfi" [ref=e152]
+              - generic [ref=e153]:
+                - heading "Badam Barfi" [level=2] [ref=e154]
+                - paragraph [ref=e155]: Rich almond fudge with a hint of cardamom.
+                - generic [ref=e156]:
+                  - generic [ref=e157]: Dry fruit
+                  - generic [ref=e158]: Festive
+                - generic [ref=e159]:
+                  - paragraph [ref=e160]: ₹799 / 500g
+                  - button "Add to cart" [ref=e161]
+            - article [ref=e162]:
+              - link "Alphonso Mango Peda New" [ref=e163] [cursor=pointer]:
+                - /url: /sweets/mango-peda
+                - img "Alphonso Mango Peda" [ref=e164]
+                - generic [ref=e166]: New
+              - generic [ref=e167]:
+                - heading "Alphonso Mango Peda" [level=2] [ref=e168]
+                - paragraph [ref=e169]: Seasonal peda infused with real Alphonso pulp.
+                - generic [ref=e170]:
+                  - generic [ref=e171]: Seasonal
+                  - generic [ref=e172]: Mango
+                - generic [ref=e173]:
+                  - paragraph [ref=e174]: ₹599 / 400g
+                  - button "Add to cart" [ref=e175]
+            - article [ref=e176]:
+              - link "Pista Roll" [ref=e177] [cursor=pointer]:
+                - /url: /sweets/pista-roll
+                - img "Pista Roll" [ref=e178]
+              - generic [ref=e179]:
+                - heading "Pista Roll" [level=2] [ref=e180]
+                - paragraph [ref=e181]: Layered pistachio and kaju roll with vark.
+                - generic [ref=e182]:
+                  - generic [ref=e183]: Dry fruit
+                  - generic [ref=e184]: Gift box friendly
+                - generic [ref=e185]:
+                  - paragraph [ref=e186]: ₹849 / 500g
+                  - button "Add to cart" [ref=e187]
+        - complementary "Filters and gifting information" [ref=e188]:
+          - generic [ref=e189]:
+            - heading "Filter by occasion" [level=2] [ref=e190]
+            - paragraph [ref=e191]: Looking for Diwali hampers, Rakhi boxes, or corporate gifting? Start here.
+            - generic [ref=e192]:
+              - button "Daily sweets For home" [ref=e193]:
+                - generic [ref=e194]: Daily sweets
+                - generic [ref=e195]: For home
+              - button "Festive gifting Diwali, Rakhi" [ref=e196]:
+                - generic [ref=e197]: Festive gifting
+                - generic [ref=e198]: Diwali, Rakhi
+              - button "Corporate hampers Bulk orders" [ref=e199]:
+                - generic [ref=e200]: Corporate hampers
+                - generic [ref=e201]: Bulk orders
+          - generic [ref=e202]:
+            - heading "Storage & shelf life" [level=2] [ref=e203]
+            - list [ref=e204]:
+              - listitem [ref=e205]: Most sweets stay fresh 2–4 days at room temperature.
+              - listitem [ref=e206]: Refrigerate Bengali sweets and cream‑based desserts.
+              - listitem [ref=e207]: Refer to individual packs for exact shelf life.
+          - generic [ref=e208]:
+            - heading "Need help choosing?" [level=2] [ref=e209]
+            - paragraph [ref=e210]: WhatsApp our team for custom recommendations based on your occasion, budget, and dietary preferences.
+            - button "Chat on WhatsApp" [ref=e211]
+  - button "Open Next.js Dev Tools" [ref=e217] [cursor=pointer]:
+    - img [ref=e218]
+  - alert [ref=e221]

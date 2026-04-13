@@ -1,10 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss/index.css";
 
 /* ---- Theme: Festive Saffron (default) ---- */
 
 :root,
 [data-theme="festive"] {
-  --font-geist-sans: "Avenir Next", "Segoe UI", Inter, Arial, sans-serif;
+  --font-geist-sans: "Outfit", "Avenir Next", "Segoe UI", Inter, Arial, sans-serif;
   --font-geist-mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace;
   --t-bg-page: #f0e4d4;
   --t-bg-card: #f7ece0;
@@ -287,6 +288,49 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* ---- Interaction polish ---- */
+
+button,
+a[href] {
+  transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--t-primary);
+  outline-offset: 2px;
+}
+
+/* ---- Tinted card shadows ---- */
+
+.shadow-card {
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--t-border-card) 40%, transparent),
+              0 4px 12px color-mix(in srgb, var(--t-border-card) 15%, transparent);
+}
+
+.shadow-card-hover {
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--t-border-card) 50%, transparent),
+              0 8px 24px color-mix(in srgb, var(--t-border-card) 20%, transparent);
 }
 
 ::selection {

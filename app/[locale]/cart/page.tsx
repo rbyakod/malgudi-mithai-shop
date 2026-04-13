@@ -107,7 +107,7 @@ export default function CartPage() {
                 For bulk or corporate orders, we may contact you to confirm
                 details.
               </p>
-              <button className="mt-2 w-full rounded-full bg-primary px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-text-light shadow-sm hover:bg-primary-hover">
+              <button className="mt-2 w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-text-light shadow-sm hover:bg-primary-hover">
                 Proceed to checkout (demo)
               </button>
             </div>

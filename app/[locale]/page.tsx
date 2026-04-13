@@ -34,22 +34,26 @@ const occasions = [
   {
     name: "Diwali",
     description:
-      "Curated hampers for homes and offices, beautifully packed."
+      "Curated hampers for homes and offices, beautifully packed.",
+    image: "/images/assorted-box.jpg"
   },
   {
     name: "Raksha Bandhan",
     description:
-      "Rakhi specials with laddoos, barfis, and keepsake boxes."
+      "Rakhi specials with laddoos, barfis, and keepsake boxes.",
+    image: "/images/motichoor-laddoo.jpg"
   },
   {
     name: "Weddings",
     description:
-      "Bespoke mithai boxes for mehendi, sangeet, and reception."
+      "Bespoke mithai boxes for mehendi, sangeet, and reception.",
+    image: "/images/kaju-katli.jpg"
   },
   {
     name: "Corporate gifting",
     description:
-      "Branded boxes with pan‑India shipping and bulk pricing."
+      "Branded boxes with pan-India shipping and bulk pricing.",
+    image: "/images/hero-mithai-box.jpg"
   }
 ];
 
@@ -79,18 +83,18 @@ export default function HomePage() {
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-16 pt-4 sm:px-6 lg:px-8">
         <Header />
 
-        <main className="flex flex-1 flex-col gap-16">
+        <main id="main-content" className="flex flex-1 flex-col gap-16">
           {/* Hero */}
           <section
             className="grid items-center gap-10 md:grid-cols-[1.1fr_0.9fr]"
             id="top"
           >
             <div className="space-y-6">
-              <p className="inline-block rounded-full bg-bg-accent px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-primary">
+              <p className="inline-block rounded-full bg-bg-accent px-3 py-1 text-xs font-medium tracking-wide text-primary">
                 {t("heroBadge")}
               </p>
 
-              <h1 className="text-4xl font-semibold leading-tight text-text-primary sm:text-5xl">
+              <h1 className="text-4xl font-semibold leading-tight tracking-tight text-text-primary sm:text-5xl">
                 {t("heroTitle")}
               </h1>
 
@@ -101,13 +105,13 @@ export default function HomePage() {
               <div className="flex flex-wrap items-center gap-4">
                 <a
                   href="/sweets"
-                  className="rounded-full bg-primary px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-text-light shadow-md transition hover:bg-primary-hover"
+                  className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-text-light shadow-md transition hover:bg-primary-hover"
                 >
                   {t("heroPrimaryCta")}
                 </a>
                 <a
                   href="#gift-boxes"
-                  className="rounded-full border border-border-input bg-bg-page/70 px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-text-secondary transition hover:bg-bg-accent/60"
+                  className="rounded-full border border-border-input bg-bg-page/70 px-6 py-2.5 text-sm font-semibold text-text-secondary transition hover:bg-bg-accent/60"
                 >
                   {t("heroSecondaryCta")}
                 </a>
@@ -150,7 +154,7 @@ export default function HomePage() {
                     </div>
                     <a
                       href="/sweets"
-                      className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-text-light shadow-sm hover:bg-primary-hover"
+                      className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-text-light shadow-sm hover:bg-primary-hover"
                     >
                       Pre‑order
                     </a>
@@ -168,12 +172,12 @@ export default function HomePage() {
           >
             <div className="flex items-baseline justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                <p className="text-xs font-medium tracking-wide text-primary">
                   {t("bestSellersLabel")}
                 </p>
                 <h2
                   id="bestsellers-heading"
-                  className="mt-1 text-2xl font-semibold text-text-primary"
+                  className="mt-1 text-2xl font-semibold tracking-tight text-text-primary"
                 >
                   {t("bestSellersTitle")}
                 </h2>
@@ -190,7 +194,7 @@ export default function HomePage() {
               {bestSellers.map((item) => (
                 <article
                   key={item.name}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-border-card bg-bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-border-card bg-bg-card shadow-card transition hover:-translate-y-1 hover:shadow-card-hover"
                 >
                   <div className="relative h-32 w-full overflow-hidden bg-bg-accent">
                     <Image
@@ -214,7 +218,7 @@ export default function HomePage() {
                       </p>
                       <a
                         href="/sweets"
-                        className="rounded-full bg-bg-darker px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-light transition hover:bg-text-heading"
+                        className="rounded-full bg-bg-darker px-3 py-1.5 text-xs font-semibold text-text-light transition hover:bg-text-heading"
                       >
                         Order
                       </a>
@@ -233,12 +237,12 @@ export default function HomePage() {
           >
             <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                <p className="text-xs font-medium tracking-wide text-primary">
                   {t("occasionsLabel")}
                 </p>
                 <h2
                   id="occasions-heading"
-                  className="mt-1 text-2xl font-semibold text-text-primary"
+                  className="mt-1 text-2xl font-semibold tracking-tight text-text-primary"
                 >
                   {t("occasionsTitle")}
                 </h2>
@@ -253,14 +257,26 @@ export default function HomePage() {
               {occasions.map((occasion) => (
                 <div
                   key={occasion.name}
-                  className="flex flex-col gap-2 rounded-2xl border border-border-card bg-bg-card p-4"
+                  className="group relative flex flex-col justify-end overflow-hidden rounded-2xl"
                 >
-                  <p className="text-sm font-semibold text-text-heading">
-                    {occasion.name}
-                  </p>
-                  <p className="text-xs text-text-muted">
-                    {occasion.description}
-                  </p>
+                  <div className="relative h-48 w-full">
+                    <Image
+                      src={occasion.image}
+                      alt={occasion.name}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 90vw"
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-bg-darker/80 via-bg-darker/30 to-transparent" />
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 p-4">
+                    <p className="text-sm font-semibold text-text-light">
+                      {occasion.name}
+                    </p>
+                    <p className="mt-0.5 text-xs text-text-light-muted">
+                      {occasion.description}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -270,13 +286,13 @@ export default function HomePage() {
           <section
             id="corporate"
             aria-labelledby="why-heading"
-            className="scroll-mt-52 grid gap-10 rounded-3xl bg-bg-darker px-6 py-10 text-text-light md:grid-cols-[1.1fr_0.9fr] md:scroll-mt-40"
+            className="scroll-mt-52 grid gap-10 rounded-3xl bg-bg-dark px-6 py-10 text-text-light md:grid-cols-[1.1fr_0.9fr] md:scroll-mt-40"
           >
             <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+              <p className="text-xs font-medium tracking-wide text-gold">
                 {t("whyLabel")}
               </p>
-              <h2 id="why-heading" className="text-2xl font-semibold">
+              <h2 id="why-heading" className="text-2xl font-semibold tracking-tight">
                 {t("whyTitle")}
               </h2>
               <p className="max-w-md text-sm text-text-light-muted">
@@ -318,7 +334,7 @@ export default function HomePage() {
             </div>
 
             <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+              <p className="text-xs font-medium tracking-wide text-gold">
                 From our customers
               </p>
               <div className="space-y-4">
@@ -345,12 +361,12 @@ export default function HomePage() {
             className="grid gap-8 md:grid-cols-[1.1fr_0.9fr]"
           >
             <div className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+              <p className="text-xs font-medium tracking-wide text-primary">
                 {t("corporateLabel")}
               </p>
               <h2
                 id="corporate-heading"
-                className="text-2xl font-semibold text-text-primary"
+                className="text-2xl font-semibold tracking-tight text-text-primary"
               >
                 {t("corporateTitle")}
               </h2>
@@ -388,14 +404,10 @@ export default function HomePage() {
               <div className="flex flex-wrap gap-4">
                 <span>{t("footerLocation")}</span>
                 <a href="tel:+919876543210" className="hover:text-primary">
-                  +91‑98765‑43210
+                  +91-98765-43210
                 </a>
-                <a href="#" className="hover:text-primary">
-                  Instagram
-                </a>
-                <a href="#" className="hover:text-primary">
-                  {t("footerPrivacy")}
-                </a>
+                <span className="text-text-muted">Instagram</span>
+                <span className="text-text-muted">{t("footerPrivacy")}</span>
               </div>
             </div>
           </footer>

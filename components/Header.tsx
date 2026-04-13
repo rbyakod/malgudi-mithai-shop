@@ -47,7 +47,7 @@ export function Header() {
                 MS
               </div>
               <div>
-                <p className="text-sm font-semibold tracking-[0.2em] text-primary">
+                <p className="text-sm font-semibold tracking-wide text-primary">
                   MALGUDI SWEETS
                 </p>
                 <p className="text-xs text-text-muted">
@@ -92,9 +92,12 @@ export function Header() {
               ))}
             </nav>
 
-            <button className="rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-text-light shadow-sm transition hover:bg-primary-hover">
+            <Link
+              href="/sweets"
+              className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-text-light shadow-sm transition hover:bg-primary-hover"
+            >
               {t("orderNow")}
-            </button>
+            </Link>
           </div>
 
           <div className="space-y-3 md:hidden">
@@ -136,9 +139,12 @@ export function Header() {
                   {t(link.key)}
                 </Link>
               ))}
-              <button className="rounded-full bg-primary px-4 py-2 font-semibold uppercase tracking-wide text-text-light shadow-sm transition hover:bg-primary-hover">
+              <Link
+                href="/sweets"
+                className="inline-block rounded-full bg-primary px-4 py-2 font-semibold text-text-light shadow-sm transition hover:bg-primary-hover"
+              >
                 {t("orderNow")}
-              </button>
+              </Link>
             </nav>
           </div>
         </div>
