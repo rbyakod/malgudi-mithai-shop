@@ -302,6 +302,118 @@ p {
 
 /* ---- Interaction polish ---- */
 
+/* ---- Scroll-reactive navbar ---- */
+
+.nav-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--t-bg-page) 60%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition:
+    background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    backdrop-filter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scrolled state — glass panel */
+.nav-header[data-scrolled] {
+  background: color-mix(in srgb, var(--t-bg-card) 85%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--t-border-card) 50%, transparent),
+    0 4px 16px color-mix(in srgb, var(--t-border-card) 12%, transparent);
+}
+
+/* Inner refraction edge at top when scrolled */
+.nav-header[data-scrolled]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 1px solid color-mix(in srgb, var(--t-bg-control) 40%, transparent);
+  pointer-events: none;
+}
+
+.nav-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-header[data-scrolled] .nav-top-bar {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.nav-logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  background: var(--t-primary);
+  color: var(--t-text-light);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition:
+    width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-header[data-scrolled] .nav-logo-mark {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.625rem;
+}
+
+.nav-tagline {
+  display: block;
+  max-height: 1.25rem;
+  opacity: 1;
+  overflow: hidden;
+  transition:
+    max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s ease;
+}
+
+.nav-header[data-scrolled] .nav-tagline {
+  max-height: 0;
+  opacity: 0;
+}
+
+.nav-desktop-row {
+  border-top: 1px solid color-mix(in srgb, var(--t-border-card) 40%, transparent);
+  padding-bottom: 0.25rem;
+  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Mobile overlay */
+.nav-mobile-overlay {
+  max-height: 0;
+  overflow: hidden;
+  border-top: 1px solid transparent;
+  transition:
+    max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+}
+
+.nav-mobile-overlay--open {
+  max-height: 400px;
+  border-top-color: color-mix(in srgb, var(--t-border-card) 50%, transparent);
+  background: color-mix(in srgb, var(--t-bg-card) 60%, transparent);
+}
+
+/* ---- Interaction polish ---- */
+
 button,
 a[href] {
   transition-property: color, background-color, border-color, box-shadow, transform, opacity;
