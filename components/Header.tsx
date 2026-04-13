@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect, useCallback} from "react";
+import {useState, useEffect, useCallback, useRef} from "react";
 import {useTranslations, useLocale} from "next-intl";
 import {Link, usePathname, useRouter} from "@/i18n/navigation";
 import {useCart} from "@/context/CartContext";
@@ -82,14 +82,85 @@ function CloseIcon({className}: {className?: string}) {
   );
 }
 
+/* ---- Scroll-spy for homepage hash anchors ---- */
+
+// Maps nav href → section DOM id
+const HASH_SECTION_MAP: Record<string, string> = {
+  "/#menu": "menu",
+  "/#occasions": "occasions",
+  "/#corporate": "corporate",
+};
+
+function useActiveSection(pathname: string): string | null {
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    // Only run scroll-spy on the homepage
+    if (pathname !== "/") {
+      setActiveId(null);
+      return;
+    }
+
+    const sectionIds = Object.values(HASH_SECTION_MAP);
+    const visible = new Map<string, number>();
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            visible.set(entry.target.id, entry.intersectionRatio);
+          } else {
+            visible.delete(entry.target.id);
+          }
+        }
+        // Pick the section with the highest visibility
+        let best: string | null = null;
+        let bestRatio = 0;
+        for (const [id, ratio] of visible) {
+          if (ratio > bestRatio) {
+            best = id;
+            bestRatio = ratio;
+          }
+        }
+        setActiveId(best);
+      },
+      {
+        // Root margin accounts for sticky header height (~120px)
+        rootMargin: "-120px 0px -40% 0px",
+        threshold: [0, 0.25, 0.5],
+      }
+    );
+
+    for (const id of sectionIds) {
+      const el = document.getElementById(id);
+      if (el) observerRef.current.observe(el);
+    }
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [pathname]);
+
+  return activeId;
+}
+
 /* ---- Helpers ---- */
 
-function isActiveLink(linkHref: string, pathname: string): boolean {
-  // Hash anchors are same-page scrolls — no persistent active state
-  if (linkHref.startsWith("/#")) return false;
-  // Exact page routes match by prefix
-  const base = linkHref.split("#")[0];
-  return base !== "/" && pathname.startsWith(base);
+function isActiveLink(
+  linkHref: string,
+  pathname: string,
+  activeSection: string | null
+): boolean {
+  // Page routes (e.g. /sweets) match by path prefix
+  if (!linkHref.startsWith("/#")) {
+    const base = linkHref.split("#")[0];
+    return base !== "/" && pathname.startsWith(base);
+  }
+  // Hash anchors light up when their section is in view on the homepage
+  if (pathname !== "/") return false;
+  const sectionId = HASH_SECTION_MAP[linkHref];
+  return sectionId != null && sectionId === activeSection;
 }
 
 /* ---- Component ---- */
@@ -103,6 +174,7 @@ export function Header() {
 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const activeSection = useActiveSection(pathname);
 
   useEffect(() => {
     const threshold = 40;
@@ -233,7 +305,7 @@ export function Header() {
         >
           <ul className="flex items-center gap-1">
             {NAV_LINKS.map((link) => {
-              const active = isActiveLink(link.href, pathname);
+              const active = isActiveLink(link.href, pathname, activeSection);
               return (
                 <li key={link.href}>
                   <Link
@@ -267,7 +339,7 @@ export function Header() {
       >
         <nav className="flex flex-col gap-1 px-4 pb-6 pt-2" aria-label="Mobile navigation">
           {NAV_LINKS.map((link) => {
-            const active = isActiveLink(link.href, pathname);
+            const active = isActiveLink(link.href, pathname, activeSection);
             return (
               <Link
                 key={link.href}

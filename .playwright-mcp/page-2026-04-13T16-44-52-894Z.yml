@@ -1,0 +1,195 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "MS MALGUDI SWEETS Modern mithai for every celebration" [ref=e8] [cursor=pointer]:
+            - /url: /en#top
+            - generic [ref=e9]: MS
+            - generic [ref=e10]:
+              - paragraph [ref=e11]: MALGUDI SWEETS
+              - paragraph [ref=e12]: Modern mithai for every celebration
+          - generic [ref=e13]:
+            - button "Design System Festive Saffron" [ref=e15]:
+              - generic [ref=e16]:
+                - generic [ref=e17]: Design System
+                - generic [ref=e18]: Festive Saffron
+            - link "Cart" [ref=e24] [cursor=pointer]:
+              - /url: /en/cart
+              - img [ref=e25]
+              - generic [ref=e28]: Cart
+            - combobox "Language" [ref=e29]:
+              - option "English" [selected]
+              - option "Español"
+              - option "Français"
+              - option "हिन्दी"
+              - option "ಕನ್ನಡ"
+              - option "தமிழ்"
+              - option "తెలుగు"
+              - option "বাংলা"
+              - option "मराठी"
+              - option "ગુજરાતী"
+            - link "Order now" [ref=e30] [cursor=pointer]:
+              - /url: /en/sweets
+        - navigation "Main navigation" [ref=e31]:
+          - list [ref=e32]:
+            - listitem [ref=e33]:
+              - link "Menu" [ref=e34] [cursor=pointer]:
+                - /url: /en#menu
+            - listitem [ref=e35]:
+              - link "All sweets" [ref=e36] [cursor=pointer]:
+                - /url: /en/sweets
+            - listitem [ref=e37]:
+              - link "Occasions" [ref=e38] [cursor=pointer]:
+                - /url: /en#occasions
+            - listitem [ref=e39]:
+              - link "Corporate" [ref=e40] [cursor=pointer]:
+                - /url: /en#corporate
+    - main [ref=e41]:
+      - generic [ref=e42]:
+        - generic [ref=e43]:
+          - paragraph [ref=e44]: Handcrafted in Bengaluru • Delivered fresh
+          - heading "Mithai that feels festive every single day." [level=1] [ref=e45]
+          - paragraph [ref=e46]: Malgudi Sweets reimagines classic Indian mithai with clean, modern flavours and boutique packaging — perfect for Diwali hampers, weddings, office gifting, or a sweet little Tuesday.
+          - generic [ref=e47]:
+            - link "Order sweets" [ref=e48] [cursor=pointer]:
+              - /url: /sweets
+            - link "View gift boxes" [ref=e49] [cursor=pointer]:
+              - /url: "#gift-boxes"
+            - paragraph [ref=e50]: Same‑day delivery in select Bengaluru pin codes.
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - generic [ref=e56]: Diwali 2026 collection
+            - generic [ref=e57]: New
+          - img "Assorted Indian sweets in a premium gift box" [ref=e59]
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - paragraph [ref=e62]: The Malgudi Festive Box
+              - paragraph [ref=e63]: 18‑piece assortment • Custom ribbon & note
+            - link "Pre‑order" [ref=e64] [cursor=pointer]:
+              - /url: /sweets
+      - region "Our best‑selling mithai" [ref=e65]:
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - paragraph [ref=e68]: House favourites
+            - heading "Our best‑selling mithai" [level=2] [ref=e69]
+          - link "View full menu" [ref=e70] [cursor=pointer]:
+            - /url: /sweets
+        - generic [ref=e71]:
+          - article [ref=e72]:
+            - img "Kaju Katli Royale" [ref=e74]
+            - generic [ref=e75]:
+              - heading "Kaju Katli Royale" [level=3] [ref=e76]
+              - paragraph [ref=e77]: Silky cashew fudge with a whisper of cardamom, finished with vark.
+              - generic [ref=e78]:
+                - paragraph [ref=e79]: ₹699 / 500g
+                - link "Order" [ref=e80] [cursor=pointer]:
+                  - /url: /sweets
+          - article [ref=e81]:
+            - img "Motichoor Laddoo" [ref=e83]
+            - generic [ref=e84]:
+              - heading "Motichoor Laddoo" [level=3] [ref=e85]
+              - paragraph [ref=e86]: Melt‑in‑mouth boondi laddoos, ghee‑roasted and hand‑rolled.
+              - generic [ref=e87]:
+                - paragraph [ref=e88]: ₹549 / 500g
+                - link "Order" [ref=e89] [cursor=pointer]:
+                  - /url: /sweets
+          - article [ref=e90]:
+            - img "Gulab Jamun Classic" [ref=e92]
+            - generic [ref=e93]:
+              - heading "Gulab Jamun Classic" [level=3] [ref=e94]
+              - paragraph [ref=e95]: Soft khoya dumplings in a warm saffron‑rose syrup.
+              - generic [ref=e96]:
+                - paragraph [ref=e97]: ₹499 / 6 pcs
+                - link "Order" [ref=e98] [cursor=pointer]:
+                  - /url: /sweets
+          - article [ref=e99]:
+            - img "Festive Assorted Box" [ref=e101]
+            - generic [ref=e102]:
+              - heading "Festive Assorted Box" [level=3] [ref=e103]
+              - paragraph [ref=e104]: Curated mix of our signature sweets in a premium gift box.
+              - generic [ref=e105]:
+                - paragraph [ref=e106]: ₹1,899 / box
+                - link "Order" [ref=e107] [cursor=pointer]:
+                  - /url: /sweets
+      - region "Occasions we sweeten" [ref=e108]:
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - paragraph [ref=e111]: For every celebration
+            - heading "Occasions we sweeten" [level=2] [ref=e112]
+          - paragraph [ref=e113]: From intimate poojas to thousand‑box corporate hampers, we help you plan the perfect mithai for each moment.
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - img "Diwali" [ref=e117]
+            - generic [ref=e119]:
+              - paragraph [ref=e120]: Diwali
+              - paragraph [ref=e121]: Curated hampers for homes and offices, beautifully packed.
+          - generic [ref=e122]:
+            - img "Raksha Bandhan" [ref=e124]
+            - generic [ref=e126]:
+              - paragraph [ref=e127]: Raksha Bandhan
+              - paragraph [ref=e128]: Rakhi specials with laddoos, barfis, and keepsake boxes.
+          - generic [ref=e129]:
+            - img "Weddings" [ref=e131]
+            - generic [ref=e133]:
+              - paragraph [ref=e134]: Weddings
+              - paragraph [ref=e135]: Bespoke mithai boxes for mehendi, sangeet, and reception.
+          - generic [ref=e136]:
+            - img "Corporate gifting" [ref=e138]
+            - generic [ref=e140]:
+              - paragraph [ref=e141]: Corporate gifting
+              - paragraph [ref=e142]: Branded boxes with pan-India shipping and bulk pricing.
+      - region "Sweetness, without the compromise." [ref=e143]:
+        - generic [ref=e144]:
+          - paragraph [ref=e145]: Why people love us
+          - heading "Sweetness, without the compromise." [level=2] [ref=e146]
+          - paragraph [ref=e147]: We obsess over ingredients, texture, and packaging so your mithai tastes as good as it looks — and arrives fresh, every single time.
+          - generic [ref=e148]:
+            - generic [ref=e149]:
+              - term [ref=e150]: Fresh, small‑batch mithai
+              - definition [ref=e151]: Sweets are prepared in limited batches through the week for peak flavour and texture.
+            - generic [ref=e152]:
+              - term [ref=e153]: Thoughtful packaging
+              - definition [ref=e154]: Sturdy, elegant boxes that travel beautifully and feel gift‑ready the moment they arrive.
+            - generic [ref=e155]:
+              - term [ref=e156]: Hygienic kitchens
+              - definition [ref=e157]: Modern, FSSAI‑certified kitchen with strict hygiene standards and temperature‑controlled storage.
+            - generic [ref=e158]:
+              - term [ref=e159]: Pan‑city delivery
+              - definition [ref=e160]: Trusted delivery partners with temperature‑aware packaging across Bengaluru.
+        - generic [ref=e161]:
+          - paragraph [ref=e162]: From our customers
+          - generic [ref=e163]:
+            - figure "Aditi from Indiranagar" [ref=e164]:
+              - blockquote [ref=e165]: "\"We switched all our festival gifting to them — the packaging and taste are consistently premium.\""
+              - generic [ref=e166]: Aditi from Indiranagar
+            - figure "Rohan, HR Lead" [ref=e167]:
+              - blockquote [ref=e168]: "\"Corporate orders were smooth, on time, and beautifully presented. Colleagues still talk about the kaju katli.\""
+              - generic [ref=e169]: Rohan, HR Lead
+            - figure "Meera & Arjun" [ref=e170]:
+              - blockquote [ref=e171]: "\"Our wedding mithai boxes felt truly special and modern, not like the usual generic sweets.\""
+              - generic [ref=e172]: Meera & Arjun
+      - region "Planning sweets for your team or clients?" [ref=e173]:
+        - generic [ref=e174]:
+          - paragraph [ref=e175]: Corporate & bulk orders
+          - heading "Planning sweets for your team or clients?" [level=2] [ref=e176]
+          - paragraph [ref=e177]: From festive hampers to launch gifts and milestone celebrations, our corporate team helps you choose the right assortments, branding, and delivery plan.
+          - list [ref=e178]:
+            - listitem [ref=e179]: Custom‑printed sleeves, notes, and logos.
+            - listitem [ref=e180]: Curated flavour pairings for different budgets.
+            - listitem [ref=e181]: Coordinated delivery across multiple locations.
+        - generic [ref=e182]:
+          - heading "Tell us what you're planning" [level=3] [ref=e183]
+          - paragraph [ref=e184]: Share a few details and our team will call you back within one business day.
+      - generic [ref=e186]:
+        - paragraph [ref=e187]: © 2026 Malgudi Sweets. All rights reserved.
+        - generic [ref=e188]:
+          - generic [ref=e189]: Indiranagar, Bengaluru
+          - link "+91-98765-43210" [ref=e190] [cursor=pointer]:
+            - /url: tel:+919876543210
+          - generic [ref=e191]: Instagram
+          - generic [ref=e192]: Privacy policy
+  - button "Open Next.js Dev Tools" [ref=e198] [cursor=pointer]:
+    - img [ref=e199]
