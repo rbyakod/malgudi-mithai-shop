@@ -85,9 +85,11 @@ function CloseIcon({className}: {className?: string}) {
 /* ---- Helpers ---- */
 
 function isActiveLink(linkHref: string, pathname: string): boolean {
-  if (linkHref === "/sweets") return pathname.startsWith("/sweets");
-  if (linkHref.startsWith("/#")) return pathname === "/";
-  return false;
+  // Hash anchors are same-page scrolls — no persistent active state
+  if (linkHref.startsWith("/#")) return false;
+  // Exact page routes match by prefix
+  const base = linkHref.split("#")[0];
+  return base !== "/" && pathname.startsWith(base);
 }
 
 /* ---- Component ---- */
