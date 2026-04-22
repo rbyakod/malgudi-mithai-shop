@@ -127,26 +127,33 @@ export default function HomePage() {
                 <div className="relative flex h-full flex-col justify-between p-5">
                   <div className="flex items-center justify-between">
                     <span className="rounded-full bg-bg-accent px-3 py-1 text-xs font-medium text-text-muted">
-                      Diwali 2026 collection
+                      Malgudi Festive Boxes
                     </span>
                     <span className="text-xs font-semibold text-primary">
                       New
                     </span>
                   </div>
                   <div className="relative h-40 w-full overflow-hidden rounded-2xl border border-border-image bg-bg-page">
-                    <Image
-                      src="/images/hero-mithai-box.jpg"
-                      alt="Assorted Indian sweets in a premium gift box"
-                      fill
-                      loading="eager"
-                      sizes="(min-width: 1024px) 420px, (min-width: 768px) 50vw, 90vw"
-                      className="object-cover"
-                    />
+                    <video
+                      autoPlay
+                      className="h-full w-full object-cover"
+                      loop
+                      muted
+                      playsInline
+                      poster="/images/hero-mithai-box.jpg"
+                      preload="auto"
+                      aria-label="Malgudi Festive Boxes showcase video"
+                    >
+                      <source
+                        src="/videos/mithai-hero-showcase.mp4"
+                        type="video/mp4"
+                      />
+                    </video>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-semibold text-text-heading">
-                        The Malgudi Festive Box
+                        Malgudi Festive Boxes
                       </p>
                       <p className="text-xs text-text-muted">
                         18‑piece assortment • Custom ribbon & note
