@@ -4,6 +4,7 @@ import {useState, useEffect, useCallback, useRef} from "react";
 import {useTranslations, useLocale} from "next-intl";
 import {Link, usePathname, useRouter} from "@/i18n/navigation";
 import {useCart} from "@/context/CartContext";
+import {useTheme} from "@/context/ThemeContext";
 import {ThemeSwitcher} from "@/components/ThemeSwitcher";
 
 const AVAILABLE_LOCALES = [
@@ -167,6 +168,7 @@ function isActiveLink(
 
 export function Header() {
   const {count} = useCart();
+  const {theme} = useTheme();
   const t = useTranslations("Header");
   const locale = useLocale();
   const pathname = usePathname();
@@ -175,6 +177,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const activeSection = useActiveSection(pathname);
+  const isHeritage2 = theme === "heritage-2";
 
   useEffect(() => {
     const threshold = 40;
@@ -212,7 +215,7 @@ export function Header() {
   return (
     <header
       data-scrolled={scrolled || undefined}
-      className="nav-header"
+      className={["nav-header", isHeritage2 ? "nav-header--heritage2" : ""].join(" ").trim()}
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Top bar — always visible */}
@@ -220,7 +223,7 @@ export function Header() {
           <Link href="/#top" className="flex items-center gap-2.5">
             <div className="nav-logo-mark">MS</div>
             <div>
-              <p className="text-sm font-semibold tracking-wide text-primary">
+              <p className="nav-brand-title text-sm font-semibold tracking-wide text-primary">
                 MALGUDI SWEETS
               </p>
               <p
@@ -237,7 +240,7 @@ export function Header() {
 
             <Link
               href="/cart"
-              className="relative flex items-center gap-1.5 rounded-full border border-border-input bg-bg-card px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:border-primary/70 hover:text-primary"
+              className="nav-utility-chip relative flex items-center gap-1.5 rounded-full border border-border-input bg-bg-card px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:border-primary/70 hover:text-primary"
             >
               <CartIcon className="h-3.5 w-3.5" />
               <span>{t("cart")}</span>
@@ -249,7 +252,7 @@ export function Header() {
             </Link>
 
             <select
-              className="rounded-full border border-border-input bg-bg-card px-2.5 py-1.5 text-xs text-text-secondary"
+              className="nav-locale-select rounded-full border border-border-input bg-bg-card px-2.5 py-1.5 text-xs text-text-secondary"
               value={locale}
               onChange={(e) => handleLocaleChange(e.target.value)}
               aria-label="Language"
@@ -263,7 +266,7 @@ export function Header() {
 
             <Link
               href="/sweets"
-              className="ml-1 rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-text-light shadow-sm transition-colors hover:bg-primary-hover"
+              className="nav-order-button ml-1 rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-text-light shadow-sm transition-colors hover:bg-primary-hover"
             >
               {t("orderNow")}
             </Link>
@@ -273,7 +276,7 @@ export function Header() {
           <div className="flex items-center gap-2 md:hidden">
             <Link
               href="/cart"
-              className="relative flex items-center gap-1.5 rounded-full border border-border-input bg-bg-card px-2.5 py-1.5 text-xs font-medium text-text-secondary"
+              className="nav-utility-chip relative flex items-center gap-1.5 rounded-full border border-border-input bg-bg-card px-2.5 py-1.5 text-xs font-medium text-text-secondary"
             >
               <CartIcon className="h-3.5 w-3.5" />
               {count > 0 && (
@@ -285,7 +288,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => setMenuOpen((o) => !o)}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-border-input bg-bg-card text-text-secondary transition-colors hover:border-primary/70 hover:text-primary"
+              className="nav-mobile-button flex h-9 w-9 items-center justify-center rounded-full border border-border-input bg-bg-card text-text-secondary transition-colors hover:border-primary/70 hover:text-primary"
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
             >
@@ -311,9 +314,9 @@ export function Header() {
                   <Link
                     href={link.href}
                     className={[
-                      "relative rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+                      "nav-link relative rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
                       active
-                        ? "text-primary"
+                        ? "nav-link--active text-primary"
                         : "text-text-secondary hover:text-primary",
                     ].join(" ")}
                   >
@@ -345,9 +348,9 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 className={[
-                  "rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                  "nav-mobile-link rounded-xl px-4 py-3 text-sm font-medium transition-colors",
                   active
-                    ? "bg-primary/10 text-primary"
+                    ? "nav-mobile-link--active bg-primary/10 text-primary"
                     : "text-text-secondary hover:bg-bg-accent/60 hover:text-primary",
                 ].join(" ")}
               >
@@ -359,7 +362,7 @@ export function Header() {
           <div className="mt-4 flex items-center gap-2">
             <ThemeSwitcher className="flex-1" />
             <select
-              className="flex-1 rounded-xl border border-border-input bg-bg-card px-3 py-2.5 text-xs text-text-secondary"
+              className="nav-locale-select flex-1 rounded-xl border border-border-input bg-bg-card px-3 py-2.5 text-xs text-text-secondary"
               value={locale}
               onChange={(e) => handleLocaleChange(e.target.value)}
               aria-label="Language"
@@ -374,7 +377,7 @@ export function Header() {
 
           <Link
             href="/sweets"
-            className="mt-3 rounded-full bg-primary py-2.5 text-center text-sm font-semibold text-text-light shadow-sm transition-colors hover:bg-primary-hover"
+            className="nav-order-button mt-3 rounded-full bg-primary py-2.5 text-center text-sm font-semibold text-text-light shadow-sm transition-colors hover:bg-primary-hover"
           >
             {t("orderNow")}
           </Link>

@@ -21,33 +21,51 @@ const ThemeContext = createContext<{
   setTheme: (t: Theme) => void;
 } | undefined>(undefined);
 
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") {
+    return DEFAULT_THEME;
+  }
+
+  try {
+    const domTheme = normalizeTheme(
+      document.documentElement.getAttribute("data-theme")
+    );
+    if (domTheme && VALID_THEMES.includes(domTheme)) {
+      return domTheme;
+    }
+
+    const storedTheme = normalizeTheme(localStorage.getItem(STORAGE_KEY));
+    if (storedTheme && VALID_THEMES.includes(storedTheme)) {
+      return storedTheme;
+    }
+  } catch {
+    // ignore
+  }
+
+  return DEFAULT_THEME;
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
 
   useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      const normalized = normalizeTheme(stored);
-      if (normalized && VALID_THEMES.includes(normalized)) {
-        setThemeState(normalized);
-        document.documentElement.setAttribute("data-theme", normalized);
-        if (stored !== normalized) {
-          localStorage.setItem(STORAGE_KEY, normalized);
-        }
-      }
+      localStorage.setItem(STORAGE_KEY, theme);
     } catch {
       // ignore
     }
-  }, []);
+  }, [theme]);
+
+  useEffect(() => {
+    const syncedTheme = getInitialTheme();
+    if (syncedTheme !== theme) {
+      setThemeState(syncedTheme);
+    }
+  }, [theme]);
 
   const setTheme = (t: Theme) => {
     setThemeState(t);
-    document.documentElement.setAttribute("data-theme", t);
-    try {
-      localStorage.setItem(STORAGE_KEY, t);
-    } catch {
-      // ignore
-    }
   };
 
   return (

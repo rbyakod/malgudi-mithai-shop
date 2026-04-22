@@ -1,6 +1,7 @@
 export type Theme =
   | "festive"
   | "heritage"
+  | "heritage-2"
   | "navy"
   | "sage"
   | "mindbox"
@@ -56,6 +57,21 @@ export const THEMES: ThemeDefinition[] = [
       canvas: "#f4e7d0",
       surface: "#fbf4e6",
       accent: "#8c0e2f",
+      pop: "#d79a35",
+      ink: "#3b2419",
+    },
+  },
+  {
+    id: "heritage-2",
+    label: "Mishran Heritage 2",
+    group: "House Themes",
+    source: "Mishran Menu Bars",
+    blurb: "Source-matched wine-red chrome with parchment, saffron, and cocoa for a stronger menu-led mood.",
+    docPath: "/design-systems/mishran-heritage-2.md",
+    preview: {
+      canvas: "#f4e7d0",
+      surface: "#fbf4e6",
+      accent: "#7c0421",
       pop: "#d79a35",
       ink: "#3b2419",
     },

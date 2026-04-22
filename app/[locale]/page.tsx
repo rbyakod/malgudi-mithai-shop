@@ -1,6 +1,8 @@
 import Image from "next/image";
 import {Header} from "@/components/Header";
+import {SiteFooter} from "@/components/SiteFooter";
 import {useTranslations} from "next-intl";
+import {Link} from "@/i18n/navigation";
 
 const bestSellers = [
   {
@@ -103,12 +105,12 @@ export default function HomePage() {
               </p>
 
               <div className="flex flex-wrap items-center gap-4">
-                <a
+                <Link
                   href="/sweets"
                   className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-text-light shadow-md transition hover:bg-primary-hover"
                 >
                   {t("heroPrimaryCta")}
-                </a>
+                </Link>
                 <a
                   href="#gift-boxes"
                   className="rounded-full border border-border-input bg-bg-page/70 px-6 py-2.5 text-sm font-semibold text-text-secondary transition hover:bg-bg-accent/60"
@@ -159,12 +161,12 @@ export default function HomePage() {
                         18‑piece assortment • Custom ribbon & note
                       </p>
                     </div>
-                    <a
+                    <Link
                       href="/sweets"
                       className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-text-light shadow-sm hover:bg-primary-hover"
                     >
                       Pre‑order
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -189,12 +191,12 @@ export default function HomePage() {
                   {t("bestSellersTitle")}
                 </h2>
               </div>
-              <a
+              <Link
                 href="/sweets"
                 className="hidden text-xs font-medium text-primary underline-offset-4 hover:underline md:inline"
               >
                 View full menu
-              </a>
+              </Link>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -223,12 +225,12 @@ export default function HomePage() {
                       <p className="text-sm font-semibold text-primary">
                         {item.price}
                       </p>
-                      <a
+                      <Link
                         href="/sweets"
                         className="rounded-full bg-bg-darker px-3 py-1.5 text-xs font-semibold text-text-light transition hover:bg-text-heading"
                       >
                         Order
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </article>
@@ -401,24 +403,8 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Footer */}
-          <footer className="mt-4 border-t border-border-card pt-4 text-xs text-text-muted">
-            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-              <p>
-                © {new Date().getFullYear()} Malgudi Sweets. All rights
-                reserved.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <span>{t("footerLocation")}</span>
-                <a href="tel:+919876543210" className="hover:text-primary">
-                  +91-98765-43210
-                </a>
-                <span className="text-text-muted">Instagram</span>
-                <span className="text-text-muted">{t("footerPrivacy")}</span>
-              </div>
-            </div>
-          </footer>
         </main>
+        <SiteFooter />
       </div>
     </div>
   );

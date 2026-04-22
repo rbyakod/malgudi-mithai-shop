@@ -53,19 +53,22 @@ export function ThemeSwitcher({className = ""}: {className?: string}) {
   };
 
   return (
-    <div ref={containerRef} className={`relative ${className}`.trim()}>
+    <div
+      ref={containerRef}
+      className={["theme-switcher", "relative", className].join(" ").trim()}
+    >
       <button
         type="button"
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={() => setOpen((current) => !current)}
-        className="group flex w-full min-w-0 items-center gap-3 rounded-2xl border border-border-input bg-bg-card/88 px-3 py-2 text-left text-text-secondary shadow-sm backdrop-blur transition hover:border-primary/60 hover:bg-bg-card md:min-w-[15rem]"
+        className="theme-switcher__trigger group flex w-full min-w-0 items-center gap-3 rounded-2xl border border-border-input bg-bg-card/88 px-3 py-2 text-left text-text-secondary shadow-sm backdrop-blur transition hover:border-primary/60 hover:bg-bg-card md:min-w-[15rem]"
       >
         <div className="min-w-0 flex-1">
-          <span className="hidden truncate text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted sm:block">
+          <span className="theme-switcher__eyebrow hidden truncate text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted sm:block">
             Design System
           </span>
-          <span className="block truncate text-sm font-semibold text-text-heading sm:mt-0.5">
+          <span className="theme-switcher__label block truncate text-sm font-semibold text-text-heading sm:mt-0.5">
             {activeTheme.label}
           </span>
         </div>
@@ -90,7 +93,7 @@ export function ThemeSwitcher({className = ""}: {className?: string}) {
         <div
           role="dialog"
           aria-label="Theme studio"
-          className="absolute left-1/2 top-[calc(100%+0.75rem)] z-40 w-[min(94vw,36rem)] -translate-x-1/2 overflow-hidden rounded-[1.5rem] border border-border-card bg-bg-card/96 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-xl md:left-auto md:right-0 md:w-[min(92vw,36rem)] md:translate-x-0 md:rounded-[1.75rem]"
+          className="theme-switcher__panel absolute left-1/2 top-[calc(100%+0.75rem)] z-40 w-[min(94vw,36rem)] -translate-x-1/2 overflow-hidden rounded-[1.5rem] border border-border-card bg-bg-card/96 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-xl md:left-auto md:right-0 md:w-[min(92vw,36rem)] md:translate-x-0 md:rounded-[1.75rem]"
         >
           <div className="border-b border-border-card bg-bg-page/60 px-4 py-3">
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-primary">
