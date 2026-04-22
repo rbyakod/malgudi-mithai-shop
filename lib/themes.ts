@@ -1,5 +1,6 @@
 export type Theme =
   | "festive"
+  | "heritage"
   | "navy"
   | "sage"
   | "mindbox"
@@ -41,6 +42,21 @@ export const THEMES: ThemeDefinition[] = [
       accent: "#b94b4b",
       pop: "#f0b35c",
       ink: "#3b221b",
+    },
+  },
+  {
+    id: "heritage",
+    label: "Mishran Heritage",
+    group: "House Themes",
+    source: "Mishran Menu Editorial",
+    blurb: "Parchment, oxblood, saffron, and cocoa with a literary old-India mood.",
+    docPath: "/design-systems/mishran-heritage.md",
+    preview: {
+      canvas: "#f4e7d0",
+      surface: "#fbf4e6",
+      accent: "#8c0e2f",
+      pop: "#d79a35",
+      ink: "#3b2419",
     },
   },
   {
@@ -158,4 +174,3 @@ export function normalizeTheme(value: string | null | undefined): Theme | null {
     ? (normalized as Theme)
     : null;
 }
-

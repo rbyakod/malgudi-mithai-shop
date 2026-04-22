@@ -38,6 +38,42 @@
   --t-noise-opacity: 0;
 }
 
+/* ---- Theme: Mishran Heritage ---- */
+
+[data-theme="heritage"] {
+  --font-geist-sans: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --font-geist-mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace;
+  --t-bg-page: #f4e7d0;
+  --t-bg-card: #fbf4e6;
+  --t-bg-accent: #f0dfc7;
+  --t-bg-control: #fff8ee;
+  --t-bg-dark: #3a2117;
+  --t-bg-darker: #25120d;
+  --t-primary: #8c0e2f;
+  --t-primary-hover: #721028;
+  --t-gold: #d79a35;
+  --t-gold-hover: #bf8321;
+  --t-text-primary: #3b2419;
+  --t-text-heading: #6f102a;
+  --t-text-on-gold: #2a170f;
+  --t-text-secondary: #69483d;
+  --t-text-info: #7b5949;
+  --t-text-muted: #8f6d5b;
+  --t-text-breadcrumb: #b08a72;
+  --t-text-light: #f8ead4;
+  --t-text-light-muted: #ecd3b4;
+  --t-border-card: #dec4a2;
+  --t-border-input: #cfa77a;
+  --t-border-image: #d8b892;
+  --t-gradient-gold: #e2ad4c;
+  --t-orb-secondary: #cc8452;
+  --t-orb-primary-opacity: 0.1;
+  --t-orb-gold-opacity: 0.08;
+  --t-orb-secondary-opacity: 0.06;
+  --t-grid-opacity: 0;
+  --t-noise-opacity: 0.02;
+}
+
 /* ---- Theme: Evening Navy ---- */
 
 [data-theme="navy"] {
