@@ -279,6 +279,40 @@
   --t-noise-opacity: 0;
 }
 
+/* ---- Theme: Yoshida (shin-hanga woodblock) ---- */
+
+[data-theme="yoshida"] {
+  --t-bg-page: #1a3348;
+  --t-bg-card: #223d54;
+  --t-bg-accent: #2a475e;
+  --t-bg-control: #304f66;
+  --t-bg-dark: #0f1f2e;
+  --t-bg-darker: #0a1620;
+  --t-primary: #C4A265;
+  --t-primary-hover: #b08f50;
+  --t-gold: #6B8FA3;
+  --t-gold-hover: #5a7e92;
+  --t-text-primary: #D4C5A9;
+  --t-text-heading: #e0d4bc;
+  --t-text-on-gold: #1a3348;
+  --t-text-secondary: #a8b8c8;
+  --t-text-info: #8fa5b8;
+  --t-text-muted: #7a92a6;
+  --t-text-breadcrumb: #5c7a90;
+  --t-text-light: #D4C5A9;
+  --t-text-light-muted: #8fa5b8;
+  --t-border-card: #3a5570;
+  --t-border-input: #4a6580;
+  --t-border-image: #3f5d75;
+  --t-gradient-gold: #C4A265;
+  --t-orb-secondary: #9B7DA8;
+  --t-orb-primary-opacity: 0.15;
+  --t-orb-gold-opacity: 0.12;
+  --t-orb-secondary-opacity: 0.1;
+  --t-grid-opacity: 0;
+  --t-noise-opacity: 0;
+}
+
 /* ---- Tailwind v4 theme tokens ---- */
 
 @theme inline {

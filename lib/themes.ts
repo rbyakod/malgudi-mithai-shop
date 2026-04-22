@@ -6,7 +6,8 @@ export type Theme =
   | "mindbox"
   | "mblue2"
   | "coinbase"
-  | "ibm";
+  | "ibm"
+  | "yoshida";
 
 type ThemeGroup = "House Themes" | "Design Systems";
 
@@ -147,6 +148,21 @@ export const THEMES: ThemeDefinition[] = [
       accent: "#0f62fe",
       pop: "#8a3ffc",
       ink: "#161616",
+    },
+  },
+  {
+    id: "yoshida",
+    label: "Yoshida",
+    group: "House Themes",
+    source: "Hiroshi Yoshida shin-hanga",
+    blurb: "Muted teal, warm ochre, and soft lavender — Japanese woodblock print atmosphere.",
+    docPath: "/design-systems/yoshida.md",
+    preview: {
+      canvas: "#2B4F6F",
+      surface: "#355A7A",
+      accent: "#C4A265",
+      pop: "#9B7DA8",
+      ink: "#D4C5A9",
     },
   },
 ];
