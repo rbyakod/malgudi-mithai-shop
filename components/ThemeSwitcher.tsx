@@ -145,7 +145,7 @@ export function ThemeSwitcher({className = ""}: {className?: string}) {
                                 color: entry.preview.ink
                               }}
                             >
-                              {entry.group === "Design Systems" ? "Inspired" : "House"}
+                              House
                             </span>
 
                             {isActive ? (
@@ -200,7 +200,7 @@ export function ThemeSwitcher({className = ""}: {className?: string}) {
                                 className="rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
                                 style={{
                                   backgroundColor: entry.preview.pop,
-                                  color: entry.id === "ibm" ? "#ffffff" : "#08111f"
+                                  color: "#08111f"
                                 }}
                               >
                                 {isActive ? "Selected" : "Switch"}

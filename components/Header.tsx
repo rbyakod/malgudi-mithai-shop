@@ -177,7 +177,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const activeSection = useActiveSection(pathname);
-  const isHeritage2 = theme === "heritage-2";
+  const isHeritage2 = theme === "wedding-heritage";
 
   useEffect(() => {
     const threshold = 40;

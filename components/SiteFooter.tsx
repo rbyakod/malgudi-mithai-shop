@@ -6,7 +6,7 @@ import {useTheme} from "@/context/ThemeContext";
 export function SiteFooter() {
   const t = useTranslations("Home");
   const {theme} = useTheme();
-  const isHeritage2 = theme === "heritage-2";
+  const isHeritage2 = theme === "wedding-heritage";
 
   return (
     <footer
