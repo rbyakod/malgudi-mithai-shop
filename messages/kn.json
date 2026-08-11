@@ -209,5 +209,28 @@
       "message": "Anything else?",
       "submit": "Submit enquiry"
     }
+  },
+
+  "Stories": {
+    "title": "ಕಥೆಗಳು",
+    "eyebrow": "ಮನೆಯಿಂದ",
+    "intro": "Stories from the Mishran kitchen — farms, karigars, craft, and the modern experience that carries it to your door.",
+    "empty": "Stories are being written. Please check back shortly.",
+    "itemCount": "{count} stories",
+    "readMore": "Read the story",
+    "backToHub": "All stories",
+    "publishedOn": "Published",
+    "pillarLabel": "Pillar",
+    "pillars": {
+      "farm": "Milk & Farms",
+      "milk": "Milk & Farms",
+      "karigar": "Karigar Mastery",
+      "karigari": "Karigari",
+      "packaging": "Packaging",
+      "festival": "Festivals",
+      "regional": "Regional",
+      "recipe": "Recipes",
+      "journal": "Modern Experience"
+    }
   }
 }
