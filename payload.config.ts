@@ -27,6 +27,12 @@ import { GiftBoxes } from "./collections/GiftBoxes";
 import { QsrMenuItems } from "./collections/QsrMenuItems";
 import { SnackProducts } from "./collections/SnackProducts";
 import { MerchProducts } from "./collections/MerchProducts";
+// Globals (Task 8).
+import { BrandSettings } from "./globals/BrandSettings";
+import { NavSettings } from "./globals/NavSettings";
+import { ThemeSettings } from "./globals/ThemeSettings";
+import { AnalyticsSettings } from "./globals/AnalyticsSettings";
+import { StoreSettings } from "./globals/StoreSettings";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -60,7 +66,13 @@ export default buildConfig({
     SnackProducts,
     MerchProducts,
   ],
-  globals: [],
+  globals: [
+    BrandSettings,
+    NavSettings,
+    ThemeSettings,
+    AnalyticsSettings,
+    StoreSettings,
+  ],
   secret: process.env.PAYLOAD_SECRET ?? "dev-secret-change-me",
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
