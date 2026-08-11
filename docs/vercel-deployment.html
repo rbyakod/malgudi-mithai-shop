@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mishran — Vercel Deployment Guide</title>
+<style>
+  :root {
+    --bg: #faf6f1;
+    --card: #ffffff;
+    --ink: #1a1410;
+    --muted: #6b5e54;
+    --rule: #e5dccf;
+    --primary: #6b1e1e;
+    --gold: #b08838;
+    --code-bg: #1a1410;
+    --code-ink: #f5e9d6;
+    --warn-bg: #fff5e0;
+    --warn-rule: #e6b94a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1rem 5rem;
+    background: var(--bg); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Manrope, system-ui, sans-serif;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; }
+  h1, h2, h3, h4 { font-family: "Iowan Old Style", Palatino, "Book Antiqua", Georgia, serif; line-height: 1.2; }
+  h1 { font-size: 2.4rem; margin: 0 0 .4rem; letter-spacing: -.01em; }
+  h2 { font-size: 1.7rem; margin: 2.5rem 0 .8rem; border-bottom: 1px solid var(--rule); padding-bottom: .4rem; }
+  h3 { font-size: 1.2rem; margin: 1.8rem 0 .5rem; color: var(--primary); }
+  h4 { font-size: 1rem; margin: 1.2rem 0 .3rem; }
+  p { margin: .6rem 0; }
+  ul, ol { padding-left: 1.4rem; }
+  li { margin: .3rem 0; }
+  .lede { font-size: 1.1rem; color: var(--muted); margin: .6rem 0 2rem; }
+  code {
+    background: #efe6d8; padding: .12em .4em; border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .92em;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-ink); padding: 1rem 1.2rem;
+    border-radius: 8px; overflow-x: auto;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .88em;
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+  .warn {
+    background: var(--warn-bg); border-left: 4px solid var(--warn-rule);
+    padding: .9rem 1.1rem; margin: 1.2rem 0; border-radius: 0 6px 6px 0;
+  }
+  .warn strong { color: #8a6a14; }
+  .pill {
+    display: inline-block; padding: .15em .65em; border-radius: 999px;
+    background: var(--primary); color: #fff; font-size: .72rem;
+    font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    vertical-align: middle;
+  }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .92rem; }
+  th, td { text-align: left; padding: .6rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { background: #f2ebde; font-weight: 600; }
+  code.inline-path { background: #efe6d8; padding: .1em .35em; border-radius: 3px; font-size: .9em; }
+  nav.toc { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+  nav.toc h3 { margin-top: 0; color: var(--ink); font-size: 1rem; }
+  nav.toc ol { margin: 0; padding-left: 1.4rem; }
+  nav.toc li { margin: .2rem 0; }
+  .footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-size: .85rem; color: var(--muted); }
+  a { color: var(--primary); }
+  a:hover { color: var(--gold); }
+  .meta { font-size: .85rem; color: var(--muted); margin-bottom: 2rem; }
+  .meta span + span::before { content: " · "; color: var(--rule); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Vercel Deployment Guide</h1>
+<p class="lede">A step-by-step recipe to take the Mishran repo from a fresh clone to a live production deploy backed by MongoDB Atlas, with Payload CMS reachable at <code>/admin</code>.</p>
+<p class="meta">
+  <span>Audience: developer with Vercel + MongoDB Atlas accounts</span>
+  <span>Stack: Next.js 16 · Payload 3.87 · MongoDB · Vercel bom1</span>
+</p>
+
+<nav class="toc">
+  <h3>Contents</h3>
+  <ol>
+    <li><a href="#prereq">Prerequisites</a></li>
+    <li><a href="#atlas">MongoDB Atlas setup</a></li>
+    <li><a href="#vercel">Vercel project setup</a></li>
+    <li><a href="#env">Environment variables</a></li>
+    <li><a href="#deploy">First deploy</a></li>
+    <li><a href="#admin">First admin user</a></li>
+    <li><a href="#seed">Seed content</a></li>
+    <li><a href="#analytics">Analytics setup</a></li>
+    <li><a href="#troubleshoot">Troubleshooting</a></li>
+  </ol>
+</nav>
+
+<h2 id="prereq">0. Prerequisites</h2>
+<ul>
+  <li><strong>Node 22.x</strong> — matches the Vercel build image. Verify with <code>node -v</code>.</li>
+  <li>A Vercel account with the project repo connected (or permission to connect).</li>
+  <li>A MongoDB Atlas account (free M0 tier is fine to start).</li>
+  <li>A Resend account + API key with a verified sending domain.</li>
+  <li>The canonical production domain (e.g. <code>mishran.shop</code>) with DNS access.</li>
+</ul>
+
+<h2 id="atlas">1. MongoDB Atlas setup</h2>
+
+<h3>1.1 Create an M0 (free) cluster</h3>
+<ul>
+  <li><strong>Region:</strong> AWS Mumbai (<code>ap-south-1</code>) to match Vercel <code>bom1</code>. Cross-region latency between Atlas and the function is the single biggest page-speed lever.</li>
+  <li>Name it <code>mishran-prod</code> (or similar).</li>
+  <li>M0 is shared-tier — fine until traffic forces upgrade to M10+ for VPC peering.</li>
+</ul>
+
+<h3>1.2 Create a database user</h3>
+<ol>
+  <li>Database Access → Add new user.</li>
+  <li>Username: <code>mishran-app</code>. Password: 32-char random (<code>openssl rand -base64 24</code>).</li>
+  <li>Role: <code>readWriteAnyDatabase</code> on M0. On M10+ scope to <code>mishran</code> database only.</li>
+  <li>Save the password — it goes into <code>MONGODB_URI</code> in Step 3.</li>
+</ol>
+
+<h3>1.3 Network access — IP allowlist</h3>
+<div class="warn">
+  <strong>Important:</strong> Vercel's egress IPs are dynamic. The M0 tier does not support VPC peering or static egress IPs from Vercel. The reliable path is to allow <code>0.0.0.0/0</code> (any IP).
+  <ul>
+    <li>Security trade-off: <code>0.0.0.0/0</code> exposes the cluster to brute-force attempts from anywhere. The DB user password is the only barrier — make it strong.</li>
+    <li>Atlas's built-in auth throttling + a strong password make brute-force impractical.</li>
+    <li>As soon as you upgrade to M10+, switch to VPC peering with Vercel and drop <code>0.0.0.0/0</code>.</li>
+    <li>Do <strong>not</strong> try to maintain a hand-curated list of Vercel egress IPs — it drifts and the site will go down.</li>
+  </ul>
+</div>
+
+<h3>1.4 Get the connection string</h3>
+<ol>
+  <li>Connect → Drivers → Node.js.</li>
+  <li>Replace <code>&lt;password&gt;</code> with the DB user password from step 1.2.</li>
+  <li>Add <code>?retryWrites=true&amp;w=majority</code> (default from Atlas).</li>
+  <li>This is your <code>MONGODB_URI</code>.</li>
+</ol>
+
+<h2 id="vercel">2. Vercel project setup</h2>
+<ol>
+  <li>Dashboard → Add New → Project → pick the Git repo.</li>
+  <li><strong>Framework preset:</strong> Next.js (auto-detected).</li>
+  <li><strong>Root directory:</strong> repo root (where <code>package.json</code> lives).</li>
+  <li><strong>Build command:</strong> <code>npm run build</code> (matches <code>vercel.ts</code>).</li>
+  <li><strong>Install command:</strong> <code>npm install</code>.</li>
+  <li><strong>Region:</strong> <code>bom1</code> (Mumbai). Pinned in <code>vercel.ts</code>.
+    <ul>
+      <li><em>Why <code>bom1</code>:</em> primary audience is India; lowest TTFB for the audience that matters. Trade-off: EU/US visitors take an extra ~150–300 ms. Add a second region (e.g. <code>fra1</code>) in <code>vercel.ts</code> if international orders grow.</li>
+    </ul>
+  </li>
+  <li><strong><code>vercel.ts</code> vs <code>vercel.json</code>:</strong> This project uses <code>vercel.ts</code> (the type-checked TS form via <code>@vercel/config</code>). Vercel reads it automatically when present. You do <strong>not</strong> need a <code>vercel.json</code>.</li>
+</ol>
+
+<h2 id="env">3. Environment variables</h2>
+<p>Set these in the Vercel dashboard (Settings → Environment Variables) for <strong>both Production and Preview</strong> environments unless noted.</p>
+
+<table>
+  <thead>
+    <tr><th>Key</th><th>Required in prod</th><th>Example</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>MONGODB_URI</code></td><td>yes</td><td><code>mongodb+srv://mishran-app:...@cluster.mongodb.net/mishran?retryWrites=true&amp;w=majority</code></td><td>From Atlas step 1.4.</td></tr>
+    <tr><td><code>PAYLOAD_SECRET</code></td><td>yes</td><td><code>openssl rand -hex 32</code></td><td>JWT/session secret. Never reuse across envs.</td></tr>
+    <tr><td><code>RESEND_API_KEY</code></td><td>yes</td><td><code>re_...</code></td><td>Server-side. Send domain must be verified in Resend.</td></tr>
+    <tr><td><code>NEXT_PUBLIC_SITE_URL</code></td><td>yes</td><td><code>https://mishran.shop</code></td><td>No trailing slash. Used by sitemap, robots, JSON-LD.</td></tr>
+    <tr><td><code>LEADS_INBOX</code></td><td>yes</td><td><code>ops@mishran.shop</code></td><td>Recipient for new-lead emails. Consumed by <code>lib/leads-api.ts</code>.</td></tr>
+    <tr><td><code>REVALIDATE_SECRET</code></td><td>yes</td><td><code>openssl rand -hex 32</code></td><td>On-demand ISR secret. Payload <code>afterChange</code> hooks send this as <code>x-revalidate-secret</code>.</td></tr>
+    <tr><td><code>NEXT_PUBLIC_GA4_ID</code></td><td>optional</td><td><code>G-XXXXXXX</code></td><td>Fallback when Payload global is empty/unreadable.</td></tr>
+    <tr><td><code>NEXT_PUBLIC_META_PIXEL_ID</code></td><td>optional</td><td><code>1234567890</code></td><td>Fallback when Payload global is empty/unreadable.</td></tr>
+    <tr><td><code>NEXT_PUBLIC_WHATSAPP_NUMBER</code></td><td>recommended</td><td><code>+919999999999</code></td><td>Display only — the click-to-chat number on the site.</td></tr>
+  </tbody>
+</table>
+
+<h3>3.1 Analytics IDs — Payload first, env-var fallback</h3>
+<p>GA4 ID and Meta Pixel ID are read from the Payload <code>analytics-settings</code> global at runtime. The env-vars above are fallbacks for the case where Payload is unreachable (build-time, DB outage). If both are set, Payload wins.</p>
+
+<h3>3.2 Preview auto-login</h3>
+<p>Set <code>NODE_ENV=production</code> on Preview env vars in addition to Production. The auto-login gate also checks <code>VERCEL_ENV</code> and <code>CI</code>.</p>
+
+<h2 id="deploy">4. First deploy</h2>
+<ol>
+  <li>Push to <code>main</code>. Vercel auto-builds.</li>
+  <li>Watch the build logs in the Vercel dashboard.</li>
+  <li>Once green, visit <code>https://&lt;project&gt;.vercel.app/admin</code>.</li>
+  <li>Payload auto-creates indexes on first boot.</li>
+</ol>
+
+<h2 id="admin">5. First admin user</h2>
+<p>Create the first admin via the Payload admin UI:</p>
+<ol>
+  <li>Navigate to <code>/admin</code>.</li>
+  <li>Create-first-user flow runs automatically on first visit.</li>
+  <li>Use a real email + strong password. Store in 1Password.</li>
+</ol>
+
+<h2 id="seed">6. Seed content</h2>
+<p>Two options:</p>
+<ol>
+  <li><strong>Payload admin UI</strong> (recommended for non-tech operators) — navigate to each collection and add records manually.</li>
+  <li><strong>Seed script</strong> — requires shell access:
+    <pre><code>MONGODB_URI=&lt;prod-uri&gt; PAYLOAD_SECRET=&lt;prod-secret&gt; npm run seed</code></pre>
+    <p>This populates sample mithai / QSR / snacks / merch / stories / karigars / farms / occasions records.</p>
+  </li>
+</ol>
+
+<h2 id="analytics">7. Analytics setup</h2>
+<ol>
+  <li>Log into Payload <code>/admin</code>.</li>
+  <li>Open Globals → Analytics Settings.</li>
+  <li>Paste GA4 ID (<code>G-XXXXXXX</code>) and Meta Pixel ID.</li>
+  <li>Save. The site picks them up on next render — no rebuild needed.</li>
+</ol>
+
+<h2 id="troubleshoot">8. Troubleshooting</h2>
+
+<h3>Build fails on <code>npm ci</code></h3>
+<p>Lockfile out of sync. Local run:</p>
+<pre><code>npm install --package-lock-only
+git add package-lock.json
+git commit -m "chore: resync lockfile"
+git push</code></pre>
+
+<h3>Build fails on tsc / lint</h3>
+<p>Don't bypass with <code>--no-verify</code>. Run locally:</p>
+<pre><code>npm run lint &amp;&amp; npx tsc --noEmit</code></pre>
+<p>Fix errors, commit, push.</p>
+
+<h3><code>/admin</code> returns 500</h3>
+<ul>
+  <li>Check <code>MONGODB_URI</code> is set in the active environment.</li>
+  <li>Check Atlas IP allowlist includes <code>0.0.0.0/0</code>.</li>
+  <li>Check database user password matches the connection string.</li>
+</ul>
+
+<h3>Lead form does not email</h3>
+<ul>
+  <li>Check <code>RESEND_API_KEY</code> set + domain verified in Resend dashboard.</li>
+  <li>Check <code>LEADS_INBOX</code> set to a real inbox.</li>
+  <li>Inspect function logs in Vercel → Functions tab.</li>
+</ul>
+
+<h3>ISR not purging on Payload publish</h3>
+<ul>
+  <li>Check <code>REVALIDATE_SECRET</code> matches in both Vercel env vars and Payload global.</li>
+  <li>Function logs should show <code>revalidate</code> hits.</li>
+</ul>
+
+<div class="footer">
+  <p>See also: <a href="developer-workflow.html">Developer Workflow (updating Vercel as we develop)</a> · <a href="Current-Functionality-README.html">Current Functionality README</a> · <a href="cofounder-guide.html">Co-Founder Guide (non-tech)</a></p>
+  <p>Operator runbook: <code>docs/deployment.md</code> (Markdown source for this doc).</p>
+</div>
+
+</div>
+</body>
+</html>

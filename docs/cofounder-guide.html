@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mishran — Co-Founder Guide (Non-Tech)</title>
+<style>
+  :root {
+    --bg: #faf6f1; --card: #ffffff; --ink: #1a1410; --muted: #6b5e54;
+    --rule: #e5dccf; --primary: #6b1e1e; --gold: #b08838;
+    --ok-bg: #eaf6ec; --ok-rule: #4a8a5c;
+    --warn-bg: #fff5e0; --warn-rule: #e6b94a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1rem 5rem; background: var(--bg); color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Manrope, system-ui, sans-serif;
+  }
+  .wrap { max-width: 740px; margin: 0 auto; }
+  h1, h2, h3, h4 { font-family: "Iowan Old Style", Palatino, "Book Antiqua", Georgia, serif; line-height: 1.2; }
+  h1 { font-size: 2.4rem; margin: 0 0 .4rem; letter-spacing: -.01em; }
+  h2 { font-size: 1.7rem; margin: 2.5rem 0 .8rem; border-bottom: 1px solid var(--rule); padding-bottom: .4rem; }
+  h3 { font-size: 1.2rem; margin: 1.8rem 0 .5rem; color: var(--primary); }
+  h4 { font-size: 1rem; margin: 1.2rem 0 .3rem; }
+  p { margin: .7rem 0; }
+  ul, ol { padding-left: 1.4rem; }
+  li { margin: .35rem 0; }
+  .lede { font-size: 1.15rem; color: var(--muted); margin: .6rem 0 2rem; }
+  code {
+    background: #efe6d8; padding: .12em .4em; border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .9em;
+  }
+  pre {
+    background: #1a1410; color: #f5e9d6; padding: 1rem 1.2rem;
+    border-radius: 8px; overflow-x: auto;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .85em;
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+  .ok-box {
+    background: var(--ok-bg); border-left: 4px solid var(--ok-rule);
+    padding: .9rem 1.1rem; margin: 1.2rem 0; border-radius: 0 6px 6px 0;
+  }
+  .warn-box {
+    background: var(--warn-bg); border-left: 4px solid var(--warn-rule);
+    padding: .9rem 1.1rem; margin: 1.2rem 0; border-radius: 0 6px 6px 0;
+  }
+  nav.toc { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+  nav.toc h3 { margin-top: 0; color: var(--ink); font-size: 1rem; }
+  nav.toc ol { margin: 0; padding-left: 1.4rem; }
+  .footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-size: .9rem; color: var(--muted); }
+  a { color: var(--primary); }
+  a:hover { color: var(--gold); }
+  .analogy {
+    background: var(--card); border-left: 4px solid var(--gold);
+    padding: 1rem 1.2rem; margin: 1.2rem 0; border-radius: 0 6px 6px 0;
+    font-style: italic; color: var(--muted);
+  }
+  .step {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 1.2rem 1.4rem; margin: 1rem 0;
+  }
+  .step h3 { margin-top: 0; }
+  .step .num {
+    display: inline-block; min-width: 1.7rem; height: 1.7rem; line-height: 1.7rem;
+    text-align: center; background: var(--primary); color: #fff; border-radius: 50%;
+    font-family: ui-monospace, Menlo, monospace; font-size: .9rem; margin-right: .5rem;
+  }
+  details { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem 1.2rem; margin: .8rem 0; }
+  summary { cursor: pointer; font-weight: 600; color: var(--primary); }
+  details[open] summary { margin-bottom: .6rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>The Co-Founder Guide</h1>
+<p class="lede">A plain-English walkthrough for non-developers. By the end, you will know how the site gets from "an idea" to "live on the internet," and what to do when something breaks.</p>
+
+<nav class="toc">
+  <h3>What this covers</h3>
+  <ol>
+    <li><a href="#mental-model">How this all works (the 60-second mental model)</a></li>
+    <li><a href="#vocabulary">Vocabulary you'll need</a></li>
+    <li><a href="#see-locally">How to see the site on your Mac</a></li>
+    <li><a href="#ask-change">How to ask for a change</a></li>
+    <li><a href="#see-change">How to see a change go live</a></li>
+    <li><a href="#content">How to edit content yourself (no code)</a></li>
+    <li><a href="#breaks">What to do when something breaks</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ol>
+</nav>
+
+<h2 id="mental-model">1. How this all works (the 60-second mental model)</h2>
+
+<div class="analogy">
+  Think of the website as a restaurant. The <strong>kitchen</strong> is the developers writing code. The <strong>menu</strong> is the content (products, stories, prices). The <strong>dining room</strong> is Vercel — the platform that serves the site to visitors. Code in the kitchen becomes a new menu becomes a meal in front of a guest.
+</div>
+
+<p>In slightly more technical terms:</p>
+<ol>
+  <li>The developer writes code in a folder on their Mac (the <em>local copy</em>).</li>
+  <li>They push that code to a website called <strong>GitHub</strong> (a safe, versioned storage for code).</li>
+  <li>A platform called <strong>Vercel</strong> is watching GitHub. Whenever new code lands, Vercel automatically builds a fresh version of the website and puts it on the internet.</li>
+  <li>The data — products, stories, prices, leads — lives in <strong>MongoDB</strong> (a database) and is edited through <strong>Payload</strong> (an admin dashboard at <code>/admin</code>).</li>
+</ol>
+
+<div class="ok-box"><strong>Key takeaway:</strong> pushing code = updating the site. There is no "publish" button. Vercel listens and reacts.</div>
+
+<h2 id="vocabulary">2. Vocabulary you'll need</h2>
+
+<table style="border-collapse: collapse; width: 100%; font-size: .94rem;">
+  <thead><tr><th style="text-align:left; padding:.5rem; border-bottom:1px solid var(--rule);">Word</th><th style="text-align:left; padding:.5rem; border-bottom:1px solid var(--rule);">What it actually means</th></tr></thead>
+  <tbody>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>Code</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">The instructions that make the site work. Lives in files in a folder.</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>Repo (repository)</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">The shared folder where all the code lives, with version history. We use GitHub.</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>Commit</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">A snapshot of the code at a moment in time. Like "Save As… v2."</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>Push</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">Upload commits from the Mac to GitHub.</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>Pull</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">Download the latest commits from GitHub to the Mac.</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>Branch</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">A parallel copy for trying a change without affecting the main one.</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>PR (Pull Request)</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">A request to merge a branch's changes into the main code. Triggers CI tests + a preview URL.</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>Production</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">The live website that the public sees.</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>Preview</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">A temporary, hidden URL Vercel makes for testing a branch before it goes live.</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>Vercel</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">The platform that hosts the website. Watches GitHub, builds automatically.</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>MongoDB</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">The database. Where content (products, leads, etc.) is stored.</td></tr>
+    <tr><td style="padding:.5rem; border-bottom:1px solid var(--rule);"><strong>Payload</strong></td><td style="padding:.5rem; border-bottom:1px solid var(--rule);">The admin dashboard at <code>/admin</code> for editing content without code.</td></tr>
+    <tr><td style="padding:.5rem;"><strong>CI (Continuous Integration)</strong></td><td style="padding:.5rem;">Automated tests that run on every PR. Blocks bad code from going live.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="see-locally">3. How to see the site on your Mac</h2>
+<p>Sometimes you want to see changes before they go public — or poke at the site when the internet is acting up. The site runs locally on your Mac. <strong>You don't need to do this often</strong> — most of the time you'll just look at the live URL.</p>
+
+<p>If you do want to run it locally:</p>
+<ol>
+  <li>Open the <strong>Terminal</strong> app (Cmd+Space, type "Terminal", Enter).</li>
+  <li>Tell the developer you want to "run locally" — they'll set it up the first time. After that, you only need:</li>
+</ol>
+<pre><code>cd ~/WORK/mithai-shop/mithai-shop
+npm run dev</code></pre>
+<ol start="3">
+  <li>Open a browser at <code>http://localhost:3000</code>.</li>
+  <li>Press <code>Ctrl + C</code> in Terminal to stop.</li>
+</ol>
+
+<div class="warn-box"><strong>Heads up:</strong> the local site is just for you. Customers cannot see it. Anything you do here does not affect production unless code is pushed.</div>
+
+<h2 id="ask-change">4. How to ask for a change</h2>
+<p>As a non-tech co-founder, your main contribution is <em>direction</em>. The developer writes the code. Here's how to make requests that get done fast:</p>
+
+<h3>Good request</h3>
+<div class="ok-box">
+  <p>"On the home page hero, change the headline from 'Mithai, the modern way' to 'Mithai, made fresh daily.' Also, the 'Build a gift' button should open the wedding configurator instead."</p>
+  <p>→ Clear, names the page, names the element, names the desired behavior.</p>
+</div>
+
+<h3>Frustrating request</h3>
+<div class="warn-box">
+  <p>"The home page feels off. Make it pop more."</p>
+  <p>→ Subjective, no clear end state. Will go in circles.</p>
+</div>
+
+<h3>Best practices</h3>
+<ul>
+  <li><strong>One change per request.</strong> Bundling 5 changes into one message means one of them gets lost.</li>
+  <li><strong>Reference the URL.</strong> "On <code>/mithai</code>…", "On the wedding configurator…".</li>
+  <li><strong>Say what you want, not how.</strong> The developer picks the implementation.</li>
+  <li><strong>Provide copy as final text.</strong> Don't make the developer guess wording.</li>
+  <li><strong>Share screenshots or sketches</strong> for visual changes.</li>
+</ul>
+
+<h2 id="see-change">5. How to see a change go live</h2>
+<p>Once the developer picks up your request, here is what happens — and how you can watch:</p>
+
+<div class="step">
+  <h3><span class="num">1</span> Developer opens a PR</h3>
+  <p>You get a link in GitHub (or Slack) that looks like <code>github.com/org/repo/pull/42</code>.</p>
+  <p>This PR page shows: what changed, comments, and a <strong>preview URL</strong> from Vercel.</p>
+</div>
+
+<div class="step">
+  <h3><span class="num">2</span> Vercel builds a preview</h3>
+  <p>Within ~2 minutes, the Vercel bot will comment on the PR with a preview URL like:</p>
+  <pre><code>https://mishran-git-fix-headline-yourorg.vercel.app</code></pre>
+  <p>Open it. This is exactly what the change will look like when live. <strong>Share with anyone for review.</strong></p>
+</div>
+
+<div class="step">
+  <h3><span class="num">3</span> Approve and merge</h3>
+  <p>If happy: click "Merge pull request" on GitHub. (Or ask the developer to.)</p>
+  <p>Vercel now builds <code>main</code> → production is live in another ~2 minutes.</p>
+</div>
+
+<div class="step">
+  <h3><span class="num">4</span> Verify on production</h3>
+  <p>Visit the canonical domain (<code>https://mishran.shop</code> or whatever it is). Hard-refresh (Cmd+Shift+R) to bust caches.</p>
+</div>
+
+<h2 id="content">6. How to edit content yourself (no code)</h2>
+<p>Most content — products, stories, prices, occasions — does <strong>not</strong> need a code change. You can edit it directly through the Payload admin dashboard.</p>
+
+<ol>
+  <li>Go to <code>https://mishran.shop/admin</code> (or your domain + <code>/admin</code>).</li>
+  <li>Log in with your admin account (developer will create one for you the first time).</li>
+  <li>Pick the collection you want to edit: <em>Mithai Products</em>, <em>Stories</em>, <em>Brand Settings</em>, etc.</li>
+  <li>Edit fields, click <strong>Save</strong>.</li>
+</ol>
+
+<div class="ok-box"><strong>Beautiful thing:</strong> saving in Payload instantly updates the live site (within 60 seconds). No rebuild required.</div>
+
+<h3>What's safe to edit</h3>
+<ul>
+  <li>Products — name, price, description, images, slug</li>
+  <li>Stories — title, body, pillar, hero image</li>
+  <li>Brand settings — tagline, positioning, contact details</li>
+  <li>Occasions, Karigars, Farms, Packaging — full CRUD</li>
+  <li>Analytics settings — GA4 ID, Meta Pixel ID, WhatsApp number</li>
+</ul>
+
+<h3>What needs a developer</h3>
+<ul>
+  <li>New collection types (e.g., "Recipes" section)</li>
+  <li>New pages (e.g., a "/press" page)</li>
+  <li>Theme or layout changes</li>
+  <li>Anything that involves the URL structure</li>
+</ul>
+
+<h2 id="breaks">7. What to do when something breaks</h2>
+
+<h3>The site is down</h3>
+<ol>
+  <li>Check <code>https://www.vercel-status.com</code> — is Vercel having an outage?</li>
+  <li>If Vercel is fine, ping the developer. Do not try to fix it yourself.</li>
+</ol>
+
+<h3>The site is up but a page shows an error</h3>
+<ol>
+  <li>Note the URL and what you were doing.</li>
+  <li>Take a screenshot.</li>
+  <li>Send to the developer with the URL + screenshot + "what I expected" + "what I saw."</li>
+</ol>
+
+<h3>A change went live that shouldn't have</h3>
+<ol>
+  <li>Tell the developer immediately. Vercel has one-click rollback to the previous deploy.</li>
+  <li>Do not panic-edit content to "fix" it — that creates a worse mess.</li>
+</ol>
+
+<h3>Orders or leads not coming through</h3>
+<ol>
+  <li>Check <code>/admin</code> → Leads collection — are recent submissions there?</li>
+  <li>If yes: Resend (email provider) is the suspect. Developer needs to inspect logs.</li>
+  <li>If no: form submission itself is broken. Developer needs to inspect.</li>
+</ol>
+
+<h2 id="faq">8. FAQ</h2>
+
+<details>
+  <summary>How long should a "small change" take?</summary>
+  <p>For a text or color change: ~10 minutes of dev time + ~4 minutes of build time. For a layout change: half a day to a full day. For a new feature: days to weeks.</p>
+</details>
+
+<details>
+  <summary>Why does it take 2 minutes for changes to appear?</summary>
+  <p>Vercel has to rebuild the site from the new code. Think of it like printing a book — even if you only fixed a typo, you still have to wait for the printer to finish.</p>
+</details>
+
+<details>
+  <summary>Can I edit the website from my phone?</summary>
+  <p>Content yes (use the <code>/admin</code> dashboard in mobile browser). Code no.</p>
+</details>
+
+<details>
+  <summary>What if I want to try a change without breaking anything?</summary>
+  <p>That's what <strong>preview deploys</strong> are for. Ask the developer to put it on a branch — you'll get a private preview URL that customers can't see.</p>
+</details>
+
+<details>
+  <summary>How do I add a new product?</summary>
+  <p>Via <code>/admin</code> → Mithai Products → "Create New". No code needed. The product shows up on the site within 60 seconds.</p>
+</details>
+
+<details>
+  <summary>What is "the cloud"?</summary>
+  <p>Someone else's computer. In our case, Vercel's servers (which run our website) and MongoDB Atlas's servers (which run our database). Both are secure, professionally managed services.</p>
+</details>
+
+<details>
+  <summary>Who pays for Vercel and MongoDB?</summary>
+  <p>Right now, both have generous free tiers that cover early traffic. We'll upgrade only when usage demands it.</p>
+</details>
+
+<details>
+  <summary>Can customers break the site?</summary>
+  <p>Almost never. The site only "reads" content publicly — customers can't write to the database. The only inputs they have are lead forms, which are validated and sanitized.</p>
+</details>
+
+<details>
+  <summary>How do I learn more about how this works?</summary>
+  <p>Read the <a href="Current-Functionality-README.html">Current Functionality README</a> (more technical) and the <a href="developer-workflow.html">Developer Workflow</a> (how changes ship). Both written for humans.</p>
+</details>
+
+<div class="footer">
+  <p>See also: <a href="vercel-deployment.html">Vercel Deployment</a> · <a href="developer-workflow.html">Developer Workflow</a> · <a href="Current-Functionality-README.html">Current Functionality README</a></p>
+  <p>When in doubt, ask the developer. The site is set up so that mistakes are recoverable — no change is permanent.</p>
+</div>
+
+</div>
+</body>
+</html>
