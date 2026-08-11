@@ -20,21 +20,4 @@ export const Drafts: CollectionConfig = {
     },
     { name: "convertedToLead", type: "relationship", relationTo: "leads" },
   ],
-  hooks: {
-    afterInit: async (args) => {
-      const { collection } = args;
-      // Create TTL index on expiresAt field for 30-day expiration
-      // This runs after the collection model is initialized
-      if (collection.model?.db?.collections?.drafts) {
-        try {
-          await collection.model.db.collections.drafts.collection.createIndex(
-            { expiresAt: 1 },
-            { expireAfterSeconds: 0 },
-          );
-        } catch (error) {
-          console.warn("Failed to create TTL index on drafts.expiresAt:", error);
-        }
-      }
-    },
-  },
 };

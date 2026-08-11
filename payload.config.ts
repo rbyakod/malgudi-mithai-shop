@@ -86,6 +86,21 @@ export default buildConfig({
   db: mongooseAdapter({
     url:
       process.env.MONGODB_URI ?? "mongodb://127.0.0.1:27017/mishran-dev",
+    afterOpenConnection: async (adapter) => {
+      // Create TTL index on drafts.expiresAt for 30-day auto-deletion
+      try {
+        const draftsModel = adapter.collections.drafts;
+        if (draftsModel) {
+          await draftsModel.collection.createIndex(
+            { expiresAt: 1 },
+            { expireAfterSeconds: 0 },
+          );
+          console.log("Created TTL index on drafts.expiresAt");
+        }
+      } catch (error) {
+        console.warn("Failed to create TTL index on drafts.expiresAt:", error);
+      }
+    },
   }),
   editor: lexicalEditor(),
   sharp,
