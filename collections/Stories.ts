@@ -6,7 +6,7 @@
 // The brief's integration test originally omitted `slug`; the test was updated
 // to include it (see task-6-brief.md "Known brief bugs" #1).
 import type { CollectionConfig } from "payload";
-import { makeRevalidateHook } from "./_revalidate-hook";
+import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
 
 export const Stories: CollectionConfig = {
   slug: "stories",
@@ -15,7 +15,10 @@ export const Stories: CollectionConfig = {
   },
   admin: { useAsTitle: "title" },
   versions: { drafts: true },
-  hooks: { afterChange: [makeRevalidateHook("stories")] },
+  hooks: {
+    afterChange: [makeRevalidateHook("stories")],
+    afterDelete: [makeRevalidateDeleteHook("stories")],
+  },
   fields: [
     { name: "title", type: "text", localized: true, required: true },
     {

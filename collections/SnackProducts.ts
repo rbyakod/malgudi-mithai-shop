@@ -5,13 +5,16 @@
 //
 // Slug "snack-products" is the stable contract — referenced by Stories.
 import type { CollectionConfig } from "payload";
-import { makeRevalidateHook } from "./_revalidate-hook";
+import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
 
 export const SnackProducts: CollectionConfig = {
   slug: "snack-products",
   access: { read: () => true },
   admin: { useAsTitle: "name", group: "FMCG" },
-  hooks: { afterChange: [makeRevalidateHook("snack-products")] },
+  hooks: {
+    afterChange: [makeRevalidateHook("snack-products")],
+    afterDelete: [makeRevalidateDeleteHook("snack-products")],
+  },
   fields: [
     { name: "name", type: "text", required: true, localized: true },
     {

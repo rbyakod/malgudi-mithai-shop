@@ -6,13 +6,16 @@
 // Slug "gift-boxes" is the stable contract — referenced by Stories,
 // Occasions, and MithaiProducts.boxCompatibility.
 import type { CollectionConfig } from "payload";
-import { makeRevalidateHook } from "./_revalidate-hook";
+import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
 
 export const GiftBoxes: CollectionConfig = {
   slug: "gift-boxes",
   access: { read: () => true },
   admin: { useAsTitle: "name", group: "Gifting" },
-  hooks: { afterChange: [makeRevalidateHook("gift-boxes")] },
+  hooks: {
+    afterChange: [makeRevalidateHook("gift-boxes")],
+    afterDelete: [makeRevalidateDeleteHook("gift-boxes")],
+  },
   fields: [
     { name: "name", type: "text", required: true, localized: true },
     {
