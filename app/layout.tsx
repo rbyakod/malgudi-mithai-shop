@@ -1,5 +1,6 @@
 // app/layout.tsx
 import type {Metadata} from "next";
+import Script from "next/script";
 import "./globals.css";
 import {CartProvider} from "@/context/CartContext";
 import {QueryProvider} from "@/context/QueryProvider";
@@ -24,14 +25,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: initialThemeScript
-          }}
-        />
-      </head>
       <body>
+        {/* Theme init — beforeInteractive so it runs before paint to prevent FOUC.
+            Using next/script (not a raw <script> tag) avoids the React 19 warning. */}
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{__html: initialThemeScript}}
+        />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-text-light focus:shadow-lg"
