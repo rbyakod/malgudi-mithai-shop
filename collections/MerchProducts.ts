@@ -1,13 +1,35 @@
 // collections/MerchProducts.ts
-// STUB — Task 7 will flesh this out with the full merchandise product
-// schema. Registered here as a minimal collection so Stories.relatedProducts
-// can resolve its relationship target. See MithaiProducts.ts for the same
-// pattern.
+// Merchandise — tools, books, experiences. Schema per spec §7 /
+// task-7-brief.md. Availability defaults to "enquiry-only" (most merch is
+// lead-gen, not direct checkout) per the brief.
+//
+// Slug "merch-products" is the stable contract — referenced by Stories.
 import type { CollectionConfig } from "payload";
 
 export const MerchProducts: CollectionConfig = {
   slug: "merch-products",
   access: { read: () => true },
-  admin: { useAsTitle: "name" },
-  fields: [{ name: "name", type: "text", required: true }],
+  admin: { useAsTitle: "name", group: "Merch" },
+  fields: [
+    { name: "name", type: "text", required: true, localized: true },
+    {
+      name: "type",
+      type: "select",
+      options: ["tool", "book", "experience"],
+      required: true,
+    },
+    { name: "description", type: "textarea", localized: true },
+    {
+      name: "images",
+      type: "array",
+      fields: [{ name: "image", type: "upload", relationTo: "media" }],
+    },
+    { name: "price", type: "text" },
+    {
+      name: "availability",
+      type: "select",
+      options: ["in-stock", "pre-order", "enquiry-only"],
+      defaultValue: "enquiry-only",
+    },
+  ],
 };
