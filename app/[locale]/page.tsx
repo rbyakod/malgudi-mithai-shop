@@ -1,6 +1,4 @@
 import Image from "next/image";
-import {Header} from "@/components/Header";
-import {SiteFooter} from "@/components/SiteFooter";
 import {useTranslations} from "next-intl";
 import {Link} from "@/i18n/navigation";
 
@@ -81,12 +79,8 @@ export default function HomePage() {
   const t = useTranslations("Home");
 
   return (
-    <div className="relative z-10 min-h-screen text-text-primary">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-16 pt-4 sm:px-6 lg:px-8">
-        <Header />
-
-        <main id="main-content" className="flex flex-1 flex-col gap-16">
-          {/* Hero */}
+    <div className="flex flex-1 flex-col gap-16">
+      {/* Hero */}
           <section
             className="grid items-center gap-10 md:grid-cols-[1.1fr_0.9fr]"
             id="top"
@@ -403,9 +397,6 @@ export default function HomePage() {
             </div>
           </section>
 
-        </main>
-        <SiteFooter />
-      </div>
     </div>
   );
 }

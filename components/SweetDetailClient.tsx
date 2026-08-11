@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Header } from "@/components/Header";
-import { SiteFooter } from "@/components/SiteFooter";
 import { useCart } from "@/context/CartContext";
 import { Link } from "@/i18n/navigation";
 
@@ -29,10 +27,7 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
   const [qty, setQty] = useState(1);
 
   return (
-    <div className="relative z-10 min-h-screen text-text-primary">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-16 pt-4 sm:px-6 lg:px-8">
-        <Header />
-        <main className="mx-auto mt-4 flex w-full max-w-5xl flex-1 flex-col">
+    <div className="mx-auto mt-4 flex w-full max-w-5xl flex-1 flex-col">
           <nav
             aria-label="Breadcrumb"
             className="mb-4 text-[11px] text-text-muted sm:text-xs"
@@ -280,9 +275,6 @@ export function SweetDetailClient({ sweet }: { sweet: Sweet }) {
               </div>
             </div>
           </section>
-        </main>
-        <SiteFooter />
-      </div>
     </div>
   );
 }

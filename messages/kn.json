@@ -8,6 +8,17 @@
     "orderNow": "Order now",
     "cart": "Cart"
   },
+  "Nav": {
+    "mithai": "ಮಿಠಾಯಿ",
+    "buildAGift": "ಗಿಫ್ಟ್ ಕಟ್ಟಿ",
+    "qsr": "ತ್ವರಿತ ಸೇವೆ",
+    "snacks": "ತಿಂಡಿಗಳು",
+    "merch": "ಮರ್ಚ್",
+    "stories": "ಕಥೆಗಳು",
+    "farms": "ಫಾರ್ಮ್‌ಗಳು",
+    "karigars": "ಕುಶಲಕರ್ಮಿಗಳು",
+    "journal": "ಜರ್ನಲ್"
+  },
   "Home": {
     "heroBadge": "Handcrafted in Bengaluru • Delivered fresh",
     "heroTitle": "Mithai that feels festive every single day.",

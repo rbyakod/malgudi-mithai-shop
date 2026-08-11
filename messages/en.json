@@ -8,6 +8,17 @@
     "orderNow": "Order now",
     "cart": "Cart"
   },
+  "Nav": {
+    "mithai": "Mithai",
+    "buildAGift": "Build a Gift",
+    "qsr": "QSR",
+    "snacks": "Snacks",
+    "merch": "Merch",
+    "stories": "Stories",
+    "farms": "Farms",
+    "karigars": "Karigars",
+    "journal": "Journal"
+  },
   "Home": {
     "heroBadge": "Handcrafted in Bengaluru • Delivered fresh",
     "heroTitle": "Mithai that feels festive every single day.",

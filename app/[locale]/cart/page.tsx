@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { Header } from "@/components/Header";
-import { SiteFooter } from "@/components/SiteFooter";
 import { useCart } from "@/context/CartContext";
 import { Link } from "@/i18n/navigation";
 
@@ -12,10 +10,7 @@ export default function CartPage() {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="relative z-10 min-h-screen text-text-primary">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-16 pt-4 sm:px-6 lg:px-8">
-        <Header />
-        <main className="mx-auto mt-4 flex w-full max-w-4xl flex-1 flex-col">
+    <div className="mx-auto mt-4 flex w-full max-w-4xl flex-1 flex-col">
           <h1 className="text-2xl font-semibold text-text-primary sm:text-3xl">
             Your cart
           </h1>
@@ -116,9 +111,6 @@ export default function CartPage() {
               </div>
             </>
           )}
-        </main>
-        <SiteFooter />
-      </div>
     </div>
   );
 }

@@ -5,6 +5,9 @@ import {NextIntlClientProvider} from "next-intl";
 import {notFound} from "next/navigation";
 import {routing} from "@/i18n/routing";
 import {buildAlternates} from "@/lib/seo";
+import {BrandBar} from "@/components/layout/BrandBar";
+import {SiteHeader} from "@/components/layout/SiteHeader";
+import {SiteFooter} from "@/components/layout/SiteFooter";
 
 type Props = {
   children: ReactNode;
@@ -34,7 +37,16 @@ export default async function LocaleLayout({children, params}: Props) {
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      {children}
+      {/* Layout shell — BrandBar (server, reads Payload) + SiteHeader (client,
+          owns theme/locale/cart UI) + main content + SiteFooter (server). */}
+      <div className="relative z-10 flex min-h-screen flex-col text-text-primary">
+        <BrandBar />
+        <SiteHeader />
+        <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-4 sm:px-6 lg:px-8">
+          {children}
+        </main>
+        <SiteFooter />
+      </div>
     </NextIntlClientProvider>
   );
 }

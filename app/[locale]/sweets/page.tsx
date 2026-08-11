@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Header } from "@/components/Header";
-import { SiteFooter } from "@/components/SiteFooter";
 import { useCart } from "@/context/CartContext";
 import { Link } from "@/i18n/navigation";
 
@@ -163,10 +161,7 @@ export default function SweetsCatalogPage() {
   });
 
   return (
-    <div className="relative z-10 min-h-screen text-text-primary">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-16 pt-4 sm:px-6 lg:px-8">
-        <Header />
-        <main className="mt-4 flex flex-1 flex-col">
+    <div className="mt-4 flex flex-1 flex-col">
           <div className="mb-6 flex items-baseline justify-between gap-4">
             <div>
               <p className="text-xs font-medium tracking-wide text-primary">
@@ -371,9 +366,6 @@ export default function SweetsCatalogPage() {
             </aside>
           </div>
 
-        </main>
-        <SiteFooter />
-      </div>
     </div>
   );
 }
