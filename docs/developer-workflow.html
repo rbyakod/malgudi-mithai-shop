@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mishran — Developer Workflow (Updating Vercel as We Develop)</title>
+<style>
+  :root {
+    --bg: #faf6f1; --card: #ffffff; --ink: #1a1410; --muted: #6b5e54;
+    --rule: #e5dccf; --primary: #6b1e1e; --gold: #b08838;
+    --code-bg: #1a1410; --code-ink: #f5e9d6; --warn-bg: #fff5e0; --warn-rule: #e6b94a;
+    --ok-bg: #eaf6ec; --ok-rule: #4a8a5c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1rem 5rem; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Manrope, system-ui, sans-serif;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; }
+  h1, h2, h3, h4 { font-family: "Iowan Old Style", Palatino, "Book Antiqua", Georgia, serif; line-height: 1.2; }
+  h1 { font-size: 2.4rem; margin: 0 0 .4rem; letter-spacing: -.01em; }
+  h2 { font-size: 1.7rem; margin: 2.5rem 0 .8rem; border-bottom: 1px solid var(--rule); padding-bottom: .4rem; }
+  h3 { font-size: 1.2rem; margin: 1.8rem 0 .5rem; color: var(--primary); }
+  h4 { font-size: 1rem; margin: 1.2rem 0 .3rem; }
+  p { margin: .6rem 0; }
+  ul, ol { padding-left: 1.4rem; }
+  li { margin: .3rem 0; }
+  .lede { font-size: 1.1rem; color: var(--muted); margin: .6rem 0 2rem; }
+  code {
+    background: #efe6d8; padding: .12em .4em; border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .92em;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-ink); padding: 1rem 1.2rem;
+    border-radius: 8px; overflow-x: auto;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .88em;
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+  .warn {
+    background: var(--warn-bg); border-left: 4px solid var(--warn-rule);
+    padding: .9rem 1.1rem; margin: 1.2rem 0; border-radius: 0 6px 6px 0;
+  }
+  .ok {
+    background: var(--ok-bg); border-left: 4px solid var(--ok-rule);
+    padding: .9rem 1.1rem; margin: 1.2rem 0; border-radius: 0 6px 6px 0;
+  }
+  nav.toc { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+  nav.toc h3 { margin-top: 0; color: var(--ink); font-size: 1rem; }
+  nav.toc ol { margin: 0; padding-left: 1.4rem; }
+  .footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-size: .85rem; color: var(--muted); }
+  a { color: var(--primary); }
+  a:hover { color: var(--gold); }
+  .flowstep {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 1.2rem 1.4rem; margin: 1.2rem 0;
+  }
+  .flowstep h3 { margin-top: 0; }
+  .flowstep .num {
+    display: inline-block; min-width: 1.6rem; height: 1.6rem; line-height: 1.6rem;
+    text-align: center; background: var(--primary); color: #fff; border-radius: 50%;
+    font-family: ui-monospace, Menlo, monospace; font-size: .9rem; margin-right: .5rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Developer Workflow</h1>
+<p class="lede">How we push code changes from a local Mac to production Vercel — every day, safely, with preview URLs and rollback.</p>
+
+<nav class="toc">
+  <h3>Contents</h3>
+  <ol>
+    <li><a href="#mental-model">The mental model</a></li>
+    <li><a href="#daily-cycle">Daily cycle (the 90-second version)</a></li>
+    <li><a href="#first-time">First time on a new Mac</a></li>
+    <li><a href="#feature-branch">Working on a feature branch</a></li>
+    <li><a href="#preview">Preview deploys (auto-magic)</a></li>
+    <li><a href="#merge">Merging to main = production</a></li>
+    <li><a href="#rollback">Rolling back a bad deploy</a></li>
+    <li><a href="#env-changes">When env vars change</a></li>
+    <li><a href="#schema">Database schema changes (Payload migrations)</a></li>
+    <li><a href="#discipline">Discipline that keeps us sane</a></li>
+  </ol>
+</nav>
+
+<h2 id="mental-model">1. The mental model</h2>
+<p>Vercel listens to the <code>main</code> branch of this Git repo. Every push to <code>main</code> triggers a fresh production build. Every push to <em>any other branch</em> triggers a preview build at a temporary URL. There is no separate "deploy" command in the normal flow — you just push.</p>
+<p>Production URL: <code>https://mishran.shop</code> (or whichever canonical domain is wired in Vercel).<br>
+Preview URL: <code>https://mishran-git-&lt;branch&gt;-&lt;org&gt;.vercel.app</code> (Vercel generates this on each push).</p>
+
+<div class="ok"><strong>One-line summary:</strong> <code>git push origin main</code> → Vercel builds → live in ~2 minutes.</div>
+
+<h2 id="daily-cycle">2. Daily cycle (the 90-second version)</h2>
+
+<div class="flowstep">
+  <h3><span class="num">1</span> Pull latest</h3>
+  <pre><code>git switch main
+git pull --rebase origin main</code></pre>
+  <p>Rebases your local commits on top of latest remote. Avoids merge bubbles.</p>
+</div>
+
+<div class="flowstep">
+  <h3><span class="num">2</span> Branch for the work</h3>
+  <pre><code>git switch -c fix/whatever-the-thing-is</code></pre>
+  <p>Branch name format: <code>&lt;kind&gt;/&lt;short-slug&gt;</code>. Kinds: <code>fix</code>, <code>feat</code>, <code>chore</code>, <code>docs</code>, <code>test</code>, <code>refactor</code>.</p>
+</div>
+
+<div class="flowstep">
+  <h3><span class="num">3</span> Make changes, commit small</h3>
+  <p>Test locally before each commit:</p>
+  <pre><code>npm run lint &amp;&amp; npx tsc --noEmit &amp;&amp; npm run test:unit</code></pre>
+  <p>Then commit — one logical change per commit:</p>
+  <pre><code>git add &lt;specific-files&gt;
+git commit -m "fix: short imperative subject"</code></pre>
+  <p>Commit message convention (Conventional Commits):</p>
+  <ul>
+    <li><code>feat:</code> new user-facing capability</li>
+    <li><code>fix:</code> bug fix</li>
+    <li><code>chore:</code> deps, config, build</li>
+    <li><code>docs:</code> docs only</li>
+    <li><code>test:</code> test-only change</li>
+    <li><code>refactor:</code> no behavior change</li>
+  </ul>
+</div>
+
+<div class="flowstep">
+  <h3><span class="num">4</span> Push the branch</h3>
+  <pre><code>git push -u origin fix/whatever-the-thing-is</code></pre>
+  <p>Vercel immediately starts a preview build. The URL lands in the GitHub PR and the Vercel dashboard.</p>
+</div>
+
+<div class="flowstep">
+  <h3><span class="num">5</span> Open a PR</h3>
+  <pre><code>gh pr create --title "fix: short subject" --body "..."</code></pre>
+  <p>CI runs (lint, tsc, unit, build, e2e). Preview URL is visible in the PR.</p>
+</div>
+
+<div class="flowstep">
+  <h3><span class="num">6</span> Merge</h3>
+  <p>Squash-merge via GitHub UI. Vercel builds <code>main</code> → production live in ~2 minutes.</p>
+</div>
+
+<h2 id="first-time">3. First time on a new Mac</h2>
+<ol>
+  <li>Install Node 22: <code>brew install node@22</code> or use <code>nvm install 22</code>.</li>
+  <li>Install MongoDB for local dev: <code>brew tap mongodb/brew &amp;&amp; brew install mongodb-community</code>, then <code>brew services start mongodb-community</code>.</li>
+  <li>Clone the repo: <code>git clone &lt;repo-url&gt;</code>.</li>
+  <li>Install deps: <code>npm install</code>.</li>
+  <li>Copy <code>.env.example</code> to <code>.env.local</code> and fill in dev values (Mongo URI <code>mongodb://127.0.0.1:27017/mishran-dev</code>, random strings for secrets).</li>
+  <li>Seed: <code>npm run seed</code>.</li>
+  <li>Run: <code>npm run dev</code> → open <code>http://localhost:3000</code>.</li>
+  <li>(Optional) Install Vercel CLI: <code>npm i -g vercel</code> — useful for <code>vercel logs</code> and <code>vercel env pull</code>.</li>
+</ol>
+
+<h2 id="feature-branch">4. Working on a feature branch</h2>
+<p>Branches are cheap. Use them even for one-line fixes — the preview URL is worth it.</p>
+<pre><code>git switch main
+git pull --rebase
+git switch -c feat/snacks-search
+# edit, lint, test
+git commit -m "feat(snacks): add product name search"
+git push -u origin feat/snacks-search</code></pre>
+
+<h2 id="preview">5. Preview deploys (auto-magic)</h2>
+<p>Every push to a non-<code>main</code> branch produces a fresh preview URL. Share it with the team for review.</p>
+<ul>
+  <li>Find it in the GitHub PR (Vercel bot comments automatically), or in the Vercel dashboard.</li>
+  <li>Preview uses the env vars scoped to the <strong>Preview</strong> environment in Vercel (Settings → Environment Variables → check "Preview").</li>
+</ul>
+
+<div class="warn">
+  <strong>⚠️ Preview URLs are shareable — never let them touch production data.</strong>
+  <ul>
+    <li>Set a <strong>separate <code>MONGODB_URI</code> for Preview</strong>, pointing at a staging database (e.g. <code>mishran-staging</code> on the same Atlas cluster, or a separate cluster entirely).</li>
+    <li>Never scope <code>MONGODB_URI</code>, <code>PAYLOAD_SECRET</code>, <code>RESEND_API_KEY</code>, or <code>REVALIDATE_SECRET</code> to "All Environments" if any of them are real production values.</li>
+    <li>Preview URLs are guessable and shareable. Anyone with the link can see the deploy, including its DB-backed content. Don't put real customer data or production secrets in the Preview environment.</li>
+  </ul>
+</div>
+
+<div class="warn"><strong>Gotcha:</strong> set <code>NODE_ENV=production</code> on Preview env vars so Payload admin doesn't auto-login. The auto-login gate checks <code>NODE_ENV</code>, <code>VERCEL_ENV</code>, and <code>CI</code>.</div>
+
+<h2 id="merge">6. Merging to main = production</h2>
+<ol>
+  <li>Wait for CI to be green on the PR.</li>
+  <li>Squash-merge via GitHub UI (or <code>gh pr merge --squash</code>).</li>
+  <li>Vercel builds <code>main</code>. Watch in dashboard or <code>vercel logs &lt;url&gt;</code>.</li>
+  <li>Production is live when the build goes green (~2 min for clean changes; up to 5 min if cold).</li>
+</ol>
+
+<h2 id="rollback">7. Rolling back a bad deploy</h2>
+<p>Two paths depending on severity:</p>
+
+<h3>Path A: Vercel dashboard (instant, no code change)</h3>
+<ol>
+  <li>Vercel → Project → Deployments.</li>
+  <li>Find the last known-good deployment.</li>
+  <li>Click the <code>⋯</code> menu → "Promote to Production".</li>
+  <li>Currents traffic routes to the old build instantly.</li>
+</ol>
+
+<h3>Path B: Git revert (the proper fix)</h3>
+<pre><code>git switch main
+git pull
+git revert &lt;bad-commit-sha&gt;
+git push</code></pre>
+<p>This creates a new commit that undoes the bad one. Vercel builds the fixed state.</p>
+
+<h2 id="env-changes">8. When env vars change</h2>
+<ol>
+  <li>Vercel dashboard → Settings → Environment Variables.</li>
+  <li>Add or edit the variable. Pick the right scope (Production / Preview / Development).</li>
+  <li>Save. <strong>No redeploy happens automatically</strong> — env vars are baked at build time.</li>
+  <li>Trigger a redeploy: push any commit to <code>main</code>, OR Vercel → Deployments → "Redeploy".</li>
+</ol>
+
+<h2 id="schema">9. Database schema changes (Payload migrations)</h2>
+<p>Payload 3.x with MongoDB is schema-on-read. Adding a field to a collection config does <strong>not</strong> require a migration script — the next time Payload boots, it sees the new field and accepts writes. Existing docs simply don't have the field until updated.</p>
+<div class="warn"><strong>Important:</strong> if you remove or rename a field, existing documents keep the old field. Plan a backfill explicitly. Payload does not auto-delete fields.</div>
+
+<h2 id="discipline">10. Discipline that keeps us sane</h2>
+<ul>
+  <li><strong>Never</strong> push to <code>main</code> without a PR. Even as the sole dev, the CI gate catches lockfile drift and type errors cheaply.</li>
+  <li><strong>Always</strong> run <code>npm run lint &amp;&amp; npx tsc --noEmit</code> before pushing.</li>
+  <li><strong>Always</strong> commit <code>package-lock.json</code> alongside <code>package.json</code> changes.</li>
+  <li><strong>One</strong> logical change per commit. Mixed-purpose commits make rollback hell.</li>
+  <li><strong>Branch name</strong> describes the change; commit subject describes the action.</li>
+  <li><strong>Don't</strong> bypass hooks with <code>--no-verify</code>. If a hook fails, fix the cause.</li>
+  <li><strong>Squash-merge</strong> from PR — keeps <code>main</code> history linear and readable.</li>
+</ul>
+
+<div class="footer">
+  <p>See also: <a href="vercel-deployment.html">Vercel Deployment (first-time setup)</a> · <a href="Current-Functionality-README.html">Current Functionality README</a> · <a href="cofounder-guide.html">Co-Founder Guide (non-tech)</a></p>
+</div>
+
+</div>
+</body>
+</html>

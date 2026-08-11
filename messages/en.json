@@ -236,6 +236,10 @@
       "trackOrder": {
         "title": "Track order",
         "blurb": "Order tracking launches with Phase 8 commerce. Need help now? WhatsApp us with your order reference."
+      },
+      "buildAGift": {
+        "title": "Build a gift",
+        "blurb": "The gift-box builder launches with our full commerce experience. Tell us the occasion, the headcount, the budget — we'll assemble the box and follow up on WhatsApp."
       }
     }
   },

@@ -16,7 +16,7 @@ import {getPayload} from "@/lib/payload-client";
 import {WhatsAppLink} from "@/components/commerce/WhatsAppLink";
 import {FALLBACK_WHATSAPP, toWaDigits} from "@/lib/whatsapp";
 
-type StubNamespace = "cart" | "checkout" | "account" | "trackOrder";
+type StubNamespace = "cart" | "checkout" | "account" | "trackOrder" | "buildAGift";
 
 type Props = {
   namespace: StubNamespace;

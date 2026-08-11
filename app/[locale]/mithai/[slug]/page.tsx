@@ -16,6 +16,7 @@ import type {Metadata} from "next";
 import {getPayload} from "@/lib/payload-client";
 import {MithaiPDP} from "@/components/mithai/MithaiPDP";
 import {ProductViewed} from "@/components/mithai/ProductViewed";
+import {InlineScript} from "@/components/InlineScript";
 import {productSchema, breadcrumbSchema} from "@/lib/seo/schema";
 
 export const revalidate = 60;
@@ -98,13 +99,7 @@ export default async function Page({params}: Context) {
       <MithaiPDP slug={slug} locale={locale} />
       <ProductViewed id={slug} name={doc?.name ?? slug} />
       {jsonLdHtml ? (
-        <script
-          type="application/ld+json"
-          // Safe: input is JSON.stringify of a plain object built from
-          // admin-authored Payload fields; `<` is escaped to prevent
-          // script-context breakout.
-          dangerouslySetInnerHTML={{__html: jsonLdHtml}}
-        />
+        <InlineScript id="mithai-jsonld" html={jsonLdHtml} />
       ) : null}
     </>
   );
