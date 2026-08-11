@@ -13,6 +13,7 @@ import {ReactNode} from "react";
 import {getTranslations} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
 import {getPayload} from "@/lib/payload-client";
+import {WhatsAppLink} from "@/components/commerce/WhatsAppLink";
 
 type StubNamespace = "cart" | "checkout" | "account" | "trackOrder";
 
@@ -88,26 +89,11 @@ export async function CommerceStub({namespace, children}: Props) {
 
       {/* CTA rail — WhatsApp primary, weddings lead secondary */}
       <div className="mt-12 grid gap-6 sm:grid-cols-2">
-        <a
+        <WhatsAppLink
           href={waLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex flex-col justify-between gap-3 rounded-2xl border border-border-card bg-bg-card p-6 transition-colors hover:border-primary"
-        >
-          <div className="flex items-center gap-2">
-            <span
-              aria-hidden="true"
-              className="inline-block h-1.5 w-1.5 rounded-full bg-gold"
-            />
-            <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-text-muted">
-              Talk to us
-            </span>
-          </div>
-          <p className="text-base font-medium text-text-heading">
-            {tCommon("whatsappCta")}
-          </p>
-          <p className="text-xs leading-relaxed text-text-muted">{whatsapp}</p>
-        </a>
+          whatsapp={whatsapp}
+          ctaLabel={tCommon("whatsappCta")}
+        />
         <Link
           href="/weddings"
           className="group flex flex-col justify-between gap-3 rounded-2xl border border-border-card bg-bg-card p-6 transition-colors hover:border-primary"

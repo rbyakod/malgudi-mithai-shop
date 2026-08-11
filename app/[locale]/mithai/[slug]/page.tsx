@@ -15,6 +15,7 @@
 import type {Metadata} from "next";
 import {getPayload} from "@/lib/payload-client";
 import {MithaiPDP} from "@/components/mithai/MithaiPDP";
+import {ProductViewed} from "@/components/mithai/ProductViewed";
 import {productSchema, breadcrumbSchema} from "@/lib/seo/schema";
 
 export const revalidate = 60;
@@ -95,6 +96,7 @@ export default async function Page({params}: Context) {
   return (
     <>
       <MithaiPDP slug={slug} locale={locale} />
+      <ProductViewed id={slug} name={doc?.name ?? slug} />
       {jsonLdHtml ? (
         <script
           type="application/ld+json"

@@ -41,6 +41,7 @@ export function WeddingConfigurator() {
   return (
     <LeadForm
       type="wedding"
+      source="/weddings"
       buildSubmission={buildSubmission}
       eyebrow={t("eyebrow")}
       title={t("formTitle")}

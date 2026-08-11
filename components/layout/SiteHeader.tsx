@@ -14,6 +14,7 @@ import {useCart} from "@/context/CartContext";
 import {useTheme} from "@/context/ThemeContext";
 import {ThemeSwitcher} from "@/components/ThemeSwitcher";
 import {NAV_LINKS} from "@/components/layout/nav-links";
+import {track} from "@/lib/analytics";
 
 // Re-export so callers (and tests) can import NAV_LINKS from the spec-mandated
 // path `@/components/layout/SiteHeader`. The constant itself lives in a pure
@@ -202,6 +203,7 @@ export function SiteHeader() {
   const handleLocaleChange = useCallback(
     (nextLocale: string) => {
       if (nextLocale === locale) return;
+      track("locale_changed", {from: locale, to: nextLocale});
       router.replace(pathname, {locale: nextLocale});
     },
     [locale, pathname, router]

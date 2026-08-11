@@ -8,6 +8,7 @@ import {
   THEMES,
   Theme
 } from "@/lib/themes";
+import {track} from "@/lib/analytics";
 
 const THEME_GROUPS = THEME_GROUP_ORDER.map((group) => ({
   group,
@@ -49,6 +50,7 @@ export function ThemeSwitcher({className = ""}: {className?: string}) {
 
   const handleThemeSelect = (nextTheme: Theme) => {
     setTheme(nextTheme);
+    track("theme_changed", {theme: nextTheme});
     setOpen(false);
   };
 

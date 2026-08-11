@@ -38,6 +38,7 @@ export function CorporateConfigurator() {
   return (
     <LeadForm
       type="corporate"
+      source="/corporate"
       buildSubmission={buildSubmission}
       eyebrow={t("eyebrow")}
       title={t("formTitle")}

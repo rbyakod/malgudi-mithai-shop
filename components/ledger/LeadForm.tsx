@@ -23,6 +23,7 @@ import {useMutation} from "@tanstack/react-query";
 import {toast} from "sonner";
 import {useTranslations} from "next-intl";
 import {type ReactNode, useState} from "react";
+import {track} from "@/lib/analytics";
 
 export type LeadContactField = "name" | "email" | "phone";
 
@@ -72,6 +73,8 @@ async function postLead(body: LeadSubmission): Promise<{leadId: string; message:
 }
 
 export function LeadForm({
+  type,
+  source,
   buildSubmission,
   eyebrow,
   title,
@@ -87,6 +90,7 @@ export function LeadForm({
     onSuccess: (data) => {
       setLeadId(data.leadId);
       toast.success(t("toastSuccess"));
+      track("lead_submitted", {type, source: source ?? `${type}-form`});
     },
   });
 
