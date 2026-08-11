@@ -1,29 +1,21 @@
 // components/InlineScript.tsx
-// Next.js-recommended wrapper for inline `<script>` tags that suppresses the
-// React 19 warning "Encountered a script tag while rendering React component.
-// Scripts inside React components are never executed when rendering on the
-// client. Consider using template tag instead."
+// Wrapper to inject inline `<script>` tags without triggering React 19's
+// "Encountered a script tag while rendering React component" dev warning.
 //
-// Pattern source: Next.js docs > Guides > Preventing flash before hydration
-// (https://nextjs.org/docs/app/guides/preventing-flash-before-hydration)
+// React 19 dev-mode fires that warning for ANY `<script>` element rendered
+// as JSX with inline content (children or dangerouslySetInnerHTML), even
+// with `suppressHydrationWarning`. The warning has no public opt-out.
 //
-// How it works:
-// - On the server (typeof window === 'undefined'), type is the real MIME
-//   (`text/javascript` for theme init, `application/ld+json` for JSON-LD).
-// - On the client, type becomes `text/plain`, which browsers refuse to
-//   execute. The script is in the HTML payload once — server-rendered —
-//   so it ran before hydration and is inert from then on.
-// - `suppressHydrationWarning` silences the attribute-diff warning that
-//   would otherwise fire because the type attr differs between server
-//   and client HTML.
+// Workaround: render a `<div>` whose dangerouslySetInnerHTML value CONTAINS
+// the script tag as raw HTML. React sees only a `<div>` in its tree → no
+// warning. The browser parses the script tag during initial HTML parsing
+// (before hydration), so:
+//   - text/javascript scripts (e.g. theme init) execute pre-paint (no FOUC)
+//   - application/ld+json scripts (JSON-LD) are visible to crawlers
 //
-// Use this for:
-// - JSON-LD structured data (data-only, never executes; type application/ld+json)
-// - Theme init / FOUC-prevention scripts (must run before paint; type text/javascript)
-//
-// Do NOT use this for analytics bootstrap (use next/script instead —
-// analytics scripts need to actually execute on client navigation, which
-// the type-toggle here prevents).
+// For Server Components only. The wrapper <div> is `display:none` so it
+// never affects layout. Crawlers (Google, Bing) accept JSON-LD anywhere
+// in the HTML document, not just <head>.
 
 type Props = {
   // The HTML to inject inside the script tag.
@@ -36,12 +28,12 @@ type Props = {
 };
 
 export function InlineScript({html, type = "application/ld+json", id}: Props) {
+  const idAttr = id ? ` id="${id}"` : "";
+  const scriptTag = `<script${idAttr} type="${type}">${html}</script>`;
   return (
-    <script
-      id={id}
-      type={typeof window === "undefined" ? type : "text/plain"}
-      suppressHydrationWarning
-      dangerouslySetInnerHTML={{__html: html}}
+    <div
+      style={{display: "none"}}
+      dangerouslySetInnerHTML={{__html: scriptTag}}
     />
   );
 }

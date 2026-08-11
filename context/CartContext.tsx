@@ -31,16 +31,29 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const STORAGE_KEY = "mithai-cart-v1";
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    if (typeof window === "undefined") return [];
+  // Always init empty — NEVER read localStorage in the initializer.
+  // SSR renders count=0; first client render also sees count=0; only
+  // after hydration does the effect below pull saved items. This
+  // avoids the "Hydration failed because the server rendered HTML
+  // didn't match the client" error caused by count badges appearing
+  // on hydration.
+  const [items, setItems] = useState<CartItem[]>([]);
+
+  // After mount, load any saved cart from localStorage.
+  useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as CartItem[];
+      if (raw) {
+        const parsed = JSON.parse(raw) as CartItem[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot load of persisted state after hydration; safe because server and first client render both see []
+          setItems(parsed);
+        }
+      }
     } catch {
       // ignore
     }
-    return [];
-  });
+  }, []);
 
   useEffect(() => {
     try {
