@@ -151,5 +151,63 @@
     },
     "breadcrumbHome": "Mishran",
     "notFound": "We couldn't find that one."
+  },
+
+  "Leads": {
+    "_todo": "TODO: translate to Kannada — currently English stubs (Task 14 pattern).",
+    "common": {
+      "submit": "Submit",
+      "submitting": "Sending…",
+      "toastSuccess": "Thanks — your enquiry is in.",
+      "errorGeneric": "Something went wrong. Please try again or email us directly.",
+      "thankYouEyebrow": "Received",
+      "thankYouTitle": "Thank you.",
+      "thankYouBody": "Our events team will be in touch within one business day to plan the details with you.",
+      "reference": "Your reference: {id}"
+    },
+    "weddings": {
+      "eyebrow": "Weddings & Bulk Gifting",
+      "title": "Weddings & Bulk Gifting",
+      "intro": "Tell us about the day you're planning. We'll respond within 24 hours with mithai suggestions, packaging options, and a quote.",
+      "formTitle": "Share your event",
+      "formIntro": "A few details and we'll take it from there — tastings, custom assortments, and packaging that matches the occasion.",
+      "groupContact": "Your details",
+      "groupEvent": "The event",
+      "groupPreferences": "Mithai & packaging",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "date": "Event date",
+      "city": "City",
+      "guests": "Guests",
+      "budget": "Budget",
+      "mithaiPreferences": "Mithai preferences",
+      "packaging": "Packaging",
+      "preferencesHint": "Optional",
+      "message": "Anything else?",
+      "submit": "Submit enquiry"
+    },
+    "corporate": {
+      "eyebrow": "Corporate & Bulk Orders",
+      "title": "Corporate & Bulk Orders",
+      "intro": "Hampers for Diwali, new‑hire kits, launch gifts — tell us the brief and our corporate team will come back within one business day.",
+      "formTitle": "Brief us",
+      "formIntro": "Company, quantity, deadline, branding — share what you have and we'll build the rest.",
+      "groupContact": "Your details",
+      "groupCompany": "Company",
+      "groupOrder": "The order",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "company": "Company",
+      "gst": "GSTIN",
+      "quantity": "Quantity",
+      "deadline": "Deadline",
+      "occasion": "Occasion",
+      "branding": "Branding",
+      "orderHint": "Approximate",
+      "message": "Anything else?",
+      "submit": "Submit enquiry"
+    }
   }
 }

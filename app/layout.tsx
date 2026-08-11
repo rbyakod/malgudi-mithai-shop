@@ -2,9 +2,11 @@
 import type {Metadata} from "next";
 import "./globals.css";
 import {CartProvider} from "@/context/CartContext";
+import {QueryProvider} from "@/context/QueryProvider";
 import {ThemeProvider} from "@/context/ThemeContext";
 import {PageBackground} from "@/components/PageBackground";
 import {DEFAULT_THEME, THEMES} from "@/lib/themes";
+import {Toaster} from "sonner";
 
 const validThemes = THEMES.map((theme) => theme.id);
 const initialThemeScript = `(function(){try{var valid=${JSON.stringify(validThemes)};var aliases=${JSON.stringify({festive:"diwali-saffron",heritage:"wedding-heritage","heritage-2":"wedding-heritage",sage:"everyday-sage",navy:"mishran-default",mblue2:"mishran-default",mindbox:"mishran-default",coinbase:"mishran-default",ibm:"mishran-default",yoshida:"mishran-default",myblue:"mishran-default"})};var stored=localStorage.getItem("mithai-theme");var normalized=(stored&&aliases[stored])||stored||${JSON.stringify(DEFAULT_THEME)};if(valid.indexOf(normalized)!==-1){document.documentElement.setAttribute("data-theme",normalized);}else{document.documentElement.setAttribute("data-theme",${JSON.stringify(DEFAULT_THEME)});}}catch(e){}})()`;
@@ -37,7 +39,10 @@ export default function RootLayout({
         </a>
         <ThemeProvider>
           <PageBackground />
-          <CartProvider>{children}</CartProvider>
+          <QueryProvider>
+            <CartProvider>{children}</CartProvider>
+          </QueryProvider>
+          <Toaster position="top-center" richColors closeButton />
         </ThemeProvider>
       </body>
     </html>
