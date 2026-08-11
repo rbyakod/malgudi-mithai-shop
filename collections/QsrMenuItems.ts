@@ -12,11 +12,13 @@
 //
 // Slug "qsr-menu-items" is the stable contract — referenced by Stories.
 import type { CollectionConfig } from "payload";
+import { makeRevalidateHook } from "./_revalidate-hook";
 
 export const QsrMenuItems: CollectionConfig = {
   slug: "qsr-menu-items",
   access: { read: () => true },
   admin: { useAsTitle: "name", group: "QSR" },
+  hooks: { afterChange: [makeRevalidateHook("qsr-menu-items")] },
   fields: [
     { name: "name", type: "text", required: true, localized: true },
     {

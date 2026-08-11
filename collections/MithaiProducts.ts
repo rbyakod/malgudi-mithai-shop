@@ -13,12 +13,14 @@
 // Slug "mithai-products" is the stable contract — referenced by Stories,
 // Karigars, Occasions, GiftBoxes, and SnackProducts via relationships.
 import type { CollectionConfig } from "payload";
+import { makeRevalidateHook } from "./_revalidate-hook";
 
 export const MithaiProducts: CollectionConfig = {
   slug: "mithai-products",
   access: { read: () => true },
   admin: { useAsTitle: "name", group: "Mithai" },
   versions: { drafts: true },
+  hooks: { afterChange: [makeRevalidateHook("mithai-products")] },
   fields: [
     { name: "name", type: "text", required: true, localized: true },
     {

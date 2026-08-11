@@ -5,11 +5,13 @@
 //
 // Slug "merch-products" is the stable contract — referenced by Stories.
 import type { CollectionConfig } from "payload";
+import { makeRevalidateHook } from "./_revalidate-hook";
 
 export const MerchProducts: CollectionConfig = {
   slug: "merch-products",
   access: { read: () => true },
   admin: { useAsTitle: "name", group: "Merch" },
+  hooks: { afterChange: [makeRevalidateHook("merch-products")] },
   fields: [
     { name: "name", type: "text", required: true, localized: true },
     {
