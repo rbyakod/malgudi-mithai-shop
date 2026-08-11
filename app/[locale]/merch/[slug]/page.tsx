@@ -15,19 +15,12 @@ import {notFound} from "next/navigation";
 import {getPayload} from "@/lib/payload-client";
 import {getTranslations} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
+import {slugify} from "@/lib/slugify";
 
 export const revalidate = 60;
 
 type Params = {locale: string; slug: string};
 type Context = {params: Promise<Params>};
-
-function slugify(s: string): string {
-  return s
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
 
 type MerchDoc = {
   id: string | number;

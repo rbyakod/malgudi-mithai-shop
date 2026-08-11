@@ -32,6 +32,7 @@
 
 import type {MetadataRoute} from "next";
 import {getPayload} from "@/lib/payload-client";
+import {slugify} from "@/lib/slugify";
 
 const LOCALES = ["en", "hi", "kn"] as const;
 
@@ -41,17 +42,10 @@ function siteUrl(): string {
 
 type Doc = {slug?: string; name?: string; updatedAt?: string; _status?: string};
 
-// Slugify mirrors the route-level `slugify()` in `app/[locale]/qsr/[slug]/page.tsx`
-// (and snacks/merch siblings). Those collections have no `slug` field — the
-// detail route's URL is `slugify(name)`. We replicate the exact transform
-// here so the sitemap emits URLs that resolve.
-function slugify(s: string): string {
-  return s
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+// `slugify` is imported from `@/lib/slugify`. The route-level handlers for
+// qsr/snacks/merch PDPs use the same helper — those collections have no
+// `slug` field, so the detail route's URL is `slugify(name)`. Sharing one
+// implementation guarantees the sitemap emits URLs that resolve.
 
 // Static hubs per locale. Priorities per task-24 should-fix spec.
 // `changeFrequency: "weekly"` matches the editorial cadence.
