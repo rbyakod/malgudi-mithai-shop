@@ -31,19 +31,16 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const STORAGE_KEY = "mithai-cart-v1";
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-
-  useEffect(() => {
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as CartItem[];
-        setItems(parsed);
-      }
+      if (raw) return JSON.parse(raw) as CartItem[];
     } catch {
       // ignore
     }
-  }, []);
+    return [];
+  });
 
   useEffect(() => {
     try {
