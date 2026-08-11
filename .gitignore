@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright-mcp session artifacts
+.playwright-mcp/
+
+# superpowers scratch
+.superpowers/
+
+# payload uploads (dev)
+/media/
+.payload/
