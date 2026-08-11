@@ -92,40 +92,38 @@ Set these in the Vercel dashboard (Settings → Environment Variables) for
 | `NEXT_PUBLIC_SITE_URL` | yes | `https://mishran.shop` | No trailing slash. Used by sitemap, robots, JSON-LD. |
 | `LEADS_INBOX` | yes | `ops@mishran.shop` | Recipient for new-lead emails. Consumed by `lib/leads-api.ts`. Falls back to `ops@mishran.shop` if unset — set explicitly so the fallback is never relied on. |
 | `REVALIDATE_SECRET` | yes | output of `openssl rand -hex 32` | On-demand ISR secret. Payload afterChange hooks send this as `x-revalidate-secret`. Without it, revalidate rejects. |
-| `NEXT_PUBLIC_GA4_ID` | do not set (inert) | `G-XXXXXXX` | Currently unused — see "Analytics IDs" below. Configure via Payload admin UI instead. |
-| `NEXT_PUBLIC_META_PIXEL_ID` | do not set (inert) | `1234567890` | Currently unused — see "Analytics IDs" below. Configure via Payload admin UI instead. |
+| `NEXT_PUBLIC_GA4_ID` | optional (fallback) | `G-XXXXXXX` | Fallback when Payload global is empty/unreadable. See "Analytics IDs" below. |
+| `NEXT_PUBLIC_META_PIXEL_ID` | optional (fallback) | `1234567890` | Fallback when Payload global is empty/unreadable. See "Analytics IDs" below. |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | recommended | `+919999999999` | Display only — the click-to-chat number on the site. |
 
-### Analytics IDs — Payload-only source
+### Analytics IDs — Payload global first, env-var fallback
 
-The **runtime** source for GA4 + Meta Pixel IDs is the Payload
+The **primary** source for GA4 + Meta Pixel IDs is the Payload
 `analytics-settings` global (fields `ga4Id`, `metaPixelId`). The server
 component `components/Analytics/AnalyticsScripts.tsx` reads that global at
 request time and inlines the GA4 + Meta Pixel bootstrap scripts.
 
 - **Set these in the Payload admin UI** at
-  `/admin/globals/analytics-settings`, **not** in Vercel env vars. If a value
-  is empty/missing in the global, the matching script is skipped (no broken
-  injection).
-- If neither ID is set in the global, no tracking fires — `AnalyticsScripts`
-  renders `null` and the `track()` helper is a no-op.
-- If Payload is unreachable (DB down, build without DB), the component
-  silently renders nothing; the layout must never 500 because of analytics.
+  `/admin/globals/analytics-settings`. If a value is present in the global,
+  that value wins and the env-var fallback is skipped.
+- If the global is empty/unreadable (DB down, build without DB, or just not
+  configured yet), `AnalyticsScripts` falls back to the
+  `NEXT_PUBLIC_GA4_ID` / `NEXT_PUBLIC_META_PIXEL_ID` env vars. A one-time
+  `console.warn` is logged so operators notice the fallback fired.
+- If neither the global nor the env var yields an ID, the matching script is
+  skipped (no broken injection). If neither ID is set anywhere, no tracking
+  fires — `AnalyticsScripts` renders `null` and the `track()` helper is a
+  no-op.
 
-**`NEXT_PUBLIC_GA4_ID` and `NEXT_PUBLIC_META_PIXEL_ID` are currently inert.**
-They appear in the env-vars table above and in `.env.example` for forward
-compatibility, but no code reads them — setting them in Vercel has no effect
-on the production deploy. Do not set them; configure analytics through the
-Payload admin UI instead.
+**When to use the env-var fallback:**
+- Bootstrap deploys before the Payload admin UI is populated.
+- Defensive redundancy if you don't fully trust the DB-backed global.
 
 The `track()` helper itself only pushes to `window.dataLayer` / `fbq` — it does
 not load the GA4/Pixel scripts. Script tags live in the layout and read from
-the same Payload global. (If the implementation diverges from this paragraph,
-update it here — keep this as the single source of truth.)
-
-> Forward-looking note: an env-var bootstrap fallback (so a first deploy works
-> before any admin-UI work) may be added in a future task. Until then, the
-> Payload global is the only source.
+the same Payload global + env-var fallback chain. (If the implementation
+diverges from this paragraph, update it here — keep this as the single source
+of truth.)
 
 ---
 

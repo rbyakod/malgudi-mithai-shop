@@ -9,8 +9,11 @@
 // Behavior:
 // - If an ID is empty/missing, the matching script is skipped (no broken
 //   injection).
-// - If Payload is unreachable (DB down, build without DB), the whole component
-//   silently renders nothing — the layout must never 500 because of analytics.
+// - If Payload is unreachable (DB down, build without DB), the component
+//   falls back to NEXT_PUBLIC_GA4_ID / NEXT_PUBLIC_META_PIXEL_ID env vars
+//   so a misconfigured Payload global doesn't silently break tracking.
+// - If neither the global nor the env vars yield an ID, the whole component
+//   renders nothing — the layout must never 500 because of analytics.
 //
 // Loading strategy: `afterInteractive` (the next/script default) — scripts
 // load early but after page hydration so they don't block LCP.
@@ -42,10 +45,40 @@ function isPresent(v: string | null | undefined): v is string {
   return typeof v === "string" && v.trim().length > 0;
 }
 
+// One-shot warn so operators notice when the env-var fallback fires. Without
+// this, a silent fallback could mask a broken Payload global indefinitely.
+let warnedFallback = false;
+function warnFallback(which: "ga4" | "pixel" | "both"): void {
+  if (warnedFallback) return;
+  warnedFallback = true;
+  console.warn(
+    `[analytics] Payload global unreadable or empty — falling back to NEXT_PUBLIC_* env vars for ${which}. ` +
+      "Set the analytics-settings global in Payload to silence this.",
+  );
+}
+
 export async function AnalyticsScripts() {
   const settings = await readAnalyticsSettings();
-  const ga4Id = settings ? (settings.ga4Id ?? "").trim() : "";
-  const pixelId = settings ? (settings.metaPixelId ?? "").trim() : "";
+  const payloadGa4 = settings ? (settings.ga4Id ?? "").trim() : "";
+  const payloadPixel = settings ? (settings.metaPixelId ?? "").trim() : "";
+
+  // Env-var fallback chain. The Payload global is the source of truth; env
+  // vars only fire when Payload returns nothing useful. Documented in
+  // docs/deployment.md §Analytics IDs.
+  const ga4Id = isPresent(payloadGa4)
+    ? payloadGa4
+    : (process.env.NEXT_PUBLIC_GA4_ID ?? "").trim();
+  const pixelId = isPresent(payloadPixel)
+    ? payloadPixel
+    : (process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "").trim();
+
+  // If we used any env-var fallbacks, surface a one-time warning so the
+  // operator notices the global isn't configured.
+  const usedGa4Fallback = !isPresent(payloadGa4) && isPresent(ga4Id);
+  const usedPixelFallback = !isPresent(payloadPixel) && isPresent(pixelId);
+  if (usedGa4Fallback || usedPixelFallback) {
+    warnFallback(usedGa4Fallback && usedPixelFallback ? "both" : usedGa4Fallback ? "ga4" : "pixel");
+  }
 
   const hasGa4 = isPresent(ga4Id);
   const hasPixel = isPresent(pixelId);
