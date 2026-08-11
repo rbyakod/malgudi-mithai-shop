@@ -43,3 +43,37 @@ test("unknown story slug 404s", async ({page}) => {
     page.getByRole("heading", {name: /not found/i}).first(),
   ).toBeVisible();
 });
+
+// Pillar filter routes (/stories/{farms,karigars,karigari,journal}) — the
+// four routes the home-page Pillars strip links to. They must render the
+// filtered listing (or an empty state) rather than 404.
+test.describe("stories pillar routes", () => {
+  for (const pillar of ["farms", "karigars", "karigari", "journal"] as const) {
+    test(`renders ${pillar} pillar route without 404`, async ({page}) => {
+      const response = await page.goto(`/en/stories/${pillar}`);
+      // Route resolves (not a 404).
+      expect(response?.status()).toBe(200);
+
+      // The pillar heading is visible — anchors on the level-1 heading so
+      // we don't collide with chrome elements.
+      await expect(
+        page.getByRole("heading", {level: 1}).first(),
+      ).toBeVisible();
+    });
+  }
+
+  test("farms pillar lists the seeded farm story", async ({page}) => {
+    // scripts/seed.ts seeds one `farm` pillar story (jhavjhar-farm). The
+    // farms route maps to pillar=farm in storage, so the seeded doc should
+    // appear here.
+    await page.goto("/en/stories/farms");
+    await expect(page.getByText(/Jhajjar Farm/i).first()).toBeVisible();
+  });
+
+  test("unknown pillar slug 404s", async ({page}) => {
+    await page.goto("/en/stories/no-such-pillar");
+    await expect(
+      page.getByRole("heading", {name: /not found/i}).first(),
+    ).toBeVisible();
+  });
+});
