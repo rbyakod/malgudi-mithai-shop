@@ -15,6 +15,7 @@ const dirname = path.dirname(filename);
 export default buildConfig({
   admin: {
     // `user: "users"` references the users collection slug, registered in a later task.
+    user: "users",
     // Auto-login in dev so /admin opens without credentials during local development.
     autoLogin:
       process.env.NODE_ENV === "production"
