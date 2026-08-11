@@ -11,8 +11,7 @@
 
 import {Link} from "@/i18n/navigation";
 import {getPayload} from "@/lib/payload-client";
-
-const FALLBACK_WHATSAPP = "+91-98765-43210";
+import {FALLBACK_WHATSAPP, toWaDigits} from "@/lib/whatsapp";
 
 // IA link map. Each column groups related routes per the new information
 // architecture. Targets may point at routes that don't exist yet (e.g.
@@ -72,7 +71,7 @@ async function readWhatsappNumber(): Promise<string> {
 }
 
 function toWaLink(raw: string): string {
-  const digits = raw.replace(/[^\d]/g, "");
+  const digits = toWaDigits(raw);
   return digits ? `https://wa.me/${digits}` : "#";
 }
 

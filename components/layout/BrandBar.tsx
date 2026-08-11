@@ -7,14 +7,11 @@
 // unavailable (e.g. during build without DB) so the layout never throws.
 
 import {getPayload} from "@/lib/payload-client";
-
-// Static fallback used when the global is missing or empty. Same number that
-// the legacy footer hard-coded.
-const FALLBACK_WHATSAPP = "+91-98765-43210";
+import {FALLBACK_WHATSAPP, toWaDigits} from "@/lib/whatsapp";
 
 // Build a wa.me link from a +<digits> string.
 function toWaLink(raw: string): string {
-  const digits = raw.replace(/[^\d]/g, "");
+  const digits = toWaDigits(raw);
   return digits ? `https://wa.me/${digits}` : "#";
 }
 

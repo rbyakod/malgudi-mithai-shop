@@ -14,6 +14,7 @@ import {getTranslations} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
 import {getPayload} from "@/lib/payload-client";
 import {WhatsAppLink} from "@/components/commerce/WhatsAppLink";
+import {FALLBACK_WHATSAPP, toWaDigits} from "@/lib/whatsapp";
 
 type StubNamespace = "cart" | "checkout" | "account" | "trackOrder";
 
@@ -21,15 +22,6 @@ type Props = {
   namespace: StubNamespace;
   children?: ReactNode;
 };
-
-// Static fallback used when the global is missing or empty. Same number that
-// BrandBar / SiteFooter fall back to.
-const FALLBACK_WHATSAPP = "+91-98765-43210";
-
-// Strip non-digits so `+91-98765-43210` → `919876543210`.
-function toWaDigits(raw: string): string {
-  return raw.replace(/[^\d]/g, "");
-}
 
 // Best-effort Payload read. Returns null on any error so the page never
 // throws during build, migrations, or DB outages.
