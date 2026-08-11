@@ -6,6 +6,7 @@
 import {BrandHero} from "@/components/home/BrandHero";
 import {VerticalPortals} from "@/components/home/VerticalPortals";
 import {Pillars} from "@/components/home/Pillars";
+import {organizationSchema} from "@/lib/seo/schema";
 
 type Props = {
   params: Promise<{locale: string}>;
@@ -16,11 +17,22 @@ export default async function Page({params}: Props) {
   // locale (avoids static-shadowing the home across locales).
   await params;
 
+  // Organization JSON-LD — safe: input is JSON.stringify of a plain object
+  // built from static brand defaults; `<` is escaped to prevent
+  // script-context breakout.
+  const orgJsonLd = JSON.stringify(organizationSchema()).replace(/</g, "\\u003c");
+
   return (
-    <div className="-mx-4 -mt-4 sm:-mx-6 lg:-mx-8">
-      <BrandHero />
-      <VerticalPortals />
-      <Pillars />
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{__html: orgJsonLd}}
+      />
+      <div className="-mx-4 -mt-4 sm:-mx-6 lg:-mx-8">
+        <BrandHero />
+        <VerticalPortals />
+        <Pillars />
+      </div>
+    </>
   );
 }
