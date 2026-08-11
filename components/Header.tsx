@@ -9,15 +9,8 @@ import {ThemeSwitcher} from "@/components/ThemeSwitcher";
 
 const AVAILABLE_LOCALES = [
   {code: "en", label: "English"},
-  {code: "es", label: "Español"},
-  {code: "fr", label: "Français"},
   {code: "hi", label: "हिन्दी"},
   {code: "kn", label: "ಕನ್ನಡ"},
-  {code: "ta", label: "தமிழ்"},
-  {code: "te", label: "తెలుగు"},
-  {code: "bn", label: "বাংলা"},
-  {code: "mr", label: "मराठी"},
-  {code: "gu", label: "ગુજરાતী"}
 ];
 
 const NAV_LINKS = [
