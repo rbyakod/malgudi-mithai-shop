@@ -211,6 +211,34 @@
     }
   },
 
+  "Commerce": {
+    "_todo": "TODO: translate to Kannada — currently English stubs (Task 14 pattern).",
+    "common": {
+      "whatsappCta": "Message us on WhatsApp",
+      "leadCta": "Planning a bulk order or wedding?",
+      "empty": "Your cart is empty.",
+      "emptyCta": "Browse mithai",
+      "itemsReadonlyNote": "Quantities are read-only while we finish our commerce experience."
+    },
+    "stubs": {
+      "cart": {
+        "title": "Cart",
+        "blurb": "Your cart is being prepared. Checkout launches with our full commerce experience. For bulk orders or weddings, message us on WhatsApp."
+      },
+      "checkout": {
+        "title": "Checkout",
+        "blurb": "Checkout is launching soon. To reserve your order today, message us on WhatsApp."
+      },
+      "account": {
+        "title": "Account",
+        "blurb": "Accounts launch with our commerce experience. For order questions, WhatsApp us."
+      },
+      "trackOrder": {
+        "title": "Track order",
+        "blurb": "Order tracking launches with Phase 8 commerce. Need help now? WhatsApp us with your order reference."
+      }
+    }
+  },
   "Stories": {
     "title": "ಕಥೆಗಳು",
     "eyebrow": "ಮನೆಯಿಂದ",
