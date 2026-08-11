@@ -38,6 +38,61 @@
     "corporateFormTitle": "Tell us what you're planning",
     "corporateFormSubtitle": "Share a few details and our team will call you back within one business day.",
     "footerLocation": "Indiranagar, Bengaluru",
-    "footerPrivacy": "Privacy policy"
+    "footerPrivacy": "Privacy policy",
+
+    "heroEyebrow": "A new house of Indian sweets",
+    "heroHeadlineLine1": "A new house",
+    "heroSubhead": "Mishran is a modern mithai house — rooted in Jhajjar milk, hand‑finished by karigars, and re‑imagined for everyday celebrations and the hampers that travel across India.",
+    "ctaExploreMithai": "Explore mithai",
+    "ctaBuildGift": "Build a gift",
+    "heroInsetAlt": "A slice of kaju katli, silver‑leafed and dusted, on a Mishran plate.",
+    "heroInsetLabel": "From the kitchen",
+    "heroInsetTitle": "Kaju katli, vark‑finished",
+    "heroInsetMeta": "Hand‑cut each morning · 500g",
+
+    "portal": {
+      "eyebrow": "Four houses, one kitchen",
+      "title": "Find your Mishran",
+      "intro": "Each vertical carries the same milk‑first promise, dressed for the moment — a quiet Tuesday, a wedding mehendi, a corporate launch, or a hamper that travels across India.",
+      "mithai": {
+        "label": "Mithai",
+        "description": "The canon — kaju katli, motichoor, besan laddoo — finished fresh, in weights that suit a Tuesday or a thousand‑box wedding."
+      },
+      "qsr": {
+        "label": "QSR",
+        "description": "Counter‑quick mithai and savouries from our high‑street kitchens. Walk in, take a box, carry on with your day."
+      },
+      "snacks": {
+        "label": "Snacks",
+        "description": "Namkeen, mathri, chivra — the savoury shelf of the Mishran house, built for evening chai and travel tins."
+      },
+      "merch": {
+        "label": "Merch",
+        "description": "Hamper shells, thalis, and keepsake boxes — the vessels that carry Mishran into homes and across occasions."
+      }
+    },
+
+    "pillars": {
+      "eyebrow": "Why Mishran",
+      "title": "Four promises, kept daily.",
+      "intro": "The Mishran house is built on four non‑negotiables — they shape every batch, every box, every karigar's day.",
+      "readMore": "Read the story",
+      "milkPurity": {
+        "label": "Milk Purity",
+        "description": "Milk from our Jhajjar farm, boiled fresh each morning — no milk powder, no reconstituted cream, ever."
+      },
+      "karigarMastery": {
+        "label": "Karigar Mastery",
+        "description": "Each sweet is finished by a karigar whose family has held the recipe for generations — hands that know when chashni is ready by sound."
+      },
+      "karigari": {
+        "label": "Karigari",
+        "description": "The craft itself — the vark on a katli, the boondi of a laddoo, the fold of a peda — done the long way, never the shortcut way."
+      },
+      "modernExperience": {
+        "label": "Modern Experience",
+        "description": "Boutique packaging, honest labels, on‑time delivery — the same mithai, dressed for how India celebrates today."
+      }
+    }
   }
 }

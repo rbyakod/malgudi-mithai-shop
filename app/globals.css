@@ -418,6 +418,7 @@
   --color-gradient-gold: var(--t-gradient-gold);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Outfit", serif;
 }
 
 /* ---- Base ---- */
