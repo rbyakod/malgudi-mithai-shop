@@ -72,8 +72,6 @@ async function postLead(body: LeadSubmission): Promise<{leadId: string; message:
 }
 
 export function LeadForm({
-  type,
-  source = `${type}-form`,
   buildSubmission,
   eyebrow,
   title,
@@ -105,7 +103,7 @@ export function LeadForm({
     return null;
   }
 
-  const [_, formAction] = useActionState(action, null);
+  const [, formAction] = useActionState(action, null);
 
   if (leadId) {
     return (

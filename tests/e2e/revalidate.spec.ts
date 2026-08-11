@@ -33,7 +33,9 @@ function loadSecret(): string | undefined {
 }
 
 const SECRET = loadSecret();
-const authHeaders = SECRET ? {"x-revalidate-secret": SECRET} : {};
+const authHeaders: Record<string, string> = SECRET
+  ? {"x-revalidate-secret": SECRET}
+  : {};
 
 test("POST /api/revalidate with {path} returns 200 + revalidated:true", async ({request}) => {
   const res = await request.post("/api/revalidate", {

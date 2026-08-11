@@ -18,7 +18,7 @@ export function buildAlternates(pathWithoutLocale: string): {
   const localePrefixRe = new RegExp(`^/(${locales.join("|")})(?=/|$)`);
 
   // Strip any existing locale prefix, then strip trailing slash.
-  let clean = pathWithoutLocale.replace(localePrefixRe, "").replace(/\/+$/, "");
+  const clean = pathWithoutLocale.replace(localePrefixRe, "").replace(/\/+$/, "");
 
   // Normalize empty back to "" so prefix concat yields "/en" not "/en/".
   const suffix = clean === "" ? "" : clean;
