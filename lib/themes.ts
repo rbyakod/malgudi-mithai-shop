@@ -2,9 +2,13 @@ export type Theme =
   | "mishran-default"
   | "diwali-saffron"
   | "wedding-heritage"
-  | "everyday-sage";
+  | "everyday-sage"
+  | "navy"
+  | "mblue2"
+  | "mindbox"
+  | "yoshida";
 
-type ThemeGroup = "House Themes";
+type ThemeGroup = "House Themes" | "Design Systems";
 
 export type ThemeDefinition = {
   id: Theme;
@@ -85,23 +89,86 @@ export const THEMES: ThemeDefinition[] = [
       ink: "#2d3a2e",
     },
   },
+  {
+    id: "navy",
+    label: "Evening Navy",
+    group: "House Themes",
+    source: "Malgudi Original",
+    blurb: "A soft slate storefront with refined blue and teal accents.",
+    docPath: "/design-systems/evening-navy.md",
+    preview: {
+      canvas: "#e2e8f0",
+      surface: "#edf1f5",
+      accent: "#2563a8",
+      pop: "#4fd1c5",
+      ink: "#1a2332",
+    },
+  },
+  {
+    id: "mblue2",
+    label: "Malgudi Blue v2",
+    group: "House Themes",
+    source: "Active DESIGN.md",
+    blurb: "Flat deep navy surfaces, bright action blue, restrained festive gold.",
+    docPath: "/design-systems/malgudi-blue-v2.md",
+    preview: {
+      canvas: "#041e42",
+      surface: "#0a2b57",
+      accent: "#0053e2",
+      pop: "#ffc220",
+      ink: "#edf5ff",
+    },
+  },
+  {
+    id: "mindbox",
+    label: "MindBox Studio",
+    group: "Design Systems",
+    source: "Inspired by awesome-design-md",
+    blurb: "Luminous indigo, teal highlights, subtle grid, and a digital lab mood.",
+    docPath: "/design-systems/mindbox-studio.md",
+    preview: {
+      canvas: "#0f0e26",
+      surface: "#17143a",
+      accent: "#5b3ffa",
+      pop: "#00d4c8",
+      ink: "#e8e6ff",
+    },
+  },
+  {
+    id: "yoshida",
+    label: "Yoshida",
+    group: "House Themes",
+    source: "Hiroshi Yoshida shin-hanga",
+    blurb: "Muted teal, warm ochre, and soft lavender — Japanese woodblock print atmosphere.",
+    docPath: "/design-systems/yoshida.md",
+    preview: {
+      canvas: "#2B4F6F",
+      surface: "#355A7A",
+      accent: "#C4A265",
+      pop: "#9B7DA8",
+      ink: "#D4C5A9",
+    },
+  },
 ];
 
-export const THEME_GROUP_ORDER: ThemeGroup[] = ["House Themes"];
+export const THEME_GROUP_ORDER: ThemeGroup[] = [
+  "House Themes",
+  "Design Systems",
+];
 
 export const VALID_THEMES = THEMES.map((theme) => theme.id) as Theme[];
 
-// Legacy theme rebrands: old id -> new occasion-theme id.
-// Fully-archived themes (navy, mblue2, mindbox, coinbase, ibm, yoshida, myblue)
-// are intentionally NOT mapped here so normalizeTheme() returns null for them,
-// letting callers fall back to DEFAULT_THEME. The inline boot script in
-// app/layout.tsx carries the broader migration map (including the archived
-// ids -> mishran-default) so stored localStorage values still resolve.
+// Legacy theme rebrands: old id -> current id.
+// Fully-archived themes (heritage-2, coinbase, ibm, myblue) are intentionally
+// NOT mapped here so normalizeTheme() returns null for them, letting callers
+// fall back to DEFAULT_THEME. The inline boot script in app/layout.tsx carries
+// the broader migration map so stored localStorage values still resolve.
 const LEGACY_THEME_ALIASES: Record<string, Theme> = {
   festive: "diwali-saffron",
   heritage: "wedding-heritage",
   "heritage-2": "wedding-heritage",
   sage: "everyday-sage",
+  myblue: "mblue2",
 };
 
 export function getThemeDefinition(theme: Theme) {
