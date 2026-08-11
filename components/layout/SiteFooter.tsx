@@ -9,7 +9,7 @@
 // is rendered inline; per-locale copy should be added in a follow-up via
 // next-intl's getTranslations once the footer namespace is localised.
 
-import Link from "next/link";
+import {Link} from "@/i18n/navigation";
 import {getPayload} from "@/lib/payload-client";
 
 const FALLBACK_WHATSAPP = "+91-98765-43210";
