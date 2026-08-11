@@ -36,6 +36,7 @@ import { NavSettings } from "./globals/NavSettings";
 import { ThemeSettings } from "./globals/ThemeSettings";
 import { AnalyticsSettings } from "./globals/AnalyticsSettings";
 import { StoreSettings } from "./globals/StoreSettings";
+import { HomeHero } from "./globals/HomeHero";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -87,6 +88,7 @@ export default buildConfig({
     ThemeSettings,
     AnalyticsSettings,
     StoreSettings,
+    HomeHero,
   ],
   secret: process.env.PAYLOAD_SECRET ?? "dev-secret-change-me",
   typescript: {
