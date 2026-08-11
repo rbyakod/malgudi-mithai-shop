@@ -115,5 +115,40 @@
     },
     "empty": "The kitchen is quiet just now. New batches are being finished — please check back shortly.",
     "itemCount": "{count} items"
+  },
+
+  "Pdp": {
+    "mithai": {
+      "ingredients": "Ingredients",
+      "allergens": "Allergens",
+      "shelfLife": "Shelf life",
+      "storage": "Storage",
+      "story": "From the karigar's bench",
+      "karigar": "Finished by",
+      "freshness": "Freshness",
+      "addToCart": "Add to draft cart",
+      "added": "Added"
+    },
+    "qsr": {
+      "category": "Category",
+      "spiceLevel": "Spice",
+      "veg": "Vegetarian",
+      "available": "Available at"
+    },
+    "snacks": {
+      "category": "Category",
+      "weight": "Weight",
+      "msrp": "MRP",
+      "buyAt": "Buy at"
+    },
+    "merch": {
+      "type": "Type",
+      "price": "Price",
+      "availability": "Availability",
+      "enquire": "Enquire",
+      "enquireDisabled": "Enquiries open soon"
+    },
+    "breadcrumbHome": "Mishran",
+    "notFound": "We couldn't find that one."
   }
 }

@@ -8,6 +8,12 @@
 // duplicating them. Standard seed hygiene — the brief doesn't mandate it
 // but re-running `npm run seed` after schema tweaks should be safe.
 //
+// Self-healing: when a doc already exists, we still `update` it with the
+// seed data so DBs from older schema versions (missing newly-added fields
+// like localized `ingredients`/`allergens`/`storage`) get back-filled
+// without requiring a manual `mongo` drop. Re-running after a schema tweak
+// is therefore safe at the field level, not just at the record level.
+//
 // Runs against the same MongoDB instance as `next dev`
 // (MONGODB_URI from .env.local — see lib/payload-client.ts + payload.config.ts).
 import { getPayload } from "@/lib/payload-client";
@@ -79,7 +85,13 @@ async function createIfMissing(payload: Awaited<ReturnType<typeof getPayload>>, 
     limit: 1,
   });
   if (existing.docs.length > 0) {
-    console.log(`  [skip] ${seed.collection}/${value} already exists`);
+    const id = existing.docs[0]!.id;
+    await payload.update({
+      collection: seed.collection,
+      id,
+      data: seed.data,
+    });
+    console.log(`  [update] ${seed.collection}/${value}`);
     return;
   }
   await payload.create({ collection: seed.collection, data: seed.data });

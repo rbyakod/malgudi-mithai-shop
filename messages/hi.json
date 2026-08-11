@@ -115,5 +115,40 @@
     },
     "empty": "रसोई अभी शांत है। नई बैचें तैयार हो रही हैं — कृपया थोड़ी देर में फिर से देखें।",
     "itemCount": "{count} वस्तुएँ"
+  },
+
+  "Pdp": {
+    "mithai": {
+      "ingredients": "सामग्री",
+      "allergens": "एलर्जेन",
+      "shelfLife": "शेल्फ लाइफ",
+      "storage": "भंडारण",
+      "story": "कारीगर की बेंच से",
+      "karigar": "फिनिश किया",
+      "freshness": "ताज़गी",
+      "addToCart": "ड्राफ्ट कार्ट में डालें",
+      "added": "जोड़ा गया"
+    },
+    "qsr": {
+      "category": "श्रेणी",
+      "spiceLevel": "मिर्च",
+      "veg": "शाकाहारी",
+      "available": "उपलब्ध"
+    },
+    "snacks": {
+      "category": "श्रेणी",
+      "weight": "वज़न",
+      "msrp": "एमआरपी",
+      "buyAt": "खरीदें"
+    },
+    "merch": {
+      "type": "प्रकार",
+      "price": "मूल्य",
+      "availability": "उपलब्धता",
+      "enquire": "पूछताछ",
+      "enquireDisabled": "पूछताछ जल्द खुलेगी"
+    },
+    "breadcrumbHome": "मिश्रण",
+    "notFound": "यह एक नहीं मिला।"
   }
 }

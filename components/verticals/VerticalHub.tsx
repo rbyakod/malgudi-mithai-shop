@@ -40,6 +40,39 @@ const TAG_FIELD: Record<CollectionSlug, string> = {
   "merch-products": "type",
 };
 
+// Which vertical route segment each collection maps to.
+const VERTICAL_PATH: Record<CollectionSlug, string> = {
+  "mithai-products": "mithai",
+  "qsr-menu-items": "qsr",
+  "snack-products": "snacks",
+  "merch-products": "merch",
+};
+
+// Slugify a doc name for the URL — only used for the slugless collections
+// (qsr / snacks / merch). Mithai has a real `slug` field and uses it as-is.
+function slugifyName(s: string): string {
+  return s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+// Build the PDP href for a doc. Mithai uses its real slug; the slugless
+// collections derive the URL from slugify(name).
+function pdpHref(
+  doc: Record<string, unknown>,
+  collection: CollectionSlug,
+): string {
+  const vertical = VERTICAL_PATH[collection];
+  if (collection === "mithai-products") {
+    const slug = doc.slug as string | undefined;
+    return slug ? `/${vertical}/${slug}` : "#";
+  }
+  const name = (doc.name as string | undefined) ?? "";
+  return name ? `/${vertical}/${slugifyName(name)}` : "#";
+}
+
 // Pull the first media URL out of a doc, handling both the array shape
 // (mithai/snacks/merch: `images: [{image: {url}}]`) and the singular shape
 // (qsr: `image: {url}`).
@@ -113,10 +146,9 @@ export async function VerticalHub({collection, vertical}: Props) {
               const tag = (doc[tagField] as string | null | undefined) ?? null;
               return (
                 <li key={String(doc.id ?? name)}>
-                  {/* href="#" — PDP routes (Task 16) not built yet. */}
                   <MediaCard
                     title={name}
-                    href="#"
+                    href={pdpHref(doc, collection)}
                     image={firstImage(doc, collection)}
                     tag={tag}
                   />
