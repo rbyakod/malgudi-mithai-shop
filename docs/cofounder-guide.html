@@ -247,9 +247,10 @@ npm run dev</code></pre>
 
 <h3>Orders or leads not coming through</h3>
 <ol>
-  <li>Check <code>/admin</code> → Leads collection — are recent submissions there?</li>
-  <li>If yes: Resend (email provider) is the suspect. Developer needs to inspect logs.</li>
-  <li>If no: form submission itself is broken. Developer needs to inspect.</li>
+  <li><strong>Contact the developer first</strong> with: who tried to submit, when, what form (wedding / corporate / contact).</li>
+  <li>If you have Payload admin access (it requires secure auth — never share credentials), you can <em>read</em> the Leads collection to see if recent submissions arrived. <strong>Do not edit or delete records</strong> — report what you see to the developer.</li>
+  <li>If submissions are in <code>/admin</code> but no email arrived: the email provider (Resend) is the suspect. Developer needs to inspect logs.</li>
+  <li>If submissions are missing entirely: the form submission itself is broken. Developer needs to inspect.</li>
 </ol>
 
 <h2 id="faq">8. FAQ</h2>

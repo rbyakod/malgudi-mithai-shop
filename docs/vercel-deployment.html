@@ -123,12 +123,19 @@
 
 <h3>1.3 Network access — IP allowlist</h3>
 <div class="warn">
-  <strong>Important:</strong> Vercel's egress IPs are dynamic. The M0 tier does not support VPC peering or static egress IPs from Vercel. The reliable path is to allow <code>0.0.0.0/0</code> (any IP).
+  <strong>⚠️ Security warning — read first:</strong> The MongoDB M0 free tier does <strong>not</strong> support VPC peering or static egress IPs from Vercel. The only way to make Vercel talk to an M0 cluster is to allow <code>0.0.0.0/0</code> (any IP), which exposes the cluster to the entire internet. The DB user password is then the <strong>only</strong> barrier to intrusion.
   <ul>
-    <li>Security trade-off: <code>0.0.0.0/0</code> exposes the cluster to brute-force attempts from anywhere. The DB user password is the only barrier — make it strong.</li>
-    <li>Atlas's built-in auth throttling + a strong password make brute-force impractical.</li>
-    <li>As soon as you upgrade to M10+, switch to VPC peering with Vercel and drop <code>0.0.0.0/0</code>.</li>
-    <li>Do <strong>not</strong> try to maintain a hand-curated list of Vercel egress IPs — it drifts and the site will go down.</li>
+    <li><strong>Treat this as a temporary launch-only configuration.</strong> Plan the M10+ upgrade within 4 weeks of public launch.</li>
+    <li><strong>Mandatory mitigations while on M0:</strong>
+      <ol>
+        <li>DB user password must be 32+ random characters (<code>openssl rand -base64 24</code>).</li>
+        <li>Store the password in 1Password / Vercel env vars only. Never commit to the repo.</li>
+        <li>Enable Atlas's built-in auth throttling (Database Access → Advanced).</li>
+        <li>Monitor Atlas access logs weekly for failed-login spikes.</li>
+      </ol>
+    </li>
+    <li><strong>Upgrade path:</strong> As soon as traffic or budget allows, move to M10+ and switch to VPC peering with Vercel (Vercel source network / private endpoints). Drop <code>0.0.0.0/0</code> from the allowlist the moment the peering is green.</li>
+    <li>Do <strong>not</strong> try to maintain a hand-curated list of Vercel egress IPs — it drifts and the site will go down on the next deploy.</li>
   </ul>
 </div>
 
@@ -198,12 +205,24 @@
 </ol>
 
 <h2 id="seed">6. Seed content</h2>
+<div class="warn">
+  <strong>⚠️ Never run <code>npm run seed</code> against production without a backup.</strong>
+  The seed script creates or updates sample records idempotently, but a misconfigured <code>MONGODB_URI</code> can write sample content into a live prod database and pollute it. Always:
+  <ol>
+    <li>Verify <code>MONGODB_URI</code> points to the intended environment before running.</li>
+    <li>Take an Atlas snapshot (Atlas → Backup → Restore snapshot) before running against prod.</li>
+    <li>Prefer the Payload admin UI for production content — it is safer and per-record.</li>
+  </ol>
+</div>
 <p>Two options:</p>
 <ol>
-  <li><strong>Payload admin UI</strong> (recommended for non-tech operators) — navigate to each collection and add records manually.</li>
-  <li><strong>Seed script</strong> — requires shell access:
-    <pre><code>MONGODB_URI=&lt;prod-uri&gt; PAYLOAD_SECRET=&lt;prod-secret&gt; npm run seed</code></pre>
-    <p>This populates sample mithai / QSR / snacks / merch / stories / karigars / farms / occasions records.</p>
+  <li><strong>Payload admin UI</strong> (recommended for production) — navigate to each collection and add records manually. No shell access needed.</li>
+  <li><strong>Seed script</strong> (dev / staging only) — for local dev or staging bootstrap:
+    <pre><code># Dev / staging example — never run against prod without a backup
+MONGODB_URI=mongodb+srv://&lt;dev-cluster&gt;/mishran-staging \
+PAYLOAD_SECRET=&lt;dev-secret&gt; \
+npm run seed</code></pre>
+    <p>Populates sample mithai / QSR / snacks / merch / stories / karigars / farms / occasions records.</p>
   </li>
 </ol>
 

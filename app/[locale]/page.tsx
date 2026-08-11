@@ -6,6 +6,7 @@
 import {BrandHero} from "@/components/home/BrandHero";
 import {VerticalPortals} from "@/components/home/VerticalPortals";
 import {Pillars} from "@/components/home/Pillars";
+import {InlineScript} from "@/components/InlineScript";
 import {organizationSchema} from "@/lib/seo/schema";
 
 type Props = {
@@ -24,10 +25,7 @@ export default async function Page({params}: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{__html: orgJsonLd}}
-      />
+      <InlineScript id="org-jsonld" html={orgJsonLd} />
       <div className="-mx-4 -mt-4 sm:-mx-6 lg:-mx-8">
         <BrandHero />
         <VerticalPortals />

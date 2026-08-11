@@ -166,9 +166,17 @@ git push -u origin feat/snacks-search</code></pre>
 <p>Every push to a non-<code>main</code> branch produces a fresh preview URL. Share it with the team for review.</p>
 <ul>
   <li>Find it in the GitHub PR (Vercel bot comments automatically), or in the Vercel dashboard.</li>
-  <li>Preview uses the same env vars as Production (set in Vercel → Settings → Environment Variables → check both "Production" and "Preview").</li>
-  <li>Preview connects to the same MongoDB cluster by default. If you need an isolated preview DB, set a different <code>MONGODB_URI</code> scoped to Preview only.</li>
+  <li>Preview uses the env vars scoped to the <strong>Preview</strong> environment in Vercel (Settings → Environment Variables → check "Preview").</li>
 </ul>
+
+<div class="warn">
+  <strong>⚠️ Preview URLs are shareable — never let them touch production data.</strong>
+  <ul>
+    <li>Set a <strong>separate <code>MONGODB_URI</code> for Preview</strong>, pointing at a staging database (e.g. <code>mishran-staging</code> on the same Atlas cluster, or a separate cluster entirely).</li>
+    <li>Never scope <code>MONGODB_URI</code>, <code>PAYLOAD_SECRET</code>, <code>RESEND_API_KEY</code>, or <code>REVALIDATE_SECRET</code> to "All Environments" if any of them are real production values.</li>
+    <li>Preview URLs are guessable and shareable. Anyone with the link can see the deploy, including its DB-backed content. Don't put real customer data or production secrets in the Preview environment.</li>
+  </ul>
+</div>
 
 <div class="warn"><strong>Gotcha:</strong> set <code>NODE_ENV=production</code> on Preview env vars so Payload admin doesn't auto-login. The auto-login gate checks <code>NODE_ENV</code>, <code>VERCEL_ENV</code>, and <code>CI</code>.</div>
 

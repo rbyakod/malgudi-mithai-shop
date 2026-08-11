@@ -1,12 +1,12 @@
 // app/layout.tsx
 import type {Metadata} from "next";
-import Script from "next/script";
 import "./globals.css";
 import {CartProvider} from "@/context/CartContext";
 import {QueryProvider} from "@/context/QueryProvider";
 import {ThemeProvider} from "@/context/ThemeContext";
 import {PageBackground} from "@/components/PageBackground";
 import {AnalyticsScripts} from "@/components/Analytics/AnalyticsScripts";
+import {InlineScript} from "@/components/InlineScript";
 import {DEFAULT_THEME, THEMES} from "@/lib/themes";
 import {Toaster} from "sonner";
 
@@ -26,12 +26,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        {/* Theme init — beforeInteractive so it runs before paint to prevent FOUC.
-            Using next/script (not a raw <script> tag) avoids the React 19 warning. */}
-        <Script
+        {/* Theme init — server-rendered as text/javascript so it runs
+            before paint (FOUC prevention). On hydration the type becomes
+            text/plain so React does not re-execute it. InlineScript
+            applies the official Next.js pattern (toggling type between
+            server/client) which suppresses the React 19 <script> warning. */}
+        <InlineScript
           id="theme-init"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{__html: initialThemeScript}}
+          type="text/javascript"
+          html={initialThemeScript}
         />
         <a
           href="#main-content"
