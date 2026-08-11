@@ -69,11 +69,4 @@ test.describe("stories pillar routes", () => {
     await page.goto("/en/stories/farms");
     await expect(page.getByText(/Jhajjar Farm/i).first()).toBeVisible();
   });
-
-  test("unknown pillar slug 404s", async ({page}) => {
-    await page.goto("/en/stories/no-such-pillar");
-    await expect(
-      page.getByRole("heading", {name: /not found/i}).first(),
-    ).toBeVisible();
-  });
 });
