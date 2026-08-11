@@ -3,15 +3,16 @@
 // Karigars portrait, Farms gallery, Packaging images, Occasions image)
 // reference this collection via `relationTo: "media"`.
 //
-// Upload config shape verified against
-// node_modules/payload/dist/uploads/types.d.ts — Payload 3 still accepts
-// { staticURL, staticDir, imageSizes }.
+// Payload 3.87 removed `staticURL` from UploadConfig — files are now served
+// via Payload's built-in file route (/api/media/file/:filename) rather than
+// a static URL prefix. `staticDir` remains and controls where uploaded files
+// are written on disk. Verified against
+// node_modules/payload/dist/uploads/types.d.ts.
 import type { CollectionConfig } from "payload";
 
 export const Media: CollectionConfig = {
   slug: "media",
   upload: {
-    staticURL: "/media",
     staticDir: "media",
     imageSizes: [
       { name: "thumbnail", width: 400, height: 300 },

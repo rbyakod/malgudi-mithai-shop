@@ -13,13 +13,13 @@
 //
 // Fire-and-forget: failures are logged but never surface to the Payload
 // admin UI — a stale cache for 60s is preferable to blocking a save.
-import type {CollectionAfterChange} from "payload";
+import type {CollectionAfterChangeHook} from "payload";
 
 /**
  * Make an afterChange hook that pings /api/revalidate on doc save.
  * Wire it in via `hooks: { afterChange: [makeRevalidateHook("mithai-products")] }`.
  */
-export function makeRevalidateHook(collection: string): CollectionAfterChange {
+export function makeRevalidateHook(collection: string): CollectionAfterChangeHook {
   return async function afterChange({doc, req}) {
     if (process.env.NODE_ENV !== "production") return;
 
