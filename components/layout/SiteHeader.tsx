@@ -200,6 +200,15 @@ export function SiteHeader() {
     };
   }, [menuOpen]);
 
+  // Close the mobile menu when the user hits browser back/forward. Without
+  // this, the overlay stays open over the previous page after navigation.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = () => setMenuOpen(false);
+    window.addEventListener("popstate", close);
+    return () => window.removeEventListener("popstate", close);
+  }, [menuOpen]);
+
   const handleLocaleChange = useCallback(
     (nextLocale: string) => {
       if (nextLocale === locale) return;
