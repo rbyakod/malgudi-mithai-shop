@@ -1,5 +1,5 @@
 // app/[locale]/layout.tsx
-import type {Metadata} from "next";
+import type {Metadata, Viewport} from "next";
 import type {ReactNode} from "react";
 import {NextIntlClientProvider} from "next-intl";
 import {notFound} from "next/navigation";
@@ -8,6 +8,12 @@ import {buildAlternates} from "@/lib/seo";
 import {BrandBar} from "@/components/layout/BrandBar";
 import {SiteHeader} from "@/components/layout/SiteHeader";
 import {SiteFooter} from "@/components/layout/SiteFooter";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 type Props = {
   children: ReactNode;

@@ -6,12 +6,16 @@ describe("themes", () => {
     expect(DEFAULT_THEME).toBe("mishran-default");
   });
 
-  it("locks to exactly 4 themes", () => {
+  it("exposes 4 house themes + 4 extra palette themes", () => {
     expect(VALID_THEMES).toEqual([
       "mishran-default",
       "diwali-saffron",
       "wedding-heritage",
       "everyday-sage",
+      "navy",
+      "mblue2",
+      "mindbox",
+      "yoshida",
     ]);
   });
 
@@ -27,8 +31,17 @@ describe("themes", () => {
     expect(normalizeTheme("sage")).toBe("everyday-sage");
   });
 
-  it("returns null for unknown themes", () => {
-    expect(normalizeTheme("navy")).toBeNull();
+  it("accepts the restored palette themes by id", () => {
+    expect(normalizeTheme("navy")).toBe("navy");
+    expect(normalizeTheme("mblue2")).toBe("mblue2");
+    expect(normalizeTheme("mindbox")).toBe("mindbox");
+    expect(normalizeTheme("yoshida")).toBe("yoshida");
+  });
+
+  it("returns null for fully-archived themes", () => {
+    expect(normalizeTheme("heritage-2")).toBe("wedding-heritage");
     expect(normalizeTheme("ibm")).toBeNull();
+    expect(normalizeTheme("coinbase")).toBeNull();
+    expect(normalizeTheme("myblue")).toBe("mblue2");
   });
 });
