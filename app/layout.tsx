@@ -5,6 +5,7 @@ import {CartProvider} from "@/context/CartContext";
 import {QueryProvider} from "@/context/QueryProvider";
 import {ThemeProvider} from "@/context/ThemeContext";
 import {PageBackground} from "@/components/PageBackground";
+import {AnalyticsScripts} from "@/components/Analytics/AnalyticsScripts";
 import {DEFAULT_THEME, THEMES} from "@/lib/themes";
 import {Toaster} from "sonner";
 
@@ -44,6 +45,7 @@ export default function RootLayout({
           </QueryProvider>
           <Toaster position="top-center" richColors closeButton />
         </ThemeProvider>
+        <AnalyticsScripts />
       </body>
     </html>
   );
