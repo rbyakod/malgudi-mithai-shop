@@ -94,5 +94,26 @@
         "description": "Boutique packaging, honest labels, on‑time delivery — the same mithai, dressed for how India celebrates today."
       }
     }
+  },
+
+  "Verticals": {
+    "mithai": {
+      "title": "Mithai",
+      "blurb": "The canon — kaju katli, motichoor, besan laddoo. Milk‑first recipes finished fresh by karigars, in weights that suit a Tuesday or a thousand‑box wedding."
+    },
+    "qsr": {
+      "title": "QSR",
+      "blurb": "Counter‑quick mithai and savouries from our high‑street kitchens. Walk in, take a box, carry on with your day."
+    },
+    "snacks": {
+      "title": "Snacks",
+      "blurb": "Namkeen, mathri, chivra — the savoury shelf of the Mishran house, built for evening chai and travel tins."
+    },
+    "merch": {
+      "title": "Merch",
+      "blurb": "Hamper shells, thalis, and keepsake boxes — the vessels that carry Mishran into homes and across occasions."
+    },
+    "empty": "The kitchen is quiet just now. New batches are being finished — please check back shortly.",
+    "itemCount": "{count} items"
   }
 }
