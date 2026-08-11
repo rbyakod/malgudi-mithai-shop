@@ -94,7 +94,7 @@ export function LeadForm({
     },
   });
 
-  // react-dom v19 useFormState — runs in the form's action prop.
+  // react-dom v19 useActionState — runs in the form's action prop.
   // We ignore the returned state (server-action style) and just kick off
   // the mutation. Errors land in mutation.error which we surface below.
   async function action(_prev: null, formData: FormData) {

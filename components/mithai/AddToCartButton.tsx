@@ -14,6 +14,7 @@
 
 import {useTransition, useState} from "react";
 import {useCart} from "@/context/CartContext";
+import {track} from "@/lib/analytics";
 
 type Props = {
   id: string;
@@ -40,6 +41,7 @@ export function AddToCartButton({
     startTransition(() => {
       addItem({id, name, priceLabel, image});
       setAdded(true);
+      track("add_to_cart", {id, name, quantity: 1});
     });
   }
 
