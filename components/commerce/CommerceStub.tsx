@@ -62,7 +62,7 @@ export async function CommerceStub({namespace, children}: Props) {
       <header className="grid gap-6 border-b border-border-card pb-10 lg:grid-cols-[0.45fr_0.55fr] lg:items-end">
         <div>
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
-            Mishran · Commerce
+            {tCommon("eyebrow")}
           </p>
           <h1
             id="commerce-stub-heading"
@@ -96,14 +96,14 @@ export async function CommerceStub({namespace, children}: Props) {
               className="inline-block h-1.5 w-1.5 rounded-full bg-primary"
             />
             <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-text-muted">
-              Bulk & weddings
+              {tCommon("leadEyebrow")}
             </span>
           </div>
           <p className="text-base font-medium text-text-heading">
             {tCommon("leadCta")}
           </p>
           <p className="text-xs leading-relaxed text-text-muted">
-            Tell us about your event →
+            {tCommon("leadHint")}
           </p>
         </Link>
       </div>

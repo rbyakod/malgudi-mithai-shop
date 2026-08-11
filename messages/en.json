@@ -211,8 +211,11 @@
 
   "Commerce": {
     "common": {
+      "eyebrow": "Mishran · Commerce",
       "whatsappCta": "Message us on WhatsApp",
+      "leadEyebrow": "Bulk & weddings",
       "leadCta": "Planning a bulk order or wedding?",
+      "leadHint": "Tell us about your event →",
       "empty": "Your cart is empty.",
       "emptyCta": "Browse mithai",
       "itemsReadonlyNote": "Quantities are read-only while we finish our commerce experience."
