@@ -40,18 +40,27 @@ import { StoreSettings } from "./globals/StoreSettings";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+// Auto-login uses hardcoded `dev@mithai.shop` / `dev-password` credentials
+// and must ONLY activate on a truly local development machine. Vercel
+// Preview environments run NODE_ENV=development, so gating on production
+// alone would expose /admin on every preview deploy. Tighten to local dev
+// by also excluding Vercel-hosted and CI environments.
+const isLocalDev =
+  process.env.NODE_ENV !== "production" &&
+  !process.env.VERCEL &&
+  !process.env.CI;
+
 export default buildConfig({
   admin: {
     // `user: "users"` references the Users collection registered below.
     user: "users",
     // Auto-login in dev so /admin opens without credentials during local development.
-    autoLogin:
-      process.env.NODE_ENV === "production"
-        ? false
-        : {
-            email: "dev@mithai.shop",
-            password: "dev-password",
-          },
+    autoLogin: isLocalDev
+      ? {
+          email: "dev@mithai.shop",
+          password: "dev-password",
+        }
+      : false,
   },
   collections: [
     // Brand collections (Task 6 scope).
