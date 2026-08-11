@@ -28,16 +28,21 @@ describe("POST /api/leads handler", () => {
       }),
     });
 
-    const res = await handleLeadPost(req);
-    expect(res.status).toBe(201);
+    let leadId: string | undefined;
+    try {
+      const res = await handleLeadPost(req);
+      expect(res.status).toBe(201);
 
-    const body = await res.json();
-    expect(body.leadId).toBeTruthy();
-    expect(body.message).toContain("Lead received");
-
-    // Clean up: remove the test lead so re-runs don't accumulate.
-    const payload = await getPayload();
-    await payload.delete({ collection: "leads", id: body.leadId });
+      const body = await res.json();
+      leadId = body.leadId;
+      expect(leadId).toBeTruthy();
+      expect(body.message).toContain("Lead received");
+    } finally {
+      if (leadId) {
+        const payload = await getPayload();
+        await payload.delete({ collection: "leads", id: leadId });
+      }
+    }
   });
 
   it("rejects missing required fields with 400", async () => {
