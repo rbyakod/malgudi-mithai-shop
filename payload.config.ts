@@ -27,6 +27,9 @@ import { GiftBoxes } from "./collections/GiftBoxes";
 import { QsrMenuItems } from "./collections/QsrMenuItems";
 import { SnackProducts } from "./collections/SnackProducts";
 import { MerchProducts } from "./collections/MerchProducts";
+// Ops collections (Task 9).
+import { Leads } from "./collections/Leads";
+import { Drafts } from "./collections/Drafts";
 // Globals (Task 8).
 import { BrandSettings } from "./globals/BrandSettings";
 import { NavSettings } from "./globals/NavSettings";
@@ -65,6 +68,9 @@ export default buildConfig({
     QsrMenuItems,
     SnackProducts,
     MerchProducts,
+    // Ops collections (Task 9).
+    Leads,
+    Drafts,
   ],
   globals: [
     BrandSettings,
