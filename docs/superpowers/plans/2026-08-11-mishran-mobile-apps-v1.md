@@ -4564,16 +4564,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val MishranColorScheme = lightColorScheme(
-  primary = MishranColors.BrandWine,
+  primary = MishranColors.BrandAccent,
   onPrimary = Color.White,
-  primaryContainer = MishranColors.BrandWineDark,
+  primaryContainer = MishranColors.BrandInk,
   onPrimaryContainer = Color.White,
-  secondary = MishranColors.BrandSaffron,
+  secondary = MishranColors.BrandPop,
   onSecondary = Color.White,
-  tertiary = MishranColors.BrandGold,
-  background = MishranColors.BrandCream,
+  tertiary = MishranColors.BrandPop,
+  background = MishranColors.BrandCanvas,
   onBackground = MishranColors.Neutral900,
-  surface = Color.White,
+  surface = MishranColors.BrandSurface,
   onSurface = MishranColors.Neutral900,
   error = MishranColors.StateError,
   onError = Color.White,
