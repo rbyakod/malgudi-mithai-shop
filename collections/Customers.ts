@@ -30,7 +30,17 @@ export const Customers: CollectionConfig = {
         (code) => ({ label: code, value: code }),
       ),
     },
-    // TODO(Task 1.4 or follow-up): add defaultAddresses as array of relationships to 'addresses' collection once it lands.
+    {
+      name: "defaultAddresses",
+      type: "array",
+      fields: [
+        {
+          name: "addressId",
+          type: "relationship",
+          relationTo: "addresses",
+        },
+      ],
+    },
     { name: "lastIp", type: "text" },
     { name: "lastSeenAt", type: "date" },
   ],

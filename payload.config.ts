@@ -41,6 +41,8 @@ import { Leads } from "./collections/Leads";
 import { Drafts } from "./collections/Drafts";
 // Mobile app (Task 1.3): customer accounts.
 import { Customers } from "./collections/Customers";
+// Mobile app (Task 1.4): customer delivery addresses.
+import { Addresses } from "./collections/Addresses";
 // Globals (Task 8).
 import { BrandSettings } from "./globals/BrandSettings";
 import { NavSettings } from "./globals/NavSettings";
@@ -110,6 +112,8 @@ export default buildConfig({
     Drafts,
     // Mobile app (Task 1.3): customer accounts.
     Customers,
+    // Mobile app (Task 1.4): customer delivery addresses.
+    Addresses,
   ],
   globals: [
     BrandSettings,
