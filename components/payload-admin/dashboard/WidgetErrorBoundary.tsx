@@ -14,6 +14,7 @@ type State = {
 
 // Per-widget error boundary so one failing widget doesn't kill the dashboard.
 export class WidgetErrorBoundary extends Component<Props, State> {
+  static displayName = "WidgetErrorBoundary";
   state: State = {hasError: false, errorKey: 0};
 
   static getDerivedStateFromError(): Partial<State> {
@@ -66,7 +67,5 @@ export class WidgetErrorBoundary extends Component<Props, State> {
     return <div key={this.state.errorKey}>{this.props.children}</div>;
   }
 }
-
-WidgetErrorBoundary.displayName = "WidgetErrorBoundary";
 
 export default WidgetErrorBoundary;
