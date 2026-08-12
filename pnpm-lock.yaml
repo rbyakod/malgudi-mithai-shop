@@ -130,6 +130,12 @@ importers:
         specifier: ^4.1.10
         version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(@vitest/ui@4.1.10)(happy-dom@20.11.2)(jsdom@29.1.1)(vite@8.2.1(@types/node@20.19.43)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.77.4)(tsx@4.23.12))
 
+  packages/analytics-taxonomy:
+    devDependencies:
+      tsx:
+        specifier: ^4
+        version: 4.23.12
+
   packages/api-contract:
     devDependencies:
       '@openapitools/openapi-generator-cli':
@@ -156,6 +162,12 @@ importers:
       vitest:
         specifier: ^4
         version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(@vitest/ui@4.1.10)(happy-dom@20.11.2)(jsdom@29.1.1)(vite@8.2.1(@types/node@20.19.43)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.77.4)(tsx@4.23.12))
+
+  packages/feature-flags:
+    devDependencies:
+      tsx:
+        specifier: ^4
+        version: 4.23.12
 
   packages/i18n-strings:
     devDependencies:
