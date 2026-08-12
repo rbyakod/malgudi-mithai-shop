@@ -36,7 +36,7 @@ export function HeroRotator({slides}: Props) {
       setActive((current) => {
         const target = clamp(next);
         if (target !== current) {
-          track("story_viewed", {index: target, total: slides.length, source: "hero_rotator"});
+          track("hero_slide_view", {index: target, total: slides.length});
         }
         return target;
       });
@@ -204,7 +204,7 @@ function AddToCartButton({slide}: {slide: Slide}) {
           image: slide.image,
         });
         setAdded(true);
-        track("add_to_cart", {id: slide.id, name: slide.name, source: "hero_rotator"});
+        track("hero_add_to_cart", {id: slide.id, name: slide.name});
         window.setTimeout(() => setAdded(false), 1800);
       }}
       aria-live="polite"

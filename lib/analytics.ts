@@ -15,7 +15,7 @@
 
 // Canonical event names used across the Mishran storefront. Keep this list in
 // sync with any consumer (search, gift builder, lead form, locale switcher,
-// theme switcher, missing-translation fallback).
+// theme switcher, missing-translation fallback, hero rotator).
 export type EventName =
   | "product_viewed"
   | "story_viewed"
@@ -24,6 +24,8 @@ export type EventName =
   | "gift_builder_started"
   | "gift_builder_completed"
   | "add_to_cart"
+  | "hero_slide_view"
+  | "hero_add_to_cart"
   | "lead_submitted"
   | "whatsapp_clicked"
   | "search_used"
