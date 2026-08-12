@@ -13,6 +13,7 @@ export default defineConfig({
     include: [
       "tests/unit/**/*.test.{ts,tsx}",
       "tests/integration/**/*.test.{ts,tsx}",
+      "lib/**/*.test.{ts,tsx}",
     ],
   },
   resolve: {
