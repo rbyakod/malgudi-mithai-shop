@@ -1,13 +1,11 @@
 export type Theme =
-  | "festive"
-  | "heritage"
-  | "heritage-2"
+  | "mishran-default"
+  | "diwali-saffron"
+  | "wedding-heritage"
+  | "everyday-sage"
   | "navy"
-  | "sage"
-  | "mindbox"
   | "mblue2"
-  | "coinbase"
-  | "ibm"
+  | "mindbox"
   | "yoshida";
 
 type ThemeGroup = "House Themes" | "Design Systems";
@@ -28,15 +26,30 @@ export type ThemeDefinition = {
   };
 };
 
-export const DEFAULT_THEME: Theme = "festive";
+export const DEFAULT_THEME: Theme = "mishran-default";
 
 export const THEMES: ThemeDefinition[] = [
   {
-    id: "festive",
-    label: "Festive Saffron",
+    id: "mishran-default",
+    label: "Mishran Default",
+    group: "House Themes",
+    source: "Mishran Brand Strategy",
+    blurb: "Warm milk-cream canvas, deep kakvi brown ink, festive saffron accent — the canonical Mishran mood.",
+    docPath: "/design-systems/mishran-default.md",
+    preview: {
+      canvas: "#f7efe0",
+      surface: "#fbf6ec",
+      accent: "#9b4d2a",
+      pop: "#d79a35",
+      ink: "#2c1810",
+    },
+  },
+  {
+    id: "diwali-saffron",
+    label: "Diwali Saffron",
     group: "House Themes",
     source: "Malgudi Original",
-    blurb: "Warm terracotta, soft cream, and celebratory gold.",
+    blurb: "Warm terracotta, soft cream, celebratory gold.",
     docPath: "/design-systems/festive-saffron.md",
     preview: {
       canvas: "#f0e4d4",
@@ -47,11 +60,11 @@ export const THEMES: ThemeDefinition[] = [
     },
   },
   {
-    id: "heritage",
-    label: "Mishran Heritage",
+    id: "wedding-heritage",
+    label: "Wedding Heritage",
     group: "House Themes",
     source: "Mishran Menu Editorial",
-    blurb: "Parchment, oxblood, saffron, and cocoa with a literary old-India mood.",
+    blurb: "Parchment, oxblood, saffron, cocoa with a literary old-India mood.",
     docPath: "/design-systems/mishran-heritage.md",
     preview: {
       canvas: "#f4e7d0",
@@ -62,18 +75,18 @@ export const THEMES: ThemeDefinition[] = [
     },
   },
   {
-    id: "heritage-2",
-    label: "Mishran Heritage 2",
+    id: "everyday-sage",
+    label: "Everyday Sage",
     group: "House Themes",
-    source: "Mishran Menu Bars",
-    blurb: "Source-matched wine-red chrome with parchment, saffron, and cocoa for a stronger menu-led mood.",
-    docPath: "/design-systems/mishran-heritage-2.md",
+    source: "Malgudi Original",
+    blurb: "Quiet botanical neutrals with low-contrast elegance.",
+    docPath: "/design-systems/minimal-sage.md",
     preview: {
-      canvas: "#f4e7d0",
-      surface: "#fbf4e6",
-      accent: "#7c0421",
-      pop: "#d79a35",
-      ink: "#3b2419",
+      canvas: "#e4e0d4",
+      surface: "#edeae3",
+      accent: "#4a7c59",
+      pop: "#c9a96e",
+      ink: "#2d3a2e",
     },
   },
   {
@@ -89,21 +102,6 @@ export const THEMES: ThemeDefinition[] = [
       accent: "#2563a8",
       pop: "#4fd1c5",
       ink: "#1a2332",
-    },
-  },
-  {
-    id: "sage",
-    label: "Minimal Sage",
-    group: "House Themes",
-    source: "Malgudi Original",
-    blurb: "Quiet botanical neutrals with low-contrast elegance.",
-    docPath: "/design-systems/minimal-sage.md",
-    preview: {
-      canvas: "#e4e0d4",
-      surface: "#edeae3",
-      accent: "#4a7c59",
-      pop: "#c9a96e",
-      ink: "#2d3a2e",
     },
   },
   {
@@ -137,36 +135,6 @@ export const THEMES: ThemeDefinition[] = [
     },
   },
   {
-    id: "coinbase",
-    label: "Coinbase Blue",
-    group: "Design Systems",
-    source: "Inspired by awesome-design-md",
-    blurb: "Trust-first blue with cleaner chrome and institutional confidence.",
-    docPath: "/design-systems/coinbase-blue.md",
-    preview: {
-      canvas: "#0b1120",
-      surface: "#111b35",
-      accent: "#1652f0",
-      pop: "#8ec5ff",
-      ink: "#f4f8ff",
-    },
-  },
-  {
-    id: "ibm",
-    label: "IBM Grid",
-    group: "Design Systems",
-    source: "Inspired by awesome-design-md",
-    blurb: "Structured enterprise blue with sharp borders and quiet precision.",
-    docPath: "/design-systems/ibm-grid.md",
-    preview: {
-      canvas: "#f4f4f4",
-      surface: "#ffffff",
-      accent: "#0f62fe",
-      pop: "#8a3ffc",
-      ink: "#161616",
-    },
-  },
-  {
     id: "yoshida",
     label: "Yoshida",
     group: "House Themes",
@@ -190,7 +158,16 @@ export const THEME_GROUP_ORDER: ThemeGroup[] = [
 
 export const VALID_THEMES = THEMES.map((theme) => theme.id) as Theme[];
 
+// Legacy theme rebrands: old id -> current id.
+// Fully-archived themes (heritage-2, coinbase, ibm, myblue) are intentionally
+// NOT mapped here so normalizeTheme() returns null for them, letting callers
+// fall back to DEFAULT_THEME. The inline boot script in app/layout.tsx carries
+// the broader migration map so stored localStorage values still resolve.
 const LEGACY_THEME_ALIASES: Record<string, Theme> = {
+  festive: "diwali-saffron",
+  heritage: "wedding-heritage",
+  "heritage-2": "wedding-heritage",
+  sage: "everyday-sage",
   myblue: "mblue2",
 };
 
@@ -200,7 +177,6 @@ export function getThemeDefinition(theme: Theme) {
 
 export function normalizeTheme(value: string | null | undefined): Theme | null {
   if (!value) return null;
-
   const normalized = LEGACY_THEME_ALIASES[value] ?? value;
   return VALID_THEMES.includes(normalized as Theme)
     ? (normalized as Theme)

@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mishran — Current Functionality README</title>
+<style>
+  :root {
+    --bg: #faf6f1; --card: #ffffff; --ink: #1a1410; --muted: #6b5e54;
+    --rule: #e5dccf; --primary: #6b1e1e; --gold: #b08838;
+    --code-bg: #1a1410; --code-ink: #f5e9d6;
+    --ok-bg: #eaf6ec; --ok-rule: #4a8a5c;
+    --defer-bg: #fff5e0; --defer-rule: #e6b94a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1rem 5rem; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Manrope, system-ui, sans-serif;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1, h2, h3, h4 { font-family: "Iowan Old Style", Palatino, "Book Antiqua", Georgia, serif; line-height: 1.2; }
+  h1 { font-size: 2.4rem; margin: 0 0 .4rem; letter-spacing: -.01em; }
+  h2 { font-size: 1.7rem; margin: 2.5rem 0 .8rem; border-bottom: 1px solid var(--rule); padding-bottom: .4rem; }
+  h3 { font-size: 1.2rem; margin: 1.8rem 0 .5rem; color: var(--primary); }
+  h4 { font-size: 1rem; margin: 1.2rem 0 .3rem; }
+  p { margin: .6rem 0; }
+  ul, ol { padding-left: 1.4rem; }
+  li { margin: .3rem 0; }
+  .lede { font-size: 1.1rem; color: var(--muted); margin: .6rem 0 2rem; }
+  code {
+    background: #efe6d8; padding: .12em .4em; border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .92em;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-ink); padding: 1rem 1.2rem;
+    border-radius: 8px; overflow-x: auto;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .88em;
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+  .ok-box {
+    background: var(--ok-bg); border-left: 4px solid var(--ok-rule);
+    padding: .9rem 1.1rem; margin: 1.2rem 0; border-radius: 0 6px 6px 0;
+  }
+  .defer-box {
+    background: var(--defer-bg); border-left: 4px solid var(--defer-rule);
+    padding: .9rem 1.1rem; margin: 1.2rem 0; border-radius: 0 6px 6px 0;
+  }
+  nav.toc { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+  nav.toc h3 { margin-top: 0; color: var(--ink); font-size: 1rem; }
+  nav.toc ol { margin: 0; padding-left: 1.4rem; }
+  .footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-size: .85rem; color: var(--muted); }
+  a { color: var(--primary); }
+  a:hover { color: var(--gold); }
+  .meta { font-size: .85rem; color: var(--muted); margin-bottom: 2rem; }
+  .meta span + span::before { content: " · "; color: var(--rule); }
+
+  .feature {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 1.2rem 1.4rem; margin: 1rem 0;
+  }
+  .feature h3 { margin-top: 0; color: var(--primary); }
+  .feature .what, .feature .how, .feature .where {
+    margin: .5rem 0;
+  }
+  .feature .label {
+    display: inline-block; min-width: 5.5rem; font-weight: 600;
+    font-size: .82rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em;
+  }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .92rem; }
+  th, td { text-align: left; padding: .6rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { background: #f2ebde; font-weight: 600; }
+  .tag {
+    display: inline-block; padding: .12em .55em; border-radius: 999px;
+    font-size: .72rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .tag.live { background: #eaf6ec; color: #356c45; }
+  .tag.stub { background: #fff5e0; color: #8a6a14; }
+  .tag.partial { background: #e8eef8; color: #2f4a78; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Current Functionality README</h1>
+<p class="lede">What ships today, what each piece does, how it works under the hood, and what is stubbed for later phases.</p>
+<p class="meta">
+  <span>Phase 0 — Foundation</span>
+  <span>Branch: <code>main</code> (squashed from <code>e633ca7</code>)</span>
+  <span>Last updated: 2026-08-11</span>
+</p>
+
+<nav class="toc">
+  <h3>Contents</h3>
+  <ol>
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="#brand">Brand &amp; content system (Payload)</a></li>
+    <li><a href="#storefront">Editorial storefront (public site)</a></li>
+    <li><a href="#commerce">Commerce stubs</a></li>
+    <li><a href="#api">API layer</a></li>
+    <li><a href="#seo">SEO</a></li>
+    <li><a href="#analytics">Analytics</a></li>
+    <li><a href="#i18n">Internationalization (i18n)</a></li>
+    <li><a href="#theming">Theming</a></li>
+    <li><a href="#isr">On-demand ISR</a></li>
+    <li><a href="#deploy">Deployment</a></li>
+    <li><a href="#ci">CI</a></li>
+    <li><a href="#tests">Test coverage</a></li>
+    <li><a href="#deferred">Deferred to later phases</a></li>
+  </ol>
+</nav>
+
+<h2 id="stack">Stack</h2>
+<ul>
+  <li><strong>Next.js 16.2</strong> App Router (TypeScript)</li>
+  <li><strong>Payload CMS 3.87</strong> + MongoDB adapter</li>
+  <li><strong>MongoDB</strong> (Atlas M0 in prod, local <code>mongod</code> in dev)</li>
+  <li><strong>next-intl 4.9</strong> for locale routing (en / hi / kn)</li>
+  <li><strong>Tailwind v4</strong> via CSS variables for theming</li>
+  <li><strong>Resend</strong> for transactional email (leads)</li>
+  <li><strong>TanStack Query</strong> for client-side lead configurators</li>
+  <li><strong>Sonner</strong> for toast notifications</li>
+  <li><strong>Vercel</strong> for hosting (region <code>bom1</code>)</li>
+</ul>
+
+<h2 id="brand">Brand &amp; content system</h2>
+
+<div class="feature">
+  <h3>14 Payload collections</h3>
+  <p class="what"><span class="label">What</span> Content types editable in the Payload admin UI at <code>/admin</code>.</p>
+  <p class="how"><span class="label">How</span> Each collection is a TypeScript config under <code>collections/</code>. Payload bootstraps the admin UI, validates writes, and exposes a typed REST + GraphQL API automatically. <code>afterChange</code> and <code>afterDelete</code> hooks on each collection fire ISR purges.</p>
+  <p><strong>Collections:</strong> <code>mithai-products</code>, <code>qsr-menu-items</code>, <code>snack-products</code>, <code>merch-products</code>, <code>gift-boxes</code>, <code>stories</code>, <code>karigars</code>, <code>farms</code>, <code>packaging</code>, <code>occasions</code>, <code>leads</code>, <code>brand-settings</code> (global), <code>analytics-settings</code> (global), <code>wedding-leads</code> + <code>corporate-leads</code> (sub-collections of leads).</p>
+</div>
+
+<div class="feature">
+  <h3>5 Payload globals</h3>
+  <p class="what"><span class="label">What</span> Site-wide settings editable without code deploys.</p>
+  <p class="how"><span class="label">How</span> Defined in <code>globals/</code>. Read at request time from server components.</p>
+  <p><strong>Globals:</strong> <code>brand-settings</code> (name, tagline, positioning, contact), <code>analytics-settings</code> (GA4 ID, Meta Pixel ID, WhatsApp number), <code>site-navigation</code>, <code>footer</code>, <code>wedding-configurator</code>.</p>
+</div>
+
+<div class="feature">
+  <h3>Seed script</h3>
+  <p class="what"><span class="label">What</span> Sample content for every vertical + brand collections.</p>
+  <p class="how"><span class="label">How</span> <code>npm run seed</code> walks each collection and inserts sample records idempotently. Safe to re-run.</p>
+</div>
+
+<h2 id="storefront">Editorial storefront</h2>
+
+<div class="feature">
+  <h3>Brand home <span class="tag live">live</span></h3>
+  <p class="what"><span class="label">What</span> The marketing front door at <code>/</code> (locale-prefixed: <code>/en</code>, <code>/hi</code>, <code>/kn</code>).</p>
+  <p class="how"><span class="label">How</span> <code>app/[locale]/page.tsx</code> composes <code>BrandHero</code> (cinematic headline + dual CTAs), <code>VerticalPortals</code> (4-up editorial row), <code>Pillars</code> (4 brand promises), <code>Occasions</code>, and editorial insets. Reads live from Payload <code>brand-settings</code>.</p>
+</div>
+
+<div class="feature">
+  <h3>4 vertical portals <span class="tag live">live</span></h3>
+  <p class="what"><span class="label">What</span> Hub landing pages for each vertical: <code>/mithai</code>, <code>/qsr</code>, <code>/snacks</code>, <code>/merch</code>.</p>
+  <p class="how"><span class="label">How</span> <code>app/[locale]/&lt;vertical&gt;/page.tsx</code> fetches the relevant Payload collection, renders a grid of product cards, links into PDPs.</p>
+</div>
+
+<div class="feature">
+  <h3>Product detail pages (PDPs) <span class="tag live">live</span></h3>
+  <p class="what"><span class="label">What</span> One PDP per product: <code>/mithai/[slug]</code>, <code>/qsr/[slug]</code>, <code>/snacks/[slug]</code>, <code>/merch/[slug]</code>.</p>
+  <p class="how"><span class="label">How</span> Server components, statically pre-rendered (SSG) via <code>generateStaticParams</code>, revalidated on Payload <code>afterChange</code>. Includes gallery, long description, quantity selector, JSON-LD <code>Product</code> schema.</p>
+</div>
+
+<div class="feature">
+  <h3>Stories hub + pillar routes <span class="tag live">live</span></h3>
+  <p class="what"><span class="label">What</span> <code>/stories</code> hub + 4 pillar filter routes: <code>/stories/farms</code>, <code>/stories/karigars</code>, <code>/stories/karigari</code>, <code>/stories/journal</code>.</p>
+  <p class="how"><span class="label">How</span> Static routes under route group <code>(pillar)</code> — not a dynamic <code>[pillar]</code> segment, to avoid collision with <code>[slug]</code>. Each pillar page filters the <code>stories</code> collection by pillar tag.</p>
+</div>
+
+<div class="feature">
+  <h3>Wedding lead configurator <span class="tag live">live</span></h3>
+  <p class="what"><span class="label">What</span> <code>/weddings</code> page with multi-step lead form (occasion, headcount, budget, packaging, message).</p>
+  <p class="how"><span class="label">How</span> <code>components/ledger/WeddingConfigurator.tsx</code> uses <code>useActionState</code> (React 19) + TanStack Query. Posts to <code>/api/leads</code>. Success fires <code>lead_submitted</code> analytics event + Sonner toast.</p>
+</div>
+
+<div class="feature">
+  <h3>Corporate lead configurator <span class="tag live">live</span></h3>
+  <p class="what"><span class="label">What</span> <code>/corporate</code> page with corporate gifting form (company, volume, occasion).</p>
+  <p class="how"><span class="label">How</span> Same pattern as wedding configurator. Submits to <code>/api/leads</code> with a <code>source: "corporate"</code> tag.</p>
+</div>
+
+<h2 id="commerce">Commerce stubs <span class="tag stub">stub</span></h2>
+
+<div class="feature">
+  <h3>/cart, /checkout, /account, /track-order, /build-a-gift</h3>
+  <p class="what"><span class="label">What</span> Branded stub pages that route customers to WhatsApp + lead CTAs. No real commerce logic.</p>
+  <p class="how"><span class="label">How</span> <code>components/commerce/CommerceStub.tsx</code> — masthead + WhatsApp deep link + weddings lead CTA. <code>/cart</code> additionally renders a read-only <code>CartItems</code> client island so shoppers can still see what they added.</p>
+  <p><span class="label">Deferred to</span> Phase 8 (Razorpay + real commerce flows).</p>
+</div>
+
+<h2 id="api">API layer</h2>
+
+<div class="feature">
+  <h3>POST /api/leads <span class="tag live">live</span></h3>
+  <p class="what"><span class="label">What</span> Receives wedding + corporate lead submissions. Sends an email via Resend to <code>LEADS_INBOX</code>.</p>
+  <p class="how"><span class="label">How</span> Pure-handler pattern: <code>lib/leads-api.ts</code> exports the typed handler; <code>app/api/leads/route.ts</code> is a one-line re-export. Validated by Vitest unit tests at <code>tests/unit/leads.test.ts</code>.</p>
+</div>
+
+<div class="feature">
+  <h3>GET /api/drafts <span class="tag live">live</span></h3>
+  <p class="what"><span class="label">What</span> Time-limited draft preview sessions for editors checking unpublished content.</p>
+  <p class="how"><span class="label">How</span> <code>lib/drafts-api.ts</code> issues a signed session cookie with TTL. <code>app/api/drafts/[sessionId]/route.ts</code> resolves the session.</p>
+</div>
+
+<div class="feature">
+  <h3>GET /api/search <span class="tag live">live</span></h3>
+  <p class="what"><span class="label">What</span> Parallel search across 5 Payload collections (mithai, qsr, snacks, merch, stories).</p>
+  <p class="how"><span class="label">How</span> <code>Promise.all</code> over 5 collection queries; returns ranked list with collection tag. Relevance ranking + faceted filters deferred to Phase 1.</p>
+</div>
+
+<div class="feature">
+  <h3>POST /api/revalidate <span class="tag live">live</span></h3>
+  <p class="what"><span class="label">What</span> On-demand ISR purge webhook called by Payload <code>afterChange</code> / <code>afterDelete</code> hooks.</p>
+  <p class="how"><span class="label">How</span> <code>lib/revalidate-api.ts</code> validates the <code>x-revalidate-secret</code> header against <code>REVALIDATE_SECRET</code>, then calls <code>revalidatePath</code> for each affected route. Routes mapped from collection slug via <code>COLLECTION_ROUTES</code>. Draft autosaves are skipped via <code>req.context</code>.</p>
+</div>
+
+<h2 id="seo">SEO</h2>
+<ul>
+  <li><strong>sitemap.xml</strong> — lists every locale route. Generated by <code>app/sitemap.ts</code>.</li>
+  <li><strong>robots.txt</strong> — generated by <code>app/robots.ts</code>. Allows all, points at sitemap.</li>
+  <li><strong>JSON-LD</strong> — <code>Product</code> on PDPs, <code>Organization</code> on home, <code>BreadcrumbList</code> on hub + PDP.</li>
+  <li><strong>hreflang alternates</strong> — emitted per route for <code>en</code>, <code>hi</code>, <code>kn</code>.</li>
+  <li><strong>Metadata API</strong> — title, description, open-graph tags per route via <code>generateMetadata</code>.</li>
+</ul>
+
+<h2 id="analytics">Analytics</h2>
+<ul>
+  <li><strong>GA4</strong> + <strong>Meta Pixel</strong> bootstrapped via <code>components/Analytics/AnalyticsScripts.tsx</code> (uses <code>next/script</code> with <code>afterInteractive</code>).</li>
+  <li><strong>track() helper</strong> at <code>lib/analytics.ts</code> — typed 14-event union. Fires to both GA4 + Meta Pixel.</li>
+  <li><strong>Wired events:</strong> <code>lead_submitted</code>, <code>add_to_cart</code>, <code>locale_changed</code>, <code>theme_changed</code>, <code>whatsapp_clicked</code>, <code>product_viewed</code>.</li>
+  <li><strong>IDs source:</strong> Payload <code>analytics-settings</code> global first; env-var fallback (<code>NEXT_PUBLIC_GA4_ID</code>, <code>NEXT_PUBLIC_META_PIXEL_ID</code>) for unreachable Payload.</li>
+  <li><strong>Regression guard:</strong> Vitest test asserts ≥4 importers of <code>track()</code>.</li>
+</ul>
+
+<h2 id="i18n">Internationalization (i18n)</h2>
+<ul>
+  <li><strong>Locales:</strong> <code>en</code>, <code>hi</code> (Hindi), <code>kn</code> (Kannada). Locale-prefixed routes (<code>/en</code>, <code>/hi</code>, <code>/kn</code>).</li>
+  <li><strong>Library:</strong> <code>next-intl</code> 4.9.1. Messages in <code>messages/{locale}.json</code>.</li>
+  <li><strong>Locale switcher:</strong> in <code>SiteHeader</code>, uses <code>@/i18n/navigation</code> <code>Link</code> (NOT <code>next/link</code>) to preserve routing.</li>
+  <li><strong>Translation state:</strong>
+    <ul>
+      <li>English — complete.</li>
+      <li>Hindi — complete.</li>
+      <li>Kannada — partial. <code>Pdp</code> / <code>Leads</code> / <code>Commerce</code> namespaces have <code>_todo_kn</code> markers. Tracked in ledger; full pass is a content task.</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="theming">Theming</h2>
+<ul>
+  <li><strong>4 themes locked:</strong> <code>mishran-default</code>, <code>diwali-saffron</code>, <code>wedding-heritage</code>, <code>everyday-sage</code>.</li>
+  <li><strong>Legacy aliases collapse:</strong> <code>festive</code> → <code>diwali-saffron</code>, <code>heritage</code>/<code>heritage-2</code> → <code>wedding-heritage</code>, <code>sage</code> → <code>everyday-sage</code>, <code>navy</code>/<code>mblue2</code>/<code>mindbox</code>/<code>coinbase</code>/<code>ibm</code>/<code>yoshida</code>/<code>myblue</code> → <code>mishran-default</code>.</li>
+  <li><strong>Implementation:</strong> <code>data-theme</code> attribute on <code>&lt;html&gt;</code> + CSS variables in <code>globals.css</code>. Theme init script in <code>app/layout.tsx</code> via <code>next/script beforeInteractive</code> to prevent FOUC.</li>
+  <li><strong>Switcher:</strong> <code>ThemeContext</code> persists selection to <code>localStorage</code> key <code>mithai-theme</code>.</li>
+</ul>
+
+<h2 id="isr">On-demand ISR</h2>
+<ul>
+  <li><strong>Default revalidate:</strong> 60s on detail pages (PDPs, stories).</li>
+  <li><strong>Purge hooks:</strong> Payload <code>afterChange</code> + <code>afterDelete</code> fire on each collection config via <code>collections/_revalidate-hook.ts</code>.</li>
+  <li><strong>Purge path:</strong> hook POSTs to <code>/api/revalidate</code> with <code>x-revalidate-secret</code>. The route validates, then <code>revalidatePath</code>s across all 3 locales.</li>
+  <li><strong>Draft autosave skip:</strong> <code>req.context</code> carries draft-autosave flag; the hook bails early.</li>
+  <li><strong>Gift-boxes:</strong> deliberately omitted from <code>COLLECTION_ROUTES</code> — purges fall through to a layout-level purge.</li>
+</ul>
+
+<h2 id="deploy">Deployment</h2>
+<ul>
+  <li><strong>Host:</strong> Vercel, region <code>bom1</code> (Mumbai).</li>
+  <li><strong>Config:</strong> <code>vercel.ts</code> via <code>@vercel/config</code>. <code>framework: nextjs</code>, <code>maxDuration: 30</code> on 4 API routes.</li>
+  <li><strong>Database:</strong> MongoDB Atlas M0 in <code>ap-south-1</code>.</li>
+  <li><strong>Operator runbook:</strong> <code>docs/deployment.md</code> and <a href="vercel-deployment.html">Vercel Deployment Guide</a>.</li>
+</ul>
+
+<h2 id="ci">CI</h2>
+<p>GitHub Actions workflow at <code>.github/workflows/ci.yml</code> runs on every PR:</p>
+<ul>
+  <li><strong>test job:</strong> lint → tsc → unit tests → build. Node 22.</li>
+  <li><strong>e2e job:</strong> MongoDB 7 service container + Playwright + axe a11y assertions against 4 core routes.</li>
+  <li><strong>lighthouse job:</strong> <code>continue-on-error: true</code> — LHCI is flaky in CI; baseline stabilizing.</li>
+</ul>
+
+<h2 id="tests">Test coverage</h2>
+<ul>
+  <li><strong>54 unit tests</strong> (Vitest) — pure-handler API tests, lib tests, component tests.</li>
+  <li><strong>29 E2E tests</strong> (Playwright) — golden paths across home, verticals, PDPs, configurators.</li>
+  <li><strong>4 axe a11y assertions</strong> — <code>tests/e2e/a11y.spec.ts</code> runs <code>wcag2a</code> + <code>wcag2aa</code> against 4 pages.</li>
+  <li><strong>Lint + tsc clean</strong> on every commit (CI gate).</li>
+</ul>
+
+<h2 id="deferred">Deferred to later phases</h2>
+<div class="defer-box">
+  <p>Per plan boundaries at <code>docs/superpowers/plans/2026-08-10-mishran-foundation-phase.md</code>:</p>
+  <ul>
+    <li><strong>Phase 1:</strong> search relevance ranking + faceted filters; analytics consent gate (GDPR/CMP).</li>
+    <li><strong>Phase 8:</strong> Razorpay + real cart/checkout/account flows; order tracking.</li>
+    <li><strong>Content task:</strong> full Kannada translation pass for <code>Pdp</code> / <code>Leads</code> / <code>Commerce</code> namespaces.</li>
+    <li><strong>Fast-follow:</strong> gift-boxes PDP routes (currently fall through to layout purge on revalidate).</li>
+    <li><strong>Fast-follow:</strong> Lighthouse CI <code>NOT_HTML</code> on ISR first-render (currently <code>continue-on-error: true</code>).</li>
+  </ul>
+</div>
+
+<div class="ok-box">
+  <p><strong>Summary:</strong> Phase 0 ships a complete editorial storefront with brand system, lead capture, analytics, SEO, i18n, theming, and CI gates. Commerce is intentionally stubbed — every placeholder routes customers to WhatsApp + lead CTAs so the brand is live and converting from day one while Phase 8 builds real checkout.</p>
+</div>
+
+<div class="footer">
+  <p>See also: <a href="vercel-deployment.html">Vercel Deployment</a> · <a href="developer-workflow.html">Developer Workflow</a> · <a href="cofounder-guide.html">Co-Founder Guide</a></p>
+  <p>Source of truth for implementation: <code>docs/superpowers/plans/2026-08-10-mishran-foundation-phase.md</code> + <code>.superpowers/sdd/progress.md</code> (gitignored).</p>
+</div>
+
+</div>
+</body>
+</html>

@@ -49,3 +49,9 @@ next-env.d.ts
 # payload uploads (dev)
 /media/
 .payload/
+
+# testing artifacts
+.lhci/
+playwright-report/
+test-results/
+

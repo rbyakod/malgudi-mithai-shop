@@ -1,0 +1,95 @@
+name: CI
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports: ["27017:27017"]
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ping:1})' --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MONGODB_URI: mongodb://localhost:27017/mishran-test
+      PAYLOAD_SECRET: test-secret
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm run test:unit
+      - run: npm run build
+
+  # End-to-end suite. Includes the a11y spec (tests/e2e/a11y.spec.ts) which
+  # runs AxeBuilder against the core routes — no separate a11y job needed.
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports: ["27017:27017"]
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ping:1})' --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MONGODB_URI: mongodb://localhost:27017/mishran-e2e
+      PAYLOAD_SECRET: test-secret
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run seed
+      - run: npm run build
+      - run: npm run test:e2e
+
+  # Lighthouse CI — runs lhci autorun against the built app. Gated behind
+  # continue-on-error: true for the first few runs because LHCI is flaky in
+  # CI (CPU throttling variance, transient TTFB). Remove the flag once the
+  # baseline is stable. PR-only so main pushes don't fail on a flake.
+  lighthouse:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    services:
+      mongodb:
+        image: mongo:7
+        ports: ["27017:27017"]
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ping:1})' --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MONGODB_URI: mongodb://localhost:27017/mishran-lhci
+      PAYLOAD_SECRET: test-secret
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run seed
+      - run: npm run build
+      # Start the production server in the background and wait for it.
+      - name: Start app
+        run: |
+          npm run start &
+          npx wait-on http://localhost:3000
+      - run: npm run lhci

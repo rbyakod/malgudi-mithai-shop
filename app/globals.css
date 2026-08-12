@@ -1,10 +1,47 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss/index.css";
 
-/* ---- Theme: Festive Saffron (default) ---- */
+/* ---- Theme: Mishran Default (canonical) ---- */
 
 :root,
-[data-theme="festive"] {
+[data-theme="mishran-default"] {
+  --font-geist-sans: "Outfit", "Avenir Next", "Segoe UI", Inter, Arial, sans-serif;
+  --font-geist-mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace;
+  --t-bg-page: #f7efe0;
+  --t-bg-card: #fbf6ec;
+  --t-bg-accent: #f3e7cf;
+  --t-bg-control: #fffaf3;
+  --t-bg-dark: #2c1810;
+  --t-bg-darker: #1c100a;
+  --t-primary: #9b4d2a;
+  --t-primary-hover: #7e3d21;
+  --t-gold: #d79a35;
+  --t-gold-hover: #b9812a;
+  --t-text-primary: #1c100a;
+  --t-text-heading: #2c1810;
+  --t-text-on-gold: #1c100a;
+  --t-text-secondary: #5a3a2a;
+  --t-text-info: #6b4636;
+  --t-text-muted: #7a5645;
+  --t-text-breadcrumb: #b59478;
+  --t-text-light: #f7efe0;
+  --t-text-light-muted: #ecd9bc;
+  --t-border-card: #ddc9a8;
+  --t-border-input: #c9b08a;
+  --t-border-image: #d4be9c;
+  --t-gradient-gold: #e2ad4c;
+  --t-orb-secondary: #c98a52;
+  --t-orb-primary-opacity: 0.55;
+  --t-orb-gold-opacity: 0.55;
+  --t-orb-secondary-opacity: 0.5;
+  --t-grid-opacity: 0;
+  --t-noise-opacity: 0;
+}
+
+/* ---- Theme: Festive Saffron (legacy alias -> diwali-saffron) ---- */
+
+[data-theme="festive"],
+[data-theme="diwali-saffron"] {
   --font-geist-sans: "Outfit", "Avenir Next", "Segoe UI", Inter, Arial, sans-serif;
   --font-geist-mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace;
   --t-bg-page: #f0e4d4;
@@ -38,9 +75,10 @@
   --t-noise-opacity: 0;
 }
 
-/* ---- Theme: Mishran Heritage ---- */
+/* ---- Theme: Mishran Heritage (legacy alias -> wedding-heritage) ---- */
 
-[data-theme="heritage"] {
+[data-theme="heritage"],
+[data-theme="wedding-heritage"] {
   --font-geist-sans: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
   --font-geist-mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace;
   --t-bg-page: #f4e7d0;
@@ -144,9 +182,10 @@
   --t-noise-opacity: 0;
 }
 
-/* ---- Theme: Minimal Sage ---- */
+/* ---- Theme: Minimal Sage (legacy alias -> everyday-sage) ---- */
 
-[data-theme="sage"] {
+[data-theme="sage"],
+[data-theme="everyday-sage"] {
   --t-bg-page: #e4e0d4;
   --t-bg-card: #edeae3;
   --t-bg-accent: #dce5d5;
@@ -379,6 +418,7 @@
   --color-gradient-gold: var(--t-gradient-gold);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Outfit", serif;
 }
 
 /* ---- Base ---- */
@@ -839,3 +879,50 @@ input:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .page-bg__orb { animation: none !important; }
 }
+
+/* ---- Story article body (lexical rich text renderer output) ----
+   The @payloadcms/richtext-lexical/react <RichText/> component emits
+   semantic HTML (p, h2, h3, ul, ol, blockquote, a). We scope type styles
+   under .prose-story so the story PDP body reads as a magazine article
+   without leaking into other pages. */
+
+.prose-story > * + * { margin-top: 1.25rem; }
+.prose-story p {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--t-text-heading);
+}
+.prose-story h2,
+.prose-story h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--t-text-heading);
+  letter-spacing: -0.01em;
+  margin-top: 2rem;
+}
+.prose-story h2 { font-size: 1.5rem; }
+.prose-story h3 { font-size: 1.25rem; }
+.prose-story ul,
+.prose-story ol {
+  padding-left: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--t-text-heading);
+}
+.prose-story ul { list-style: disc; }
+.prose-story ol { list-style: decimal; }
+.prose-story li + li { margin-top: 0.5rem; }
+.prose-story blockquote {
+  border-left: 2px solid var(--t-gold);
+  padding-left: 1rem;
+  font-style: italic;
+  color: var(--t-text-muted);
+}
+.prose-story a {
+  color: var(--t-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-story a:hover { color: var(--t-primary-hover); }

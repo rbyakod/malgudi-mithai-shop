@@ -8,6 +8,7 @@ import {
   THEMES,
   Theme
 } from "@/lib/themes";
+import {track} from "@/lib/analytics";
 
 const THEME_GROUPS = THEME_GROUP_ORDER.map((group) => ({
   group,
@@ -49,6 +50,7 @@ export function ThemeSwitcher({className = ""}: {className?: string}) {
 
   const handleThemeSelect = (nextTheme: Theme) => {
     setTheme(nextTheme);
+    track("theme_changed", {theme: nextTheme});
     setOpen(false);
   };
 
@@ -145,7 +147,7 @@ export function ThemeSwitcher({className = ""}: {className?: string}) {
                                 color: entry.preview.ink
                               }}
                             >
-                              {entry.group === "Design Systems" ? "Inspired" : "House"}
+                              House
                             </span>
 
                             {isActive ? (
@@ -200,7 +202,7 @@ export function ThemeSwitcher({className = ""}: {className?: string}) {
                                 className="rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
                                 style={{
                                   backgroundColor: entry.preview.pop,
-                                  color: entry.id === "ibm" ? "#ffffff" : "#08111f"
+                                  color: "#08111f"
                                 }}
                               >
                                 {isActive ? "Selected" : "Switch"}

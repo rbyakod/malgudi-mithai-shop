@@ -57,13 +57,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [theme]);
 
-  useEffect(() => {
-    const syncedTheme = getInitialTheme();
-    if (syncedTheme !== theme) {
-      setThemeState(syncedTheme);
-    }
-  }, [theme]);
-
   const setTheme = (t: Theme) => {
     setThemeState(t);
   };

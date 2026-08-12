@@ -8,6 +8,26 @@
     "orderNow": "Order now",
     "cart": "Cart"
   },
+  "Nav": {
+    "mithai": "ಮಿಠಾಯಿ",
+    "buildAGift": "ಗಿಫ್ಟ್ ಕಟ್ಟಿ",
+    "qsr": "ತ್ವರಿತ ಸೇವೆ",
+    "snacks": "ತಿಂಡಿಗಳು",
+    "merch": "ಮರ್ಚ್",
+    "stories": "ಕಥೆಗಳು",
+    "farms": "ಫಾರ್ಮ್‌ಗಳು",
+    "karigars": "ಕುಶಲಕರ್ಮಿಗಳು",
+    "journal": "ಜರ್ನಲ್"
+  },
+  "HeroRotator": {
+    "regionLabel": "ಆಯ್ದ ಉತ್ಪನ್ನಗಳು",
+    "view": "ನೋಡಿ",
+    "addToCart": "ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ",
+    "added": "ಸೇರಿಸಲಾಗಿದೆ",
+    "previous": "ಹಿಂದಿನ ಸ್ಲೈಡ್",
+    "next": "ಮುಂದಿನ ಸ್ಲೈಡ್",
+    "dotLabel": "ಸ್ಲೈಡ್‌ಗೆ ಹೋಗಿ"
+  },
   "Home": {
     "heroBadge": "Handcrafted in Bengaluru • Delivered fresh",
     "heroTitle": "Mithai that feels festive every single day.",
@@ -27,6 +47,235 @@
     "corporateFormTitle": "Tell us what you're planning",
     "corporateFormSubtitle": "Share a few details and our team will call you back within one business day.",
     "footerLocation": "Indiranagar, Bengaluru",
-    "footerPrivacy": "Privacy policy"
+    "footerPrivacy": "Privacy policy",
+
+    "heroEyebrow": "A new house of Indian sweets",
+    "heroHeadlineLine1": "A new house",
+    "heroSubhead": "Mishran is a modern mithai house — rooted in Jhajjar milk, hand‑finished by karigars, and re‑imagined for everyday celebrations and the hampers that travel across India.",
+    "ctaExploreMithai": "Explore mithai",
+    "ctaBuildGift": "Build a gift",
+    "heroInsetAlt": "A slice of kaju katli, silver‑leafed and dusted, on a Mishran plate.",
+    "heroInsetLabel": "From the kitchen",
+    "heroInsetTitle": "Kaju katli, vark‑finished",
+    "heroInsetMeta": "Hand‑cut each morning · 500g",
+
+    "portal": {
+      "eyebrow": "Four houses, one kitchen",
+      "title": "Find your Mishran",
+      "intro": "Each vertical carries the same milk‑first promise, dressed for the moment — a quiet Tuesday, a wedding mehendi, a corporate launch, or a hamper that travels across India.",
+      "mithai": {
+        "label": "Mithai",
+        "description": "The canon — kaju katli, motichoor, besan laddoo — finished fresh, in weights that suit a Tuesday or a thousand‑box wedding."
+      },
+      "qsr": {
+        "label": "QSR",
+        "description": "Counter‑quick mithai and savouries from our high‑street kitchens. Walk in, take a box, carry on with your day."
+      },
+      "snacks": {
+        "label": "Snacks",
+        "description": "Namkeen, mathri, chivra — the savoury shelf of the Mishran house, built for evening chai and travel tins."
+      },
+      "merch": {
+        "label": "Merch",
+        "description": "Hamper shells, thalis, and keepsake boxes — the vessels that carry Mishran into homes and across occasions."
+      }
+    },
+
+    "pillars": {
+      "eyebrow": "Why Mishran",
+      "title": "Four promises, kept daily.",
+      "intro": "The Mishran house is built on four non‑negotiables — they shape every batch, every box, every karigar's day.",
+      "readMore": "Read the story",
+      "milkPurity": {
+        "label": "Milk Purity",
+        "description": "Milk from our Jhajjar farm, boiled fresh each morning — no milk powder, no reconstituted cream, ever."
+      },
+      "karigarMastery": {
+        "label": "Karigar Mastery",
+        "description": "Each sweet is finished by a karigar whose family has held the recipe for generations — hands that know when chashni is ready by sound."
+      },
+      "karigari": {
+        "label": "Karigari",
+        "description": "The craft itself — the vark on a katli, the boondi of a laddoo, the fold of a peda — done the long way, never the shortcut way."
+      },
+      "modernExperience": {
+        "label": "Modern Experience",
+        "description": "Boutique packaging, honest labels, on‑time delivery — the same mithai, dressed for how India celebrates today."
+      }
+    }
+  },
+
+  "Verticals": {
+    "mithai": {
+      "title": "Mithai",
+      "blurb": "The canon — kaju katli, motichoor, besan laddoo. Milk‑first recipes finished fresh by karigars, in weights that suit a Tuesday or a thousand‑box wedding."
+    },
+    "qsr": {
+      "title": "QSR",
+      "blurb": "Counter‑quick mithai and savouries from our high‑street kitchens. Walk in, take a box, carry on with your day."
+    },
+    "snacks": {
+      "title": "Snacks",
+      "blurb": "Namkeen, mathri, chivra — the savoury shelf of the Mishran house, built for evening chai and travel tins."
+    },
+    "merch": {
+      "title": "Merch",
+      "blurb": "Hamper shells, thalis, and keepsake boxes — the vessels that carry Mishran into homes and across occasions."
+    },
+    "empty": "The kitchen is quiet just now. New batches are being finished — please check back shortly.",
+    "itemCount": "{count} items"
+  },
+
+  "Pdp": {
+    "_TODO_kn": "Kannada translations pending — Task 14 pattern. Keys below are English stubs.",
+    "mithai": {
+      "ingredients": "Ingredients",
+      "allergens": "Allergens",
+      "shelfLife": "Shelf life",
+      "storage": "Storage",
+      "story": "From the karigar's bench",
+      "karigar": "Finished by",
+      "freshness": "Freshness",
+      "addToCart": "Add to draft cart",
+      "added": "Added"
+    },
+    "qsr": {
+      "category": "Category",
+      "spiceLevel": "Spice",
+      "veg": "Vegetarian",
+      "available": "Available at"
+    },
+    "snacks": {
+      "category": "Category",
+      "weight": "Weight",
+      "msrp": "MRP",
+      "buyAt": "Buy at"
+    },
+    "merch": {
+      "type": "Type",
+      "price": "Price",
+      "availability": "Availability",
+      "enquire": "Enquire",
+      "enquireDisabled": "Enquiries open soon"
+    },
+    "breadcrumbHome": "Mishran",
+    "notFound": "We couldn't find that one."
+  },
+
+  "Leads": {
+    "_todo": "TODO: translate to Kannada — currently English stubs (Task 14 pattern).",
+    "common": {
+      "submit": "Submit",
+      "submitting": "Sending…",
+      "toastSuccess": "Thanks — your enquiry is in.",
+      "errorGeneric": "Something went wrong. Please try again or email us directly.",
+      "thankYouEyebrow": "Received",
+      "thankYouTitle": "Thank you.",
+      "thankYouBody": "Our events team will be in touch within one business day to plan the details with you.",
+      "reference": "Your reference: {id}"
+    },
+    "weddings": {
+      "eyebrow": "Weddings & Bulk Gifting",
+      "title": "Weddings & Bulk Gifting",
+      "intro": "Tell us about the day you're planning. We'll respond within 24 hours with mithai suggestions, packaging options, and a quote.",
+      "formTitle": "Share your event",
+      "formIntro": "A few details and we'll take it from there — tastings, custom assortments, and packaging that matches the occasion.",
+      "groupContact": "Your details",
+      "groupEvent": "The event",
+      "groupPreferences": "Mithai & packaging",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "date": "Event date",
+      "city": "City",
+      "guests": "Guests",
+      "budget": "Budget",
+      "mithaiPreferences": "Mithai preferences",
+      "packaging": "Packaging",
+      "preferencesHint": "Optional",
+      "message": "Anything else?",
+      "submit": "Submit enquiry"
+    },
+    "corporate": {
+      "eyebrow": "Corporate & Bulk Orders",
+      "title": "Corporate & Bulk Orders",
+      "intro": "Hampers for Diwali, new‑hire kits, launch gifts — tell us the brief and our corporate team will come back within one business day.",
+      "formTitle": "Brief us",
+      "formIntro": "Company, quantity, deadline, branding — share what you have and we'll build the rest.",
+      "groupContact": "Your details",
+      "groupCompany": "Company",
+      "groupOrder": "The order",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "company": "Company",
+      "gst": "GSTIN",
+      "quantity": "Quantity",
+      "deadline": "Deadline",
+      "occasion": "Occasion",
+      "branding": "Branding",
+      "orderHint": "Approximate",
+      "message": "Anything else?",
+      "submit": "Submit enquiry"
+    }
+  },
+
+  "Commerce": {
+    "_todo": "TODO: translate to Kannada — currently English stubs (Task 14 pattern).",
+    "common": {
+      "_todo_kn": "TODO: translate to Kannada — currently English stubs (Task 14 pattern).",
+      "eyebrow": "Mishran · Commerce",
+      "whatsappCta": "Message us on WhatsApp",
+      "leadEyebrow": "Bulk & weddings",
+      "leadCta": "Planning a bulk order or wedding?",
+      "leadHint": "Tell us about your event →",
+      "empty": "Your cart is empty.",
+      "emptyCta": "Browse mithai",
+      "itemsReadonlyNote": "Quantities are read-only while we finish our commerce experience."
+    },
+    "stubs": {
+      "cart": {
+        "title": "Cart",
+        "blurb": "Your cart is being prepared. Checkout launches with our full commerce experience. For bulk orders or weddings, message us on WhatsApp."
+      },
+      "checkout": {
+        "title": "Checkout",
+        "blurb": "Checkout is launching soon. To reserve your order today, message us on WhatsApp."
+      },
+      "account": {
+        "title": "Account",
+        "blurb": "Accounts launch with our commerce experience. For order questions, WhatsApp us."
+      },
+      "trackOrder": {
+        "title": "Track order",
+        "blurb": "Order tracking launches with Phase 8 commerce. Need help now? WhatsApp us with your order reference."
+      },
+      "buildAGift": {
+        "title": "ಗಿಫ್ಟ್ ಕಟ್ಟಿ",
+        "blurb": "ಗಿಫ್ಟ್-ಬಾಕ್ಸ್ ಬಿಲ್ಡರ್ ನಮ್ಮ ಪೂರ್ಣ ಕಾಮರ್ಸ್ ಅನುಭವದೊಂದಿಗೆ ಬಿಡುಗಡೆಯಾಗಲಿದೆ. ಸಂದರ್ಭ, ಸಂಖ್ಯೆ, ಬಜೆಟ್ ಹೇಳಿ — ನಾವು ಬಾಕ್ಸ್ ಸಿದ್ಧಪಡಿಸಿ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಸಂಪರ್ಕಿಸುತ್ತೇವೆ."
+      }
+    }
+  },
+  "Stories": {
+    "title": "ಕಥೆಗಳು",
+    "eyebrow": "ಮನೆಯಿಂದ",
+    "intro": "Stories from the Mishran kitchen — farms, karigars, craft, and the modern experience that carries it to your door.",
+    "empty": "Stories are being written. Please check back shortly.",
+    "itemCount": "{count} stories",
+    "readMore": "Read the story",
+    "backToHub": "All stories",
+    "publishedOn": "Published",
+    "pillarLabel": "Pillar",
+    "pillars": {
+      "farm": "Milk & Farms",
+      "milk": "Milk & Farms",
+      "karigar": "Karigar Mastery",
+      "karigari": "Karigari",
+      "packaging": "Packaging",
+      "festival": "Festivals",
+      "regional": "Regional",
+      "recipe": "Recipes",
+      "journal": "Modern Experience"
+    }
   }
 }
