@@ -1,0 +1,20 @@
+[
+  {"pincode":"110001","city":"New Delhi","state":"Delhi","slaDays":1},
+  {"pincode":"110002","city":"New Delhi","state":"Delhi","slaDays":1},
+  {"pincode":"110003","city":"New Delhi","state":"Delhi","slaDays":1},
+  {"pincode":"110005","city":"New Delhi","state":"Delhi","slaDays":1},
+  {"pincode":"110011","city":"New Delhi","state":"Delhi","slaDays":1},
+  {"pincode":"110017","city":"New Delhi","state":"Delhi","slaDays":1},
+  {"pincode":"110024","city":"New Delhi","state":"Delhi","slaDays":1},
+  {"pincode":"110048","city":"New Delhi","state":"Delhi","slaDays":1},
+  {"pincode":"110092","city":"New Delhi","state":"Delhi","slaDays":1},
+  {"pincode":"201301","city":"Noida","state":"Uttar Pradesh","slaDays":1},
+  {"pincode":"201304","city":"Noida","state":"Uttar Pradesh","slaDays":1},
+  {"pincode":"201309","city":"Noida","state":"Uttar Pradesh","slaDays":1},
+  {"pincode":"122001","city":"Gurugram","state":"Haryana","slaDays":1},
+  {"pincode":"122003","city":"Gurugram","state":"Haryana","slaDays":1},
+  {"pincode":"122002","city":"Gurugram","state":"Haryana","slaDays":1},
+  {"pincode":"122009","city":"Gurugram","state":"Haryana","slaDays":1},
+  {"pincode":"121001","city":"Faridabad","state":"Haryana","slaDays":2},
+  {"pincode":"201009","city":"Ghaziabad","state":"Uttar Pradesh","slaDays":2}
+]

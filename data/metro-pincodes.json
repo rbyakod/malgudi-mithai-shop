@@ -1,0 +1,17 @@
+[
+  {"pincode":"400001","city":"Mumbai","state":"Maharashtra","slaDays":3},
+  {"pincode":"400050","city":"Mumbai","state":"Maharashtra","slaDays":3},
+  {"pincode":"400076","city":"Mumbai","state":"Maharashtra","slaDays":3},
+  {"pincode":"411001","city":"Pune","state":"Maharashtra","slaDays":3},
+  {"pincode":"411014","city":"Pune","state":"Maharashtra","slaDays":3},
+  {"pincode":"500001","city":"Hyderabad","state":"Telangana","slaDays":3},
+  {"pincode":"500032","city":"Hyderabad","state":"Telangana","slaDays":3},
+  {"pincode":"600001","city":"Chennai","state":"Tamil Nadu","slaDays":3},
+  {"pincode":"600119","city":"Chennai","state":"Tamil Nadu","slaDays":3},
+  {"pincode":"560001","city":"Bengaluru","state":"Karnataka","slaDays":3},
+  {"pincode":"560102","city":"Bengaluru","state":"Karnataka","slaDays":3},
+  {"pincode":"700001","city":"Kolkata","state":"West Bengal","slaDays":3},
+  {"pincode":"700091","city":"Kolkata","state":"West Bengal","slaDays":3},
+  {"pincode":"380001","city":"Ahmedabad","state":"Gujarat","slaDays":3},
+  {"pincode":"380054","city":"Ahmedabad","state":"Gujarat","slaDays":3}
+]
