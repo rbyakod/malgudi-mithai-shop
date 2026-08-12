@@ -5,6 +5,9 @@ export const AnalyticsSettings: GlobalConfig = {
   access: {
     read: () => true,
   },
+  admin: {
+    group: "05 Settings",
+  },
   fields: [
     {
       name: "ga4Id",

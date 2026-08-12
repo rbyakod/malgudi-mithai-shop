@@ -10,7 +10,7 @@ import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook
 export const SnackProducts: CollectionConfig = {
   slug: "snack-products",
   access: { read: () => true },
-  admin: { useAsTitle: "name", group: "FMCG" },
+  admin: { useAsTitle: "name", group: "02 Products" },
   hooks: {
     afterChange: [makeRevalidateHook("snack-products")],
     afterDelete: [makeRevalidateDeleteHook("snack-products")],

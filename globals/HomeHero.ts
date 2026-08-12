@@ -10,6 +10,9 @@ export const HomeHero: GlobalConfig = {
   access: {
     read: () => true,
   },
+  admin: {
+    group: "04 Storefront",
+  },
   fields: [
     {
       name: "autoplayMs",

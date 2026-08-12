@@ -14,7 +14,7 @@ export const Users: CollectionConfig = {
     // once role-based access is wired through the rest of the config.
     read: ({ req: { user } }) => Boolean(user),
   },
-  admin: { useAsTitle: "email" },
+  admin: { useAsTitle: "email", group: "05 Settings" },
   fields: [
     { name: "name", type: "text" },
     {

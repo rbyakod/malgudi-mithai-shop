@@ -7,7 +7,7 @@ import type { CollectionConfig } from "payload";
 export const Occasions: CollectionConfig = {
   slug: "occasions",
   access: { read: () => true },
-  admin: { useAsTitle: "name" },
+  admin: { useAsTitle: "name", group: "01 Brand" },
   fields: [
     { name: "name", type: "text", required: true, localized: true },
     { name: "copy", type: "textarea", localized: true },

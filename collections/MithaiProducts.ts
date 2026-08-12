@@ -18,7 +18,7 @@ import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook
 export const MithaiProducts: CollectionConfig = {
   slug: "mithai-products",
   access: { read: () => true },
-  admin: { useAsTitle: "name", group: "Mithai" },
+  admin: { useAsTitle: "name", group: "02 Products" },
   versions: { drafts: true },
   hooks: {
     afterChange: [makeRevalidateHook("mithai-products")],

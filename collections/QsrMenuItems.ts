@@ -17,7 +17,7 @@ import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook
 export const QsrMenuItems: CollectionConfig = {
   slug: "qsr-menu-items",
   access: { read: () => true },
-  admin: { useAsTitle: "name", group: "QSR" },
+  admin: { useAsTitle: "name", group: "02 Products" },
   hooks: {
     afterChange: [makeRevalidateHook("qsr-menu-items")],
     afterDelete: [makeRevalidateDeleteHook("qsr-menu-items")],

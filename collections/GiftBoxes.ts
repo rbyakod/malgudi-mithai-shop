@@ -11,7 +11,7 @@ import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook
 export const GiftBoxes: CollectionConfig = {
   slug: "gift-boxes",
   access: { read: () => true },
-  admin: { useAsTitle: "name", group: "Gifting" },
+  admin: { useAsTitle: "name", group: "02 Products" },
   hooks: {
     afterChange: [makeRevalidateHook("gift-boxes")],
     afterDelete: [makeRevalidateDeleteHook("gift-boxes")],

@@ -13,7 +13,7 @@ export const Stories: CollectionConfig = {
   access: {
     read: () => true,
   },
-  admin: { useAsTitle: "title" },
+  admin: { useAsTitle: "title", group: "01 Brand" },
   versions: { drafts: true },
   hooks: {
     afterChange: [makeRevalidateHook("stories")],

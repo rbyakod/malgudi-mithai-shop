@@ -5,6 +5,9 @@ export const NavSettings: GlobalConfig = {
   access: {
     read: () => true,
   },
+  admin: {
+    group: "04 Storefront",
+  },
   fields: [
     {
       name: "primaryNav",

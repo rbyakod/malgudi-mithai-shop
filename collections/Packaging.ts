@@ -7,7 +7,7 @@ import type { CollectionConfig } from "payload";
 export const Packaging: CollectionConfig = {
   slug: "packaging",
   access: { read: () => true },
-  admin: { useAsTitle: "name" },
+  admin: { useAsTitle: "name", group: "03 Catalog Ops" },
   fields: [
     { name: "name", type: "text", required: true },
     {
