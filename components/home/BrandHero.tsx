@@ -6,7 +6,7 @@
 // still life (original behaviour).
 
 import Image from "next/image";
-import {getTranslations} from "next-intl/server";
+import {getTranslations, getLocale} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
 import {getPayload} from "@/lib/payload-client";
 import {resolveHomeHeroSlides} from "@/lib/home-hero";
@@ -32,11 +32,12 @@ async function readBrandSettings(): Promise<BrandGlobal | null> {
 }
 
 export async function BrandHero() {
-  const [t, brand, slides] = await Promise.all([
+  const [t, brand, locale] = await Promise.all([
     getTranslations("Home"),
     readBrandSettings(),
-    resolveHomeHeroSlides(),
+    getLocale(),
   ]);
+  const {slides, autoplayMs} = await resolveHomeHeroSlides(locale);
 
   const brandName = brand?.brandName?.trim() || "Mishran";
   const positioning = brand?.positioning?.trim();
@@ -112,7 +113,7 @@ export async function BrandHero() {
         {/* Right column — rotator when slides exist, else static fallback. */}
         {hasSlides ? (
           <div className="relative lg:ml-auto lg:max-w-md">
-            <HeroRotator slides={slides} />
+            <HeroRotator slides={slides} autoplayMs={autoplayMs} />
           </div>
         ) : (
           <div className="relative hidden lg:block">

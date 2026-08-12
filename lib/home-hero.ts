@@ -21,7 +21,13 @@
 //   gift-boxes      -> /build-a-gift/<slug>   (gift-boxes are showcased
 //                                                inside build-a-gift flow)
 //
-// Any error → empty array. BrandHero falls back to static layout.
+// All 5 hero collections have localized `name` (and some have localized
+// `description`/`story`). Pass the request locale so slide names + captions
+// match the surrounding page. The `home-hero` global itself has no
+// localized fields (autoplayMs + captionOverride are locale-agnostic) so
+// findGlobal needs no locale arg.
+//
+// Any error → empty result. BrandHero falls back to static layout.
 import { getPayload } from "@/lib/payload-client";
 
 export type Slide = {
@@ -34,6 +40,15 @@ export type Slide = {
   href: string;
 };
 
+export type HomeHeroData = {
+  slides: Slide[];
+  autoplayMs: number;
+};
+
+const DEFAULT_AUTOPLAY_MS = 5000;
+const AUTOPLAY_MIN = 3000;
+const AUTOPLAY_MAX = 15000;
+
 type PolymorphicRef = {
   relationTo: string;
   value: string;
@@ -42,6 +57,11 @@ type PolymorphicRef = {
 type GlobalRow = {
   product?: PolymorphicRef;
   captionOverride?: string;
+};
+
+type HomeHeroGlobal = {
+  slides?: GlobalRow[];
+  autoplayMs?: number | null;
 };
 
 const HREF_PREFIX: Record<string, string> = {
@@ -54,8 +74,12 @@ const HREF_PREFIX: Record<string, string> = {
 
 // Minimal Payload SDK types for our usage.
 type PayloadSDK = {
-  findByID(params: { collection: string; id: string }): Promise<PayloadDoc>;
-  findGlobal(params: { slug: string }): Promise<{ slides?: GlobalRow[] }>;
+  findByID(params: {
+    collection: string;
+    id: string;
+    locale?: string;
+  }): Promise<PayloadDoc>;
+  findGlobal(params: { slug: string }): Promise<HomeHeroGlobal>;
 };
 
 type PayloadDoc = {
@@ -92,16 +116,28 @@ function readPriceLabel(doc: PayloadDoc, collection: string): string | undefined
   return undefined;
 }
 
+function clampAutoplayMs(value: number | null | undefined): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return DEFAULT_AUTOPLAY_MS;
+  }
+  return Math.min(AUTOPLAY_MAX, Math.max(AUTOPLAY_MIN, Math.round(value)));
+}
+
 async function resolveOne(
   payload: PayloadSDK,
-  row: GlobalRow
+  row: GlobalRow,
+  locale: string | undefined
 ): Promise<Slide | null> {
   if (!row.product?.relationTo || !row.product?.value) return null;
   const { relationTo: collection, value: id } = row.product;
 
   let doc: PayloadDoc;
   try {
-    doc = await payload.findByID({ collection: collection, id });
+    doc = await payload.findByID({
+      collection: collection,
+      id,
+      ...(locale ? { locale } : {}),
+    });
   } catch {
     return null;
   }
@@ -124,26 +160,32 @@ async function resolveOne(
   };
 }
 
-export async function resolveHomeHeroSlides(): Promise<Slide[]> {
+export async function resolveHomeHeroSlides(
+  locale?: string
+): Promise<HomeHeroData> {
   let payload: PayloadSDK;
   try {
     payload = await getPayload();
   } catch {
-    return [];
+    return { slides: [], autoplayMs: DEFAULT_AUTOPLAY_MS };
   }
 
-  let global: { slides?: GlobalRow[] };
+  let global: HomeHeroGlobal;
   try {
     global = await payload.findGlobal({ slug: "home-hero" });
   } catch {
-    return [];
+    return { slides: [], autoplayMs: DEFAULT_AUTOPLAY_MS };
   }
 
+  const autoplayMs = clampAutoplayMs(global?.autoplayMs);
   const rows = Array.isArray(global?.slides) ? global.slides : [];
-  if (rows.length === 0) return [];
+  if (rows.length === 0) {
+    return { slides: [], autoplayMs };
+  }
 
   const settled = await Promise.all(
-    rows.map((row) => resolveOne(payload, row))
+    rows.map((row) => resolveOne(payload, row, locale))
   );
-  return settled.filter((s): s is Slide => s !== null);
+  const slides = settled.filter((s): s is Slide => s !== null);
+  return { slides, autoplayMs };
 }

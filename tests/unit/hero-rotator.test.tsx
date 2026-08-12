@@ -3,19 +3,25 @@ import {render, screen, fireEvent, act} from "@testing-library/react";
 import {HeroRotator} from "@/components/home/HeroRotator";
 import type {Slide} from "@/lib/home-hero";
 
-// Mock next-intl
+// Mock next-intl — simulate useTranslations("HeroRotator") returning a
+// function that looks up bare keys inside the HeroRotator namespace.
 vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string) => {
-    const dict: Record<string, string> = {
-      "HeroRotator.view": "View",
-      "HeroRotator.addToCart": "Add to cart",
-      "HeroRotator.added": "Added",
-      "HeroRotator.previous": "Previous slide",
-      "HeroRotator.next": "Next slide",
-      "HeroRotator.dotLabel": "Go to slide",
-      "HeroRotator.regionLabel": "Featured products",
+  useTranslations: (namespace?: string) => (key: string) => {
+    const dicts: Record<string, Record<string, string>> = {
+      HeroRotator: {
+        view: "View",
+        addToCart: "Add to cart",
+        added: "Added",
+        previous: "Previous slide",
+        next: "Next slide",
+        dotLabel: "Go to slide",
+        regionLabel: "Featured products",
+      },
     };
-    return dict[key] ?? key;
+    if (namespace && dicts[namespace]) {
+      return dicts[namespace][key] ?? key;
+    }
+    return key;
   },
 }));
 
@@ -180,8 +186,9 @@ describe("HeroRotator", () => {
 
   it("clicking Add to cart calls addItem with slide shape", () => {
     render(<HeroRotator slides={slides} />);
-    const btns = screen.getAllByRole("button", {name: /Add to cart/i});
-    fireEvent.click(btns[0]);
+    // Only the active slide's button is exposed; inert hides the rest.
+    const btn = screen.getByRole("button", {name: /Add to cart/i});
+    fireEvent.click(btn);
     expect(addItemMock).toHaveBeenCalledWith({
       id: "1",
       name: "Kaju Katli",
@@ -192,7 +199,27 @@ describe("HeroRotator", () => {
 
   it("View link points to PDP href", () => {
     render(<HeroRotator slides={slides} />);
-    const viewLinks = screen.getAllByRole("link", {name: /^View$/i});
-    expect(viewLinks[0]).toHaveAttribute("href", "/mithai/kaju-katli");
+    const viewLink = screen.getByRole("link", {name: /^View$/i});
+    expect(viewLink).toHaveAttribute("href", "/mithai/kaju-katli");
+  });
+
+  it("inert hides inactive slides' View + Add buttons from the accessibility tree", () => {
+    render(<HeroRotator slides={slides} />);
+    // Only one View link + one Add to cart button visible (the active slide's).
+    expect(screen.getAllByRole("link", {name: /^View$/i})).toHaveLength(1);
+    expect(screen.getAllByRole("button", {name: /Add to cart/i})).toHaveLength(1);
+  });
+
+  it("honors autoplayMs prop over default 5000ms", () => {
+    render(<HeroRotator slides={slides} autoplayMs={3000} />);
+    // Slide 1 active
+    const dotsBefore = screen.getAllByRole("button", {name: /Go to slide/i});
+    expect(dotsBefore[0]).toHaveAttribute("aria-current", "true");
+    // Advance only 3s — should already have moved
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+    const dotsAfter = screen.getAllByRole("button", {name: /Go to slide/i});
+    expect(dotsAfter[1]).toHaveAttribute("aria-current", "true");
   });
 });

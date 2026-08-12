@@ -22,29 +22,31 @@ function mockPayload(overrides: Partial<MockPayload> = {}): MockPayload {
   };
 }
 
+const EMPTY = {slides: [], autoplayMs: 5000};
+
 describe("resolveHomeHeroSlides", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("returns empty array when global is empty", async () => {
+  it("returns empty result when global is empty", async () => {
     (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockPayload({
         findGlobal: vi.fn().mockResolvedValue({ slides: [] }),
       })
     );
-    const slides = await resolveHomeHeroSlides();
-    expect(slides).toEqual([]);
+    const result = await resolveHomeHeroSlides();
+    expect(result).toEqual(EMPTY);
   });
 
-  it("returns empty array when global has no slides field", async () => {
+  it("returns empty result when global has no slides field", async () => {
     (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockPayload({
         findGlobal: vi.fn().mockResolvedValue({}),
       })
     );
-    const slides = await resolveHomeHeroSlides();
-    expect(slides).toEqual([]);
+    const result = await resolveHomeHeroSlides();
+    expect(result).toEqual(EMPTY);
   });
 
   it("resolves mithai product with array images field", async () => {
@@ -78,9 +80,9 @@ describe("resolveHomeHeroSlides", () => {
         findByID: vi.fn().mockResolvedValue(mithaiDoc),
       })
     );
-    const slides = await resolveHomeHeroSlides();
-    expect(slides).toHaveLength(1);
-    expect(slides[0]).toEqual({
+    const result = await resolveHomeHeroSlides();
+    expect(result.slides).toHaveLength(1);
+    expect(result.slides[0]).toEqual({
       id: "mithai-1",
       collection: "mithai-products",
       name: "Kaju Katli",
@@ -114,9 +116,9 @@ describe("resolveHomeHeroSlides", () => {
         findByID: vi.fn().mockResolvedValue(qsrDoc),
       })
     );
-    const slides = await resolveHomeHeroSlides();
-    expect(slides).toHaveLength(1);
-    expect(slides[0]).toEqual({
+    const result = await resolveHomeHeroSlides();
+    expect(result.slides).toHaveLength(1);
+    expect(result.slides[0]).toEqual({
       id: "qsr-1",
       collection: "qsr-menu-items",
       name: "Masala Chai",
@@ -148,8 +150,8 @@ describe("resolveHomeHeroSlides", () => {
         findByID: vi.fn().mockResolvedValue(doc),
       })
     );
-    const slides = await resolveHomeHeroSlides();
-    expect(slides[0].name).toBe("Hero Copy");
+    const result = await resolveHomeHeroSlides();
+    expect(result.slides[0].name).toBe("Hero Copy");
   });
 
   it("skips slides when product fetch throws", async () => {
@@ -172,9 +174,9 @@ describe("resolveHomeHeroSlides", () => {
           }),
       })
     );
-    const slides = await resolveHomeHeroSlides();
-    expect(slides).toHaveLength(1);
-    expect(slides[0].id).toBe("y");
+    const result = await resolveHomeHeroSlides();
+    expect(result.slides).toHaveLength(1);
+    expect(result.slides[0].id).toBe("y");
   });
 
   it("skips slides when product has no image", async () => {
@@ -192,8 +194,8 @@ describe("resolveHomeHeroSlides", () => {
         }),
       })
     );
-    const slides = await resolveHomeHeroSlides();
-    expect(slides).toEqual([]);
+    const result = await resolveHomeHeroSlides();
+    expect(result.slides).toEqual([]);
   });
 
   it("skips draft products", async () => {
@@ -211,8 +213,8 @@ describe("resolveHomeHeroSlides", () => {
         }),
       })
     );
-    const slides = await resolveHomeHeroSlides();
-    expect(slides).toEqual([]);
+    const result = await resolveHomeHeroSlides();
+    expect(result.slides).toEqual([]);
   });
 
   it("returns empty when findGlobal throws", async () => {
@@ -221,7 +223,107 @@ describe("resolveHomeHeroSlides", () => {
         findGlobal: vi.fn().mockRejectedValue(new Error("DB down")),
       })
     );
-    const slides = await resolveHomeHeroSlides();
-    expect(slides).toEqual([]);
+    const result = await resolveHomeHeroSlides();
+    expect(result).toEqual(EMPTY);
+  });
+
+  it("passes locale through to payload.findByID for localized product name", async () => {
+    (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockPayload({
+        findGlobal: vi.fn().mockResolvedValue({
+          slides: [{ product: { relationTo: "mithai-products", value: "m1" } }],
+        }),
+        findByID: vi.fn().mockResolvedValue({
+          id: "m1",
+          name: "काजू कतली",
+          slug: "kaju-katli",
+          images: [{ image: { url: "u", alt: "alt" } }],
+          _status: "published",
+        }),
+      })
+    );
+    const result = await resolveHomeHeroSlides("hi");
+    expect(result.slides[0].name).toBe("काजू कतली");
+    const call = (getPayload as ReturnType<typeof vi.fn>).mock.results[0]
+      .value;
+    const payload = await call;
+    expect(payload.findByID).toHaveBeenCalledWith({
+      collection: "mithai-products",
+      id: "m1",
+      locale: "hi",
+    });
+  });
+
+  it("omits locale from findByID when not provided", async () => {
+    (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockPayload({
+        findGlobal: vi.fn().mockResolvedValue({
+          slides: [{ product: { relationTo: "mithai-products", value: "m1" } }],
+        }),
+        findByID: vi.fn().mockResolvedValue({
+          id: "m1",
+          name: "Kaju Katli",
+          slug: "kaju-katli",
+          images: [{ image: { url: "u", alt: "alt" } }],
+          _status: "published",
+        }),
+      })
+    );
+    await resolveHomeHeroSlides();
+    const payload = await (getPayload as ReturnType<typeof vi.fn>).mock
+      .results[0].value;
+    expect(payload.findByID).toHaveBeenCalledWith({
+      collection: "mithai-products",
+      id: "m1",
+    });
+  });
+
+  it("returns autoplayMs from global when set", async () => {
+    (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockPayload({
+        findGlobal: vi.fn().mockResolvedValue({
+          autoplayMs: 7000,
+          slides: [],
+        }),
+      })
+    );
+    const result = await resolveHomeHeroSlides();
+    expect(result.autoplayMs).toBe(7000);
+  });
+
+  it("defaults autoplayMs to 5000 when global field missing", async () => {
+    (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockPayload({
+        findGlobal: vi.fn().mockResolvedValue({ slides: [] }),
+      })
+    );
+    const result = await resolveHomeHeroSlides();
+    expect(result.autoplayMs).toBe(5000);
+  });
+
+  it("clamps autoplayMs below 3000 up to 3000", async () => {
+    (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockPayload({
+        findGlobal: vi.fn().mockResolvedValue({
+          autoplayMs: 1000,
+          slides: [],
+        }),
+      })
+    );
+    const result = await resolveHomeHeroSlides();
+    expect(result.autoplayMs).toBe(3000);
+  });
+
+  it("clamps autoplayMs above 15000 down to 15000", async () => {
+    (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockPayload({
+        findGlobal: vi.fn().mockResolvedValue({
+          autoplayMs: 60000,
+          slides: [],
+        }),
+      })
+    );
+    const result = await resolveHomeHeroSlides();
+    expect(result.autoplayMs).toBe(15000);
   });
 });
