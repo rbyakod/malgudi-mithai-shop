@@ -13,6 +13,8 @@ describe('config', () => {
       RAZORPAY_WEBHOOK_SECRET: 'whsecret',
       MSG91_AUTH_KEY: 'msgkey',
       MSG91_SENDER_ID: 'MISHRN',
+      MSG91_TEMPLATE_OTP: 'MISHRN_OTP',
+      RESEND_API_KEY: 're_test_xxx',
       FCM_PROJECT_ID: 'mishran-test',
       SENTRY_DSN: '',
       NODE_ENV: 'test',
