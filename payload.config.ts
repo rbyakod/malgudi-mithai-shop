@@ -21,6 +21,15 @@ import { Karigars } from "./collections/Karigars";
 import { Farms } from "./collections/Farms";
 import { Packaging } from "./collections/Packaging";
 import { Occasions } from "./collections/Occasions";
+// Mishran admin aesthetics (Task 18 wiring).
+// String paths are used because Payload 3.x's CustomComponent type expects
+// a component client-referenced through importMap; direct component refs
+// trip TS2322 against CustomComponent<Record<string, any>>.
+const CrestIconPath = "@/components/payload-admin/graphics/CrestIcon";
+const WordmarkLogoPath = "@/components/payload-admin/graphics/WordmarkLogo";
+const MishranLoginHeroPath = "@/components/payload-admin/login/MishranLoginHero";
+const MishranDashboardPath = "@/components/payload-admin/dashboard/MishranDashboard";
+const AdminThemeSwitcherPath = "@/components/payload-admin/theme/AdminThemeSwitcher";
 // Product stubs — expanded by Task 7.
 import { MithaiProducts } from "./collections/MithaiProducts";
 import { GiftBoxes } from "./collections/GiftBoxes";
@@ -62,6 +71,15 @@ export default buildConfig({
           password: "dev-password",
         }
       : false,
+    components: {
+      graphics: {
+        Icon: CrestIconPath,
+        Logo: WordmarkLogoPath,
+      },
+      beforeLogin: [MishranLoginHeroPath],
+      beforeDashboard: [MishranDashboardPath],
+      settingsMenu: [AdminThemeSwitcherPath],
+    },
   },
   collections: [
     // Brand collections (Task 6 scope).
