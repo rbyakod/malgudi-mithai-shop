@@ -45,6 +45,10 @@ import { Customers } from "./collections/Customers";
 import { Addresses } from "./collections/Addresses";
 // Mobile app (Task 1.5): orders.
 import { Orders } from "./collections/Orders";
+// Mobile app (Task 1.6): payments, shipments, serviceable pincodes.
+import { Payments } from "./collections/Payments";
+import { Shipments } from "./collections/Shipments";
+import { ServiceablePincodes } from "./collections/ServiceablePincodes";
 // Globals (Task 8).
 import { BrandSettings } from "./globals/BrandSettings";
 import { NavSettings } from "./globals/NavSettings";
@@ -118,6 +122,10 @@ export default buildConfig({
     Addresses,
     // Mobile app (Task 1.5): orders.
     Orders,
+    // Mobile app (Task 1.6): payments, shipments, serviceable pincodes.
+    Payments,
+    Shipments,
+    ServiceablePincodes,
   ],
   globals: [
     BrandSettings,
