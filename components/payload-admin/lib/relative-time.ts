@@ -1,5 +1,6 @@
-// Relative-time formatting using native Intl.RelativeTimeFormat.
-// Used for "edited Xd ago" copy in admin dashboard widgets.
+// Relative-time formatting for the admin dashboard.
+// Hardcoded English vocabulary — admin-only, no i18n requirement.
+// Pure function, no external date libraries.
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
