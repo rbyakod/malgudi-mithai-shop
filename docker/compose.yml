@@ -1,0 +1,48 @@
+version: '3.9'
+services:
+  mongo:
+    build: ./mongo
+    container_name: mishran-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mishran
+      MONGO_INITDB_ROOT_PASSWORD: mishrandev
+      MONGO_INITDB_DATABASE: mishran
+    volumes:
+      - mongo-data:/data/db
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    healthcheck:
+      test: |
+        mongosh --quiet --eval 'try { rs.status().ok } catch (e) { 0 }'
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo-init:
+    image: mongo:7
+    depends_on:
+      mongo:
+        condition: service_healthy
+    entrypoint: |
+      mongosh --host mongo:27017 -u mishran -p mishrandev --eval '
+        try { rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "mongo:27017" }] }) } catch (e) { print(e.codeName) }
+      '
+    restart: "no"
+
+  minio:
+    image: minio/minio:latest
+    container_name: mishran-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: mishran
+      MINIO_ROOT_PASSWORD: mishrandev
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+
+volumes:
+  mongo-data:
+  minio-data:
