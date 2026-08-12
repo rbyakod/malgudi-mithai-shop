@@ -1,0 +1,85 @@
+openapi: 3.1.0
+info:
+  title: Mishran Mobile API
+  version: 0.1.0
+  description: |
+    REST API consumed by the Mishran Android (v1) and iOS (v2) apps.
+    All routes under /api/mobile/v1/* unless noted.
+  contact:
+    name: Mishran Engineering
+    url: https://mishran.app
+servers:
+  - url: http://localhost:3000/api/mobile/v1
+    description: Local dev
+  - url: https://staging-api.mishran.app/api/mobile/v1
+    description: Staging
+  - url: https://api.mishran.app/api/mobile/v1
+    description: Production
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum:
+                - RATE_LIMITED
+                - OTP_INVALID
+                - OTP_EXPIRED
+                - PINCODE_NOT_SERVICEABLE
+                - CART_CHANGED
+                - STOCK_INSUFFICIENT
+                - PAYMENT_FAILED
+                - PAYMENT_ABANDONED
+                - ORDER_NOT_FOUND
+                - INVALID_STATE_TRANSITION
+                - TOKEN_EXPIRED
+                - TOKEN_REVOKED
+                - CONFLICT
+                - VALIDATION
+                - INTERNAL
+                - OTP_PROVIDER_DOWN
+            message:
+              type: string
+            fieldErrors:
+              type: object
+              additionalProperties:
+                type: string
+            traceId:
+              type: string
+    Customer:
+      type: object
+      required: [id, phone]
+      properties:
+        id: { type: string }
+        phone: { type: string }
+        name: { type: [string, "null"] }
+        email: { type: [string, "null"] }
+        locale:
+          type: string
+          enum: [en, hi, kn, ta, te, mr, gu, bn, pa]
+        createdAt: { type: string, format: date-time }
+    Paginated:
+      type: object
+      required: [items, total, page, pageSize]
+      properties:
+        items: { type: array, items: {} }
+        total: { type: integer }
+        page: { type: integer }
+        pageSize: { type: integer }
+
+security:
+  - bearerAuth: []
+
+paths: {}

@@ -503,8 +503,7 @@ git commit -m "chore: convert repo to pnpm monorepo with workspace config"
   "devDependencies": {
     "openapi-typescript": "^7",
     "@openapitools/openapi-generator-cli": "^2",
-    "redocly": "^1",
-    "oasdiff": "^2",
+    "@redocly/cli": "^2.46.1",
     "tsx": "^4"
   }
 }
@@ -579,8 +578,8 @@ components:
       properties:
         id: { type: string }
         phone: { type: string }
-        name: { type: string, nullable: true }
-        email: { type: string, nullable: true }
+        name: { type: [string, "null"] }
+        email: { type: [string, "null"] }
         locale:
           type: string
           enum: [en, hi, kn, ta, te, mr, gu, bn, pa]

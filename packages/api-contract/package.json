@@ -1,0 +1,19 @@
+{
+  "name": "@mishran/api-contract",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "lint": "tsx scripts/lint.ts",
+    "check-breaking": "tsx scripts/check-breaking.ts",
+    "codegen:ts": "openapi-typescript openapi.yaml -o generated/ts/index.ts",
+    "codegen:kotlin": "openapi-generator-cli generate -i openapi.yaml -g kotlin -o generated/kotlin --package-name com.mishran.api",
+    "codegen:swift": "openapi-generator-cli generate -i openapi.yaml -g swift5 -o generated/swift",
+    "codegen": "pnpm codegen:ts && pnpm codegen:kotlin && pnpm codegen:swift"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7",
+    "@openapitools/openapi-generator-cli": "^2",
+    "@redocly/cli": "^2.46.1",
+    "tsx": "^4"
+  }
+}
