@@ -3,13 +3,13 @@
 import {useEffect, useState} from "react";
 import {fetchRecentLeads, type LeadRow, type LeadStatus} from "@/components/payload-admin/lib/dashboard-queries";
 
-// Tone mapping for lead status pills. Uses only tones that exist in
-// custom.scss (muted/primary/gold/success). `qualified` maps to `muted`
-// because there is no `info` tone in Task 4's CSS — flagged as follow-up.
-const STATUS_TONE: Record<LeadStatus, "muted" | "primary" | "success" | "gold"> = {
+// Tone mapping for lead status pills. Uses tones that exist in custom.scss
+// (muted/primary/gold/success/info). `qualified` maps to `info` to distinguish
+// it from `lost` (which is `muted`).
+const STATUS_TONE: Record<LeadStatus, "muted" | "primary" | "success" | "gold" | "info"> = {
   new: "gold",
   contacted: "primary",
-  qualified: "muted",
+  qualified: "info",
   won: "success",
   lost: "muted",
 };

@@ -104,6 +104,7 @@ body[data-admin-theme] {
 .mishran-pill--gold { background: var(--t-gold); color: var(--t-text); }
 .mishran-pill--success { background: var(--t-success); color: white; }
 .mishran-pill--danger { background: var(--t-danger); color: white; }
+.mishran-pill--info { background: var(--t-primary-hover); color: var(--t-bg-card); }
 
 .mishran-skeleton {
   background: linear-gradient(
