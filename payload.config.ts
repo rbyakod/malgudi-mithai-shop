@@ -39,6 +39,8 @@ import { MerchProducts } from "./collections/MerchProducts";
 // Ops collections (Task 9).
 import { Leads } from "./collections/Leads";
 import { Drafts } from "./collections/Drafts";
+// Mobile app (Task 1.3): customer accounts.
+import { Customers } from "./collections/Customers";
 // Globals (Task 8).
 import { BrandSettings } from "./globals/BrandSettings";
 import { NavSettings } from "./globals/NavSettings";
@@ -106,6 +108,8 @@ export default buildConfig({
     // Ops collections (Task 9).
     Leads,
     Drafts,
+    // Mobile app (Task 1.3): customer accounts.
+    Customers,
   ],
   globals: [
     BrandSettings,
