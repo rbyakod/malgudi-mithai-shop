@@ -50,6 +50,16 @@
     "heroInsetTitle": "Kaju katli, vark‑finished",
     "heroInsetMeta": "Hand‑cut each morning · 500g",
 
+    "HeroRotator": {
+      "regionLabel": "Featured products",
+      "view": "View",
+      "addToCart": "Add to cart",
+      "added": "Added",
+      "previous": "Previous slide",
+      "next": "Next slide",
+      "dotLabel": "Go to slide"
+    },
+
     "portal": {
       "eyebrow": "Four houses, one kitchen",
       "title": "Find your Mishran",

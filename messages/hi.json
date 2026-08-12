@@ -50,6 +50,16 @@
     "heroInsetTitle": "काजू कतली, वर्क फिनिश",
     "heroInsetMeta": "हर सुबह हाथ से कटी · 500g",
 
+    "HeroRotator": {
+      "regionLabel": "चुने हुए उत्पाद",
+      "view": "देखें",
+      "addToCart": "कार्ट में डालें",
+      "added": "जोड़ा गया",
+      "previous": "पिछला स्लाइड",
+      "next": "अगला स्लाइड",
+      "dotLabel": "स्लाइड पर जाएँ"
+    },
+
     "portal": {
       "eyebrow": "चार घर, एक रसोई",
       "title": "अपना मिश्रण खोजें",
