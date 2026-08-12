@@ -54,7 +54,9 @@ export function CartItems() {
               <p className="text-sm font-semibold text-text-heading">
                 {item.name}
               </p>
-              <p className="text-[11px] text-text-muted">{item.priceLabel}</p>
+              {item.priceLabel && (
+                <p className="text-[11px] text-text-muted">{item.priceLabel}</p>
+              )}
               <p className="text-[11px] text-text-muted">
                 Qty {item.quantity}
               </p>

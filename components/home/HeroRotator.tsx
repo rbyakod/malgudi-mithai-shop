@@ -22,8 +22,16 @@ export function HeroRotator({slides}: Props) {
   const t = useTranslations();
   const reducedMotion = usePrefersReducedMotion();
   const [active, setActive] = useState(0);
+  const activeRef = useRef(0);
   const [paused, setPaused] = useState(false);
   const regionRef = useRef<HTMLDivElement>(null);
+
+  // Keep activeRef in sync so the autoplay interval (which intentionally
+  // excludes `active` from its deps to avoid resetting the timer on every
+  // transition) can read the current value via the ref.
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
 
   // Wrap clamp helper.
   const clamp = useCallback(
@@ -47,15 +55,16 @@ export function HeroRotator({slides}: Props) {
   const goPrev = useCallback(() => go(active - 1), [active, go]);
   const goNext = useCallback(() => go(active + 1), [active, go]);
 
-  // Autoplay timer. Reset when active changes, paused, reducedMotion, or
-  // slides count changes.
+  // Autoplay timer. Routed through `go` so every auto-advance also emits
+  // `hero_slide_view`. activeRef sidesteps the stale-active closure without
+  // adding `active` to deps (which would reset the timer on every tick).
   useEffect(() => {
     if (reducedMotion || paused || slides.length <= 1) return;
     const id = setInterval(() => {
-      setActive((current) => clamp(current + 1));
+      go(activeRef.current + 1);
     }, AUTOPLAY_MS);
     return () => clearInterval(id);
-  }, [reducedMotion, paused, slides.length, clamp]);
+  }, [reducedMotion, paused, slides.length, go]);
 
   // Pause when the region is scrolled off-screen.
   useEffect(() => {
