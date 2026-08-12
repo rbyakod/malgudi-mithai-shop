@@ -4,7 +4,13 @@ import { withPayload } from "@payloadcms/next/withPayload";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // You can keep any other Next.js config here
+  images: {
+    // Mishran SVGs are first-party assets in /public/admin — safe to permit.
+    // Required so <Image src="/admin/mishran-crest.svg" /> works.
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
 };
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
