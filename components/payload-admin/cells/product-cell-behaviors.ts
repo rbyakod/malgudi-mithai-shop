@@ -1,14 +1,8 @@
-import {makeProductNameCell, type ProductCellBehavior} from "./ProductNameCell";
+import type {ProductCellBehavior} from "./ProductNameCell";
 
 // Per-collection cell behaviors. Verified against actual collection schemas.
-//
-// Cast helper: Payload's `Cell` field expects a union of server-component
-// and client-component signatures (`CustomComponent & PayloadComponent<DefaultServerCellComponentProps, DefaultCellComponentProps>`).
-// Our cells are client-only (they read `cellData` + `rowData`); the server
-// signature is unused at runtime. Cast keeps wire-up sites clean without
-// forcing the factory to accept unused server props.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type PayloadCellComponent = any;
+// Each behavior has a thin wrapper component file (e.g. MithaiProductCell.tsx)
+// that the importMap references by string path. Wrapper files are "use client".
 
 export const mithaiBehavior: ProductCellBehavior = {
   image: {kind: "array", field: "images", imageKey: "image"},
@@ -63,9 +57,3 @@ export const giftBoxBehavior: ProductCellBehavior = {
   ].filter((x): x is {label: string} => x !== null),
   badges: () => [],
 };
-
-export const MithaiProductCell = makeProductNameCell(mithaiBehavior) as PayloadCellComponent;
-export const QsrMenuCell = makeProductNameCell(qsrBehavior) as PayloadCellComponent;
-export const SnackProductCell = makeProductNameCell(snackBehavior) as PayloadCellComponent;
-export const MerchProductCell = makeProductNameCell(merchBehavior) as PayloadCellComponent;
-export const GiftBoxCell = makeProductNameCell(giftBoxBehavior) as PayloadCellComponent;

@@ -1,5 +1,9 @@
-"use client";
-
+// NOTE: This module must NOT have "use client". The factory is invoked at
+// server module-evaluation time from collection configs (see
+// product-cell-behaviors.ts). Putting "use client" here marks every export
+// as client-only and throws "Attempted to call makeProductNameCell() from
+// the server" at /admin request time. The returned component renders
+// next/image which establishes its own client boundary.
 import Image from "next/image";
 import type {DefaultCellComponentProps} from "payload";
 

@@ -25,11 +25,11 @@ import { Occasions } from "./collections/Occasions";
 // String paths are used because Payload 3.x's CustomComponent type expects
 // a component client-referenced through importMap; direct component refs
 // trip TS2322 against CustomComponent<Record<string, any>>.
-const CrestIconPath = "@/components/payload-admin/graphics/CrestIcon";
-const WordmarkLogoPath = "@/components/payload-admin/graphics/WordmarkLogo";
-const MishranLoginHeroPath = "@/components/payload-admin/login/MishranLoginHero";
-const MishranDashboardPath = "@/components/payload-admin/dashboard/MishranDashboard";
-const AdminThemeSwitcherPath = "@/components/payload-admin/theme/AdminThemeSwitcher";
+const CrestIconPath = "./components/payload-admin/graphics/CrestIcon";
+const WordmarkLogoPath = "./components/payload-admin/graphics/WordmarkLogo";
+const MishranLoginHeroPath = "./components/payload-admin/login/MishranLoginHero";
+const MishranDashboardPath = "./components/payload-admin/dashboard/MishranDashboard";
+const AdminThemeSwitcherPath = "./components/payload-admin/theme/AdminThemeSwitcher";
 // Product stubs — expanded by Task 7.
 import { MithaiProducts } from "./collections/MithaiProducts";
 import { GiftBoxes } from "./collections/GiftBoxes";
@@ -71,6 +71,13 @@ export default buildConfig({
           password: "dev-password",
         }
       : false,
+    // baseDir MUST be set so Payload's import-map generator resolves our
+    // custom component paths. Without it, paths like "@/components/..." or
+    // "./components/..." are skipped silently and the components never
+    // render in the admin panel (Task 19 E2E caught this regression).
+    importMap: {
+      baseDir: path.resolve(dirname, "."),
+    },
     components: {
       graphics: {
         Icon: CrestIconPath,

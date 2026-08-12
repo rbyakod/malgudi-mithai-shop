@@ -13,7 +13,9 @@
 // Slug "qsr-menu-items" is the stable contract — referenced by Stories.
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
-import { QsrMenuCell } from "@/components/payload-admin/cells/product-cell-behaviors";
+
+// Custom Cell referenced by string path — Payload importMap resolves it.
+const QsrMenuCellPath = "./components/payload-admin/cells/QsrMenuCell";
 
 export const QsrMenuItems: CollectionConfig = {
   slug: "qsr-menu-items",
@@ -29,7 +31,7 @@ export const QsrMenuItems: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
-      admin: { components: { Cell: QsrMenuCell } },
+      admin: { components: { Cell: QsrMenuCellPath } },
     },
     {
       name: "category",

@@ -6,7 +6,9 @@
 // Slug "merch-products" is the stable contract — referenced by Stories.
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
-import { MerchProductCell } from "@/components/payload-admin/cells/product-cell-behaviors";
+
+// Custom Cell referenced by string path — Payload importMap resolves it.
+const MerchProductCellPath = "./components/payload-admin/cells/MerchProductCell";
 
 export const MerchProducts: CollectionConfig = {
   slug: "merch-products",
@@ -22,7 +24,7 @@ export const MerchProducts: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
-      admin: { components: { Cell: MerchProductCell } },
+      admin: { components: { Cell: MerchProductCellPath } },
     },
     {
       name: "type",

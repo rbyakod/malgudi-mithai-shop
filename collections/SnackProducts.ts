@@ -6,7 +6,9 @@
 // Slug "snack-products" is the stable contract — referenced by Stories.
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
-import { SnackProductCell } from "@/components/payload-admin/cells/product-cell-behaviors";
+
+// Custom Cell referenced by string path — Payload importMap resolves it.
+const SnackProductCellPath = "./components/payload-admin/cells/SnackProductCell";
 
 export const SnackProducts: CollectionConfig = {
   slug: "snack-products",
@@ -22,7 +24,7 @@ export const SnackProducts: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
-      admin: { components: { Cell: SnackProductCell } },
+      admin: { components: { Cell: SnackProductCellPath } },
     },
     {
       name: "category",

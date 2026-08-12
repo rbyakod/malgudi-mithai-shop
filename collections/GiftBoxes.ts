@@ -7,7 +7,9 @@
 // Occasions, and MithaiProducts.boxCompatibility.
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
-import { GiftBoxCell } from "@/components/payload-admin/cells/product-cell-behaviors";
+
+// Custom Cell referenced by string path — Payload importMap resolves it.
+const GiftBoxCellPath = "./components/payload-admin/cells/GiftBoxCell";
 
 export const GiftBoxes: CollectionConfig = {
   slug: "gift-boxes",
@@ -23,7 +25,7 @@ export const GiftBoxes: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
-      admin: { components: { Cell: GiftBoxCell } },
+      admin: { components: { Cell: GiftBoxCellPath } },
     },
     {
       name: "size",

@@ -14,7 +14,10 @@
 // Karigars, Occasions, GiftBoxes, and SnackProducts via relationships.
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
-import { MithaiProductCell } from "@/components/payload-admin/cells/product-cell-behaviors";
+
+// Custom Cell is referenced by string path — Payload's importMap generator
+// (and admin runtime) resolves it to components/payload-admin/cells/MithaiProductCell.
+const MithaiProductCellPath = "./components/payload-admin/cells/MithaiProductCell";
 
 export const MithaiProducts: CollectionConfig = {
   slug: "mithai-products",
@@ -33,7 +36,7 @@ export const MithaiProducts: CollectionConfig = {
       localized: true,
       admin: {
         components: {
-          Cell: MithaiProductCell,
+          Cell: MithaiProductCellPath,
         },
       },
     },

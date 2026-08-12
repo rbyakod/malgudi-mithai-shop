@@ -1,25 +1,39 @@
-// Inline script injected before hydration to read the theme cookie and set
-// body[data-admin-theme] — prevents theme flash on cold load.
-// Rendered as a Next.js Script with strategy="beforeInteractive".
-import Script from "next/script";
-import {ADMIN_THEME_COOKIE, DEFAULT_ADMIN_THEME, ADMIN_THEMES} from "./admin-theme";
+// Sets body[data-admin-theme] from cookie on first client render.
+//
+// Original implementation used an inline <script> rendered via RSC, but
+// Next.js 16 App Router does NOT execute inline scripts rendered as React
+// children inside server components (browser sees them in HTML but never
+// runs them). next/script with beforeInteractive only fires from the root
+// layout, which Payload owns. The pragmatic fix is a client component that
+// runs the same logic in a useEffect on mount. We accept the brief theme
+// flash on cold cache (one paint frame) in exchange for reliable execution.
+"use client";
 
-const scriptContent = `
-(function() {
-  try {
-    var match = document.cookie.match(/(?:^|;\\s)${ADMIN_THEME_COOKIE}=([^;]+)/);
-    var value = match ? decodeURIComponent(match[1]) : "${DEFAULT_ADMIN_THEME}";
-    var known = ${JSON.stringify(ADMIN_THEMES)};
-    if (known.indexOf(value) === -1) value = "${DEFAULT_ADMIN_THEME}";
-    document.body.setAttribute("data-admin-theme", value);
-  } catch (e) {
-    document.body.setAttribute("data-admin-theme", "${DEFAULT_ADMIN_THEME}");
-  }
-})();
-`;
+import {useEffect} from "react";
+import {
+  ADMIN_THEME_COOKIE,
+  ADMIN_THEMES,
+  DEFAULT_ADMIN_THEME,
+  type AdminTheme,
+} from "./admin-theme";
 
 export function AdminThemeBootScript() {
-  return <Script id="mishran-admin-theme-boot" strategy="beforeInteractive" dangerouslySetInnerHTML={{__html: scriptContent}} />;
+  useEffect(() => {
+    try {
+      const match = document.cookie.match(
+        new RegExp(`(?:^|;\\s)${ADMIN_THEME_COOKIE}=([^;]+)`),
+      );
+      const value = match ? decodeURIComponent(match[1]) : DEFAULT_ADMIN_THEME;
+      const known: readonly string[] = ADMIN_THEMES;
+      const theme: AdminTheme = known.includes(value)
+        ? (value as AdminTheme)
+        : DEFAULT_ADMIN_THEME;
+      document.body.setAttribute("data-admin-theme", theme);
+    } catch {
+      document.body.setAttribute("data-admin-theme", DEFAULT_ADMIN_THEME);
+    }
+  }, []);
+  return null;
 }
 
 export default AdminThemeBootScript;
