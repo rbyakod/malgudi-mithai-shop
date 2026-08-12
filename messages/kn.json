@@ -19,6 +19,15 @@
     "karigars": "ಕುಶಲಕರ್ಮಿಗಳು",
     "journal": "ಜರ್ನಲ್"
   },
+  "HeroRotator": {
+    "regionLabel": "ಆಯ್ದ ಉತ್ಪನ್ನಗಳು",
+    "view": "ನೋಡಿ",
+    "addToCart": "ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ",
+    "added": "ಸೇರಿಸಲಾಗಿದೆ",
+    "previous": "ಹಿಂದಿನ ಸ್ಲೈಡ್",
+    "next": "ಮುಂದಿನ ಸ್ಲೈಡ್",
+    "dotLabel": "ಸ್ಲೈಡ್‌ಗೆ ಹೋಗಿ"
+  },
   "Home": {
     "heroBadge": "Handcrafted in Bengaluru • Delivered fresh",
     "heroTitle": "Mithai that feels festive every single day.",
@@ -49,16 +58,6 @@
     "heroInsetLabel": "From the kitchen",
     "heroInsetTitle": "Kaju katli, vark‑finished",
     "heroInsetMeta": "Hand‑cut each morning · 500g",
-
-    "HeroRotator": {
-      "regionLabel": "ಆಯ್ದ ಉತ್ಪನ್ನಗಳು",
-      "view": "ನೋಡಿ",
-      "addToCart": "ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ",
-      "added": "ಸೇರಿಸಲಾಗಿದೆ",
-      "previous": "ಹಿಂದಿನ ಸ್ಲೈಡ್",
-      "next": "ಮುಂದಿನ ಸ್ಲೈಡ್",
-      "dotLabel": "ಸ್ಲೈಡ್‌ಗೆ ಹೋಗಿ"
-    },
 
     "portal": {
       "eyebrow": "Four houses, one kitchen",

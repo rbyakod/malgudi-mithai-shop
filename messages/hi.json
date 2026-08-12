@@ -19,6 +19,15 @@
     "karigars": "कारीगर",
     "journal": "जर्नल"
   },
+  "HeroRotator": {
+    "regionLabel": "चुने हुए उत्पाद",
+    "view": "देखें",
+    "addToCart": "कार्ट में डालें",
+    "added": "जोड़ा गया",
+    "previous": "पिछला स्लाइड",
+    "next": "अगला स्लाइड",
+    "dotLabel": "स्लाइड पर जाएँ"
+  },
   "Home": {
     "heroBadge": "बेंगलुरु में हस्तनिर्मित • ताज़ा डिलीवरी",
     "heroTitle": "ऐसी मिठाई जो हर दिन को त्योहार बना दे।",
@@ -49,16 +58,6 @@
     "heroInsetLabel": "रसोई से",
     "heroInsetTitle": "काजू कतली, वर्क फिनिश",
     "heroInsetMeta": "हर सुबह हाथ से कटी · 500g",
-
-    "HeroRotator": {
-      "regionLabel": "चुने हुए उत्पाद",
-      "view": "देखें",
-      "addToCart": "कार्ट में डालें",
-      "added": "जोड़ा गया",
-      "previous": "पिछला स्लाइड",
-      "next": "अगला स्लाइड",
-      "dotLabel": "स्लाइड पर जाएँ"
-    },
 
     "portal": {
       "eyebrow": "चार घर, एक रसोई",
