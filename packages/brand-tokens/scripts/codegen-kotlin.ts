@@ -24,11 +24,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.shapes.Shape
 
 object MishranColors {
-  val BrandWine = Color(${hexToComposeColor(tokens.color.brand.wine)})
-  val BrandWineDark = Color(${hexToComposeColor(tokens.color.brand.wineDark)})
-  val BrandSaffron = Color(${hexToComposeColor(tokens.color.brand.saffron)})
-  val BrandGold = Color(${hexToComposeColor(tokens.color.brand.gold)})
-  val BrandCream = Color(${hexToComposeColor(tokens.color.brand.cream)})
+  val BrandCanvas = Color(${hexToComposeColor(tokens.color.brand.canvas)})
+  val BrandSurface = Color(${hexToComposeColor(tokens.color.brand.surface)})
+  val BrandAccent = Color(${hexToComposeColor(tokens.color.brand.accent)})
+  val BrandPop = Color(${hexToComposeColor(tokens.color.brand.pop)})
+  val BrandInk = Color(${hexToComposeColor(tokens.color.brand.ink)})
 
   val Neutral50 = Color(${hexToComposeColor(tokens.color.neutral['50'])})
   val Neutral100 = Color(${hexToComposeColor(tokens.color.neutral['100'])})

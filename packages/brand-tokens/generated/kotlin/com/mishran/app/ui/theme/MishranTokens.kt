@@ -10,11 +10,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.shapes.Shape
 
 object MishranColors {
-  val BrandWine = Color(0xFF8B1E3F)
-  val BrandWineDark = Color(0xFF6B1730)
-  val BrandSaffron = Color(0xFFE76F51)
-  val BrandGold = Color(0xFFC9A55C)
-  val BrandCream = Color(0xFFFAFAF7)
+  val BrandCanvas = Color(0xFFF7EFE0)
+  val BrandSurface = Color(0xFFFBF6EC)
+  val BrandAccent = Color(0xFF9B4D2A)
+  val BrandPop = Color(0xFFD79A35)
+  val BrandInk = Color(0xFF2C1810)
 
   val Neutral50 = Color(0xFFFAFAF7)
   val Neutral100 = Color(0xFFF3F0E8)

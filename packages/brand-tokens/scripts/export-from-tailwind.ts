@@ -1,28 +1,24 @@
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-// Web's Tailwind v4 config exposes CSS variables via @theme in app/globals.css.
-// This script reads the resolved CSS variable values and writes tokens.json.
+// Source-of-truth for v1. Web Tailwind v4 @theme reverse-flow is a tracked
+// follow-up (not yet implemented). See lib/themes.ts for theme list.
 //
-// Source of truth: This file holds the canonical brand tokens for v1.
-// - Web Tailwind v4 reads brand colors from `@theme` blocks in app/globals.css
-//   which are kept in sync with this file. Future task will add a codegen step
-//   that emits the @theme block from tokens.json so the source-of-truth becomes
-//   single-direction (tokens.json -> CSS).
-// - Repo also has 8+ theme palettes in lib/themes.ts (mishran-default,
-//   wedding-heritage, diwali-saffron, etc.). Multi-theme support is a follow-up:
-//   tokens.json shape will grow a `themes` array. For v1 we ship a single
-//   canonical brand palette (wine/saffron/cream) consumed by the Android/iOS
-//   native apps.
+// Canonical brand palette mirrors `mishran-default` (DEFAULT_THEME in
+// lib/themes.ts): kakvi brown accent + festive saffron gold pop on warm
+// milk-cream canvas. The repo ships 8+ theme palettes in lib/themes.ts
+// (mishran-default, wedding-heritage, diwali-saffron, etc.); multi-theme
+// support is a follow-up — tokens.json shape will grow a `themes` array.
+// For v1 we ship a single canonical brand palette consumed by Android/iOS.
 
 const tokens = {
   color: {
     brand: {
-      wine: '#8b1e3f',
-      wineDark: '#6b1730',
-      saffron: '#e76f51',
-      gold: '#c9a55c',
-      cream: '#fafaf7',
+      canvas: '#f7efe0',  // warm milk-cream background (mishran-default)
+      surface: '#fbf6ec', // lighter surface
+      accent: '#9b4d2a',  // kakvi brown — primary brand
+      pop: '#d79a35',     // festive saffron gold — secondary
+      ink: '#2c1810',     // deep kakvi brown — text
     },
     neutral: {
       50: '#fafaf7',

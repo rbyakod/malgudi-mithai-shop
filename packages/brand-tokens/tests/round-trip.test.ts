@@ -31,11 +31,19 @@ describe('brand-tokens round-trip', () => {
     expect(after).toEqual(before);
   });
 
-  it('tokens.json has expected brand color palette', () => {
+  it('tokens.json has expected brand color palette (mishran-default)', () => {
     const tokens = parseTokens(join(pkgRoot, 'tokens.json'));
-    expect(tokens.color.brand.wine).toMatch(/^#[0-9a-f]{6}$/i);
-    expect(tokens.color.brand.saffron).toMatch(/^#[0-9a-f]{6}$/i);
-    expect(tokens.color.brand.cream).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(tokens.color.brand.canvas).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(tokens.color.brand.surface).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(tokens.color.brand.accent).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(tokens.color.brand.pop).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(tokens.color.brand.ink).toMatch(/^#[0-9a-f]{6}$/i);
+    // Canonical mishran-default values from lib/themes.ts
+    expect(tokens.color.brand.canvas).toBe('#f7efe0');
+    expect(tokens.color.brand.surface).toBe('#fbf6ec');
+    expect(tokens.color.brand.accent).toBe('#9b4d2a');
+    expect(tokens.color.brand.pop).toBe('#d79a35');
+    expect(tokens.color.brand.ink).toBe('#2c1810');
   });
 
   it('tokens.json has radius, spacing, typography sections', () => {
@@ -56,8 +64,13 @@ describe('brand-tokens round-trip', () => {
     expect(kt).toContain('object MishranRadii');
     expect(kt).toContain('object MishranSpacing');
     expect(kt).toContain('object MishranType');
-    // Compose Color is opaque ARGB: starts 0xFF
-    expect(kt).toMatch(/Color\(0xFF8B1E3F\)/);
+    // Compose Color is opaque ARGB: starts 0xFF. accent #9b4d2a -> 0xFF9B4D2A
+    expect(kt).toMatch(/Color\(0xFF9B4D2A\)/);
+    expect(kt).toContain('BrandAccent');
+    expect(kt).toContain('BrandInk');
+    expect(kt).toContain('BrandCanvas');
+    expect(kt).toContain('BrandSurface');
+    expect(kt).toContain('BrandPop');
   });
 
   it('Swift codegen produces MishranTokens.swift', () => {
@@ -68,6 +81,10 @@ describe('brand-tokens round-trip', () => {
     expect(swift).toContain('extension Color');
     expect(swift).toContain('extension CGFloat');
     expect(swift).toContain('extension Font');
-    expect(swift).toContain('static let mishranBrandWine');
+    expect(swift).toContain('static let mishranBrandAccent');
+    expect(swift).toContain('static let mishranBrandInk');
+    expect(swift).toContain('static let mishranBrandCanvas');
+    expect(swift).toContain('static let mishranBrandSurface');
+    expect(swift).toContain('static let mishranBrandPop');
   });
 });

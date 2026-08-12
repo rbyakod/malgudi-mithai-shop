@@ -3,11 +3,11 @@
 import SwiftUI
 
 extension Color {
-  static let mishranBrandWine = Color(red: 0.5451, green: 0.1176, blue: 0.2471)
-  static let mishranBrandWineDark = Color(red: 0.4196, green: 0.0902, blue: 0.1882)
-  static let mishranBrandSaffron = Color(red: 0.9059, green: 0.4353, blue: 0.3176)
-  static let mishranBrandGold = Color(red: 0.7882, green: 0.6471, blue: 0.3608)
-  static let mishranBrandCream = Color(red: 0.9804, green: 0.9804, blue: 0.9686)
+  static let mishranBrandCanvas = Color(red: 0.9686, green: 0.9373, blue: 0.8784)
+  static let mishranBrandSurface = Color(red: 0.9843, green: 0.9647, blue: 0.9255)
+  static let mishranBrandAccent = Color(red: 0.6078, green: 0.3020, blue: 0.1647)
+  static let mishranBrandPop = Color(red: 0.8431, green: 0.6039, blue: 0.2078)
+  static let mishranBrandInk = Color(red: 0.1725, green: 0.0941, blue: 0.0627)
 
   static let mishranNeutral50 = Color(red: 0.9804, green: 0.9804, blue: 0.9686)
   static let mishranNeutral100 = Color(red: 0.9529, green: 0.9412, blue: 0.9098)

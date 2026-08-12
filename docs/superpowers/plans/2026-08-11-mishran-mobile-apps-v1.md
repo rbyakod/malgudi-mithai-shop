@@ -680,7 +680,7 @@ git commit -m "feat(api-contract): scaffold OpenAPI 3.1 contract package with re
 ```json
 {
   "color": {
-    "brand": { "wine": "#8b1e3f", "saffron": "#e76f51", "cream": "#fafaf7" },
+    "brand": { "canvas": "#f7efe0", "surface": "#fbf6ec", "accent": "#9b4d2a", "pop": "#d79a35", "ink": "#2c1810" },
     "neutral": { "100": "#f3f0e8", "500": "#5a5a5a", "900": "#1a1a1a" }
   },
   "radius": { "sm": "4px", "md": "8px", "lg": "12px", "xl": "20px", "full": "9999px" },
@@ -698,19 +698,21 @@ git commit -m "feat(api-contract): scaffold OpenAPI 3.1 contract package with re
 import { writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
-// Web's Tailwind v4 config exposes CSS variables. We import them directly.
-// This script reads the resolved CSS variable values and writes tokens.json.
-// For v1: hard-coded source-of-truth in this file. Web Tailwind config will
-// import these tokens via @theme in globals.css.
+// Source-of-truth for v1. Web Tailwind v4 @theme reverse-flow is a tracked
+// follow-up (not yet implemented). See lib/themes.ts for theme list.
+//
+// Canonical brand palette mirrors `mishran-default` (DEFAULT_THEME in
+// lib/themes.ts): kakvi brown accent + festive saffron gold pop on warm
+// milk-cream canvas.
 
 const tokens = {
   color: {
     brand: {
-      wine: '#8b1e3f',
-      wineDark: '#6b1730',
-      saffron: '#e76f51',
-      gold: '#c9a55c',
-      cream: '#fafaf7',
+      canvas: '#f7efe0',  // warm milk-cream background (mishran-default)
+      surface: '#fbf6ec', // lighter surface
+      accent: '#9b4d2a',  // kakvi brown — primary brand
+      pop: '#d79a35',     // festive saffron gold — secondary
+      ink: '#2c1810',     // deep kakvi brown — text
     },
     neutral: {
       50: '#fafaf7',
@@ -769,11 +771,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.shapes.Shape
 
 object MishranColors {
-  val BrandWine = Color(0xFF8B1E3F)
-  val BrandWineDark = Color(0xFF6B1730)
-  val BrandSaffron = Color(0xFFE76F51)
-  val BrandGold = Color(0xFFC9A55C)
-  val BrandCream = Color(0xFFFAFAF7)
+  val BrandCanvas = Color(0xFFF7EFE0)
+  val BrandSurface = Color(0xFFFBF6EC)
+  val BrandAccent = Color(0xFF9B4D2A)
+  val BrandPop = Color(0xFFD79A35)
+  val BrandInk = Color(0xFF2C1810)
 
   val Neutral50 = Color(0xFFFAFAF7)
   val Neutral100 = Color(0xFFF3F0E8)
