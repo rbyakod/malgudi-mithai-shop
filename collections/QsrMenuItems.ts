@@ -14,16 +14,25 @@
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
 
+// Custom Cell referenced by string path — Payload importMap resolves it.
+const QsrMenuCellPath = "./components/payload-admin/cells/QsrMenuCell";
+
 export const QsrMenuItems: CollectionConfig = {
   slug: "qsr-menu-items",
   access: { read: () => true },
-  admin: { useAsTitle: "name", group: "QSR" },
+  admin: { useAsTitle: "name", group: "02 Products" },
   hooks: {
     afterChange: [makeRevalidateHook("qsr-menu-items")],
     afterDelete: [makeRevalidateDeleteHook("qsr-menu-items")],
   },
   fields: [
-    { name: "name", type: "text", required: true, localized: true },
+    {
+      name: "name",
+      type: "text",
+      required: true,
+      localized: true,
+      admin: { components: { Cell: QsrMenuCellPath } },
+    },
     {
       name: "category",
       type: "select",

@@ -5,6 +5,9 @@ export const StoreSettings: GlobalConfig = {
   access: {
     read: () => true,
   },
+  admin: {
+    group: "05 Settings",
+  },
   fields: [
     {
       name: "stores",

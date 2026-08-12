@@ -5,6 +5,9 @@ export const BrandSettings: GlobalConfig = {
   access: {
     read: () => true,
   },
+  admin: {
+    group: "04 Storefront",
+  },
   fields: [
     {
       name: "logo",

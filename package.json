@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node --import tsx scripts/regen-importmap.mjs",
+    "prebuild": "node --import tsx scripts/regen-importmap.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -12,7 +14,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "lhci": "lhci autorun",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "regen:importmap": "node --import tsx scripts/regen-importmap.mjs"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "^3.87.1",

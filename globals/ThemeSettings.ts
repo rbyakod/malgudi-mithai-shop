@@ -5,6 +5,9 @@ export const ThemeSettings: GlobalConfig = {
   access: {
     read: () => true,
   },
+  admin: {
+    group: "04 Storefront",
+  },
   fields: [
     {
       name: "themes",

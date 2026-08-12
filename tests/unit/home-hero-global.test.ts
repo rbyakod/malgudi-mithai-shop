@@ -55,4 +55,13 @@ describe("HomeHero global", () => {
     ) as any;
     expect(slidesField.maxRows).toBe(12);
   });
+
+  it("has an editorial autoplayMs field with sane bounds + default", () => {
+    const field = HomeHero.fields.find((f: any) => f.name === "autoplayMs") as any;
+    expect(field).toBeDefined();
+    expect(field.type).toBe("number");
+    expect(field.defaultValue).toBe(5000);
+    expect(field.min).toBe(3000);
+    expect(field.max).toBe(15000);
+  });
 });

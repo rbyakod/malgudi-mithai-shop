@@ -12,14 +12,16 @@ import {track} from "@/lib/analytics";
 import {usePrefersReducedMotion} from "./use-prefers-reduced-motion";
 import type {Slide} from "@/lib/home-hero";
 
-const AUTOPLAY_MS = 5000;
+const DEFAULT_AUTOPLAY_MS = 5000;
 
 type Props = {
   slides: Slide[];
+  autoplayMs?: number;
 };
 
-export function HeroRotator({slides}: Props) {
-  const t = useTranslations();
+export function HeroRotator({slides, autoplayMs}: Props) {
+  const t = useTranslations("HeroRotator");
+  const intervalMs = autoplayMs && autoplayMs > 0 ? autoplayMs : DEFAULT_AUTOPLAY_MS;
   const reducedMotion = usePrefersReducedMotion();
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);
@@ -62,9 +64,9 @@ export function HeroRotator({slides}: Props) {
     if (reducedMotion || paused || slides.length <= 1) return;
     const id = setInterval(() => {
       go(activeRef.current + 1);
-    }, AUTOPLAY_MS);
+    }, intervalMs);
     return () => clearInterval(id);
-  }, [reducedMotion, paused, slides.length, go]);
+  }, [reducedMotion, paused, slides.length, go, intervalMs]);
 
   // Pause when the region is scrolled off-screen.
   useEffect(() => {
@@ -86,7 +88,7 @@ export function HeroRotator({slides}: Props) {
       ref={regionRef}
       role="group"
       aria-roledescription="carousel"
-      aria-label={t("HeroRotator.regionLabel")}
+      aria-label={t("regionLabel")}
       className="relative"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -108,7 +110,11 @@ export function HeroRotator({slides}: Props) {
               role="group"
               aria-roledescription="slide"
               aria-label={`${i + 1} / ${slides.length}`}
-              aria-hidden={!isActive}
+              aria-hidden={!isActive || undefined}
+              // React 19+ supports `inert` natively — keeps inactive slides'
+              // buttons/links out of the tab order and accessibility tree
+              // without per-focusable tabIndex bookkeeping.
+              {...(!isActive ? {inert: true} : {})}
               className={
                 isActive
                   ? "block"
@@ -140,7 +146,7 @@ export function HeroRotator({slides}: Props) {
                       href={slide.href}
                       className="inline-flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-text-light transition hover:bg-primary-hover"
                     >
-                      {t("HeroRotator.view")}
+                      {t("view")}
                     </Link>
                     <AddToCartButton slide={slide} />
                   </div>
@@ -157,7 +163,7 @@ export function HeroRotator({slides}: Props) {
           <button
             type="button"
             onClick={goPrev}
-            aria-label={t("HeroRotator.previous")}
+            aria-label={t("previous")}
             className="hidden h-9 w-9 items-center justify-center rounded-full border border-border-input bg-bg-card text-text-secondary transition hover:border-primary/60 hover:text-primary sm:inline-flex"
           >
             <span aria-hidden="true">←</span>
@@ -169,7 +175,7 @@ export function HeroRotator({slides}: Props) {
                 key={i}
                 type="button"
                 onClick={() => go(i)}
-                aria-label={`${t("HeroRotator.dotLabel")} ${i + 1}`}
+                aria-label={`${t("dotLabel")} ${i + 1}`}
                 aria-current={i === active ? "true" : undefined}
                 className={
                   i === active
@@ -183,7 +189,7 @@ export function HeroRotator({slides}: Props) {
           <button
             type="button"
             onClick={goNext}
-            aria-label={t("HeroRotator.next")}
+            aria-label={t("next")}
             className="hidden h-9 w-9 items-center justify-center rounded-full border border-border-input bg-bg-card text-text-secondary transition hover:border-primary/60 hover:text-primary sm:inline-flex"
           >
             <span aria-hidden="true">→</span>
@@ -198,7 +204,7 @@ export function HeroRotator({slides}: Props) {
 // the project's AddToCartButton visual style (gold border, uppercase
 // tracking) but smaller for the hero card.
 function AddToCartButton({slide}: {slide: Slide}) {
-  const t = useTranslations();
+  const t = useTranslations("HeroRotator");
   const {addItem} = useCart();
   const [added, setAdded] = useState(false);
 
@@ -222,7 +228,7 @@ function AddToCartButton({slide}: {slide: Slide}) {
       <span aria-hidden="true" className="text-gold">
         {added ? "✓" : "+"}
       </span>
-      <span>{added ? t("HeroRotator.added") : t("HeroRotator.addToCart")}</span>
+      <span>{added ? t("added") : t("addToCart")}</span>
     </button>
   );
 }

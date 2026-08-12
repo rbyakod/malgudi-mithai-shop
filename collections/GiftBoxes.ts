@@ -8,16 +8,25 @@
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
 
+// Custom Cell referenced by string path — Payload importMap resolves it.
+const GiftBoxCellPath = "./components/payload-admin/cells/GiftBoxCell";
+
 export const GiftBoxes: CollectionConfig = {
   slug: "gift-boxes",
   access: { read: () => true },
-  admin: { useAsTitle: "name", group: "Gifting" },
+  admin: { useAsTitle: "name", group: "02 Products" },
   hooks: {
     afterChange: [makeRevalidateHook("gift-boxes")],
     afterDelete: [makeRevalidateDeleteHook("gift-boxes")],
   },
   fields: [
-    { name: "name", type: "text", required: true, localized: true },
+    {
+      name: "name",
+      type: "text",
+      required: true,
+      localized: true,
+      admin: { components: { Cell: GiftBoxCellPath } },
+    },
     {
       name: "size",
       type: "select",

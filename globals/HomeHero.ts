@@ -10,7 +10,23 @@ export const HomeHero: GlobalConfig = {
   access: {
     read: () => true,
   },
+  admin: {
+    group: "04 Storefront",
+  },
   fields: [
+    {
+      name: "autoplayMs",
+      type: "number",
+      label: "Autoplay interval (ms)",
+      defaultValue: 5000,
+      min: 3000,
+      max: 15000,
+      admin: {
+        description:
+          "Milliseconds between auto-advancing slides. Default 5000 (5s). Range 3000–15000. Honored only on the client; reduced-motion users never autoplay.",
+        step: 500,
+      },
+    },
     {
       name: "slides",
       type: "array",

@@ -15,17 +15,31 @@
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
 
+// Custom Cell is referenced by string path — Payload's importMap generator
+// (and admin runtime) resolves it to components/payload-admin/cells/MithaiProductCell.
+const MithaiProductCellPath = "./components/payload-admin/cells/MithaiProductCell";
+
 export const MithaiProducts: CollectionConfig = {
   slug: "mithai-products",
   access: { read: () => true },
-  admin: { useAsTitle: "name", group: "Mithai" },
+  admin: { useAsTitle: "name", group: "02 Products" },
   versions: { drafts: true },
   hooks: {
     afterChange: [makeRevalidateHook("mithai-products")],
     afterDelete: [makeRevalidateDeleteHook("mithai-products")],
   },
   fields: [
-    { name: "name", type: "text", required: true, localized: true },
+    {
+      name: "name",
+      type: "text",
+      required: true,
+      localized: true,
+      admin: {
+        components: {
+          Cell: MithaiProductCellPath,
+        },
+      },
+    },
     {
       name: "slug",
       type: "text",

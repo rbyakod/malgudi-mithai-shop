@@ -27,6 +27,9 @@ test.describe("home hero", () => {
       ).toBeVisible();
     } else {
       // Static fallback must render the kaju-katli figure caption.
+      // NOTE: assertion text is English-only. If this test is ever
+      // parameterized across locales, replace with locale-aware lookup
+      // (e.g. read expected strings from messages/<locale>.json).
       await expect(page.getByText(/From the kitchen/i)).toBeVisible();
       await expect(page.getByText(/Kaju katli/).first()).toBeVisible();
     }

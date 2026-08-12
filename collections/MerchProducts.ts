@@ -7,16 +7,25 @@
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
 
+// Custom Cell referenced by string path — Payload importMap resolves it.
+const MerchProductCellPath = "./components/payload-admin/cells/MerchProductCell";
+
 export const MerchProducts: CollectionConfig = {
   slug: "merch-products",
   access: { read: () => true },
-  admin: { useAsTitle: "name", group: "Merch" },
+  admin: { useAsTitle: "name", group: "02 Products" },
   hooks: {
     afterChange: [makeRevalidateHook("merch-products")],
     afterDelete: [makeRevalidateDeleteHook("merch-products")],
   },
   fields: [
-    { name: "name", type: "text", required: true, localized: true },
+    {
+      name: "name",
+      type: "text",
+      required: true,
+      localized: true,
+      admin: { components: { Cell: MerchProductCellPath } },
+    },
     {
       name: "type",
       type: "select",

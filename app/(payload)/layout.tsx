@@ -2,11 +2,13 @@
 /* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
 import config from "@payload-config";
 import "@payloadcms/next/css";
+import "./admin/custom.scss";
 import type { ServerFunctionClient } from "payload";
 import { handleServerFunctions, RootLayout } from "@payloadcms/next/layouts";
 import React from "react";
 
 import { importMap } from "./admin/importMap.js";
+import { AdminThemeBootScript } from "@/components/payload-admin/theme/AdminThemeBootScript";
 
 type Args = {
   children: React.ReactNode;
@@ -27,6 +29,7 @@ const Layout = ({ children }: Args) => (
     importMap={importMap}
     serverFunction={serverFunction}
   >
+    <AdminThemeBootScript />
     {children}
   </RootLayout>
 );

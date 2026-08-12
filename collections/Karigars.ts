@@ -7,7 +7,7 @@ import type { CollectionConfig } from "payload";
 export const Karigars: CollectionConfig = {
   slug: "karigars",
   access: { read: () => true },
-  admin: { useAsTitle: "name" },
+  admin: { useAsTitle: "name", group: "01 Brand" },
   fields: [
     { name: "name", type: "text", required: true },
     {

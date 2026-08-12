@@ -21,5 +21,6 @@ export const Media: CollectionConfig = {
     ],
   },
   access: { read: () => true },
+  admin: { group: "03 Catalog Ops" },
   fields: [{ name: "alt", type: "text", localized: true }],
 };

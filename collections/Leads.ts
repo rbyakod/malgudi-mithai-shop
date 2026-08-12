@@ -2,7 +2,7 @@ import type { CollectionConfig } from "payload";
 
 export const Leads: CollectionConfig = {
   slug: "leads",
-  admin: { useAsTitle: "type", group: "Ops" },
+  admin: { useAsTitle: "type", group: "03 Catalog Ops" },
   access: {
     read: ({ req: { user } }) => Boolean(user),
     create: () => true,

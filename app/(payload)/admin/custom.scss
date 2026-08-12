@@ -1,0 +1,124 @@
+// Mishran admin theme tokens.
+//
+// Three themes: mishran-admin (default), mishran-midnight, mishran-monsoon.
+// Selected via body[data-admin-theme] attribute, set by AdminThemeBootScript
+// before hydration to avoid theme flash.
+
+:root {
+  --mishran-font-display: "Outfit", system-ui, sans-serif;
+  --mishran-radius-sm: 6px;
+  --mishran-radius-md: 10px;
+  --mishran-radius-lg: 16px;
+}
+
+// === Mishran Admin (default) ===
+body[data-admin-theme="mishran-admin"] {
+  --t-bg: #f7efe0;
+  --t-bg-card: #ffffff;
+  --t-bg-control: #fdf8ed;
+  --t-text: #2a1a0e;
+  --t-text-muted: #6b4f37;
+  --t-primary: #9b4d2a;
+  --t-primary-hover: #7d3d22;
+  --t-gold: #d79a35;
+  --t-border: #e8d5b8;
+  --t-success: #2f7a3a;
+  --t-danger: #c0392b;
+}
+
+// === Mishran Midnight ===
+body[data-admin-theme="mishran-midnight"] {
+  --t-bg: #1a1614;
+  --t-bg-card: #261f1a;
+  --t-bg-control: #2f2620;
+  --t-text: #f0e6d2;
+  --t-text-muted: #a89878;
+  --t-primary: #d79a35;
+  --t-primary-hover: #e8ad4d;
+  --t-gold: #d79a35;
+  --t-border: #3a2f25;
+  --t-success: #4ca85a;
+  --t-danger: #e55a4a;
+}
+
+// === Mishran Monsoon ===
+body[data-admin-theme="mishran-monsoon"] {
+  --t-bg: #e8eef2;
+  --t-bg-card: #ffffff;
+  --t-bg-control: #f4f7fa;
+  --t-text: #1f2937;
+  --t-text-muted: #4b5563;
+  --t-primary: #e07a3c;
+  --t-primary-hover: #c5682f;
+  --t-gold: #c4942c;
+  --t-border: #cbd5e1;
+  --t-success: #2f7a3a;
+  --t-danger: #c0392b;
+}
+
+// === Map Mishran tokens onto Payload's CSS variables ===
+// Payload 3.x exposes its palette under --theme-elevation-* and --theme-* tokens.
+// Verify exact names in node_modules/@payloadcms/ui/dist/scss/_variables.scss.
+// The mappings below target the variables Payload 3.85 uses; adjust if renamed.
+body[data-admin-theme] {
+  --theme-elevation-50: var(--t-bg);
+  --theme-elevation-100: var(--t-bg);
+  --theme-elevation-200: var(--t-bg-card);
+  --theme-elevation-300: var(--t-bg-control);
+  --theme-elevation-400: var(--t-border);
+  --theme-elevation-500: var(--t-text-muted);
+  --theme-elevation-600: var(--t-text);
+  --theme-elevation-700: var(--t-text);
+  --theme-elevation-800: var(--t-text);
+  --theme-elevation-900: var(--t-text);
+  --theme-success-500: var(--t-primary);
+  --theme-warning-500: var(--t-gold);
+  --theme-error-500: var(--t-danger);
+
+  // Apply base styles
+  background-color: var(--t-bg);
+  color: var(--t-text);
+  font-family: var(--mishran-font-display);
+}
+
+// Mishran-specific utility classes (used by widgets + cells)
+.mishran-card {
+  background-color: var(--t-bg-card);
+  border: 1px solid var(--t-border);
+  border-radius: var(--mishran-radius-md);
+  padding: 1rem 1.25rem;
+}
+
+.mishran-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.mishran-pill--muted { background: var(--t-bg-control); color: var(--t-text-muted); }
+.mishran-pill--primary { background: var(--t-primary); color: var(--t-bg-card); }
+.mishran-pill--gold { background: var(--t-gold); color: var(--t-text); }
+.mishran-pill--success { background: var(--t-success); color: white; }
+.mishran-pill--danger { background: var(--t-danger); color: white; }
+.mishran-pill--info { background: var(--t-primary-hover); color: var(--t-bg-card); }
+
+.mishran-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--t-bg-control) 0%,
+    var(--t-border) 50%,
+    var(--t-bg-control) 100%
+  );
+  background-size: 200% 100%;
+  animation: mishran-skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--mishran-radius-sm);
+}
+
+@keyframes mishran-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
