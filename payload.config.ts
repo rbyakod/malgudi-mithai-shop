@@ -49,6 +49,12 @@ import { Orders } from "./collections/Orders";
 import { Payments } from "./collections/Payments";
 import { Shipments } from "./collections/Shipments";
 import { ServiceablePincodes } from "./collections/ServiceablePincodes";
+// Mobile app (Task 1.7): auth + ops collections.
+import { OtpRequests } from "./collections/OtpRequests";
+import { Devices } from "./collections/Devices";
+import { IdempotencyKeys } from "./collections/IdempotencyKeys";
+import { RevokedTokens } from "./collections/RevokedTokens";
+import { SecurityEvents } from "./collections/SecurityEvents";
 // Globals (Task 8).
 import { BrandSettings } from "./globals/BrandSettings";
 import { NavSettings } from "./globals/NavSettings";
@@ -126,6 +132,12 @@ export default buildConfig({
     Payments,
     Shipments,
     ServiceablePincodes,
+    // Mobile app (Task 1.7): auth + ops collections.
+    OtpRequests,
+    Devices,
+    IdempotencyKeys,
+    RevokedTokens,
+    SecurityEvents,
   ],
   globals: [
     BrandSettings,
