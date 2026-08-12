@@ -14,7 +14,7 @@ export const Orders: CollectionConfig = {
       "id",
       "customerId",
       "status",
-      "totalInPaise",
+      "totals.totalInPaise",
       "createdAt",
     ],
     group: "Commerce",
