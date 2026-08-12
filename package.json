@@ -2,6 +2,10 @@
   "name": "mithai-shop",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "predev": "node --import tsx scripts/regen-importmap.mjs",
     "prebuild": "node --import tsx scripts/regen-importmap.mjs",
@@ -9,12 +13,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "lhci": "lhci autorun",
+    "codegen": "pnpm -r --filter './packages/*' run codegen",
+    "build:packages": "pnpm -r --filter './packages/*' run build",
     "seed": "tsx scripts/seed.ts",
+    "seed:staging": "tsx scripts/seed-staging.ts",
     "regen:importmap": "node --import tsx scripts/regen-importmap.mjs"
   },
   "dependencies": {
