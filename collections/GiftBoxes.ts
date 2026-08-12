@@ -7,6 +7,7 @@
 // Occasions, and MithaiProducts.boxCompatibility.
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
+import { GiftBoxCell } from "@/components/payload-admin/cells/product-cell-behaviors";
 
 export const GiftBoxes: CollectionConfig = {
   slug: "gift-boxes",
@@ -17,7 +18,13 @@ export const GiftBoxes: CollectionConfig = {
     afterDelete: [makeRevalidateDeleteHook("gift-boxes")],
   },
   fields: [
-    { name: "name", type: "text", required: true, localized: true },
+    {
+      name: "name",
+      type: "text",
+      required: true,
+      localized: true,
+      admin: { components: { Cell: GiftBoxCell } },
+    },
     {
       name: "size",
       type: "select",

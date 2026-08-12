@@ -14,6 +14,7 @@
 // Karigars, Occasions, GiftBoxes, and SnackProducts via relationships.
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
+import { MithaiProductCell } from "@/components/payload-admin/cells/product-cell-behaviors";
 
 export const MithaiProducts: CollectionConfig = {
   slug: "mithai-products",
@@ -25,7 +26,17 @@ export const MithaiProducts: CollectionConfig = {
     afterDelete: [makeRevalidateDeleteHook("mithai-products")],
   },
   fields: [
-    { name: "name", type: "text", required: true, localized: true },
+    {
+      name: "name",
+      type: "text",
+      required: true,
+      localized: true,
+      admin: {
+        components: {
+          Cell: MithaiProductCell,
+        },
+      },
+    },
     {
       name: "slug",
       type: "text",

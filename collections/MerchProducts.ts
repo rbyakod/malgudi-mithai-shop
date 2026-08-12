@@ -6,6 +6,7 @@
 // Slug "merch-products" is the stable contract — referenced by Stories.
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
+import { MerchProductCell } from "@/components/payload-admin/cells/product-cell-behaviors";
 
 export const MerchProducts: CollectionConfig = {
   slug: "merch-products",
@@ -16,7 +17,13 @@ export const MerchProducts: CollectionConfig = {
     afterDelete: [makeRevalidateDeleteHook("merch-products")],
   },
   fields: [
-    { name: "name", type: "text", required: true, localized: true },
+    {
+      name: "name",
+      type: "text",
+      required: true,
+      localized: true,
+      admin: { components: { Cell: MerchProductCell } },
+    },
     {
       name: "type",
       type: "select",

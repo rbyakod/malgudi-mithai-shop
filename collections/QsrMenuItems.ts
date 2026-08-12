@@ -13,6 +13,7 @@
 // Slug "qsr-menu-items" is the stable contract — referenced by Stories.
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
+import { QsrMenuCell } from "@/components/payload-admin/cells/product-cell-behaviors";
 
 export const QsrMenuItems: CollectionConfig = {
   slug: "qsr-menu-items",
@@ -23,7 +24,13 @@ export const QsrMenuItems: CollectionConfig = {
     afterDelete: [makeRevalidateDeleteHook("qsr-menu-items")],
   },
   fields: [
-    { name: "name", type: "text", required: true, localized: true },
+    {
+      name: "name",
+      type: "text",
+      required: true,
+      localized: true,
+      admin: { components: { Cell: QsrMenuCell } },
+    },
     {
       name: "category",
       type: "select",
