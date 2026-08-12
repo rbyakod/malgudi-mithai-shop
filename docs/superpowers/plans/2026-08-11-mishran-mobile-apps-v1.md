@@ -419,7 +419,7 @@ MSG91_TEMPLATE_ORDER_STATUS=xxx
 
 # FCM (Android push)
 FCM_PROJECT_ID=mishran-prod
-FCP_SERVICE_ACCOUNT_JSON='{"type":"service_account",...}'
+FCM_SERVICE_ACCOUNT_JSON='{"type":"service_account",...}'
 
 # APNs (iOS v2 — leave blank for v1)
 APNS_TEAM_ID=
