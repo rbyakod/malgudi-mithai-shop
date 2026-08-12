@@ -2,9 +2,13 @@ packages:
   - 'apps/*'
   - 'packages/*'
 allowBuilds:
+  '@firebase/util': false
   '@openapitools/openapi-generator-cli': true
   '@parcel/watcher': true
   '@redocly/cli': true
   '@swc/core': true
+  argon2: true
   esbuild: true
+  mongodb-memory-server: true
+  protobufjs: false
   unrs-resolver: true
