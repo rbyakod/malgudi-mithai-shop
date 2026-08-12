@@ -165,20 +165,24 @@ async function main() {
   // Create the AutoLogin dev user (idempotent). AutoLogin requires the
   // user to exist in the DB; without this the admin panel bounces to
   // /admin/login even when isLocalDev is true.
-  const devEmail = "dev@mithai.shop";
-  const devUserExisting = await payload.find({
-    collection: "users",
-    where: { email: { equals: devEmail } },
-    limit: 1,
-  });
-  if (devUserExisting.docs.length === 0) {
-    await payload.create({
+  if (process.env.NODE_ENV !== "production") {
+    const devEmail = "dev@mithai.shop";
+    const devUserExisting = await payload.find({
       collection: "users",
-      data: { email: devEmail, password: "dev-password" },
+      where: { email: { equals: devEmail } },
+      limit: 1,
     });
-    console.log(`  [create] users/${devEmail}`);
+    if (devUserExisting.docs.length === 0) {
+      await payload.create({
+        collection: "users",
+        data: { email: devEmail, password: "dev-password" },
+      });
+      console.log(`  [create] users/${devEmail}`);
+    } else {
+      console.log(`  [skip] users/${devEmail} exists`);
+    }
   } else {
-    console.log(`  [skip] users/${devEmail} exists`);
+    console.log("Skipping dev user seed in production environment");
   }
   console.log("Seed complete.");
   process.exit(0);
