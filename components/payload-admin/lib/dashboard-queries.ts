@@ -59,8 +59,15 @@ async function apiGet<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+type LeadDoc = {
+  id: string;
+  contact?: {name?: string; email?: string};
+  status: LeadStatus;
+  createdAt: string;
+};
+
 type LeadsResponse = {
-  docs: LeadRow[];
+  docs: LeadDoc[];
   totalDocs: number;
 };
 
@@ -68,7 +75,13 @@ export async function fetchRecentLeads(limit = 5): Promise<LeadRow[]> {
   const data = await apiGet<LeadsResponse>(
     `/leads?limit=${limit}&sort=-createdAt&depth=0`
   );
-  return data.docs;
+  return data.docs.map((doc): LeadRow => ({
+    id: doc.id,
+    name: doc.contact?.name ?? "",
+    email: doc.contact?.email,
+    status: doc.status,
+    createdAt: doc.createdAt,
+  }));
 }
 
 type MithaiResponse = {

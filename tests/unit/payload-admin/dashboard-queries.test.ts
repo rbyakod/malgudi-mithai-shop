@@ -70,6 +70,8 @@ describe("dashboard-queries", () => {
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
         id: "lead-1",
+        name: "Ravi",
+        email: "r@x.com",
         status: "new",
         createdAt: "2026-08-10T00:00:00Z",
       });
@@ -82,6 +84,27 @@ describe("dashboard-queries", () => {
       await fetchRecentLeads();
       const init = fetchSpy.mock.calls[0][1] as RequestInit;
       expect(init.headers).toMatchObject({Accept: "application/json"});
+    });
+
+    it("handles missing contact group gracefully", async () => {
+      const docs = [
+        {
+          id: "lead-2",
+          status: "contacted",
+          createdAt: "2026-08-10T00:00:00Z",
+        },
+      ];
+      fetchSpy.mockResolvedValueOnce(
+        mockResponse({docs, totalDocs: 1})
+      );
+      const result = await fetchRecentLeads();
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        id: "lead-2",
+        name: "",
+        email: undefined,
+        status: "contacted",
+      });
     });
 
     it("throws on non-ok response", async () => {
