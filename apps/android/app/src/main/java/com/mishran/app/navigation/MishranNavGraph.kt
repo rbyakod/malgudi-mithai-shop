@@ -35,6 +35,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.mishran.app.ui.auth.OtpScreen
+import com.mishran.app.ui.auth.PhoneEntryScreen
 
 /**
  * Root of the app UI. Wire this into [com.mishran.app.MainActivity]; it owns
@@ -73,16 +75,30 @@ fun MishranAppRoot() {
             modifier = Modifier.fillMaxSize().padding(innerPadding),
         ) {
             composable(Routes.SPLASH) {
-                PlaceholderScreen("Splash — auth gate lands in Phase 8")
+                PlaceholderScreen("Splash — auth gate lands in Task 8.2")
             }
             composable(Routes.AUTH_PHONE) {
-                PlaceholderScreen("Sign in (phone)")
+                PhoneEntryScreen(onOtpSent = { requestId ->
+                    navController.navigate(Routes.authOtp(requestId))
+                })
             }
             composable(
                 route = Routes.AUTH_OTP,
                 arguments = listOf(navArgument("requestId") { type = NavType.StringType }),
-            ) { entry ->
-                PlaceholderScreen("Verify OTP — requestId=${entry.arguments?.getString("requestId")}")
+            ) {
+                OtpScreen(
+                    onVerified = {
+                        // Clear the entire back stack (splash + auth) so HOME is the
+                        // new root: Back from Home exits the app, never returns to login.
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    },
+                    onResend = { navController.popBackStack(Routes.AUTH_PHONE, inclusive = false) },
+                )
             }
             composable(Routes.HOME) { PlaceholderScreen("Home") }
             composable(Routes.CATALOG) { PlaceholderScreen("Catalog") }
