@@ -1,23 +1,16 @@
-// apps/android/app/src/main/java/com/mishran/app/MainActivity.kt — Task 7.1.
+// apps/android/app/src/main/java/com/mishran/app/MainActivity.kt — Task 7.1 / 7.4.
 //
-// Single-activity host for the Compose NavGraph (wired in Task 7.4). For now it
-// renders a brand-themed placeholder surface so the project compiles + launches;
-// MishranTheme is applied here (Task 7.2), the NavHost lands in Task 7.4.
+// Single-activity host. @AndroidEntryPoint enables Hilt field injection; the
+// Compose NavGraph (Task 7.4) lives in MishranAppRoot, wrapped in the brand
+// MishranTheme (Task 7.2). Deep links (mishran://order/{id}) are declared in
+// the AndroidManifest intent-filter and resolved inside the NavHost.
 package com.mishran.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import com.mishran.app.navigation.MishranAppRoot
 import com.mishran.app.ui.theme.MishranTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,21 +21,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MishranTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Placeholder(modifier = Modifier.padding(innerPadding))
-                }
+                MishranAppRoot()
             }
         }
     }
-}
-
-@Composable
-private fun Placeholder(modifier: Modifier = Modifier) {
-    // Replaced by the NavHost in Task 7.4.
-    Text(
-        text = "Mishran",
-        style = MaterialTheme.typography.headlineMedium,
-        textAlign = TextAlign.Center,
-        modifier = modifier.padding(24.dp),
-    )
 }
