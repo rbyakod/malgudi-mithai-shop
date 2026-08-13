@@ -62,6 +62,7 @@
 		CAED0D2ACB563E649EF0B480 /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		CE06CF24565A57CA9FCAA9AD /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		D15083CDE49B78AEB7CE5C9D /* MishranTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranTokens.swift; sourceTree = "<group>"; };
+		D1C7CF35CFC86189210BDBCE /* Mishran.xctestplan */ = {isa = PBXFileReference; path = Mishran.xctestplan; sourceTree = "<group>"; };
 		D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranApp.swift; sourceTree = "<group>"; };
 		E8AD84061607513B2822EFFA /* MishranUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranUITests.swift; sourceTree = "<group>"; };
 		ED91007C15EEF6F6939E19F7 /* MishranTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranTheme.swift; sourceTree = "<group>"; };
@@ -88,6 +89,7 @@
 		3B29749DEA5CABF32922E983 = {
 			isa = PBXGroup;
 			children = (
+				D1C7CF35CFC86189210BDBCE /* Mishran.xctestplan */,
 				132604EA27D443488AA53EC1 /* Generated */,
 				B5B5DF2A3F7F9D39FBB3A74E /* Mishran */,
 				F74AB2076E8EB487B7552C9F /* MishranTests */,

@@ -32,6 +32,10 @@ targets:
       # `pnpm codegen:swift` in packages/brand-tokens.
       - path: ../../packages/brand-tokens/generated/swift
         group: Generated
+      # Test plan (Task 14.5): project-level file, no target membership —
+      # selectable from Xcode Cloud and usable via `xcodebuild -testPlan`.
+      - path: Mishran.xctestplan
+        buildPhase: none
     info:
       path: Mishran/Info.plist
       properties:
@@ -83,6 +87,11 @@ schemes:
       config: Debug
     test:
       config: Debug
+      # Runs BOTH bundles (unit + UI). The committed Mishran.xctestplan
+      # mirrors this set for Xcode Cloud / -testPlan use; XcodeGen 2.46
+      # can't emit a scheme TestPlanReference, so the plan is registered as
+      # a project file (buildPhase: none) and selected in the Xcode Cloud
+      # workflow config instead.
       targets:
         - MishranTests
         - MishranUITests
