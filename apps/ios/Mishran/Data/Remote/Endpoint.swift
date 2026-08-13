@@ -90,6 +90,12 @@ extension Endpoint {
         Endpoint(path: "orders/\(id)")
     }
 
+    /// GET /account/loyalty-pass — eligible customers get a signed .pkpass
+    /// URL; 404 NOT_FOUND means "not yet" (handled, not an error banner).
+    static var loyaltyPass: Endpoint {
+        Endpoint(path: "account/loyalty-pass")
+    }
+
     /// POST /notifications/register-device — idempotent device upsert;
     /// called on APNs token change and whenever a Live Activity push token
     /// appears. liveActivityToken rides the same row (18.3).

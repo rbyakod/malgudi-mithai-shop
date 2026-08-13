@@ -10,4 +10,5 @@ enum Route: Hashable {
     case orderConfirmed(id: String)
     case orders
     case orderDetail(id: String)
+    case account
 }

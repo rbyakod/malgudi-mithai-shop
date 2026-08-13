@@ -2,6 +2,7 @@
 // Parses mishran:// URIs into routes. Registered scheme lives in Info.plist
 // (CFBundleURLSchemes, set in Task 14.1). Currently understood:
 //   mishran://order/{id}  → .orderDetail (push-notification taps)
+//   mishran://account      → .account (loyalty pass, Task 19.3)
 // Unknown hosts/schemes are ignored — never crash on a malformed link.
 import Foundation
 
@@ -21,6 +22,8 @@ final class DeepLinkHandler {
             if let id = url.pathComponents.first(where: { $0 != "/" }), !id.isEmpty {
                 router.reset(to: .orderDetail(id: id))
             }
+        case "account":
+            router.reset(to: .account)
         default:
             break
         }

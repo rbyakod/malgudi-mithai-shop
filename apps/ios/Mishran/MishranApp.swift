@@ -146,6 +146,14 @@ struct PlaceholderHomeView: View {
         }
         .listStyle(.plain)
         .navigationTitle("Mishran")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink(value: Route.account) {
+                    Label("Account", systemImage: "person.crop.circle")
+                }
+                .accessibilityLabel("Account")
+            }
+        }
     }
 }
 
@@ -169,6 +177,8 @@ struct PlaceholderDestinationView: View {
             OrderListView()
         case let .orderDetail(id):
             OrderDetailView(orderId: id)
+        case .account:
+            AccountView()
         }
     }
 }

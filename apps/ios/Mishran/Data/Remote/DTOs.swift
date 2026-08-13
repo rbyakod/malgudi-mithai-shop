@@ -209,3 +209,12 @@ struct OrderPageDTO: Decodable, Equatable {
 struct VerifyPaymentResponseDTO: Decodable {
     let order: OrderDTO
 }
+
+/// GET /account/loyalty-pass — 200 hands back a 24h signed .pkpass URL the
+/// client redeems via PKAddPassesViewController (Task 19.1 backend).
+/// LoyaltyTier lives in Wallet/LoyaltyPassManager.swift.
+struct LoyaltyPassResponseDTO: Decodable {
+    let url: String
+    let serialNumber: String
+    let tier: LoyaltyTier
+}
