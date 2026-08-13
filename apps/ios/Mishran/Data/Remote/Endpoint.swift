@@ -73,6 +73,23 @@ extension Endpoint {
         )
     }
 
+    /// GET /orders — customer-scoped (JWT), newest first, paginated.
+    static func orders(page: Int = 1, pageSize: Int = 20) -> Endpoint {
+        Endpoint(
+            path: "orders",
+            queryItems: [
+                URLQueryItem(name: "page", value: String(page)),
+                URLQueryItem(name: "pageSize", value: String(pageSize)),
+            ]
+        )
+    }
+
+    /// GET /orders/{id} — customer-scoped; 404 ORDER_NOT_FOUND if the id
+    /// belongs to someone else (service returns null → mapped, not leaked).
+    static func orderDetail(id: String) -> Endpoint {
+        Endpoint(path: "orders/\(id)")
+    }
+
     static func otpSend(phone: String) -> Endpoint {
         Endpoint(
             path: "auth/otp/send",

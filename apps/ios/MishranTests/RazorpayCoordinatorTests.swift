@@ -103,7 +103,7 @@ final class RazorpayCoordinatorTests: XCTestCase {
             ))
         }
         MockURLProtocol.routes["payments/razorpay/verify"] = (200, [:], json(
-            #"{"data":{"order":{"id":"order_1","status":"confirmed"}}}"#
+            #"{"data":{"order":{"id":"order_1","customerId":"cust_1","items":[],"totals":{"itemsTotalInPaise":0,"deliveryFeeInPaise":0,"taxesInPaise":0,"discountInPaise":0,"totalInPaise":0},"status":"confirmed","paymentStatus":"paid","createdAt":"2026-08-13T10:00:00Z","updatedAt":"2026-08-13T10:05:00Z"}}}"#
         ))
     }
 
@@ -167,7 +167,7 @@ final class RazorpayCoordinatorTests: XCTestCase {
             ))
         }
         MockURLProtocol.routes["payments/razorpay/verify"] = (200, [:], json(
-            #"{"data":{"order":{"id":"order_1","status":"confirmed"}}}"#
+            #"{"data":{"order":{"id":"order_1","customerId":"cust_1","items":[],"totals":{"itemsTotalInPaise":0,"deliveryFeeInPaise":0,"taxesInPaise":0,"discountInPaise":0,"totalInPaise":0},"status":"confirmed","paymentStatus":"paid","createdAt":"2026-08-13T10:00:00Z","updatedAt":"2026-08-13T10:05:00Z"}}}"#
         ))
 
         let launcher = StubRazorpayLauncher()

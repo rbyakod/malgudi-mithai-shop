@@ -165,10 +165,58 @@ struct VerifyPaymentRequestDTO: Encodable {
     let signature: String
 }
 
-/// Minimal order projection — the confirm path only needs id + status.
-struct OrderDTO: Decodable, Equatable {
+/// Order lifecycle (contract OrderStatus — 12 states, side states included).
+enum OrderStatus: String, Decodable, Equatable, CaseIterable, Hashable {
+    case created
+    case pendingPayment = "pending_payment"
+    case confirmed
+    case packed
+    case dispatched
+    case outForDelivery = "out_for_delivery"
+    case delivered
+    case paymentFailed = "payment_failed"
+    case cancelled
+    case returned
+    case failedDelivery = "failed_delivery"
+    case abandoned
+}
+
+struct OrderItemDTO: Decodable, Equatable {
+    let productId: String
+    let slug: String
+    let name: String
+    let quantity: Int
+    let unit: String?
+    let priceInPaise: Int
+    let image: String?
+}
+
+struct OrderTotalsDTO: Decodable, Equatable {
+    let itemsTotalInPaise: Int
+    let deliveryFeeInPaise: Int
+    let taxesInPaise: Int
+    let discountInPaise: Int
+    let totalInPaise: Int
+}
+
+/// Full order projection (GET /orders, GET /orders/{id}, verify response).
+struct OrderDTO: Decodable, Equatable, Identifiable {
     let id: String
-    let status: String
+    let customerId: String
+    let items: [OrderItemDTO]
+    let totals: OrderTotalsDTO
+    let status: OrderStatus
+    let paymentStatus: String
+    let createdAt: String
+    let updatedAt: String
+}
+
+/// Paginated orders envelope (mirrors the products page shape).
+struct OrderPageDTO: Decodable, Equatable {
+    let items: [OrderDTO]
+    let total: Int
+    let page: Int
+    let pageSize: Int
 }
 
 struct VerifyPaymentResponseDTO: Decodable {

@@ -125,7 +125,8 @@ struct PlaceholderHomeView: View {
 }
 
 /// Scaffold destinations per route — one placeholder line each so every
-/// Route case renders (and UI tests can assert on stable text).
+/// Route case renders (and UI tests can assert on stable text). Real
+/// screens replace their placeholder as their tasks land (18.1: orders).
 struct PlaceholderDestinationView: View {
     let route: Route
 
@@ -140,9 +141,9 @@ struct PlaceholderDestinationView: View {
         case let .orderConfirmed(id):
             Text("Confirmed \(id)")
         case .orders:
-            Text("Orders")
+            OrderListView()
         case let .orderDetail(id):
-            Text("Order \(id)")
+            OrderDetailView(orderId: id)
         }
     }
 }
