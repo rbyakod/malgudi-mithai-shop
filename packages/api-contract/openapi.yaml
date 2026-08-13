@@ -116,6 +116,48 @@ components:
       required: [ok]
       properties:
         ok: { type: boolean }
+    Product:
+      type: object
+      required: [id, slug, name, family]
+      description: |
+        Catalog product. Mirrors collections/MithaiProducts.ts.
+        `images` are resolved URLs (Payload upload refs flattened to strings).
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        family:
+          type: string
+          enum: [classic, original, sugar-free, regional, seasonal]
+        displayPrice:
+          type: [string, 'null']
+          description: Display-only. Commerce deferred to Phase 8.
+        freshnessStatus:
+          type: [string, 'null']
+          enum: [made-daily, made-to-order, batch-frozen, null]
+        dietaryTags:
+          type: array
+          items: { type: string }
+        allergens:
+          type: array
+          items: { type: string }
+        ingredients:
+          type: [string, 'null']
+        shelfLife:
+          type: [string, 'null']
+        storage:
+          type: [string, 'null']
+        images:
+          type: array
+          items: { type: string }
+        story:
+          type: [string, 'null']
+        karigar:
+          type: [string, 'null']
+          description: Karigar (artisan) relationship id, if any.
+        updatedAt:
+          type: [string, 'null']
+          format: date-time
 
 security:
   - bearerAuth: []
@@ -208,3 +250,69 @@ paths:
                 type: object
                 properties:
                   data: { $ref: '#/components/schemas/LogoutResponse' }
+  /catalog/products:
+    get:
+      tags: [catalog]
+      security: []
+      parameters:
+        - in: header
+          name: If-None-Match
+          schema: { type: string }
+        - in: query
+          name: family
+          schema:
+            type: string
+            enum: [classic, original, sugar-free, regional, seasonal]
+        - in: query
+          name: freshnessStatus
+          schema:
+            type: string
+            enum: [made-daily, made-to-order, batch-frozen]
+        - in: query
+          name: dietaryTags
+          schema:
+            type: array
+            items: { type: string }
+          style: form
+          explode: true
+        - in: query
+          name: q
+          schema: { type: string }
+          description: Case-insensitive name substring (Payload `contains`).
+        - in: query
+          name: page
+          schema: { type: integer, default: 1, minimum: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, default: 50, minimum: 1, maximum: 100 }
+      responses:
+        '200':
+          description: OK
+          headers:
+            ETag:
+              schema:
+                type: string
+                description: |
+                  SHA-1 of `id:updatedAt` joined list, wrapped in double
+                  quotes, truncated to 16 hex chars. Send back via
+                  `If-None-Match` to get a 304 when unchanged.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Paginated'
+                      - type: object
+                        properties:
+                          items:
+                            type: array
+                            items: { $ref: '#/components/schemas/Product' }
+        '304':
+          description: Not Modified — client's If-None-Match matched current ETag.
+          headers:
+            ETag:
+              schema: { type: string }
+
