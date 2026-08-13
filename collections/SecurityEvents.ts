@@ -25,6 +25,8 @@ export const SecurityEvents: CollectionConfig = {
         "otp_brute_force",
         "token_reuse_new_ip",
         "webhook_signature_fail",
+        "webhook_config_error",
+        "webhook_malformed_json",
         "mass_refund_attempt",
         "unusual_order_pattern",
       ].map((v) => ({ label: v, value: v })),
