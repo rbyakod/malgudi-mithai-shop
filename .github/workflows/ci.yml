@@ -124,3 +124,33 @@ jobs:
             maestro test apps/android/maestro/
         env:
           MAESTRO_OTP: ${{ secrets.MAESTRO_OTP }}
+
+  # Macrobenchmarks (Task 12.2): cold start (budget p95 ≤ 1.5s, Pixel 4a
+  # class) + catalog scroll jank, against the release-shaped "benchmark"
+  # build type. Manual dispatch: wall-clock gates are too noisy to run per
+  # PR. Results are archived per run; the >5% regression gate compares
+  # against the last archived baseline once a stable one exists (follow-up:
+  # commit a baselineprofile + ci-perf thresholds).
+  macrobenchmark:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Run macrobenchmarks on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          script: cd apps/android && ./gradlew :macrobenchmark:connectedBenchmarkAndroidTest
+      - name: Archive benchmark results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macrobenchmark-results
+          path: apps/android/macrobenchmark/build/outputs/connected_android_test_additional_output

@@ -68,6 +68,25 @@ android {
                 "proguard-rules.pro",
             )
         }
+        // Task 12.2: release-shaped build the macrobenchmark module measures
+        // — minified + shrunk like release, debug-signed so it installs on
+        // emulators, pointed at the emulator host loopback like debug.
+        create("benchmark") {
+            isDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"http://10.0.2.2:3000/api/mobile/v1/\"",
+            )
+        }
     }
 
     compileOptions {
