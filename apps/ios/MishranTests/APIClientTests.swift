@@ -74,6 +74,24 @@ final class MockURLProtocol: URLProtocol {
     }
 
     override func stopLoading() {}
+
+    /// Drain a request's httpBodyStream (URLSession re-encodes the body).
+    static func body(of request: URLRequest) -> Data? {
+        if let data = request.httpBody { return data }
+        guard let stream = request.httpBodyStream else { return nil }
+        stream.open()
+        defer { stream.close() }
+        var data = Data()
+        let bufferSize = 4096
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+        defer { buffer.deallocate() }
+        while stream.hasBytesAvailable {
+            let read = stream.read(buffer, maxLength: bufferSize)
+            if read <= 0 { break }
+            data.append(buffer, count: read)
+        }
+        return data
+    }
 }
 
 final class APIClientTests: XCTestCase {
