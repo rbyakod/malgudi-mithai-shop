@@ -14,6 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mishran.app.ui.checkout.PaymentMethod
 
@@ -24,7 +26,11 @@ fun PaymentMethodPicker(
     onSelect: (PaymentMethod) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Pay with", style = MaterialTheme.typography.titleMedium)
+        Text(
+            "Pay with",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.semantics { heading() },
+        )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             PaymentMethod.entries.forEach { method ->
                 FilterChip(

@@ -33,6 +33,13 @@ val MishranLightColorScheme: ColorScheme = lightColorScheme(
     onError = Color.White,
 )
 
+/**
+ * Dark-mode error ink: [MishranColors.StateError] (#9D1C1C) is 2.10:1 on the
+ * deep-ink canvas — unreadable for error/OTP-failure messages. This warmed
+ * salmon keeps the terracotta family at 7.95:1 on BrandInk (Task 12.4 audit).
+ */
+private val StateErrorDark = Color(0xFFE8A09B)
+
 /** Dark scheme: deep ink canvas, warmed accent so it reads on black. */
 val MishranDarkColorScheme: ColorScheme = darkColorScheme(
     primary = MishranColors.BrandPop,
@@ -48,6 +55,6 @@ val MishranDarkColorScheme: ColorScheme = darkColorScheme(
     surfaceVariant = Color(0xFF4A3328),
     onSurfaceVariant = MishranColors.Neutral200,
     outline = MishranColors.Neutral400,
-    error = MishranColors.StateError,
-    onError = Color.White,
+    error = StateErrorDark,
+    onError = Color(0xFF2C1810),
 )

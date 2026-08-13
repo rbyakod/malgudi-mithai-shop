@@ -32,6 +32,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -85,6 +88,7 @@ private fun OrderDetailContent(
             Text(
                 text = orderReferenceLabel(order.id),
                 style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.semantics { heading() },
             )
             Text(
                 text = "Placed ${formatOrderDate(order.createdAt)}",
@@ -170,7 +174,18 @@ private fun Timeline(stageIndex: Int) {
             val current = index == stageIndex
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)
+                    // Progress is otherwise conveyed only through dot/text
+                    // color (Task 12.4).
+                    .semantics {
+                        stateDescription = when {
+                            current -> "Current stage"
+                            done -> "Completed"
+                            else -> "Upcoming"
+                        }
+                    },
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Box(

@@ -173,7 +173,8 @@ private fun CartLine(
                     OutlinedIconButton(
                         onClick = onDecrement,
                         enabled = line.quantity > 1,
-                        modifier = Modifier.size(40.dp),
+                        // No size override: OutlinedIconButton floors itself at
+                        // the 48dp touch-target minimum (Task 12.4).
                     ) {
                         Icon(Icons.Filled.Remove, contentDescription = "One less")
                     }
@@ -184,7 +185,6 @@ private fun CartLine(
                     )
                     OutlinedIconButton(
                         onClick = onIncrement,
-                        modifier = Modifier.size(40.dp),
                     ) {
                         Icon(Icons.Filled.Add, contentDescription = "One more")
                     }

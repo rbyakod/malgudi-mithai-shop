@@ -40,6 +40,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
@@ -114,6 +117,7 @@ private fun ProductDetailContent(
                     Text(
                         text = product.name,
                         style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.semantics { heading() },
                     )
                     product.displayPrice?.let {
                         Text(
@@ -203,9 +207,19 @@ private fun Gallery(product: Product) {
             )
         }
         if (images.size > 1) {
-            // Thin dot strip instead of a full tab row.
+            // Thin dot strip instead of a full tab row. The strip itself
+            // announces the page position (the dots carry no semantics);
+            // inactive dots use onSurfaceVariant because outline lands at
+            // 2.49:1 on the light canvas — under the 3:1 non-text minimum
+            // (Task 12.4).
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .semantics {
+                        contentDescription =
+                            "Image ${pagerState.currentPage + 1} of ${images.size}"
+                    },
                 horizontalArrangement = Arrangement.Center,
             ) {
                 repeat(images.size) { index ->
@@ -217,7 +231,7 @@ private fun Gallery(product: Product) {
                             .clip(CircleShape)
                             .background(
                                 if (active) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.outline,
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
                             ),
                     )
                 }
@@ -230,7 +244,11 @@ private fun Gallery(product: Product) {
 private fun Section(label: String, body: String?) {
     if (body.isNullOrBlank()) return
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(label, style = MaterialTheme.typography.titleSmall)
+        Text(
+            label,
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.semantics { heading() },
+        )
         Text(
             text = body,
             style = MaterialTheme.typography.bodyMedium,

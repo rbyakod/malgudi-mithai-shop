@@ -27,6 +27,8 @@ import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
+import androidx.glance.semantics.contentDescription
+import androidx.glance.semantics.semantics
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -81,6 +83,7 @@ private fun TrackedWidgetContent(lines: WidgetLines, deepLink: String) {
             .background(BACKGROUND)
             .cornerRadius(16.dp)
             .padding(12.dp)
+            .semantics { contentDescription = "Order ${lines.stage}. Open order details." }
             .clickable(actionStartActivity(intent)),
         contentAlignment = Alignment.Center,
     ) {

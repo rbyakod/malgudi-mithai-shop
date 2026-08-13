@@ -20,6 +20,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mishran.api.models.Address
 import com.mishran.app.ui.checkout.ServiceabilityState
@@ -33,7 +38,11 @@ fun AddressPicker(
     onSelect: (Address) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Deliver to", style = MaterialTheme.typography.titleMedium)
+        Text(
+            "Deliver to",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.semantics { heading() },
+        )
 
         addresses.forEach { address ->
             val isSelected = address.id == selected?.id
@@ -42,14 +51,24 @@ fun AddressPicker(
                 shape = MaterialTheme.shapes.medium,
                 tonalElevation = if (isSelected) 2.dp else 0.dp,
                 onClick = { onSelect(address) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    // Single a11y node for the whole row: TalkBack announces
+                    // "address, selected, radio button, double-tap to switch"
+                    // instead of an unlabeled RadioButton nested inside a
+                    // second clickable (Task 12.4).
+                    .semantics(mergeDescendants = true) {
+                        role = Role.RadioButton
+                        selected = isSelected
+                    },
             ) {
                 Row(
                     modifier = Modifier.padding(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    RadioButton(selected = isSelected, onClick = { onSelect(address) })
+                    // Display-only: the row above is the one tap target.
+                    RadioButton(selected = isSelected, onClick = null)
                     Column {
                         address.tag?.let { tag ->
                             Text(

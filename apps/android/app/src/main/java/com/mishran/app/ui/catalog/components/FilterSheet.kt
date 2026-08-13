@@ -31,6 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mishran.api.models.Product
 import com.mishran.app.ui.catalog.CatalogFilters
@@ -64,7 +66,11 @@ fun FilterSheet(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("Filter", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "Filter",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.semantics { heading() },
+                )
                 if (filters.isActive) {
                     TextButton(onClick = { onChange(CatalogFilters()) }) { Text("Clear all") }
                 }
@@ -77,7 +83,11 @@ fun FilterSheet(
 
             if (availableDietaryTags.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Dietary", style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        "Dietary",
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.semantics { heading() },
+                    )
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         availableDietaryTags.sorted().forEach { tag ->
                             FilterChip(
