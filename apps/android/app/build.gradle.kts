@@ -152,6 +152,10 @@ dependencies {
 
     // --- Biometric (in-app auth gate, Task 8.2) ---
     implementation("androidx.biometric:biometric:1.2.0")
+    // BiometricPrompt requires a FragmentActivity host; MainActivity extends it.
+    implementation("androidx.fragment:fragment-ktx:1.8.2")
+    // Keystore-backed encrypted prefs for the biometric-gated refresh token.
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
     // --- Payments: Razorpay ---
     implementation("com.razorpay:checkout:1.6.33")

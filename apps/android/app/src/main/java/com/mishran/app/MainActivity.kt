@@ -7,15 +7,19 @@
 package com.mishran.app
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.fragment.app.FragmentActivity
 import com.mishran.app.navigation.MishranAppRoot
 import com.mishran.app.ui.theme.MishranTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+// FragmentActivity (not plain ComponentActivity) because androidx.biometric's
+// BiometricPrompt mounts an internal fragment and requires a FragmentActivity
+// host. FragmentActivity still extends ComponentActivity, so enableEdgeToEdge()
+// + setContent() compose-hosting both keep working.
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

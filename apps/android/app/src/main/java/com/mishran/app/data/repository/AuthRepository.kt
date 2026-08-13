@@ -16,6 +16,7 @@ import com.mishran.api.models.OtpSendResponse
 import com.mishran.api.models.OtpVerifyRequest
 import com.mishran.api.models.OtpVerifyResponse
 import com.mishran.app.data.local.DataStoreKeys
+import com.mishran.app.data.local.SecureTokenStore
 import com.mishran.app.data.remote.api.MishranApi
 import kotlinx.coroutines.flow.first
 import java.io.IOException
@@ -26,6 +27,10 @@ import javax.inject.Singleton
 class AuthRepository @Inject constructor(
     private val api: MishranApi,
     private val dataStore: DataStore<Preferences>,
+    // Keystore-encrypted store for the biometric-gated refresh token (Task 8.2).
+    // Distinct from the plain DataStore: it is only written when the user opts
+    // into biometric login, and only read after a successful BiometricPrompt.
+    private val secureTokenStore: SecureTokenStore,
 ) {
     /** Send an OTP to an E.164 phone; returns the server requestId + expiry. */
     suspend fun sendOtp(phone: String): OtpSendResponse {
@@ -59,5 +64,55 @@ class AuthRepository @Inject constructor(
             it.remove(DataStoreKeys.REFRESH_TOKEN)
             it.remove(DataStoreKeys.CUSTOMER_ID)
         }
+    }
+
+    // ---- Biometric login (Task 8.2) ----------------------------------------
+
+    /**
+     * Opt this device into biometric unlock: copy the current refresh token
+     * into the Keystore-encrypted store. Idempotent — overwrites any prior
+     * token, so it is safe after every rotation. Returns false only when there
+     * is no refresh token to copy (caller had not completed sign-in).
+     */
+    suspend fun enableBiometricLogin(): Boolean {
+        val refresh = dataStore.data.first()[DataStoreKeys.REFRESH_TOKEN] ?: return false
+        secureTokenStore.saveRefreshToken(refresh)
+        return true
+    }
+
+    /** True when a biometric-gated refresh token exists for cold-start unlock. */
+    suspend fun isBiometricLoginEnabled(): Boolean = secureTokenStore.hasRefreshToken()
+
+    /** Drop the biometric-gated token; leaves the live DataStore session intact. */
+    suspend fun disableBiometricLogin() {
+        secureTokenStore.clear()
+    }
+
+    /**
+     * Re-enter the app behind a biometric challenge: copy the encrypted refresh
+     * token back into the DataStore (where [TokenRefreshAuthenticator] reads
+     * it), then silent-refresh to mint a fresh access token. Returns false when
+     * no stored token exists or the refresh failed — the caller must send the
+     * user to OTP sign-in rather than show a raw error at cold start.
+     *
+     * Rotation-safe: the backend revokes the consumed refresh token, so the
+     * newly issued one is written back into the encrypted store for the next
+     * cold start.
+     */
+    suspend fun restoreSessionFromBiometric(): Boolean {
+        val refresh = secureTokenStore.getRefreshToken() ?: return false
+        // Make the token visible to AuthInterceptor / TokenRefreshAuthenticator.
+        dataStore.edit { it[DataStoreKeys.REFRESH_TOKEN] = refresh }
+        val refreshed = try {
+            api.refresh("Bearer $refresh").data
+        } catch (e: Exception) {
+            return false
+        }
+        dataStore.edit {
+            it[DataStoreKeys.ACCESS_TOKEN] = refreshed.accessToken
+            it[DataStoreKeys.REFRESH_TOKEN] = refreshed.refreshToken
+        }
+        secureTokenStore.saveRefreshToken(refreshed.refreshToken)
+        return true
     }
 }

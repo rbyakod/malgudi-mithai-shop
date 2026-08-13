@@ -24,6 +24,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -37,17 +40,47 @@ import com.mishran.app.ui.common.UiState
 @Composable
 fun OtpScreen(
     viewModel: OtpViewModel = hiltViewModel(),
+    enrollmentViewModel: BiometricEnrollmentViewModel = hiltViewModel(),
     onVerified: () -> Unit,
     onResend: () -> Unit,
 ) {
     val code by viewModel.code.collectAsStateWithLifecycle()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // On a fresh verify success, offer biometric enrollment (if a STRONG sensor
+    // is available and not already enabled) before handing off to the NavGraph.
+    // While the dialog is up we hold navigation; either button releases it.
+    var showEnrollment by rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(state) {
-        if (state is UiState.Success) {
-            onVerified()
-            viewModel.consumeState()
+        if (state is UiState.Success && !showEnrollment) {
+            if (enrollmentViewModel.shouldOffer()) {
+                showEnrollment = true
+            } else {
+                onVerified()
+                viewModel.consumeState()
+            }
         }
+    }
+
+    if (showEnrollment) {
+        EnableBiometricDialog(
+            // Persist the token, THEN navigate — enable() invokes onVerified()
+            // inside its coroutine after the write lands, so popping this entry
+            // cannot cancel a half-written token.
+            onEnable = {
+                showEnrollment = false
+                enrollmentViewModel.enable {
+                    onVerified()
+                    viewModel.consumeState()
+                }
+            },
+            onSkip = {
+                showEnrollment = false
+                onVerified()
+                viewModel.consumeState()
+            },
+        )
     }
 
     Column(

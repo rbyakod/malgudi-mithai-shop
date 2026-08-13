@@ -35,6 +35,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.mishran.app.ui.auth.BiometricGate
 import com.mishran.app.ui.auth.OtpScreen
 import com.mishran.app.ui.auth.PhoneEntryScreen
 
@@ -75,7 +76,28 @@ fun MishranAppRoot() {
             modifier = Modifier.fillMaxSize().padding(innerPadding),
         ) {
             composable(Routes.SPLASH) {
-                PlaceholderScreen("Splash — auth gate lands in Task 8.2")
+                // Cold-start auth gate (Task 8.2): biometric-locked session →
+                // prompt → Home; plain session → Home; otherwise → phone entry.
+                // Either outcome pops SPLASH so the destination becomes the new
+                // back-stack root (Back from Home/AUTH_PHONE exits the app).
+                BiometricGate(
+                    onUnlocked = {
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    },
+                    onNeedLogin = {
+                        navController.navigate(Routes.AUTH_PHONE) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    },
+                )
             }
             composable(Routes.AUTH_PHONE) {
                 PhoneEntryScreen(onOtpSent = { requestId ->
