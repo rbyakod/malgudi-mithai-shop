@@ -10,6 +10,8 @@ interface RateLimiterLike {
 }
 
 interface JwtServiceLike {
+  verify(token: string, expectedKind: string): Promise<{ customerId: string; jti?: string; exp?: number; kind: string }>;
+  revoke(jti: string, customerId: string, reason: string, exp: Date): Promise<void>;
   issueAccessToken(customerId: string): Promise<string>;
   issueRefreshToken(customerId: string): Promise<string>;
 }

@@ -102,6 +102,20 @@ components:
         accessToken: { type: string }
         refreshToken: { type: string }
         customer: { $ref: '#/components/schemas/Customer' }
+    RefreshRequest:
+      type: object
+      description: Empty body — refresh token passed via Authorization header.
+    RefreshResponse:
+      type: object
+      required: [accessToken, refreshToken]
+      properties:
+        accessToken: { type: string }
+        refreshToken: { type: string }
+    LogoutResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
 
 security:
   - bearerAuth: []
@@ -163,3 +177,34 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
+  /auth/refresh:
+    post:
+      tags: [auth]
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/RefreshResponse' }
+        '401':
+          description: Token invalid or revoked
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /auth/logout:
+    post:
+      tags: [auth]
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/LogoutResponse' }
