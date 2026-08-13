@@ -49,6 +49,22 @@ export interface PaymentService {
   fetchStatus(providerPaymentId: string): Promise<PaymentStatus>;
 
   /**
+   * Fetch the authoritative status of an ORDER at the payment provider,
+   * used by the reconciliation cron (Task 4.7) when the only stable handle
+   * we have is the provider order id — typical for orphan payments where
+   * the client abandoned before verify wrote a providerPaymentId locally.
+   *
+   * Returns the normalized status of the latest payment attempt on the
+   * order, plus the providerPaymentId of that attempt when one exists
+   * (caller backfills the local payment row). When the order has no
+   * payment attempts yet (client never even opened the widget), returns
+   * status 'created' with no providerPaymentId.
+   */
+  fetchStatusByOrder(
+    providerOrderId: string,
+  ): Promise<{ status: PaymentStatus; providerPaymentId?: string }>;
+
+  /**
    * Refund a captured payment (full or partial). Returns the provider-side
    * refund id.
    */

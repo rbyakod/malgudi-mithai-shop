@@ -87,6 +87,51 @@ export class RazorpayPaymentService implements PaymentService {
     return mapStatus(body.status);
   }
 
+  /**
+   * Look up the authoritative status of an order at Razorpay, used by the
+   * reconciliation cron (Task 4.7) to settle orphan payments where the
+   * client abandoned before our verify route stored a providerPaymentId.
+   *
+   * Razorpay exposes payment attempts as a list on the order:
+   *   GET /v1/orders/:id/payments  ->  { items: [{ id, status, ... }, ...] }
+   *
+   * Strategy: pick the most recent attempt and return its normalized status
+   * + the payment id (caller backfills the local row). If there are no
+   * attempts yet, the order is still "created" from our side — return
+   * status 'created' with no providerPaymentId so the caller leaves the
+   * row alone and waits for the next cron tick or the webhook.
+   *
+   * Fail-closed: any non-2xx or unparseable response throws, which the
+   * reconcile loop catches per-payment so one bad order doesn't block the
+   * rest of the batch.
+   */
+  async fetchStatusByOrder(
+    providerOrderId: string,
+  ): Promise<{ status: PaymentStatus; providerPaymentId?: string }> {
+    const res = await fetch(
+      `${RAZORPAY_BASE}/v1/orders/${encodeURIComponent(providerOrderId)}/payments`,
+      { headers: { authorization: this.authHeader } },
+    );
+    if (!res.ok) {
+      throw new Error(
+        `Razorpay fetch-status-by-order failed: ${res.status}`,
+      );
+    }
+    const body = (await res.json()) as {
+      items?: Array<{ id?: string; status?: string }>;
+    };
+    const items = body.items ?? [];
+    if (items.length === 0) {
+      return { status: 'created' };
+    }
+    // Razorpay returns items newest-first; the first entry is the most
+    // recent attempt. Map its status into our normalized enum.
+    const latest = items[0];
+    const id = latest.id;
+    const status = mapStatus(latest.status ?? '');
+    return id ? { status, providerPaymentId: id } : { status };
+  }
+
   async refund(opts: {
     providerPaymentId: string;
     amountInPaise: number;

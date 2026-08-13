@@ -10,8 +10,10 @@ import type { PaymentService } from '../PaymentService';
 export class FakePaymentService implements PaymentService {
   /** Override in a test to make verifySignature return false. */
   verifySignatureResult: boolean = true;
-  /** Override in a test to change the status returned by fetchStatus. */
+  /** Override in a test to change the status returned by fetchStatus / fetchStatusByOrder. */
   statusResult: 'created' | 'captured' | 'failed' | 'refunded' | 'partially_refunded' = 'captured';
+  /** Override in a test to make fetchStatusByOrder return a specific providerPaymentId. */
+  statusByOrderProviderPaymentId: string | undefined = 'pay_fake_1';
   /** Set to an Error to make createOrder throw. */
   createOrderError: Error | null = null;
 
@@ -34,6 +36,13 @@ export class FakePaymentService implements PaymentService {
 
   async fetchStatus(_providerPaymentId: string) {
     return this.statusResult;
+  }
+
+  async fetchStatusByOrder(_providerOrderId: string) {
+    return {
+      status: this.statusResult,
+      providerPaymentId: this.statusByOrderProviderPaymentId,
+    };
   }
 
   async refund(_opts: {
