@@ -16,9 +16,12 @@ import com.mishran.api.models.OtpSendResponse
 import com.mishran.api.models.OtpVerifyRequest
 import com.mishran.api.models.OtpVerifyResponse
 import com.mishran.app.data.local.DataStoreKeys
+import com.mishran.app.data.local.MishranDatabase
 import com.mishran.app.data.local.SecureTokenStore
 import com.mishran.app.data.remote.api.MishranApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,6 +34,8 @@ class AuthRepository @Inject constructor(
     // Distinct from the plain DataStore: it is only written when the user opts
     // into biometric login, and only read after a successful BiometricPrompt.
     private val secureTokenStore: SecureTokenStore,
+    // Room cache owner — clearSession() wipes tables on sign-out (Task 12.5).
+    private val database: MishranDatabase,
 ) {
     /** Send an OTP to an E.164 phone; returns the server requestId + expiry. */
     suspend fun sendOtp(phone: String): OtpSendResponse {
@@ -57,12 +62,24 @@ class AuthRepository @Inject constructor(
     suspend fun isLoggedIn(): Boolean =
         dataStore.data.first()[DataStoreKeys.ACCESS_TOKEN] != null
 
-    /** Drop the persisted session (access + refresh + customer). */
+    /**
+     * Sign out completely (Task 12.5 audit): drop the persisted session
+     * (access + refresh + customer), the Keystore-encrypted biometric token
+     * (a surviving one would let the next biometric prompt silently restore
+     * the logged-out session), and the Room caches (orders/addresses/cart
+     * must not outlive the session — the mishran://order/{id} deep link reads
+     * Room before the network, and getOrder's network fallback 401s without
+     * a session).
+     */
     suspend fun clearSession() {
         dataStore.edit {
             it.remove(DataStoreKeys.ACCESS_TOKEN)
             it.remove(DataStoreKeys.REFRESH_TOKEN)
             it.remove(DataStoreKeys.CUSTOMER_ID)
+        }
+        secureTokenStore.clear()
+        withContext(Dispatchers.IO) {
+            database.clearAllTables()
         }
     }
 
