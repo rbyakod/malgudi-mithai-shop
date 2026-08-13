@@ -594,6 +594,78 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
+  /orders:
+    get:
+      tags: [orders]
+      description: |
+        List the authenticated customer's own orders, newest first. Pagination
+        via `page` and `pageSize` query params; pageSize is capped at 50.
+        Non-integer or NaN values fall back to the defaults (page=1, pageSize=20).
+        The customer id is taken from the verified access token; a forged
+        `customerId` in a query string is never honored.
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, default: 1, minimum: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, default: 20, minimum: 1, maximum: 50 }
+      responses:
+        '200':
+          description: OK — paginated list of the caller's orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [items, total, page, pageSize]
+                    properties:
+                      items:
+                        type: array
+                        items: { $ref: '#/components/schemas/Order' }
+                      total: { type: integer, minimum: 0 }
+                      page: { type: integer, minimum: 1 }
+                      pageSize: { type: integer, minimum: 1, maximum: 50 }
+        '401':
+          description: Unauthorized — missing or invalid bearer token.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /orders/{id}:
+    get:
+      tags: [orders]
+      description: |
+        Fetch a single order by id. Returns 404 ORDER_NOT_FOUND both when
+        the id does not exist and when the order belongs to a different
+        customer (no existence leak).
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK — the requested order.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Order' }
+        '401':
+          description: Unauthorized — missing or invalid bearer token.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Not Found — order id unknown or belongs to another customer.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
   /payments/razorpay/create-order:
     post:
       tags: [payments]
