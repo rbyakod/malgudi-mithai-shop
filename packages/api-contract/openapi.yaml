@@ -176,6 +176,69 @@ components:
         updatedAt:
           type: [string, 'null']
           format: date-time
+    CartItem:
+      type: object
+      required: [productId, quantity]
+      properties:
+        productId: { type: string, minLength: 1 }
+        quantity:
+          type: integer
+          minimum: 1
+    CartValidateRequest:
+      type: object
+      required: [items, pincode]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/CartItem' }
+        pincode:
+          type: string
+          pattern: '^[0-9]{6}$'
+        slot:
+          type: object
+          required: [date, window]
+          properties:
+            date: { type: string }
+            window: { type: string }
+    OrderTotals:
+      type: object
+      required:
+        [itemsTotalInPaise, deliveryFeeInPaise, taxesInPaise, discountInPaise, totalInPaise]
+      description: |
+        Order totals in paise (INR). All zero today; real pricing lands in
+        Phase 8 alongside the commerce schema on MithaiProducts.
+      properties:
+        itemsTotalInPaise: { type: integer, minimum: 0 }
+        deliveryFeeInPaise: { type: integer, minimum: 0 }
+        taxesInPaise: { type: integer, minimum: 0 }
+        discountInPaise: { type: integer, minimum: 0 }
+        totalInPaise: { type: integer, minimum: 0 }
+    CartSnapshotItem:
+      type: object
+      required: [productId, slug, name, quantity, freshnessStatus]
+      properties:
+        productId: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        quantity: { type: integer, minimum: 1 }
+        freshnessStatus:
+          type: [string, 'null']
+          enum: [made-daily, made-to-order, batch-frozen, null]
+    CartSnapshot:
+      type: object
+      required: [snapshotId, customerId, items, totals, pincodeTier, expiresAt]
+      properties:
+        snapshotId: { type: string, format: uuid }
+        customerId: { type: string }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/CartSnapshotItem' }
+        totals: { $ref: '#/components/schemas/OrderTotals' }
+        pincodeTier:
+          type: [string, 'null']
+          description: Service tier of the resolved pincode (e.g. shelf, fresh).
+        expiresAt: { type: string, format: date-time }
 
 security:
   - bearerAuth: []
@@ -394,4 +457,40 @@ paths:
                 required: [data]
                 properties:
                   data: { $ref: '#/components/schemas/ServiceableResponse' }
+  /cart/validate:
+    post:
+      tags: [cart]
+      description: |
+        Validate the customer's cart: authenticate, re-check pincode
+        serviceability, re-fetch each product to confirm it still exists,
+        and return a cart snapshot valid for 10 minutes.
+
+        NOTE: totals are all zero today — commerce / variant pricing on
+        MithaiProducts is deferred to Phase 8. This endpoint gives mobile
+        clients a stable contract for cart shape + availability now.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CartValidateRequest' }
+      responses:
+        '200':
+          description: OK — cart snapshot.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/CartSnapshot' }
+        '404':
+          description: Not Found — one or more products no longer exist.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: Unprocessable Entity — invalid body or unserviceable pincode.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
 
