@@ -63,6 +63,16 @@ extension Endpoint {
         Endpoint(path: "catalog/products/\(slug)", requiresAuth: false)
     }
 
+    /// GET /catalog/serviceable?pincode=XXXXXX (public; non-serviceable is
+    /// a 200 with serviceable:false, not an error).
+    static func catalogServiceable(pincode: String) -> Endpoint {
+        Endpoint(
+            path: "catalog/serviceable",
+            queryItems: [URLQueryItem(name: "pincode", value: pincode)],
+            requiresAuth: false
+        )
+    }
+
     static func otpSend(phone: String) -> Endpoint {
         Endpoint(
             path: "auth/otp/send",
