@@ -16,6 +16,18 @@ export default defineConfig({
       "lib/**/*.test.{ts,tsx}",
       "app/**/*.test.{ts,tsx}",
     ],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      include: ["lib/**/*.ts", "app/api/**/*.ts"],
+      exclude: ["**/*.test.ts", "vitest.setup.ts", "tests/**"],
+      thresholds: {
+        lines: 80,
+        functions: 75,
+        branches: 70,
+        statements: 80,
+      },
+    },
   },
   resolve: {
     alias: {
