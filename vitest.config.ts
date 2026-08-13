@@ -14,6 +14,7 @@ export default defineConfig({
       "tests/unit/**/*.test.{ts,tsx}",
       "tests/integration/**/*.test.{ts,tsx}",
       "lib/**/*.test.{ts,tsx}",
+      "app/**/*.test.{ts,tsx}",
     ],
   },
   resolve: {

@@ -78,8 +78,88 @@ components:
         total: { type: integer }
         page: { type: integer }
         pageSize: { type: integer }
+    OtpSendRequest:
+      type: object
+      required: [phone]
+      properties:
+        phone: { type: string, pattern: '^\+[1-9]\d{6,14}$' }
+    OtpSendResponse:
+      type: object
+      required: [requestId, expiresAt]
+      properties:
+        requestId: { type: string }
+        expiresAt: { type: string, format: date-time }
+    OtpVerifyRequest:
+      type: object
+      required: [requestId, code]
+      properties:
+        requestId: { type: string }
+        code: { type: string, pattern: '^[0-9]{6}$' }
+    OtpVerifyResponse:
+      type: object
+      required: [accessToken, refreshToken, customer]
+      properties:
+        accessToken: { type: string }
+        refreshToken: { type: string }
+        customer: { $ref: '#/components/schemas/Customer' }
 
 security:
   - bearerAuth: []
 
-paths: {}
+paths:
+  /auth/otp/send:
+    post:
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OtpSendRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/OtpSendResponse' }
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '503':
+          description: SMS provider down
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /auth/otp/verify:
+    post:
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OtpVerifyRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/OtpVerifyResponse' }
+        '400':
+          description: Invalid OTP
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '410':
+          description: OTP expired
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
