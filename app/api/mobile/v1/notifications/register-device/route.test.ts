@@ -101,4 +101,25 @@ describe("POST /api/mobile/v1/notifications/register-device", () => {
     const body = await res.json();
     expect(body.error.code).toBe("TOKEN_EXPIRED");
   });
+
+  // Task 18.3: iOS Live Activity push tokens ride the same upsert so
+  // OrderEventEmitter can fire .liveactivity content-state updates.
+  it("200 upsert: persists a liveActivityToken when provided", async () => {
+    payloadMock.find.mockResolvedValue({ docs: [{ id: "dev-7", active: true }] });
+    payloadMock.update.mockResolvedValue({ id: "dev-7" });
+
+    const res = await POST(
+      req({ platform: "ios", pushToken: "apns-1", liveActivityToken: "la-1" }) as any,
+    );
+
+    expect(res.status).toBe(200);
+    expect(payloadMock.update.mock.calls[0][0].data.liveActivityToken).toBe("la-1");
+  });
+
+  it("422 VALIDATION when liveActivityToken is present but empty", async () => {
+    const res = await POST(
+      req({ platform: "ios", pushToken: "t", liveActivityToken: "" }) as any,
+    );
+    expect(res.status).toBe(422);
+  });
 });

@@ -90,6 +90,42 @@ extension Endpoint {
         Endpoint(path: "orders/\(id)")
     }
 
+    /// POST /notifications/register-device — idempotent device upsert;
+    /// called on APNs token change and whenever a Live Activity push token
+    /// appears. liveActivityToken rides the same row (18.3).
+    static func registerDevice(
+        platform: String,
+        pushToken: String,
+        liveActivityToken: String? = nil,
+        appVersion: String? = nil,
+        deviceModel: String? = nil,
+        osVersion: String? = nil,
+        locale: String? = nil
+    ) -> Endpoint {
+        struct RegisterDeviceRequestDTO: Encodable {
+            let platform: String
+            let pushToken: String
+            let liveActivityToken: String?
+            let appVersion: String?
+            let deviceModel: String?
+            let osVersion: String?
+            let locale: String?
+        }
+        return Endpoint(
+            path: "notifications/register-device",
+            method: .post,
+            body: try? JSONEncoder().encode(RegisterDeviceRequestDTO(
+                platform: platform,
+                pushToken: pushToken,
+                liveActivityToken: liveActivityToken,
+                appVersion: appVersion,
+                deviceModel: deviceModel,
+                osVersion: osVersion,
+                locale: locale
+            ))
+        )
+    }
+
     static func otpSend(phone: String) -> Endpoint {
         Endpoint(
             path: "auth/otp/send",

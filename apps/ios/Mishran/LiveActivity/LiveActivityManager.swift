@@ -30,6 +30,12 @@ final class LiveActivityManager {
                 content: ActivityContent(state: state, staleDate: nil)
             )
             self.activity = activity
+            // Hand the ActivityKit push token to the registrar so the
+            // backend can drive .liveactivity content-state updates
+            // (Task 18.3 sink; set by the app shell).
+            if let tokenData = activity.pushToken {
+                DeviceRegistrar.liveActivityTokenSink?(DeviceRegistrar.hexString(from: tokenData))
+            }
             return activity
         } catch {
             // Request failures (quota, unsupported device) degrade to none.

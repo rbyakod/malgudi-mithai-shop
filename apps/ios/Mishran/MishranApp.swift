@@ -4,6 +4,8 @@
 // scaffolding until the real screens land (16.x/17.x).
 import SwiftData
 import SwiftUI
+import UIKit
+import UserNotifications
 
 /// Applies the modelContainer only when one was built (keeps body type
 /// stable when the container is nil).
@@ -23,6 +25,10 @@ struct ModelContainerInjector: ViewModifier {
 struct MishranApp: App {
     @State private var router = Router()
     private let deepLinkHandler: DeepLinkHandler
+    /// Task 18.3: APNs — foreground banners + tap-to-order routing, token
+    /// upsert via DeviceRegistrar.
+    private let pushDelegate: PushDelegate
+    private let deviceRegistrar: DeviceRegistrar
 
     /// Launch gate (Task 15.4): biometric unlock when the user enabled it
     /// AND a refresh token survives in the keychain.
@@ -51,6 +57,17 @@ struct MishranApp: App {
             }
             CatalogRefreshTask.scheduleNext()
         }
+        // Task 18.3: APNs — foreground banners + tap-to-order routing come
+        // from PushDelegate; DeviceRegistrar upserts the APNs + Live Activity
+        // tokens with /notifications/register-device.
+        pushDelegate = PushDelegate(router: router)
+        deviceRegistrar = DeviceRegistrar(client: MishranAPIClient())
+        UNUserNotificationCenter.current().delegate = pushDelegate
+        deviceRegistrar.startObserving()
+        DeviceRegistrar.liveActivityTokenSink = { [deviceRegistrar] token in
+            Task { @MainActor in await deviceRegistrar.registerLiveActivityToken(token) }
+        }
+
         let arguments = ProcessInfo.processInfo.arguments
         if arguments.contains("-authScreen") {
             // UI-test preview of the sign-in flow (15.2) until the app shell
@@ -80,6 +97,14 @@ struct MishranApp: App {
                         PhoneEntryView(viewModel: AuthViewModel(client: MishranAPIClient()))
                     case .home:
                         PlaceholderHomeView(router: router)
+                            // First home appearance (Task 18.3): ask for
+                            // notification permission once, then register
+                            // with APNs. The token lands in DeviceRegistrar
+                            // via the system notification it observes.
+                            .task {
+                                await PushPermissionRequester.live.requestIfNeeded()
+                                UIApplication.shared.registerForRemoteNotifications()
+                            }
                     }
                 }
                 .navigationDestination(for: Route.self) { route in

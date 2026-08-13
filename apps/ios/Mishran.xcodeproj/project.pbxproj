@@ -16,6 +16,7 @@
 		0F8936B3B493D50EC8605D2E /* KeychainAndBiometricTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D12DD757BE134A9B7406611 /* KeychainAndBiometricTests.swift */; };
 		11E5D63EF7D33F646CFE7B67 /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E15EA367D070805A633A6C /* Authenticator.swift */; };
 		16AFAC411B397963C72D750C /* CheckoutViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608A8F33A9B70154DC268F53 /* CheckoutViewModelTests.swift */; };
+		181AFB73EFEAD306391C9EF1 /* PushDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CCD1EFAEB38141845913FEA /* PushDelegate.swift */; };
 		186A3AB14234585B0DCF8957 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0148C12898D2AEFEC886FA /* LiveActivityManager.swift */; };
 		204DB3D2D023360D50D1E607 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824C93F1D0932E5DEA6A05C8 /* DeliveryAttributes.swift */; };
 		23A239703DE20415072B8E80 /* CheckoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60104183AB6B52BD81194EF5 /* CheckoutViewModel.swift */; };
@@ -30,11 +31,13 @@
 		4CE6542461877B26241C34F3 /* BiometricGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9676FDF11354D50F0311FE96 /* BiometricGate.swift */; };
 		50179D7DB34E1CE9D50AB3E7 /* MishranTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED91007C15EEF6F6939E19F7 /* MishranTheme.swift */; };
 		5241D9593377B8F8C42420FC /* BiometricGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC83CE02DB09238F8FF3887C /* BiometricGateView.swift */; };
+		558A0AF3CAC117F0B0B3D84C /* DeviceRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF55A83645C40970E80C152 /* DeviceRegistrar.swift */; };
 		574C9AB932A24DF992905FBD /* CartViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4B54152260D000962946B9 /* CartViewModelTests.swift */; };
 		59ADC11FAB6700259C9586D5 /* CartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3C9B2094A54AD694C17BCB /* CartView.swift */; };
 		59B2B9B58C01BA97CC40881D /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4774C4B2CF65897F30615C9 /* AuthViewModelTests.swift */; };
 		5D0BD8A2DEA298E5516DD416 /* SlotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56520E6F1D7EFAAB5C70A16B /* SlotPicker.swift */; };
 		5DCF00EBFACD0A6E0F37D9DF /* DTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0E622CC322FD71D228D9A1 /* DTOs.swift */; };
+		655748B8C4E2F7FDDC5DDE19 /* PushRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2281E986EC07089C8334D767 /* PushRegistrationTests.swift */; };
 		69A51C41FCD53D0B6EAC94EF /* OrdersViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A6771BF7A84128F55A815 /* OrdersViewModelTests.swift */; };
 		6B2A9A756E587C152AC0F7D2 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D23986BE08057D412B120B /* DeepLinkHandler.swift */; };
 		6CCC747B899B6C9881054032 /* FilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131DE0E7667A8BBA133CE155 /* FilterSheet.swift */; };
@@ -49,6 +52,7 @@
 		8C167D518B491CBC4E136210 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6EE45F8BABD45F7382D47E /* Route.swift */; };
 		8C7788A86A5962A26D96F3A0 /* OrderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB199895148C72A88679FE4 /* OrderDetailView.swift */; };
 		8E2667EF644522F496C20C20 /* MishranApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */; };
+		8E35FCFDCBD80F8F6E3E7E36 /* PushPermissionRequester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CBE5C7BE6081E0ECFE196FD /* PushPermissionRequester.swift */; };
 		94F0A8D1DE402F9A13C5284D /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824C93F1D0932E5DEA6A05C8 /* DeliveryAttributes.swift */; };
 		95803D6C83C1B4DC3A1E71E4 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */; };
 		9C7A6B6FB71F40282BEF70AD /* RazorpayCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557BDC90C27B02C28EE85F24 /* RazorpayCoordinator.swift */; };
@@ -130,14 +134,17 @@
 		10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
 		131DE0E7667A8BBA133CE155 /* FilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSheet.swift; sourceTree = "<group>"; };
 		17F6E1F7404D245F24FE9B87 /* SwiftDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModels.swift; sourceTree = "<group>"; };
+		1CCD1EFAEB38141845913FEA /* PushDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushDelegate.swift; sourceTree = "<group>"; };
 		1DA54984EE19823EDAE55EBC /* CatalogRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogRepositoryTests.swift; sourceTree = "<group>"; };
 		216B46F1EBE74875531A80EE /* PaymentMethodPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentMethodPicker.swift; sourceTree = "<group>"; };
+		2281E986EC07089C8334D767 /* PushRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushRegistrationTests.swift; sourceTree = "<group>"; };
 		2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModelTests.swift; sourceTree = "<group>"; };
 		2ECCEF7E4112394AACFA9906 /* CatalogRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogRepository.swift; sourceTree = "<group>"; };
 		315A6771BF7A84128F55A815 /* OrdersViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersViewModelTests.swift; sourceTree = "<group>"; };
 		38C61D8573D8238A69276ACD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3958B3310C55B430C1A8788B /* ProductDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailViewModel.swift; sourceTree = "<group>"; };
 		3A4B54152260D000962946B9 /* CartViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewModelTests.swift; sourceTree = "<group>"; };
+		3CBE5C7BE6081E0ECFE196FD /* PushPermissionRequester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPermissionRequester.swift; sourceTree = "<group>"; };
 		42DE5E76A474C16C34FC4633 /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
 		46E74593A6376B6833A2DEDF /* QuantitySelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuantitySelector.swift; sourceTree = "<group>"; };
 		47991E844FC2618D4D5A5DBA /* CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogView.swift; sourceTree = "<group>"; };
@@ -165,6 +172,7 @@
 		91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkTests.swift; sourceTree = "<group>"; };
 		9676FDF11354D50F0311FE96 /* BiometricGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricGate.swift; sourceTree = "<group>"; };
 		9B0148C12898D2AEFEC886FA /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
+		9CF55A83645C40970E80C152 /* DeviceRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrar.swift; sourceTree = "<group>"; };
 		9D530C7E3563C4D49DEF96BB /* MishranUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MishranUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FE3F782C4272E71BD283282 /* Mishran.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Mishran.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTests.swift; sourceTree = "<group>"; };
@@ -334,6 +342,16 @@
 			path = MishranUITests;
 			sourceTree = "<group>";
 		};
+		7D5F33F436ED312A8CBD2328 /* Push */ = {
+			isa = PBXGroup;
+			children = (
+				9CF55A83645C40970E80C152 /* DeviceRegistrar.swift */,
+				1CCD1EFAEB38141845913FEA /* PushDelegate.swift */,
+				3CBE5C7BE6081E0ECFE196FD /* PushPermissionRequester.swift */,
+			);
+			path = Push;
+			sourceTree = "<group>";
+		};
 		83F9AD1D5FF3891E471A09B6 /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
@@ -367,6 +385,7 @@
 				B6BBCFE354652AF6E8CADEAD /* Data */,
 				67EACA78FC84220DADB2E69E /* LiveActivity */,
 				83F9AD1D5FF3891E471A09B6 /* Navigation */,
+				7D5F33F436ED312A8CBD2328 /* Push */,
 				D9E82DA9C05F8170E3E9720D /* Theme */,
 				5D687E43B492F5E5BDBCFFA7 /* UI */,
 			);
@@ -451,6 +470,7 @@
 				315A6771BF7A84128F55A815 /* OrdersViewModelTests.swift */,
 				B5A462F19B1C8E989A459CDE /* ProductCardSnapshotTests.swift */,
 				A48A5980852C073E51B9FBFF /* ProductDetailViewModelTests.swift */,
+				2281E986EC07089C8334D767 /* PushRegistrationTests.swift */,
 				82730F53B7A9C3AE55E3ADCD /* RazorpayCoordinatorTests.swift */,
 				2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */,
 				A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */,
@@ -655,6 +675,7 @@
 				5DCF00EBFACD0A6E0F37D9DF /* DTOs.swift in Sources */,
 				6B2A9A756E587C152AC0F7D2 /* DeepLinkHandler.swift in Sources */,
 				204DB3D2D023360D50D1E607 /* DeliveryAttributes.swift in Sources */,
+				558A0AF3CAC117F0B0B3D84C /* DeviceRegistrar.swift in Sources */,
 				83973606D789D3E21B7B8528 /* Endpoint.swift in Sources */,
 				6CCC747B899B6C9881054032 /* FilterSheet.swift in Sources */,
 				EE7F140846CF5EB22A6CFF6C /* KeychainHelper.swift in Sources */,
@@ -674,6 +695,8 @@
 				F2BD4A59463083692303DBE5 /* ProductCard.swift in Sources */,
 				25C19354A1430F709BA572A3 /* ProductDetailView.swift in Sources */,
 				3FAA8FDEBCBA2525DDDE120D /* ProductDetailViewModel.swift in Sources */,
+				181AFB73EFEAD306391C9EF1 /* PushDelegate.swift in Sources */,
+				8E35FCFDCBD80F8F6E3E7E36 /* PushPermissionRequester.swift in Sources */,
 				DFC97BC9292838CD64A337E2 /* QuantitySelector.swift in Sources */,
 				9C7A6B6FB71F40282BEF70AD /* RazorpayCoordinator.swift in Sources */,
 				8C167D518B491CBC4E136210 /* Route.swift in Sources */,
@@ -701,6 +724,7 @@
 				69A51C41FCD53D0B6EAC94EF /* OrdersViewModelTests.swift in Sources */,
 				BC1E4E42C0A73854841E9E77 /* ProductCardSnapshotTests.swift in Sources */,
 				315E701EE458F89C88DE27C1 /* ProductDetailViewModelTests.swift in Sources */,
+				655748B8C4E2F7FDDC5DDE19 /* PushRegistrationTests.swift in Sources */,
 				0BB50EF4FF9169EB606587D8 /* RazorpayCoordinatorTests.swift in Sources */,
 				ABF0BF37C890C6A8E909992C /* SwiftDataModelTests.swift in Sources */,
 				333556C8D78846566DF80474 /* ThemeTests.swift in Sources */,

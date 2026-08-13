@@ -834,6 +834,7 @@ paths:
               properties:
                 platform: { type: string, enum: [android, ios] }
                 pushToken: { type: string, minLength: 1 }
+                liveActivityToken: { type: string, minLength: 1, description: ActivityKit push token while a delivery Live Activity is in flight (iOS). }
                 appVersion: { type: string }
                 deviceModel: { type: string }
                 osVersion: { type: string }

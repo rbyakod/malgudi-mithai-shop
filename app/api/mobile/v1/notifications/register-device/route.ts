@@ -25,6 +25,10 @@ import { ApiError, ErrorCode } from '../../../../../../lib/api/errors';
 const Body = z.object({
   platform: z.enum(['android', 'ios']),
   pushToken: z.string().min(1),
+  // ActivityKit push token (Task 18.3 iOS): present only while a delivery
+  // Live Activity is in flight; OrderEventEmitter fires .liveactivity
+  // content-state updates at it (Task 18.4 backend half).
+  liveActivityToken: z.string().min(1).optional(),
   appVersion: z.string().optional(),
   deviceModel: z.string().optional(),
   osVersion: z.string().optional(),
