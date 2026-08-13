@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  apps/android/app/src/main/AndroidManifest.xml — Task 7.1 / 7.4.
+  apps/android/app/src/main/AndroidManifest.xml — Task 7.1 / 7.4 / 13.1.
   Application class (Hilt), launcher MainActivity, and the mishran:// deep-link
   intent filter. Cleartext is gated to the emulator loopback only via
-  network_security_config (production uses https). Firebase messaging service +
-  additional intent filters land in their own tasks (11.3, 13.1).
+  network_security_config (production uses https).
+
+  PERMISSIONS (Task 13.1 — minimal set, each earns its place):
+    INTERNET               — all API traffic (catalog, orders, payments).
+    ACCESS_NETWORK_STATE   — offline-first cache decides refresh vs stale
+                             serve by observing connectivity.
+    USE_BIOMETRIC          — BiometricPrompt gate over the encrypted
+                             refresh token (opt-in "quick access").
+    POST_NOTIFICATIONS     — order-update pushes (FCM). Runtime-requested
+                             on Android 13+; never required to order.
+
+  Deliberately NOT declared (Play policy + least privilege):
+    RECEIVE_SMS / READ_SMS — OTP autofill uses the SMS Retriever API, which
+                             matches the app-signature hash with NO SMS
+                             permission (Task 8.3). Declaring SMS read would
+                             trigger Play's sensitive-permission review for
+                             zero benefit.
+    CAMERA                 — the gift-builder feature is deferred out of v1;
+                             add it with that feature, not before.
+    WAKE_LOCK / FOREGROUND_SERVICE — WorkManager and FirebaseMessagingService
+                             merge what they need from their own library
+                             manifests; nothing in v1 runs a user-visible
+                             foreground service.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".MishranApp"
