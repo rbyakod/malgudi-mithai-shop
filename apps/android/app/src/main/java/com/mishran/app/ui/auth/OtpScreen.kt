@@ -3,8 +3,8 @@
 // OTP-verify screen: 6-digit code → Verify. On success the session is already
 // persisted by [OtpViewModel]/[AuthRepository]; this screen hands control to
 // [onVerified] (the NavGraph routes to Home and pops the auth stack).
-// SMS-retriever autofill (Task 8.3) will populate [code] from an inbound SMS;
-// the field stays hand-editable regardless.
+// SMS-retriever autofill (Task 8.3) populates [code] from a matched inbound
+// SMS; the field stays hand-editable regardless.
 package com.mishran.app.ui.auth
 
 import androidx.compose.foundation.layout.Arrangement
@@ -22,13 +22,16 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mishran.app.ui.common.UiState
+import com.mishran.app.util.SmsAutofillController
 
 @Composable
 fun OtpScreen(
@@ -46,6 +50,16 @@ fun OtpScreen(
 ) {
     val code by viewModel.code.collectAsStateWithLifecycle()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    // SMS Retriever autofill (Task 8.3): open a listen window for this screen's
+    // lifetime only; on a matched inbound SMS, drop the 6-digit code into the
+    // field. The field is still hand-editable, so autofill never blocks typing.
+    val autofill = remember { SmsAutofillController() }
+    DisposableEffect(Unit) {
+        autofill.start(context) { otp -> viewModel.code.value = otp }
+        onDispose { autofill.stop(context) }
+    }
 
     // On a fresh verify success, offer biometric enrollment (if a STRONG sensor
     // is available and not already enabled) before handing off to the NavGraph.

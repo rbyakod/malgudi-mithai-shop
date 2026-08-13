@@ -157,6 +157,13 @@ dependencies {
     // Keystore-backed encrypted prefs for the biometric-gated refresh token.
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
+    // --- SMS autofill (Task 8.3): Google Play Services SMS Retriever ---
+    // No READ_SMS permission — the system matches the app's 11-char signature
+    // hash inside the inbound SMS, so the OTP body never reaches the app unless
+    // we triggered the listen window. Requires the MSG91 template to append the
+    // hash (see AppSignatureHelper + plan open item).
+    implementation("com.google.android.gms:play-services-auth-api-phone:18.1.0")
+
     // --- Payments: Razorpay ---
     implementation("com.razorpay:checkout:1.6.33")
 
