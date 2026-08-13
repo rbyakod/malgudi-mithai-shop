@@ -1,0 +1,30 @@
+# apps/android/maestro/track_order.yaml — Task 12.1.
+# Maestro translation of packages/e2e-flows/track_order.feature.
+# The placed order comes from login_checkout.yaml's run (CI runs the suite
+# in order; the order id is stable within one staging session).
+appId: com.mishran.app
+name: Track a placed order
+
+- launchApp
+- tapOn: "Orders"
+- assertVisible: "Your orders"
+- assertVisible: "Packed"          # stage set by the staging seed
+- tapOn:
+    id: "order_card"
+- assertVisible: "Items"
+- assertVisible: "Totals"
+- assertVisible: "Need help with this order?"
+
+---
+name: Push deep link opens order detail
+# Sends the deep link directly — the push notification tap on an emulator
+# is flaky, so this exercises the same intent the notification fires.
+- runApp:
+    appId: com.mishran.app
+    clearState: false
+- runScript:
+    when:
+      visible: "Your orders"
+    commands:
+      - adb shell am start -a android.intent.action.VIEW -d "mishran://order/latest"
+- assertVisible: "Items"

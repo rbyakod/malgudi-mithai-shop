@@ -1,5 +1,5 @@
 name: CI
-on: [pull_request]
+on: [pull_request, workflow_dispatch]
 
 jobs:
   test:
@@ -93,3 +93,34 @@ jobs:
           npm run start &
           npx wait-on http://localhost:3000
       - run: npm run lhci
+
+  # Maestro E2E against a live Android emulator (Task 12.1). Manual dispatch
+  # only: the flows need a staging backend URL + Razorpay test mode baked
+  # into the APK and a staging OTP (MAESTRO_OTP secret). Firebase Test Lab
+  # can replace the hosted emulator by swapping this job's runner for
+  # `gcloud firebase test android run` with the same YAMLs.
+  maestro-android:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Assemble debug APK
+        working-directory: apps/android
+        run: ./gradlew :app:assembleDebug
+      - name: Run Maestro flows on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          script: |
+            curl -Ls "https://get.maestro.mobile.dev" | bash
+            export PATH="$PATH":"$HOME/.maestro/bin"
+            maestro test apps/android/maestro/
+        env:
+          MAESTRO_OTP: ${{ secrets.MAESTRO_OTP }}

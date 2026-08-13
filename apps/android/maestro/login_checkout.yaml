@@ -1,0 +1,45 @@
+# apps/android/maestro/login_checkout.yaml — Task 12.1.
+# Maestro translation of packages/e2e-flows/login_checkout.feature.
+# Run against a staging backend (API base URL baked into the build) with
+# Razorpay in TEST mode; the staging OTP comes from the MAESTRO_OTP env
+# (CI fetches it from the staging OTP log endpoint).
+appId: com.mishran.app
+name: Login and checkout
+
+---
+# Scenario: Phone login via OTP
+name: Sign in with phone + OTP
+- launchApp
+- assertVisible: "Sign in to order fresh mithai."
+- tapOn:
+    id: "phone_field"           # contentDescription-free fallback below
+- tapOn: "Phone number"
+- inputText: "9876543210"
+- tapOn: "Send code"
+- assertVisible: "Enter the code"
+- inputText: ${MAESTRO_OTP}
+- tapOn: "Verify"
+- assertVisible: "Home"
+
+---
+# Scenario: Full checkout with Razorpay test payment
+name: Checkout pays through Razorpay test mode
+- runFlow: sign-in-with-otp.yaml
+- tapOn: "Catalog"
+- tapOn: "Kaju Katli"
+- tapOn:
+    id: "increase_quantity"
+    repeat: 1
+- tapOn: "Add to cart"
+- tapOn:
+    id: "cart_button"
+- assertVisible: "Checkout"
+- tapOn: "Checkout"
+- assertVisible: "Place order"
+- tapOn: "Place order"
+# Razorpay test sheet: success card. Test mode only.
+- assertVisible: "UPI"
+- tapOn: "SUCCESS"
+- assertVisible: "Order confirmed"
+- tapOn: "Track order"
+- assertVisible: "Totals"
