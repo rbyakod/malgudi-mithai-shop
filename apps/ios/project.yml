@@ -38,6 +38,10 @@ targets:
     platform: iOS
     sources:
       - path: Mishran
+        excludes:
+          # Widget-rendering code compiles into the MishranWidgets extension
+          # only (Task 18.2) — an ActivityConfiguration is inert in the app.
+          - "LiveActivity/DeliveryActivity.swift"
       # Monorepo brand tokens, compiled in place (zero duplication — same
       # convention as the Android srcDir wiring). Regenerate with
       # `pnpm codegen:swift` in packages/brand-tokens.
@@ -51,6 +55,7 @@ targets:
       # The repo publishes one product: RazorpayCheckout (name != repo name).
       - package: Razorpay
         product: RazorpayCheckout
+      - target: MishranWidgets
     info:
       path: Mishran/Info.plist
       properties:
@@ -71,6 +76,8 @@ targets:
         # Task 16.2: periodic catalog refresh (every 6h, ETag conditional).
         BGTaskSchedulerPermittedIdentifiers:
           - com.mishran.app.catalog-refresh
+        # Task 18.2: delivery Live Activities (+ Dynamic Island).
+        NSSupportsLiveActivities: true
         ITSAppUsesNonExemptEncryption: false
     settings:
       base:
@@ -79,6 +86,31 @@ targets:
         # Task 15.2: Sign in with Apple. Not embedded in simulator builds
         # (CODE_SIGNING_ALLOWED=NO above); applies to signed device/Cloud builds.
         CODE_SIGN_ENTITLEMENTS: Mishran/Mishran.entitlements
+
+  MishranWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      # Shared attributes/state (also compiled into the app target).
+      - path: Mishran/LiveActivity/DeliveryAttributes.swift
+      # Widget rendering — extension-only (inert in the app bundle).
+      - path: Mishran/LiveActivity/DeliveryActivity.swift
+      # Brand tokens for the activity UI (same srcDir convention as the app).
+      - path: ../../packages/brand-tokens/generated/swift
+        group: Generated
+    info:
+      path: MishranWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: MishranWidgets
+        # Sim install requires bundleVersion on the extension placeholder.
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mishran.app.widgets
+        TARGETED_DEVICE_FAMILY: "1"
 
   MishranUITests:
     type: bundle.ui-testing

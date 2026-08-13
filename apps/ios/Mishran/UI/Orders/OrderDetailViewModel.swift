@@ -10,6 +10,9 @@ final class OrderDetailViewModel {
     let orderId: String
 
     private let client: MishranAPIClient
+    /// Task 18.2: starts the delivery Live Activity for in-flight orders
+    /// (no-op when Live Activities are toggled off or unsupported).
+    private let liveActivity = LiveActivityManager()
 
     private(set) var order: OrderDTO?
     private(set) var isLoading = false
@@ -25,6 +28,12 @@ final class OrderDetailViewModel {
         errorMessage = nil
         do {
             order = try await client.request(Endpoint.orderDetail(id: orderId))
+            // Happy-path stages keep a Live Activity on the lock screen;
+            // backend pushes drive its state from here on (18.3 registers
+            // the push token).
+            if let order, OrderTimeline.stageIndex(for: order.status) != nil {
+                await liveActivity.startActivity(orderId: order.id, status: order.status)
+            }
         } catch let error as APIError {
             errorMessage = Self.friendlyMessage(for: error)
         } catch {

@@ -165,21 +165,8 @@ struct VerifyPaymentRequestDTO: Encodable {
     let signature: String
 }
 
-/// Order lifecycle (contract OrderStatus — 12 states, side states included).
-enum OrderStatus: String, Decodable, Equatable, CaseIterable, Hashable {
-    case created
-    case pendingPayment = "pending_payment"
-    case confirmed
-    case packed
-    case dispatched
-    case outForDelivery = "out_for_delivery"
-    case delivered
-    case paymentFailed = "payment_failed"
-    case cancelled
-    case returned
-    case failedDelivery = "failed_delivery"
-    case abandoned
-}
+/// Order lifecycle — see LiveActivity/DeliveryAttributes.swift (shared
+/// with the widget extension target; kept there so both bundles see it).
 
 struct OrderItemDTO: Decodable, Equatable {
     let productId: String
