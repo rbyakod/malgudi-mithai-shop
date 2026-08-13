@@ -40,6 +40,7 @@ import com.mishran.app.ui.auth.OtpScreen
 import com.mishran.app.ui.auth.PhoneEntryScreen
 import com.mishran.app.ui.cart.CartScreen
 import com.mishran.app.ui.catalog.CatalogScreen
+import com.mishran.app.ui.checkout.CheckoutScreen
 import com.mishran.app.ui.product.ProductDetailScreen
 
 /**
@@ -158,7 +159,11 @@ fun MishranAppRoot() {
                     },
                 )
             }
-            composable(Routes.CHECKOUT) { PlaceholderScreen("Checkout") }
+            composable(Routes.CHECKOUT) {
+                // Task 10.2: address + slot + payment selection. Placing the
+                // order (validate → create → Razorpay verify) is Task 10.3.
+                CheckoutScreen(onPlaceOrder = { })
+            }
             composable(Routes.ORDERS) { PlaceholderScreen("Orders") }
             composable(
                 route = Routes.ORDER_DETAIL,
