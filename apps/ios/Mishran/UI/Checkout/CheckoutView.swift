@@ -112,6 +112,13 @@ struct CheckoutView: View {
             }
         }
         .navigationTitle("Checkout")
+        // Confirmed hands off to the shell (thank-you screen); the parent
+        // decides the navigation move.
+        .onChange(of: viewModel.paymentState) { _, state in
+            if case .confirmed = state {
+                onPlaceOrder?(viewModel)
+            }
+        }
     }
 
     private func blockingText(_ reason: CheckoutViewModel.BlockingReason) -> String {

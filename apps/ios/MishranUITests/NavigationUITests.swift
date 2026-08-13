@@ -3,13 +3,21 @@
 import XCTest
 
 final class NavigationUITests: XCTestCase {
-    func testTapProductRowPushesDetail() throws {
+    func testTapProductCardPushesDetail() throws {
         let app = XCUIApplication()
+        // Seed the SwiftData catalog so the grid renders without a backend
+        // (argument string mirrors SeedData.seedCatalogArgument).
+        app.launchArguments = ["-seedCatalog"]
         app.launch()
-        let row = app.staticTexts["Kaju Katli"]
-        XCTAssertTrue(row.waitForExistence(timeout: 5))
-        row.tap()
-        XCTAssertTrue(app.staticTexts["Product: kaju-katli"].waitForExistence(timeout: 5))
+        // ProductCard surfaces "name, price" as the button's accessibility
+        // label (not a static text), so query buttons.
+        let card = app.buttons["Kaju Katli, ₹720/kg"]
+        XCTAssertTrue(card.waitForExistence(timeout: 5))
+        card.tap()
+        XCTAssertTrue(
+            app.buttons["Add to cart"].waitForExistence(timeout: 5),
+            "Product detail should offer Add to cart"
+        )
     }
 
     func testOrderDeepLinkOpensOrderDetail() throws {

@@ -7,9 +7,10 @@ final class MishranUITests: XCTestCase {
     func testAppBoots() throws {
         let app = XCUIApplication()
         app.launch()
+        // The catalog is the home surface since the shell wiring landed.
         XCTAssertTrue(
-            app.staticTexts["Mishran"].waitForExistence(timeout: 5),
-            "App should boot to a screen showing the Mishran wordmark"
+            app.navigationBars["Sweets"].waitForExistence(timeout: 5),
+            "App should boot to the catalog screen"
         )
     }
 }

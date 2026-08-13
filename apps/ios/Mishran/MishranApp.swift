@@ -46,10 +46,16 @@ struct MishranApp: App {
         _router = State(initialValue: router)
         // Same instance the stack binds to — deep links move the real path.
         deepLinkHandler = DeepLinkHandler(router: router)
+        let arguments = ProcessInfo.processInfo.arguments
         // Task 16.2: register the 6h catalog refresh before launch finishes;
         // schedule the first run. Same container the environment gets.
         if let container = try? ModelContainerFactory.makeContainer() {
             _modelContainer = State(initialValue: container)
+            // UI-test seam: seed a small catalog so headless flows can drive
+            // the grid + detail without a backend (same idea as -authScreen).
+            if arguments.contains(SeedData.seedCatalogArgument) {
+                SeedData.seedCatalogIfNeeded(context: container.mainContext)
+            }
             CatalogRefreshTask.register {
                 let cache = await CatalogCache(context: container.mainContext)
                 let repository = await CatalogRepository(client: MishranAPIClient(), cache: cache)
@@ -68,10 +74,8 @@ struct MishranApp: App {
             Task { @MainActor in await deviceRegistrar.registerLiveActivityToken(token) }
         }
 
-        let arguments = ProcessInfo.processInfo.arguments
         if arguments.contains("-authScreen") {
-            // UI-test preview of the sign-in flow (15.2) until the app shell
-            // routes there on its own.
+            // UI-test preview of the sign-in flow (15.2).
             _launchScreen = State(initialValue: .signIn)
         } else if BiometricSettings.isEnabled, KeychainTokenStore().refreshToken != nil {
             _launchScreen = State(initialValue: .biometricGate)
@@ -96,19 +100,20 @@ struct MishranApp: App {
                         // there on its own.
                         PhoneEntryView(viewModel: AuthViewModel(client: MishranAPIClient()))
                     case .home:
-                        PlaceholderHomeView(router: router)
+                        HomeView(router: router, container: modelContainer) {
                             // First home appearance (Task 18.3): ask for
                             // notification permission once, then register
                             // with APNs. The token lands in DeviceRegistrar
                             // via the system notification it observes.
-                            .task {
+                            Task {
                                 await PushPermissionRequester.live.requestIfNeeded()
                                 UIApplication.shared.registerForRemoteNotifications()
                             }
+                        }
                     }
                 }
                 .navigationDestination(for: Route.self) { route in
-                    PlaceholderDestinationView(route: route)
+                    DestinationView(route: route, router: router)
                 }
             }
             .mishranTheme()
@@ -120,65 +125,61 @@ struct MishranApp: App {
     }
 }
 
-/// Scaffold home: sample product rows pushing .productDetail. Replaced by
-/// the catalog screen in 16.x.
-struct PlaceholderHomeView: View {
-    let router: Router
-
-    private let samples = [
-        "kaju-katli": "Kaju Katli",
-        "motichoor-laddoo": "Motichoor Laddoo",
-    ]
-
-    var body: some View {
-        List {
-            ForEach(samples.sorted(by: { $0.key < $1.key }), id: \.key) { slug, name in
-                Button {
-                    router.push(.productDetail(slug: slug))
-                } label: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(name).font(.body.weight(.semibold))
-                        Text(slug).font(.caption).foregroundStyle(.secondary)
-                    }
-                }
-                .accessibilityLabel(name)
-            }
-        }
-        .listStyle(.plain)
-        .navigationTitle("Mishran")
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(value: Route.account) {
-                    Label("Account", systemImage: "person.crop.circle")
-                }
-                .accessibilityLabel("Account")
-            }
-        }
-    }
-}
-
-/// Scaffold destinations per route — one placeholder line each so every
-/// Route case renders (and UI tests can assert on stable text). Real
-/// screens replace their placeholder as their tasks land (18.1: orders).
-struct PlaceholderDestinationView: View {
+/// Real destinations per route — every case renders its shipped screen
+/// (shell wiring owed since 16.3; orderConfirmed landed with it).
+struct DestinationView: View {
     let route: Route
+    let router: Router
+    @Environment(\.modelContext) private var context
 
     var body: some View {
         switch route {
         case let .productDetail(slug):
-            Text("Product: \(slug)")
+            ProductDetailView(slug: slug, client: MishranAPIClient(), context: context)
         case .cart:
-            Text("Cart")
+            CartView(onCheckout: { router.push(.checkout) })
         case .checkout:
-            Text("Checkout")
+            CheckoutDestination(router: router, context: context)
         case let .orderConfirmed(id):
-            Text("Confirmed \(id)")
+            OrderConfirmedView(
+                orderId: id,
+                onTrackOrder: { router.push(.orderDetail(id: id)) },
+                onContinueShopping: { router.popToRoot() }
+            )
         case .orders:
             OrderListView()
         case let .orderDetail(id):
             OrderDetailView(orderId: id)
         case .account:
             AccountView()
+        }
+    }
+}
+
+/// Checkout needs a view model built with the ambient model context; the
+/// confirmed state routes to the thank-you screen (reset — no way back
+/// into a completed checkout).
+private struct CheckoutDestination: View {
+    let router: Router
+    let context: ModelContext
+    @State private var viewModel: CheckoutViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CheckoutView(viewModel: viewModel) { vm in
+                    if case let .confirmed(orderId) = vm.paymentState {
+                        router.reset(to: .orderConfirmed(id: orderId))
+                    }
+                }
+            } else {
+                ProgressView()
+            }
+        }
+        .task {
+            if viewModel == nil {
+                viewModel = CheckoutViewModel(client: MishranAPIClient(), context: context)
+            }
         }
     }
 }

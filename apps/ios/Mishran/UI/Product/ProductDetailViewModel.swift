@@ -42,10 +42,29 @@ final class ProductDetailViewModel {
             let dto = try await client.productDetail(slug: slug)
             product = ProductEntity(dto: dto)
         } catch let error as APIError {
-            errorMessage = Self.message(for: error)
+            // Offline-first: fall back to the cached/seeded row before
+            // surfacing an error (catalog 16.3 does the same via the
+            // repository cache; detail reads the store directly).
+            if let cached = Self.cachedProduct(slug: slug, in: context) {
+                product = cached
+            } else {
+                errorMessage = Self.message(for: error)
+            }
         } catch {
-            errorMessage = "Couldn't load this sweet. Try again."
+            if let cached = Self.cachedProduct(slug: slug, in: context) {
+                product = cached
+            } else {
+                errorMessage = "Couldn't load this sweet. Try again."
+            }
         }
+    }
+
+    /// Fetch the cached catalog row for a slug (nil when never cached).
+    nonisolated static func cachedProduct(slug: String, in context: ModelContext) -> ProductEntity? {
+        let descriptor = FetchDescriptor<ProductEntity>(
+            predicate: #Predicate { $0.slug == slug }
+        )
+        return (try? context.fetch(descriptor))?.first
     }
 
     /// Upsert: one CartEntity row (singleton), one line per product —
