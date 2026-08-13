@@ -160,9 +160,15 @@ fun MishranAppRoot() {
                 )
             }
             composable(Routes.CHECKOUT) {
-                // Task 10.2: address + slot + payment selection. Placing the
-                // order (validate → create → Razorpay verify) is Task 10.3.
-                CheckoutScreen(onPlaceOrder = { })
+                // Task 10.3: validate → create-order → Razorpay → verify.
+                // Task 10.4 replaces the ORDERS hop with OrderConfirmed/{id}.
+                CheckoutScreen(
+                    onOrderPlaced = { orderId ->
+                        navController.navigate(Routes.orderDetail(orderId)) {
+                            popUpTo(Routes.HOME) { inclusive = false }
+                        }
+                    },
+                )
             }
             composable(Routes.ORDERS) { PlaceholderScreen("Orders") }
             composable(

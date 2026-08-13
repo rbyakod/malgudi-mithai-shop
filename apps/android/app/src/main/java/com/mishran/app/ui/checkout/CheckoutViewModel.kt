@@ -11,10 +11,20 @@ package com.mishran.app.ui.checkout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mishran.api.models.Address
+import com.mishran.api.models.CartValidateRequestSlot
 import com.mishran.api.models.ServiceableResponse
 import com.mishran.app.data.repository.AddressRepository
+import com.mishran.app.data.repository.CartRepository
+import com.mishran.app.domain.usecase.CreateOrderResult
+import com.mishran.app.domain.usecase.PaymentRequest
+import com.mishran.app.domain.usecase.PlaceOrderResult
+import com.mishran.app.domain.usecase.PlaceOrderUseCase
+import com.mishran.app.util.RazorpayOutcome
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -65,13 +75,37 @@ data class CheckoutUiState(
 
 data class SlotOption(val date: String, val window: String, val label: String)
 
+/** One-shot checkout events the screen turns into navigation + toasts. */
+sealed interface CheckoutEvent {
+    /** Open the Razorpay sheet for this request. */
+    data class OpenPayment(val request: PaymentRequest) : CheckoutEvent
+
+    data class OrderPlaced(val orderId: String) : CheckoutEvent
+
+    data class CartChanged(val message: String?) : CheckoutEvent
+
+    data class PaymentFailed(val message: String?) : CheckoutEvent
+
+    data class Failed(val message: String?) : CheckoutEvent
+}
+
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
     private val addressRepository: AddressRepository,
+    private val cartRepository: CartRepository,
+    private val placeOrder: PlaceOrderUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CheckoutUiState())
     val state: StateFlow<CheckoutUiState> = _state.asStateFlow()
+
+    private val _events = MutableSharedFlow<CheckoutEvent>(extraBufferCapacity = 8)
+    val events: SharedFlow<CheckoutEvent> = _events
+
+    /** The in-flight payment — kept so the Razorpay outcome finds its context. */
+    private var pendingRequest: PaymentRequest? = null
+
+    val placingOrder = MutableStateFlow(false)
 
     init {
         refreshAddresses()
@@ -112,6 +146,71 @@ class CheckoutViewModel @Inject constructor(
 
     fun selectPaymentMethod(method: PaymentMethod) {
         _state.update { it.copy(paymentMethod = method) }
+    }
+
+    /** Validate the cart + mint the order; the sheet opens on [CheckoutEvent.OpenPayment]. */
+    fun placeOrder() {
+        val current = _state.value
+        val address = current.selectedAddress ?: return
+        val addressId = address.id ?: return
+        if (!current.canPlaceOrder) return
+        if (placingOrder.value) return // one transaction at a time
+
+        placingOrder.value = true
+        viewModelScope.launch {
+            val items = cartRepository.observeItems().first()
+            val slot = current.selectedSlot?.let {
+                CartValidateRequestSlot(date = it.date, window = it.window)
+            }
+            when (val result = placeOrder.createPaymentRequest(
+                items = items,
+                pincode = address.pincode.orEmpty(),
+                deliveryAddressId = addressId,
+                slot = slot,
+            )) {
+                is CreateOrderResult.NeedsPayment -> {
+                    pendingRequest = result.request
+                    _events.emit(CheckoutEvent.OpenPayment(result.request))
+                }
+                is CreateOrderResult.CartChanged ->
+                    _events.emit(CheckoutEvent.CartChanged(result.message))
+                is CreateOrderResult.Failure ->
+                    _events.emit(CheckoutEvent.Failed(result.message))
+            }
+            placingOrder.value = false
+        }
+    }
+
+    /** Razorpay outcome landed — verify the signature (or surface the failure). */
+    fun onRazorpayOutcome(outcome: RazorpayOutcome) {
+        val request = pendingRequest ?: return
+        when (outcome) {
+            is RazorpayOutcome.Success -> viewModelScope.launch {
+                val result = placeOrder.verifyPayment(
+                    request = request,
+                    razorpayPaymentId = outcome.razorpayPaymentId,
+                    signature = outcome.signature,
+                )
+                when (result) {
+                    is PlaceOrderResult.Success -> {
+                        pendingRequest = null
+                        cartRepository.clear()
+                        _events.emit(CheckoutEvent.OrderPlaced(result.orderId))
+                    }
+                    is PlaceOrderResult.PaymentFailed ->
+                        _events.emit(CheckoutEvent.PaymentFailed(result.message))
+                    is PlaceOrderResult.Failure ->
+                        _events.emit(CheckoutEvent.Failed(result.message))
+                }
+            }
+            is RazorpayOutcome.Failed ->
+                _events.tryEmit(
+                    CheckoutEvent.PaymentFailed(
+                        outcome.description ?: "Payment failed. If money was deducted it will be refunded within 5-7 days.",
+                    ),
+                )
+            RazorpayOutcome.Dismissed -> Unit // user backed out; nothing moved
+        }
     }
 
     private fun checkServiceability(address: Address) {
