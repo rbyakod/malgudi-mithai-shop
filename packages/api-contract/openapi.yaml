@@ -116,6 +116,24 @@ components:
       required: [ok]
       properties:
         ok: { type: boolean }
+    ServiceableResponse:
+      type: object
+      required: [serviceable]
+      properties:
+        serviceable:
+          type: boolean
+        tier:
+          type: string
+          description: Service tier (e.g. shelf, fresh). Present only when serviceable.
+        city:
+          type: string
+          description: City name. Present only when serviceable.
+        slaDays:
+          type: integer
+          description: Estimated delivery SLA in days. Present only when serviceable.
+        reason:
+          type: string
+          description: Reason code when not serviceable (e.g. invalid_pincode).
     Product:
       type: object
       required: [id, slug, name, family]
@@ -344,4 +362,36 @@ paths:
                 required: [error]
                 properties:
                   error: { $ref: '#/components/schemas/Error' }
+  /catalog/serviceable:
+    get:
+      tags: [catalog]
+      security: []
+      description: Check if a pincode is serviceable for delivery.
+      parameters:
+        - in: query
+          name: pincode
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]{6}$'
+          description: 6-digit Indian postal code.
+      responses:
+        '200':
+          description: OK — pincode validated (serviceable or not).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/ServiceableResponse' }
+        '422':
+          description: Unprocessable Entity — pincode format invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/ServiceableResponse' }
 
