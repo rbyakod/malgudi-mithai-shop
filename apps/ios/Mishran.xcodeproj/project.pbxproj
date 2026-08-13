@@ -7,18 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01426908FD705FCA1750E7E6 /* NavigationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64620CDA70359F2FAF3E0AC9 /* NavigationUITests.swift */; };
 		11E5D63EF7D33F646CFE7B67 /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E15EA367D070805A633A6C /* Authenticator.swift */; };
 		333556C8D78846566DF80474 /* ThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */; };
 		50179D7DB34E1CE9D50AB3E7 /* MishranTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED91007C15EEF6F6939E19F7 /* MishranTheme.swift */; };
 		5DCF00EBFACD0A6E0F37D9DF /* DTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0E622CC322FD71D228D9A1 /* DTOs.swift */; };
+		6B2A9A756E587C152AC0F7D2 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D23986BE08057D412B120B /* DeepLinkHandler.swift */; };
 		761CCC593D07CFC0546F0BA0 /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42DE5E76A474C16C34FC4633 /* APIClientTests.swift */; };
 		83973606D789D3E21B7B8528 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAED0D2ACB563E649EF0B480 /* Endpoint.swift */; };
 		84F381E7BA4D6C9C295196A1 /* MishranTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15083CDE49B78AEB7CE5C9D /* MishranTokens.swift */; };
+		8C167D518B491CBC4E136210 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6EE45F8BABD45F7382D47E /* Route.swift */; };
 		8E2667EF644522F496C20C20 /* MishranApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */; };
 		9FD03ADFDD9C9409D7C60BF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38C61D8573D8238A69276ACD /* Assets.xcassets */; };
 		A3985EE883EE06FF0E9483AD /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE06CF24565A57CA9FCAA9AD /* APIError.swift */; };
+		ADD7CCDC3C37DC330F12A408 /* DeepLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */; };
 		B2DAA6BC451CF54279A60DAC /* MishranAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA438316FABC42993AEAC8DD /* MishranAPIClient.swift */; };
 		BD20E249EB84D2D509889488 /* MishranUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8AD84061607513B2822EFFA /* MishranUITests.swift */; };
+		BDCB0C231117C2D7A860D61E /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1A994EB9D1587A43329B4B /* Router.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,15 +44,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D6EE45F8BABD45F7382D47E /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		38C61D8573D8238A69276ACD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		42DE5E76A474C16C34FC4633 /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
+		4A1A994EB9D1587A43329B4B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		64620CDA70359F2FAF3E0AC9 /* NavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationUITests.swift; sourceTree = "<group>"; };
 		6D0E622CC322FD71D228D9A1 /* DTOs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTOs.swift; sourceTree = "<group>"; };
 		7ACC75BEA637550855532CA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkTests.swift; sourceTree = "<group>"; };
 		9D530C7E3563C4D49DEF96BB /* MishranUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MishranUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FE3F782C4272E71BD283282 /* Mishran.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Mishran.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTests.swift; sourceTree = "<group>"; };
 		AA438316FABC42993AEAC8DD /* MishranAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranAPIClient.swift; sourceTree = "<group>"; };
 		B4E15EA367D070805A633A6C /* Authenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authenticator.swift; sourceTree = "<group>"; };
+		B5D23986BE08057D412B120B /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		BEDC8DC14F2500F2AA893CD2 /* MishranTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MishranTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAED0D2ACB563E649EF0B480 /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		CE06CF24565A57CA9FCAA9AD /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
@@ -90,8 +100,19 @@
 			isa = PBXGroup;
 			children = (
 				E8AD84061607513B2822EFFA /* MishranUITests.swift */,
+				64620CDA70359F2FAF3E0AC9 /* NavigationUITests.swift */,
 			);
 			path = MishranUITests;
+			sourceTree = "<group>";
+		};
+		83F9AD1D5FF3891E471A09B6 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				B5D23986BE08057D412B120B /* DeepLinkHandler.swift */,
+				0D6EE45F8BABD45F7382D47E /* Route.swift */,
+				4A1A994EB9D1587A43329B4B /* Router.swift */,
+			);
+			path = Navigation;
 			sourceTree = "<group>";
 		};
 		B5B5DF2A3F7F9D39FBB3A74E /* Mishran */ = {
@@ -101,6 +122,7 @@
 				7ACC75BEA637550855532CA3 /* Info.plist */,
 				D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */,
 				B6BBCFE354652AF6E8CADEAD /* Data */,
+				83F9AD1D5FF3891E471A09B6 /* Navigation */,
 				D9E82DA9C05F8170E3E9720D /* Theme */,
 			);
 			path = Mishran;
@@ -148,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				42DE5E76A474C16C34FC4633 /* APIClientTests.swift */,
+				91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */,
 				A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */,
 			);
 			path = MishranTests;
@@ -269,6 +292,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD20E249EB84D2D509889488 /* MishranUITests.swift in Sources */,
+				01426908FD705FCA1750E7E6 /* NavigationUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,11 +303,14 @@
 				A3985EE883EE06FF0E9483AD /* APIError.swift in Sources */,
 				11E5D63EF7D33F646CFE7B67 /* Authenticator.swift in Sources */,
 				5DCF00EBFACD0A6E0F37D9DF /* DTOs.swift in Sources */,
+				6B2A9A756E587C152AC0F7D2 /* DeepLinkHandler.swift in Sources */,
 				83973606D789D3E21B7B8528 /* Endpoint.swift in Sources */,
 				B2DAA6BC451CF54279A60DAC /* MishranAPIClient.swift in Sources */,
 				8E2667EF644522F496C20C20 /* MishranApp.swift in Sources */,
 				50179D7DB34E1CE9D50AB3E7 /* MishranTheme.swift in Sources */,
 				84F381E7BA4D6C9C295196A1 /* MishranTokens.swift in Sources */,
+				8C167D518B491CBC4E136210 /* Route.swift in Sources */,
+				BDCB0C231117C2D7A860D61E /* Router.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +319,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				761CCC593D07CFC0546F0BA0 /* APIClientTests.swift in Sources */,
+				ADD7CCDC3C37DC330F12A408 /* DeepLinkTests.swift in Sources */,
 				333556C8D78846566DF80474 /* ThemeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
