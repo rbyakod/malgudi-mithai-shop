@@ -33,6 +33,7 @@ import type { PushService } from './notifications/PushService';
 import { Msg91SmsService } from './notifications/impl/Msg91SmsService';
 import { FakeSmsService } from './notifications/impl/FakeSmsService';
 import type { SmsService } from './notifications/SmsService';
+import type { AppleAuthService } from './auth/AppleAuthService';
 import type { RateLimiter } from './security/rateLimiter';
 import { logger } from './observability/Logger';
 import { config } from './config';
@@ -196,6 +197,35 @@ function resolveSms(): SmsService {
 const smsService: SmsService = resolveSms();
 
 // ---------------------------------------------------------------------------
+// AppleAuthService — env-driven, resolved sync at module load (Task 15.3)
+// ---------------------------------------------------------------------------
+//
+// APPLE_AUTH_PROVIDER=apple selects the real JWKS verifier (lazy jose import
+// so container import in tests never pays the jose cost); otherwise the fake.
+// Also falls back to fake when APPLE_CLIENT_ID is unset — the real verifier
+// needs it as the JWT audience, so without it every token would 401.
+
+function resolveAppleAuth(): AppleAuthService {
+  const provider = process.env.APPLE_AUTH_PROVIDER ?? (config.nodeEnv === 'test' ? 'fake' : 'apple');
+  if (provider === 'fake') {
+    const { FakeAppleAuthService } = require('./auth/impl/FakeAppleAuthService');
+    return new FakeAppleAuthService() as AppleAuthService;
+  }
+  if (provider === 'apple') {
+    if (!config.appleClientId) {
+      logger.warn('APPLE_CLIENT_ID missing — apple auth falling back to fake');
+      const { FakeAppleAuthService } = require('./auth/impl/FakeAppleAuthService');
+      return new FakeAppleAuthService() as AppleAuthService;
+    }
+    const { AppleJwksService } = require('./auth/impl/AppleJwksService');
+    return new AppleJwksService({ clientId: config.appleClientId }) as AppleAuthService;
+  }
+  throw new Error(`Unknown APPLE_AUTH_PROVIDER "${provider}"`);
+}
+
+const appleAuthService: AppleAuthService = resolveAppleAuth();
+
+// ---------------------------------------------------------------------------
 // RateLimiter — async-init behind a sync facade
 // ---------------------------------------------------------------------------
 //
@@ -244,6 +274,7 @@ export const container = {
   logger,
   pushService,
   smsService,
+  appleAuthService,
   // TODO(later): emailService — ResendEmailService
   // TODO(later): analyticsService — MultiAnalyticsService
   // TODO(later): storageService — LocalDiskStorageService

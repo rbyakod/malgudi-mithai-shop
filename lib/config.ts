@@ -27,6 +27,9 @@ const schema = z.object({
   flagProvider: z.enum(['env', 'growthbook']).default('env'),
   ga4Id: z.string().optional(),
   metaPixelId: z.string().optional(),
+  // Sign-in-with-Apple (Task 15.3). Services ID / Client ID used as the JWT
+  // audience. Optional — absent in test; container falls back to the fake.
+  appleClientId: z.string().optional(),
 });
 
 export type Config = z.infer<typeof schema> & {
@@ -64,6 +67,7 @@ const env = {
   flagProvider: process.env.FLAG_PROVIDER,
   ga4Id: process.env.GA4_ID,
   metaPixelId: process.env.META_PIXEL_ID,
+  appleClientId: process.env.APPLE_CLIENT_ID,
 };
 
 export const config: Config = {

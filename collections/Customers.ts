@@ -10,15 +10,37 @@ export const Customers: CollectionConfig = {
   },
   indexes: [
     { fields: ["phone"], unique: true },
+    { fields: ["appleSub"], unique: true },
     { fields: ["createdAt"] },
   ],
   fields: [
     {
       name: "phone",
       type: "text",
-      required: true,
+      // Optional since Task 15.3: Sign-in-with-Apple customers carry an email
+      // + appleSub but no phone. OTP customers always set phone. The unique
+      // index still prevents duplicate phone rows; sparse-ish behavior comes
+      // from app-level upsert (find-by-phone → update/create).
+      required: false,
       unique: true,
       maxLength: 15,
+    },
+    {
+      // Apple "sub" — the stable, app-scoped user identifier from the
+      // identityToken (Task 15.3). Unique per Apple user per team. NULL for
+      // OTP-only customers; the unique index de-dupes Apple upserts.
+      name: "appleSub",
+      type: "text",
+      unique: true,
+    },
+    {
+      name: "authProvider",
+      type: "select",
+      defaultValue: "phone",
+      options: [
+        { label: "Phone OTP", value: "phone" },
+        { label: "Apple", value: "apple" },
+      ],
     },
     { name: "name", type: "text" },
     { name: "email", type: "email" },
