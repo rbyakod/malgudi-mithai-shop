@@ -35,6 +35,7 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -50,11 +51,17 @@ import com.mishran.app.ui.common.UiState
 
 @Composable
 fun ProductDetailScreen(
-    onAddToCart: (product: Product, quantity: Int) -> Unit,
+    onAddedToCart: () -> Unit,
     viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val quantity by viewModel.quantity.collectAsState()
+
+    // Pop back once the cart write lands (not before — a cancelled coroutine
+    // must never eat an Add-to-cart tap).
+    LaunchedEffect(viewModel) {
+        viewModel.added.collect { onAddedToCart() }
+    }
 
     when (val s = state) {
         is UiState.Loading -> Box(
@@ -76,7 +83,7 @@ fun ProductDetailScreen(
             quantity = quantity,
             onIncrement = viewModel::incrementQuantity,
             onDecrement = viewModel::decrementQuantity,
-            onAddToCart = { onAddToCart(s.data, quantity) },
+            onAddToCart = viewModel::addToCart,
         )
     }
 }

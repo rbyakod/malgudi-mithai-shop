@@ -38,6 +38,7 @@ import androidx.navigation.navDeepLink
 import com.mishran.app.ui.auth.BiometricGate
 import com.mishran.app.ui.auth.OtpScreen
 import com.mishran.app.ui.auth.PhoneEntryScreen
+import com.mishran.app.ui.cart.CartScreen
 import com.mishran.app.ui.catalog.CatalogScreen
 import com.mishran.app.ui.product.ProductDetailScreen
 
@@ -131,17 +132,32 @@ fun MishranAppRoot() {
                     onProductClick = { product ->
                         navController.navigate(Routes.product(product.slug))
                     },
+                    onCartClick = { navController.navigate(Routes.CART) },
                 )
             }
             composable(
                 route = Routes.PRODUCT,
                 arguments = listOf(navArgument("slug") { type = NavType.StringType }),
             ) {
-                // Task 9.4: detail (gallery + stepper). The add-to-cart callback
-                // gains its real body in Task 10.1 (cart repository + Room).
-                ProductDetailScreen(onAddToCart = { _, _ -> })
+                // Task 9.4/10.1: detail (gallery + stepper); Add-to-cart writes
+                // the Room cart, then pops back to where the user came from.
+                ProductDetailScreen(onAddedToCart = { navController.popBackStack() })
             }
-            composable(Routes.CART) { PlaceholderScreen("Cart") }
+            composable(Routes.CART) {
+                // Task 10.1: local cart. Checkout is Task 10.2-10.4.
+                CartScreen(
+                    onCheckout = { navController.navigate(Routes.CHECKOUT) },
+                    onBrowse = {
+                        navController.navigate(Routes.CATALOG) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
+            }
             composable(Routes.CHECKOUT) { PlaceholderScreen("Checkout") }
             composable(Routes.ORDERS) { PlaceholderScreen("Orders") }
             composable(

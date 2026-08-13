@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -49,6 +50,7 @@ import com.mishran.app.ui.catalog.components.ProductCard
 @Composable
 fun CatalogScreen(
     onProductClick: (Product) -> Unit,
+    onCartClick: () -> Unit,
     viewModel: CatalogViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -59,22 +61,30 @@ fun CatalogScreen(
     var showFilterSheet by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        OutlinedTextField(
-            value = query,
-            onValueChange = viewModel::onSearchQueryChange,
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            placeholder = { Text("Search sweets") },
-            singleLine = true,
-            trailingIcon = {
-                if (query.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
-                        Icon(Icons.Filled.Close, contentDescription = "Clear search")
+                .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedTextField(
+                value = query,
+                onValueChange = viewModel::onSearchQueryChange,
+                modifier = Modifier.weight(1f),
+                placeholder = { Text("Search sweets") },
+                singleLine = true,
+                trailingIcon = {
+                    if (query.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
+                            Icon(Icons.Filled.Close, contentDescription = "Clear search")
+                        }
                     }
-                }
-            },
-        )
+                },
+            )
+            IconButton(onClick = onCartClick) {
+                Icon(Icons.Filled.ShoppingCart, contentDescription = "Cart")
+            }
+        }
 
         Row(
             modifier = Modifier

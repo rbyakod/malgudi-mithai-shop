@@ -14,6 +14,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import com.mishran.app.data.local.MishranDatabase
+import com.mishran.app.data.local.dao.CartDao
 import com.mishran.app.data.local.dao.ProductDao
 import dagger.Module
 import dagger.Provides
@@ -56,5 +57,8 @@ object DatabaseModule {
 
     @Provides
     fun provideProductDao(database: MishranDatabase): ProductDao = database.productDao()
+
+    @Provides
+    fun provideCartDao(database: MishranDatabase): CartDao = database.cartDao()
 }
 
