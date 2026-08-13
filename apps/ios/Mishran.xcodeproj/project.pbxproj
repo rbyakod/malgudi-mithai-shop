@@ -20,13 +20,16 @@
 		761CCC593D07CFC0546F0BA0 /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42DE5E76A474C16C34FC4633 /* APIClientTests.swift */; };
 		83973606D789D3E21B7B8528 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAED0D2ACB563E649EF0B480 /* Endpoint.swift */; };
 		84F381E7BA4D6C9C295196A1 /* MishranTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15083CDE49B78AEB7CE5C9D /* MishranTokens.swift */; };
+		88D4B0C4E1A3F32E8BCC7E30 /* SwiftDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F6E1F7404D245F24FE9B87 /* SwiftDataModels.swift */; };
 		8C167D518B491CBC4E136210 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6EE45F8BABD45F7382D47E /* Route.swift */; };
 		8E2667EF644522F496C20C20 /* MishranApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */; };
+		95803D6C83C1B4DC3A1E71E4 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */; };
 		9C9AFBD5F27AE26EBF166126 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68431822FCFD10052C69E84 /* AuthViewModel.swift */; };
 		9E4748531BA06BC94A2C484F /* AppleSignInTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4B0CA54764C50EF5E7288E /* AppleSignInTests.swift */; };
 		9F0470D37E60CB3A0B5F97A1 /* AuthUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBCD922D98E4F596E91C2BB3 /* AuthUITests.swift */; };
 		9FD03ADFDD9C9409D7C60BF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38C61D8573D8238A69276ACD /* Assets.xcassets */; };
 		A3985EE883EE06FF0E9483AD /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE06CF24565A57CA9FCAA9AD /* APIError.swift */; };
+		ABF0BF37C890C6A8E909992C /* SwiftDataModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */; };
 		ADD7CCDC3C37DC330F12A408 /* DeepLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */; };
 		B2DAA6BC451CF54279A60DAC /* MishranAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA438316FABC42993AEAC8DD /* MishranAPIClient.swift */; };
 		BD20E249EB84D2D509889488 /* MishranUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8AD84061607513B2822EFFA /* MishranUITests.swift */; };
@@ -57,6 +60,9 @@
 
 /* Begin PBXFileReference section */
 		0D6EE45F8BABD45F7382D47E /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
+		10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
+		17F6E1F7404D245F24FE9B87 /* SwiftDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModels.swift; sourceTree = "<group>"; };
+		2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModelTests.swift; sourceTree = "<group>"; };
 		38C61D8573D8238A69276ACD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		42DE5E76A474C16C34FC4633 /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
 		4A1A994EB9D1587A43329B4B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
@@ -193,6 +199,8 @@
 			isa = PBXGroup;
 			children = (
 				74A4A9D1DB2500B7A437F297 /* KeychainHelper.swift */,
+				10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */,
+				17F6E1F7404D245F24FE9B87 /* SwiftDataModels.swift */,
 			);
 			path = Local;
 			sourceTree = "<group>";
@@ -235,6 +243,7 @@
 				D4774C4B2CF65897F30615C9 /* AuthViewModelTests.swift */,
 				91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */,
 				5D12DD757BE134A9B7406611 /* KeychainAndBiometricTests.swift */,
+				2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */,
 				A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */,
 			);
 			path = MishranTests;
@@ -380,10 +389,12 @@
 				8E2667EF644522F496C20C20 /* MishranApp.swift in Sources */,
 				50179D7DB34E1CE9D50AB3E7 /* MishranTheme.swift in Sources */,
 				84F381E7BA4D6C9C295196A1 /* MishranTokens.swift in Sources */,
+				95803D6C83C1B4DC3A1E71E4 /* ModelContainerFactory.swift in Sources */,
 				C2EFA9133A34076358A8935B /* OTPView.swift in Sources */,
 				F4576857819DFBE595478C4A /* PhoneEntryView.swift in Sources */,
 				8C167D518B491CBC4E136210 /* Route.swift in Sources */,
 				BDCB0C231117C2D7A860D61E /* Router.swift in Sources */,
+				88D4B0C4E1A3F32E8BCC7E30 /* SwiftDataModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +407,7 @@
 				59B2B9B58C01BA97CC40881D /* AuthViewModelTests.swift in Sources */,
 				ADD7CCDC3C37DC330F12A408 /* DeepLinkTests.swift in Sources */,
 				0F8936B3B493D50EC8605D2E /* KeychainAndBiometricTests.swift in Sources */,
+				ABF0BF37C890C6A8E909992C /* SwiftDataModelTests.swift in Sources */,
 				333556C8D78846566DF80474 /* ThemeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

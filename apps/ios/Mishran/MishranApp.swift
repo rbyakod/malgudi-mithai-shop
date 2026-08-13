@@ -2,7 +2,22 @@
 // Root: brand theme + NavigationStack driven by Router, mishran:// deep
 // links via DeepLinkHandler. The placeholder home + destination views are
 // scaffolding until the real screens land (16.x/17.x).
+import SwiftData
 import SwiftUI
+
+/// Applies the modelContainer only when one was built (keeps body type
+/// stable when the container is nil).
+struct ModelContainerInjector: ViewModifier {
+    let container: ModelContainer?
+
+    func body(content: Content) -> some View {
+        if let container {
+            content.modelContainer(container)
+        } else {
+            content
+        }
+    }
+}
 
 @main
 struct MishranApp: App {
@@ -16,12 +31,16 @@ struct MishranApp: App {
     }
 
     @State private var launchScreen: LaunchScreen
+    /// SwiftData store (Task 16.1) — on-disk Mishran.sqlite, injected into
+    /// the environment for repository consumption.
+    @State private var modelContainer: ModelContainer?
 
     init() {
         let router = Router()
         _router = State(initialValue: router)
         // Same instance the stack binds to — deep links move the real path.
         deepLinkHandler = DeepLinkHandler(router: router)
+        _modelContainer = State(initialValue: try? ModelContainerFactory.makeContainer())
         let arguments = ProcessInfo.processInfo.arguments
         if arguments.contains("-authScreen") {
             // UI-test preview of the sign-in flow (15.2) until the app shell
@@ -61,6 +80,7 @@ struct MishranApp: App {
             .onOpenURL { url in
                 deepLinkHandler.handle(url)
             }
+            .modifier(ModelContainerInjector(container: modelContainer))
         }
     }
 }
