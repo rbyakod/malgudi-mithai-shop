@@ -35,6 +35,7 @@ import type {
   PushService,
   LiveActivityContentState,
   LiveActivityUpdateOptions,
+  PassUpdateFields,
 } from "../PushService";
 
 export class FcmPushService implements PushService {
@@ -84,6 +85,21 @@ export class FcmPushService implements PushService {
     _deviceToken: string,
     _contentState: LiveActivityContentState,
     _options?: LiveActivityUpdateOptions,
+  ): Promise<void> {
+    // Intentionally empty.
+  }
+
+  /**
+   * Apple Wallet `.pass` updates are iOS-only (APNs pushType "pass"). Android
+   * uses Google Wallet, whose update mechanism is out of scope for v1, so this
+   * is a documented no-op — the real work happens in ApnsPushService
+   * (container.apnsService). The OrderEventEmitter only routes pass updates to
+   * devices registered against a WalletPasses row, so this path is not hit.
+   */
+  async sendPassUpdate(
+    _deviceToken: string,
+    _serialNumber: string,
+    _fields?: PassUpdateFields,
   ): Promise<void> {
     // Intentionally empty.
   }

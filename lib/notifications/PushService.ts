@@ -1,8 +1,9 @@
 // lib/notifications/PushService.ts
 // Push notification adapter interface — Task 5.2 (Mishran Mobile Apps v1),
-// extended for iOS Live Activity in Task 18.4.
+// extended for iOS Live Activity in Task 18.4 and Apple Wallet pass updates
+// in Task 19.2.
 //
-// Two concerns:
+// Three concerns:
 //   1. `sendToTokens` — multicast alert push. Callers pass a list of device
 //      tokens (one per registered Device row) and the impl fans out to the
 //      underlying provider (FCM for Android in v1). Partial failures are
@@ -13,12 +14,16 @@
 //      device-scoped and distinct from the alert pushToken; only iOS devices
 //      that have started a Live Activity carry one. `dismissalDate` ends the
 //      activity (delivered/cancelled) per spec §8.8.
+//   3. `sendPassUpdate` (Task 19.2) — iOS-only. Pings a device that has an
+//      Apple Wallet loyalty pass added, via an APNs `.pass` push with an empty
+//      `aps` payload, so the device re-fetches the refreshed pass face. The
+//      token is registered per-pass (WalletPasses.devices[]), not per-Device.
 //
 // Adapter pattern: a future SNS/Expo impl satisfies the same interface; the
 // DI container + OrderEventEmitter stay unchanged on a vendor swap. Note
-// Live Activity is iOS-only — the FCM impl's sendLiveActivityUpdate is a
-// documented no-op (Android has no Live Activity); the real work happens in
-// ApnsPushService.
+// Live Activity + Wallet pass updates are iOS-only — the FCM impl's
+// sendLiveActivityUpdate / sendPassUpdate are documented no-ops; the real
+// work happens in ApnsPushService.
 //
 // `data` is the custom key/value payload delivered to the client. Keep
 // values string-typed — FCM requires string values, and the client resolves
@@ -64,6 +69,20 @@ export interface LiveActivityUpdateOptions {
   dismissalDate?: Date;
 }
 
+/**
+ * Refreshed pass-face fields for an Apple Wallet loyalty-pass update
+ * (Task 19.2). These are NOT carried in the APNs payload — Apple requires a
+ * `.pass` push to have an empty `aps` body; the device re-fetches the updated
+ * pass from the Wallet webServiceURL. They are recorded by the Fake for test
+ * assertions and used by the emitter to decide whether a push is warranted.
+ */
+export interface PassUpdateFields {
+  tier?: "silver" | "gold";
+  holderName?: string;
+  /** New loyalty balance / delivered-order count shown on the pass face. */
+  balanceLabel?: string;
+}
+
 export interface PushService {
   sendToTokens(message: PushMessage): Promise<PushResult>;
   /**
@@ -76,5 +95,19 @@ export interface PushService {
     deviceToken: string,
     contentState: LiveActivityContentState,
     options?: LiveActivityUpdateOptions,
+  ): Promise<void>;
+  /**
+   * Push an Apple Wallet `.pass` update ping to one device token registered for
+   * a pass (Task 19.2). The `aps` payload is empty (Apple requirement); the
+   * device re-fetches the refreshed pass face from the Wallet webServiceURL.
+   * `serialNumber` identifies the pass; `fields` are the new face values
+   * (recorded by the Fake, not sent over APNs). iOS-only; the FCM impl is a
+   * no-op (Google Wallet uses a separate mechanism, out of scope for v1).
+   * Throws on transport failure; the caller wraps in try/catch.
+   */
+  sendPassUpdate(
+    deviceToken: string,
+    serialNumber: string,
+    fields?: PassUpdateFields,
   ): Promise<void>;
 }

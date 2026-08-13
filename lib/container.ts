@@ -304,6 +304,10 @@ function resolveApns(): PushService {
       keyId: config.apnsKeyId,
       privateKey: config.apnsPrivateKey,
       bundleId: config.apnsBundleId ?? 'com.mishran.app',
+      // pass type identifier is the APNs topic for `.pass` pushes (Task 19.2);
+      // absent creds gate already prevent real sends, so an unset value just
+      // makes the fallback topic = bundleId inside ApnsPushService.
+      passTypeIdentifier: config.applePassTypeIdentifier,
       production: config.nodeEnv === 'production',
     }) as PushService;
   }

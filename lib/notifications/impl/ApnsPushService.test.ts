@@ -146,3 +146,45 @@ describe("ApnsPushService.sendToTokens (alert)", () => {
     expect(note.topic).toBe("com.mishran.app");
   });
 });
+
+describe("ApnsPushService.sendPassUpdate (.pass)", () => {
+  beforeEach(() => {
+    providerSend.mockReset();
+    builtNotes.length = 0;
+    providerSend.mockResolvedValue({ sent: true });
+  });
+
+  it("sends a .pass push with an empty payload + pass-type-id topic", async () => {
+    const svc = new ApnsPushService({ ...opts, passTypeIdentifier: "pass.com.mishran.app" });
+    await svc.sendPassUpdate("pass-token-1", "mishran-loyalty-cust-1", {
+      tier: "gold",
+      balanceLabel: "6",
+    });
+
+    const note = builtNotes[builtNotes.length - 1] as Record<string, unknown>;
+    expect(note.pushType).toBe("pass");
+    expect(note.topic).toBe("pass.com.mishran.app");
+    // .pass pushes carry an empty aps body — no alert/payload/sound. The
+    // refreshed face fields are NOT sent over APNs (Apple requirement).
+    expect(note.alert).toBeUndefined();
+    expect(note.payload).toBeUndefined();
+    // sent to the registered pass-update token, not the ActivityKit/alert token.
+    expect(providerSend).toHaveBeenCalledOnce();
+    expect(providerSend.mock.calls[0]![1]).toBe("pass-token-1");
+  });
+
+  it("falls back to bundleId topic when passTypeIdentifier is unset", async () => {
+    const svc = new ApnsPushService(opts);
+    await svc.sendPassUpdate("tok", "serial-1");
+
+    const note = builtNotes[builtNotes.length - 1] as Record<string, unknown>;
+    expect(note.topic).toBe("com.mishran.app");
+    expect(note.pushType).toBe("pass");
+  });
+
+  it("propagates provider.send rejections", async () => {
+    providerSend.mockRejectedValue(new Error("BadDeviceToken"));
+    const svc = new ApnsPushService(opts);
+    await expect(svc.sendPassUpdate("tok", "serial-1")).rejects.toThrow("BadDeviceToken");
+  });
+});

@@ -368,6 +368,12 @@ components:
         lng: { type: number }
         tag: { type: string, enum: [home, work, other] }
         isDefault: { type: boolean }
+    PassDeviceInput:
+      type: object
+      required: [serialNumber, pushToken]
+      properties:
+        serialNumber: { type: string, minLength: 1, description: Pass serial (also the pass.json serial). }
+        pushToken: { type: string, minLength: 1, description: APNs .pass update token issued by Wallet. }
 
 security:
   - bearerAuth: []
@@ -957,4 +963,86 @@ paths:
                   data: { type: object, required: [ok], properties: { ok: { type: boolean } } }
         '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
         '404': { description: Not Found — unknown id or owned by another customer., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /account/loyalty-pass:
+    get:
+      tags: [Loyalty]
+      summary: Generate / refresh the customer's Apple Wallet loyalty pass (signed URL)
+      description: >
+        Silver tier at >=2 delivered orders, Gold at >=5. Below the threshold the
+        route 404s. Returns a short-lived signed .pkpass URL the iOS client adds
+        via PKAddPassesViewController.
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK — pass generated/refreshed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [url, serialNumber, tier]
+                    properties:
+                      url: { type: string, format: uri }
+                      serialNumber: { type: string }
+                      tier: { type: string, enum: [silver, gold] }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — not eligible (fewer than 2 delivered orders)., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /wallet/register-pass-device:
+    post:
+      tags: [Wallet]
+      summary: Register a device token for Apple Wallet .pass updates (idempotent)
+      description: >
+        Called by the iOS app after the user adds the loyalty pass to Wallet.
+        Stores the pass-update token on the WalletPasses row so the backend can
+        push .pass update pings when the loyalty balance / tier changes.
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PassDeviceInput' }
+      responses:
+        '200':
+          description: OK — token registered or already present.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [ok], properties: { ok: { type: boolean } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — no active owned pass for this serial., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /wallet/unregister-pass-device:
+    delete:
+      tags: [Wallet]
+      summary: Remove a device token from Apple Wallet .pass updates (idempotent)
+      description: >
+        Called by the iOS app when the user removes the loyalty pass from Wallet.
+        Idempotent — 200 even if the token or pass is already gone.
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PassDeviceInput' }
+      responses:
+        '200':
+          description: OK — token removed or already absent.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [ok], properties: { ok: { type: boolean } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
 

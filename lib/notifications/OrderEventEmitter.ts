@@ -166,7 +166,7 @@ export async function emitOrderEvent(orderId: string, stage: string): Promise<vo
     }
   }
 
-  // --- Loyalty eligibility (Task 19.1) ---------------------------------
+  // --- Loyalty eligibility (Task 19.1) + Wallet pass refresh (Task 19.2) --
   // On a delivered order, proactively mint the customer's Apple Wallet
   // loyalty pass if they just crossed the Silver threshold (≥2 delivered)
   // and no active pass row exists yet. The on-demand GET /account/loyalty-
@@ -175,6 +175,11 @@ export async function emitOrderEvent(orderId: string, stage: string): Promise<vo
   // emitter's test container omits it) + try/catch so a wallet outage never
   // blocks an already-persisted transition. Gold upgrade is left to the route
   // (re-generation is cheap + idempotent on serial).
+  //
+  // When a pass is already in Wallet with registered devices, the same
+  // delivered hook fires an APNs `.pass` push (Task 19.2) so each device
+  // re-fetches the refreshed pass face (new balance / tier). Guarded by
+  // apnsService presence + per-device try/catch.
   if (stage === "delivered" && container.walletPassService) {
     try {
       const delivered = await payload.find({
@@ -184,25 +189,55 @@ export async function emitOrderEvent(orderId: string, stage: string): Promise<vo
         },
         limit: 0,
       });
-      const tier = tierForDeliveredCount(delivered.totalDocs ?? 0);
+      const deliveredCount = delivered.totalDocs ?? 0;
+      const tier = tierForDeliveredCount(deliveredCount);
       if (tier) {
         const existingPass = await payload.find({
           collection: "walletPasses",
           where: { and: [{ customerId: { equals: customerId } }, { active: { equals: true } }] },
           limit: 1,
         });
-        if (!existingPass.docs[0]) {
+        const passRow = existingPass.docs[0] as
+          | { id: string; serialNumber: string; devices?: Array<{ pushToken?: string }> }
+          | undefined;
+
+        if (!passRow) {
+          // Proactive mint (Task 19.1): no pass yet, generate one. A freshly
+          // minted pass has no registered Wallet devices, so no `.pass` push.
           const serialNumber = loyaltySerialNumber(customerId);
           await container.walletPassService.createSignedPassUrl({
             serialNumber,
             tier,
             holderName: (customer as { name?: string }).name ?? undefined,
-            balanceLabel: String(delivered.totalDocs ?? 0),
+            balanceLabel: String(deliveredCount),
           });
           await payload.create({
             collection: "walletPasses",
             data: { customerId, serialNumber, tier, active: true },
           });
+        }
+
+        // --- Wallet pass refresh (Task 19.2) ----------------------------
+        // A pass already added to Apple Wallet carries registered device
+        // tokens (WalletPasses.devices[]). Ping each with an APNs `.pass` push
+        // so the device re-fetches the refreshed pass face (new balance / tier
+        // from this delivery).
+        if (passRow && container.apnsService) {
+          for (const dev of passRow.devices ?? []) {
+            const token = dev.pushToken;
+            if (!token) continue;
+            try {
+              await container.apnsService.sendPassUpdate(token, passRow.serialNumber, {
+                balanceLabel: String(deliveredCount),
+                tier,
+              });
+            } catch (err) {
+              container.logger.error(
+                { err, orderId, stage, eventId, channel: "pass-push", token },
+                "emitOrderEvent .pass push failed",
+              );
+            }
+          }
         }
       }
     } catch (err) {

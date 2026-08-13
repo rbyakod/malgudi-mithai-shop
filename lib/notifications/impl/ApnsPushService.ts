@@ -1,14 +1,17 @@
 // lib/notifications/impl/ApnsPushService.ts
-// APNs (Apple Push Notification service) adapter — Task 18.4.
+// APNs (Apple Push Notification service) adapter — Task 18.4, extended for
+// Apple Wallet pass updates in Task 19.2.
 //
-// Two push types, both over APNs via the `@parse/node-apn` library:
+// Three push types, all over APNs via the `@parse/node-apn` library:
 //   1. sendToTokens  — `.alert` pushes (iOS alert notifications).
 //   2. sendLiveActivityUpdate — `.liveactivity` content-state updates for the
 //      Mishran delivery Live Activity + Dynamic Island (spec §8.8).
+//   3. sendPassUpdate — `.pass` update pings for Apple Wallet loyalty passes
+//      (Task 19.2). Empty aps payload; topic = pass type identifier.
 //
 // `@parse/node-apn` is a prod-only dependency, dynamically imported so that
 // test + container import never fails when it is absent (same gating pattern
-// as node-passbook). Without it, both methods throw a clear, actionable error
+// as node-passbook). Without it, all methods throw a clear, actionable error
 // and the container resolves `apnsService` to FakePushService — so a box
 // without APNs credentials (awaiting Apple Developer Program enrollment — plan
 // Open Question #8) never attempts an unreachable APNs call.
@@ -27,6 +30,7 @@ import type {
   PushService,
   LiveActivityContentState,
   LiveActivityUpdateOptions,
+  PassUpdateFields,
 } from "../PushService";
 
 export interface ApnsOptions {
@@ -36,8 +40,13 @@ export interface ApnsOptions {
   keyId: string;
   /** APNs auth `.p8` private key (PEM body, `\n` escaped in env). */
   privateKey: string;
-  /** App Bundle ID / topic (e.g. com.mishran.app). */
+  /** App Bundle ID / topic for `.alert` + `.liveactivity` (e.g. com.mishran.app). */
   bundleId: string;
+  /**
+   * Apple Wallet pass type identifier — the APNs topic for `.pass` pushes
+   * (e.g. pass.com.mishran.app). Falls back to `bundleId` when unset.
+   */
+  passTypeIdentifier?: string;
   /** true → production APNs gateway; false → sandbox/development. */
   production?: boolean;
 }
@@ -161,6 +170,31 @@ export class ApnsPushService implements PushService {
     }
 
     const note = new apn.Notification(noteConfig);
+    await provider.send(note, deviceToken);
+  }
+
+  async sendPassUpdate(
+    deviceToken: string,
+    _serialNumber: string,
+    _fields?: PassUpdateFields,
+  ): Promise<void> {
+    const provider = await this.getProvider();
+    const apnModule = "@parse/node-apn";
+    const apn = (await import(/* @vite-ignore */ apnModule)) as {
+      Notification: new (config?: Record<string, unknown>) => Record<string, unknown>;
+    };
+
+    // Apple Wallet `.pass` update push: empty aps payload (Apple requirement —
+    // any alert/body/sound is rejected for pushType "pass"), topic = the pass
+    // type identifier. The device receives this silent ping and re-fetches the
+    // pass from the Wallet webServiceURL. The refreshed face values
+    // (`_fields` — new balance/tier) are NOT carried over APNs; they are
+    // recorded by the Fake for test assertions + used by the emitter to decide
+    // whether a push is warranted. `_serialNumber` identifies the pass for logs.
+    const note = new apn.Notification({
+      topic: this.opts.passTypeIdentifier ?? this.opts.bundleId,
+      pushType: "pass",
+    });
     await provider.send(note, deviceToken);
   }
 }

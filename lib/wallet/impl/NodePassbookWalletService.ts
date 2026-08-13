@@ -21,12 +21,8 @@
 // Developer Program enrollment (plan Open Question #8) supplies those certs,
 // this path is exercised only in staging/prod with real certs configured.
 import { createHash } from "node:crypto";
-import {
-  S3Client,
-  PutObjectCommand,
-  getSignedUrl,
-} from "@aws-sdk/client-s3";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import type {
   WalletPassService,
   WalletPassFields,
