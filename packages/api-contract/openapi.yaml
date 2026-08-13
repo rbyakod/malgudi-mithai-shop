@@ -340,6 +340,35 @@ components:
       properties:
         order: { $ref: '#/components/schemas/Order' }
 
+    # ---- Task 5.3 ----
+    Address:
+      type: object
+      properties:
+        id: { type: string }
+        customerId: { type: string }
+        line1: { type: string }
+        line2: { type: string }
+        city: { type: string }
+        state: { type: string }
+        pincode: { type: string }
+        lat: { type: number }
+        lng: { type: number }
+        tag: { type: string, enum: [home, work, other] }
+        isDefault: { type: boolean }
+    AddressInput:
+      type: object
+      required: [line1, city, state, pincode]
+      properties:
+        line1: { type: string, minLength: 1 }
+        line2: { type: string }
+        city: { type: string, minLength: 1 }
+        state: { type: string, minLength: 1 }
+        pincode: { type: string, minLength: 1, maxLength: 10 }
+        lat: { type: number }
+        lng: { type: number }
+        tag: { type: string, enum: [home, work, other] }
+        isDefault: { type: boolean }
+
 security:
   - bearerAuth: []
 
@@ -782,4 +811,150 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
+
+  # ---- Task 5.3: device registration + addresses CRUD ----
+  /notifications/register-device:
+    post:
+      tags: [Notifications]
+      summary: Register / refresh a push token (idempotent upsert)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [platform, pushToken]
+              properties:
+                platform: { type: string, enum: [android, ios] }
+                pushToken: { type: string, minLength: 1 }
+                appVersion: { type: string }
+                deviceModel: { type: string }
+                osVersion: { type: string }
+                locale: { type: string }
+      responses:
+        '200':
+          description: OK — device created or rebound.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [ok], properties: { ok: { type: boolean } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /addresses:
+    get:
+      tags: [Addresses]
+      summary: List the caller's saved addresses
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [items]
+                    properties:
+                      items: { type: array, items: { $ref: '#/components/schemas/Address' } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    post:
+      tags: [Addresses]
+      summary: Create a new address
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AddressInput' }
+      responses:
+        '201':
+          description: Created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [address], properties: { address: { $ref: '#/components/schemas/Address' } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /addresses/{id}:
+    get:
+      tags: [Addresses]
+      summary: Get one address (owner-scoped; 404 if owned by another)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [address], properties: { address: { $ref: '#/components/schemas/Address' } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — unknown id or owned by another customer., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    patch:
+      tags: [Addresses]
+      summary: Update an address (owner-scoped)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AddressInput' }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [address], properties: { address: { $ref: '#/components/schemas/Address' } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — unknown id or owned by another customer., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    delete:
+      tags: [Addresses]
+      summary: Delete an address (owner-scoped)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [ok], properties: { ok: { type: boolean } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — unknown id or owned by another customer., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
 
