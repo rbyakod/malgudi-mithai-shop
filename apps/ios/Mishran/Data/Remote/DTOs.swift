@@ -96,8 +96,8 @@ enum ProductFamily: String, Decodable, CaseIterable, Hashable {
 
 extension ProductDTO {
     /// Test/convenience initializer — optional fields default to nil.
-    init(id: String, slug: String, name: String, family: ProductFamily) {
-        self.init(id: id, slug: slug, name: name, family: family, displayPrice: nil,
+    init(id: String, slug: String, name: String, family: ProductFamily, displayPrice: String? = nil) {
+        self.init(id: id, slug: slug, name: name, family: family, displayPrice: displayPrice,
                   freshnessStatus: nil, dietaryTags: nil, allergens: nil, ingredients: nil,
                   shelfLife: nil, storage: nil, images: nil, story: nil, updatedAt: nil)
     }
