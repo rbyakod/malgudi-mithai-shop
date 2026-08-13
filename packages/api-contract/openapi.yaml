@@ -315,4 +315,33 @@ paths:
           headers:
             ETag:
               schema: { type: string }
+  /catalog/products/{slug}:
+    get:
+      tags: [catalog]
+      security: []
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+          description: Unique product slug (collections/MithaiProducts.slug).
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Product' }
+        '404':
+          description: Not Found — no product matches the given slug.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error: { $ref: '#/components/schemas/Error' }
 
