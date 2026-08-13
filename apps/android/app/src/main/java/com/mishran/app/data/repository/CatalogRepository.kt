@@ -23,8 +23,9 @@ import com.mishran.app.data.local.dao.ProductDao
 import com.mishran.app.data.local.entity.ProductEntity
 import com.mishran.app.data.remote.api.MishranApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -51,6 +52,27 @@ class CatalogRepository @Inject constructor(
     /** Network-only refresh for the WorkManager janitor + pull-to-refresh. */
     suspend fun refreshNow(force: Boolean = true) {
         refreshFromNetwork(force)
+    }
+
+    /** Reactive single product for the detail screen; null while absent. */
+    fun observeProduct(slug: String): Flow<Product?> =
+        productDao.observeBySlug(slug).map { it?.toDomain() }
+
+    /**
+     * One-shot product lookup for the detail screen: Room first, then a single
+     * network fetch (cached back with the same freshness window) when the row
+     * is not on disk yet — e.g. a deep link into a cold cache. Returns null
+     * when both miss (offline first run); the caller renders a not-found state.
+     */
+    suspend fun getProduct(slug: String): Product? {
+        productDao.observeBySlug(slug).first()?.let { return it.toDomain() }
+        return try {
+            api.getProduct(slug).data.also { product ->
+                productDao.upsertAll(listOf(product.toEntity(now() + STALE_WINDOW_MS)))
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private suspend fun refreshFromNetwork(force: Boolean) {

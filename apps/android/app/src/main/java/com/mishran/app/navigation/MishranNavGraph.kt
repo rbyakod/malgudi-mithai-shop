@@ -39,6 +39,7 @@ import com.mishran.app.ui.auth.BiometricGate
 import com.mishran.app.ui.auth.OtpScreen
 import com.mishran.app.ui.auth.PhoneEntryScreen
 import com.mishran.app.ui.catalog.CatalogScreen
+import com.mishran.app.ui.product.ProductDetailScreen
 
 /**
  * Root of the app UI. Wire this into [com.mishran.app.MainActivity]; it owns
@@ -135,8 +136,10 @@ fun MishranAppRoot() {
             composable(
                 route = Routes.PRODUCT,
                 arguments = listOf(navArgument("slug") { type = NavType.StringType }),
-            ) { entry ->
-                PlaceholderScreen("Product — slug=${entry.arguments?.getString("slug")}")
+            ) {
+                // Task 9.4: detail (gallery + stepper). The add-to-cart callback
+                // gains its real body in Task 10.1 (cart repository + Room).
+                ProductDetailScreen(onAddToCart = { _, _ -> })
             }
             composable(Routes.CART) { PlaceholderScreen("Cart") }
             composable(Routes.CHECKOUT) { PlaceholderScreen("Checkout") }

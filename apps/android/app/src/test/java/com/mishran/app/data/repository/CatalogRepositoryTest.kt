@@ -22,6 +22,7 @@ import com.mishran.app.data.local.entity.ProductEntity
 import com.mishran.app.data.remote.api.MishranApi
 import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -188,6 +189,38 @@ class CatalogRepositoryTest {
         assertEquals(2, emissions.size)
         assertEquals(emptyList<Product>(), emissions[0])
         assertEquals(listOf(wireProduct), emissions[1])
+    }
+
+    // ---- getProduct (detail lookup: Room → network fallback) ---------------
+
+    @Test
+    fun `getProduct serves a cached row without touching the network`() = runTest {
+        table += wireProduct.toEntity(staleAt = 0L)
+        every { productDao.observeBySlug("kaju-katli") } returns flowOf(table.first())
+
+        assertEquals(wireProduct, repository.getProduct("kaju-katli"))
+        coVerify(exactly = 0) { api.getProduct(any()) }
+    }
+
+    @Test
+    fun `getProduct falls back to the network and caches the row`() = runTest {
+        every { productDao.observeBySlug(any()) } returns flowOf(null)
+        coEvery { api.getProduct("kaju-katli") } returns
+            com.mishran.api.models.CatalogProductsSlugGet200Response(data = wireProduct)
+
+        assertEquals(wireProduct, repository.getProduct("kaju-katli"))
+        // Fetched row lands in Room stamped with the same 6h freshness window.
+        assertEquals(1, table.size)
+        assertEquals(wireProduct, table.single().toDomain())
+    }
+
+    @Test
+    fun `getProduct returns null when cache and network both miss`() = runTest {
+        every { productDao.observeBySlug(any()) } returns flowOf(null)
+        coEvery { api.getProduct(any()) } throws java.io.IOException("offline")
+
+        assertNull(repository.getProduct("missing-sweet"))
+        verify(exactly = 0) { productDao.upsertAll(any()) }
     }
 
     private companion object {
