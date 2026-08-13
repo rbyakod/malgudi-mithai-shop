@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mishran Mobile Apps (iOS + Android) — Customer-Facing Commerce App Design</title>
+<style>
+:root{--bg:#fafaf7;--fg:#1a1a1a;--muted:#5a5a5a;--accent:#8b1e3f;--rule:#e5e5dd;--code-bg:#f3f0e8;--code-fg:#3a2a4a}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Georgia,'Times New Roman',serif;line-height:1.7;color:var(--fg);background:var(--bg);max-width:920px;margin:0 auto;padding:2.5rem 1.5rem 6rem;font-size:16px}
+h1,h2,h3,h4,h5,h6{font-family:'Helvetica Neue',Arial,sans-serif;line-height:1.25;color:#111;margin-top:2.5rem;margin-bottom:0.8rem;font-weight:600;letter-spacing:-0.01em}
+h1{font-size:2.1rem;border-bottom:3px solid var(--accent);padding-bottom:0.4rem;margin-top:0}
+h2{font-size:1.6rem;color:var(--accent);border-bottom:1px solid var(--rule);padding-bottom:0.3rem}
+h3{font-size:1.25rem;color:#222}
+h4{font-size:1.05rem;color:#333}
+p{margin:0.8rem 0}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
+a:hover{border-bottom-color:var(--accent)}
+strong{color:#0a0a0a;font-weight:600}
+em{color:#3a3a3a}
+ul,ol{margin:0.8rem 0;padding-left:1.6rem}
+li{margin:0.3rem 0}
+li>ul,li>ol{margin:0.3rem 0}
+code{font-family:'SF Mono',Menlo,Consolas,monospace;background:var(--code-bg);color:var(--code-fg);padding:0.12em 0.4em;border-radius:4px;font-size:0.88em}
+pre{background:#1e1e2e;color:#e0e0e8;padding:1.2rem 1.4rem;border-radius:10px;overflow-x:auto;margin:1.2rem 0;font-size:0.85rem;line-height:1.5}
+pre code{background:transparent;color:inherit;padding:0;font-size:inherit}
+blockquote{margin:1.2rem 0;padding:0.6rem 1.2rem;border-left:4px solid var(--accent);background:#f3f0e8;color:var(--muted);font-style:italic}
+blockquote p{margin:0.4rem 0}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5rem 0}
+table{border-collapse:collapse;width:100%;margin:1.2rem 0;font-size:0.93rem;display:block;overflow-x:auto}
+th,td{border:1px solid var(--rule);padding:0.6rem 0.9rem;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600;font-family:'Helvetica Neue',Arial,sans-serif}
+tbody tr:nth-child(even){background:#f7f5ef}
+input[type=checkbox]{margin-right:0.4rem}
+@media print{body{max-width:none;padding:1rem;font-size:11pt} pre,table{page-break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+<h1>Mishran Mobile Apps (iOS + Android) — Customer-Facing Commerce App Design</h1>
+<p><strong>Status:</strong> Spec (brainstorming output, awaiting user review)
+<strong>Date:</strong> 2026-08-11
+<strong>Author:</strong> Ravi Byakod (with Claude)
+<strong>Sources:</strong></p>
+<ul>
+<li><code>2026-08-10-mishran-digital-flagship-design.md</code> (umbrella PRD)</li>
+<li><code>2026-08-10-mishran-foundation-phase.md</code> (foundation implementation plan)</li>
+<li><code>Mishran Brand Strategy Summary Draft 1.0</code> (PDF)</li>
+</ul>
+<hr>
+<h2>1. Executive Summary</h2>
+<p>This spec defines native mobile apps for iOS and Android that let Mishran customers browse the catalog, place orders, pay via Razorpay, and track delivery status. The apps ship <strong>before</strong> the Shopify commerce migration, against a custom backend that extends the existing Next.js + Payload CMS foundation. The backend is built with an adapter layer so every external dependency — payments, SMS, push, email, logistics, analytics — can be swapped via config when business contracts or scale demands change.</p>
+<p><strong>Android ships first</strong> (Kotlin + Jetpack Compose). <strong>iOS ships 2–3 months later</strong> (Swift + SwiftUI). The shared backend goes live with Android v1.</p>
+<p><strong>Critical posture:</strong> This spec defers the umbrella web PRD&#39;s &quot;commerce deferred&quot; constraint specifically for the mobile channel. Web remains draft-only until the Shopify phase. Mobile runs its own commerce backend with a documented migration path to Shopify Storefront API once that migration lands.</p>
+<h3>Out of scope for v1</h3>
+<ul>
+<li>Admin functionality of any kind (this is a customer-only app)</li>
+<li>Live map driver tracking (v3)</li>
+<li>Third-party courier API integration (v2)</li>
+<li>iOS app (v2 — ships 2–3 months after Android v1)</li>
+<li>AR gift preview (permanent non-goal)</li>
+<li>Voice concierge / PersonaPlex (Phase 9 in umbrella PRD)</li>
+<li>Subscriptions, rewards, referrals, customer accounts history beyond basic order list</li>
+</ul>
+<hr>
+<h2>2. Goals and Non-Goals</h2>
+<h3>Goals</h3>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Goal</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Reach</td>
+<td>Android-first native app on Google Play covering 9 Indian languages. iOS App Store entry 2–3 months later.</td>
+</tr>
+<tr>
+<td>Ordering</td>
+<td>End-to-end browse → cart → checkout → Razorpay payment → order placement → order history.</td>
+</tr>
+<tr>
+<td>Catalog</td>
+<td>Offline-first catalog with search, category filter, dietary filter (sugar-free, eggless), regional collections.</td>
+</tr>
+<tr>
+<td>Tracking</td>
+<td>5-step status-only delivery tracking with push notifications + Android home-screen widget. No live map in v1.</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>Phone OTP login with biometric re-auth. JWT sessions with refresh-token rotation.</td>
+</tr>
+<tr>
+<td>Brand</td>
+<td>Premium native feel matching Mishran&#39;s heritage-modern identity. Material 3 on Android; SwiftUI native on iOS.</td>
+</tr>
+<tr>
+<td>Operations</td>
+<td>Status updates driven by ops staff via Payload admin until v2 courier API integration.</td>
+</tr>
+<tr>
+<td>Engineering</td>
+<td>Every external dependency behind an adapter interface. Vendor swap is env var + impl change, not a rewrite.</td>
+</tr>
+</tbody></table>
+<h3>Non-Goals (v1)</h3>
+<ul>
+<li>Live map / driver-on-map tracking. Deferred to v3.</li>
+<li>Third-party courier integration (Delhivery/Shadowfax/etc.). Deferred to v2.</li>
+<li>iOS app. Deferred to a v2 release window 2–3 months after Android v1.</li>
+<li>Cash on Delivery (COD). Deferred — ops cost (failed deliveries, reconciliation, fraud).</li>
+<li>EMI and pay-later. Deferred until average order value justifies.</li>
+<li>Live Activities / Apple Wallet passes. Deferred to iOS v2.</li>
+<li>Loyalty, referrals, subscriptions. Out of scope.</li>
+<li>Wedding/corporate configurators on mobile. v1 routes these to the web lead form.</li>
+<li>Multi-warehouse inventory. Single Delhi NCR warehouse assumed for v1.</li>
+<li>Customer-side refund flow. v1 is ops-initiated via admin.</li>
+</ul>
+<hr>
+<h2>3. Audience and Use Cases</h2>
+<table>
+<thead>
+<tr>
+<th>Audience</th>
+<th>Primary need</th>
+<th>Mobile experience requirement</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Everyday premium buyer</td>
+<td>Fresh mithai for home, hosting, table</td>
+<td>Fast discovery, freshness signals, easy reorder, delivery clarity</td>
+</tr>
+<tr>
+<td>Gift buyer</td>
+<td>Thoughtful, polished, personalized box</td>
+<td>Gift-builder canvas on mobile-web; app routes to it for v1</td>
+</tr>
+<tr>
+<td>Wedding buyer</td>
+<td>Bulk gifting, MOQ transparency</td>
+<td>Routes to web wedding configurator; captures lead via deep link</td>
+</tr>
+<tr>
+<td>Corporate buyer</td>
+<td>GST-friendly, branded, repeat orders</td>
+<td>Routes to web corporate lead form</td>
+</tr>
+<tr>
+<td>Health-conscious buyer</td>
+<td>Sugar-free without compromise</td>
+<td>Sugar-free collection, dietary filters, ingredient clarity</td>
+</tr>
+<tr>
+<td>Discovery-led buyer</td>
+<td>Regional mithai, modern originals</td>
+<td>Regional collections, editorial storytelling surfaces</td>
+</tr>
+<tr>
+<td>Returning customer</td>
+<td>Quick reorder, status visibility</td>
+<td>Reorder from history, push notifications, order status widget</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>4. Brand Strategy → Design Principles</h2>
+<p>Carried from the umbrella PRD into the mobile app:</p>
+<ol>
+<li><strong>Milk-First Purity</strong> — every PDP and the home surface foreground the Jhajjar farm story and freshness promise with sensory, specific language.</li>
+<li><strong>The Karigar &amp; His Mastery</strong> — karigar archetype profiles (Chenna, Kaju, Ghee specialists) are first-class content.</li>
+<li><strong>Karigari — Technique Driven by Tradition</strong> — technique glossary appears on relevant product and story screens.</li>
+<li><strong>Modern Experience</strong> — app performance, accessibility, and clarity are non-negotiable. Heritage does not excuse friction.</li>
+<li><strong>Copy principle</strong> — warm, specific, sensory. Avoid generic claims (&quot;premium quality&quot;) unless immediately backed by proof.</li>
+</ol>
+<p>The app&#39;s reason to exist is the <strong>native-feeling</strong> experience. Material 3 on Android (with motion, dynamic color where supported, glanceable widget) and SwiftUI on iOS (with Live Activity and Wallet in v2) are how the brand earns the install over the responsive web.</p>
+<hr>
+<h2>5. Architecture Overview</h2>
+<h3>5.1 High-level shape</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                       SHARED BACKEND                            │
+│  Next.js 16 App Router + Payload 3.x CMS + MongoDB              │
+│  (existing web codebase — extended with mobile commerce)        │
+│                                                                 │
+│  Routes (under /api/mobile/v1/*):                              │
+│   • POST /auth/otp/send, /auth/otp/verify, /auth/refresh       │
+│   • GET  /catalog/products, /catalog/categories                │
+│   • GET  /products/:slug                                        │
+│   • POST /cart/validate (server-side price/stock check)        │
+│   • POST /orders, GET /orders, GET /orders/:id                  │
+│   • POST /payments/razorpay/create-order                        │
+│   • POST /payments/razorpay/verify                              │
+│   • POST /webhooks/razorpay                                     │
+│   • POST /delivery/status-update (internal ops)                │
+│   • POST /addresses, GET /addresses                            │
+│   • GET  /account/me                                            │
+│   • POST /notifications/register-device                        │
+│                                                                 │
+│  Payload collections added:                                     │
+│   customers, addresses, orders, payments, shipments,           │
+│   serviceablePincodes, otpRequests, devices,                   │
+│   idempotencyKeys, securityEvents, revokedTokens               │
+└─────────────────────────────────────────────────────────────────┘
+            ▲                              ▲
+            │ HTTPS + JWT (RS256)          │
+            │ OpenAPI 3.1 contract         │
+            │ gzip + ETag caching          │
+            │                              │
+┌───────────┴──────────────┐    ┌──────────┴───────────────┐
+│   ANDROID APP            │    │   iOS APP (v2)           │
+│   Kotlin + Compose       │    │   Swift + SwiftUI        │
+│   • MVVM + Coroutines    │    │   • MVVM + Combine       │
+│   • Retrofit + OkHttp    │    │   • URLSession           │
+│   • Hilt DI              │    │   • Keychain             │
+│   • DataStore + Room     │    │   • Live Activity        │
+│   • WorkManager          │    │   • Apple Wallet pass    │
+│   • FCM push             │    │   • APNs push            │
+│   • BiometricPrompt      │    │   • Apple Sign-in        │
+│   • Razorpay Android SDK │    │   • Razorpay iOS SDK     │
+│   • Material 3 widget    │    │                          │
+│   • Google Wallet pass   │    │                          │
+└──────────────────────────┘    └──────────────────────────┘
+            │                              │
+            ▼                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  SHARED PACKAGES (pnpm-workspace monorepo)                     │
+│   • api-contract/    OpenAPI 3.1 YAML + codegen per platform   │
+│   • brand-tokens/    Tailwind-derived tokens JSON + codegen    │
+│   • i18n-strings/    9-locale source JSON + per-platform codegen│
+│   • analytics-taxonomy/  Event schema single source            │
+│   • feature-flags/   GrowthBook config + per-platform SDKs     │
+│   • e2e-flows/       Gherkin specs consumed cross-platform     │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3>5.2 Repository structure</h3>
+<p>pnpm-workspace monorepo. Existing Next.js app stays in current location. New workspaces:</p>
+<pre><code>mithai-shop/
+├── app/                       (existing Next.js — extended with mobile API routes)
+├── components/                (existing web components)
+├── context/                   (existing)
+├── lib/                       (existing + new commerce/auth/notifications modules)
+├── packages/
+│   ├── api-contract/
+│   ├── brand-tokens/
+│   ├── i18n-strings/
+│   ├── analytics-taxonomy/
+│   ├── feature-flags/
+│   └── e2e-flows/
+├── apps/
+│   ├── android/               (Kotlin + Compose)
+│   └── ios/                   (Swift + SwiftUI, ships v2)
+└── docs/
+    └── superpowers/
+        ├── plans/
+        └── specs/
+</code></pre>
+<h3>5.3 Infrastructure stance</h3>
+<p><strong>Self-hosted by default, with documented cloud-migration paths.</strong> This is a deliberate cost-and-control posture for the foundation + mobile phase.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>v1 choice</th>
+<th>Cloud migration path</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MongoDB</td>
+<td>Self-hosted single-node replica set on a VPS (Docker). Required by Payload change-stream support.</td>
+<td>Connection-string swap to Atlas M10+ when scale or HA demands.</td>
+</tr>
+<tr>
+<td>File storage</td>
+<td>Local disk on VPS for product imagery (synced from Payload).</td>
+<td>MinIO (self-hosted S3-compatible) → S3/R2/GCS.</td>
+</tr>
+<tr>
+<td>Email</td>
+<td>Resend free tier (3k/mo).</td>
+<td>SES / Postmark / SendGrid via <code>EmailService</code> adapter.</td>
+</tr>
+<tr>
+<td>SMS + OTP</td>
+<td>MSG91.</td>
+<td>Kaleyra / Twilio / Gupshup via <code>OtpService</code> + <code>SmsService</code> adapters.</td>
+</tr>
+<tr>
+<td>Push</td>
+<td>FCM v1 (Android) + APNs direct (iOS, when shipped).</td>
+<td>OneSignal / SNS via <code>PushService</code> adapter.</td>
+</tr>
+<tr>
+<td>Error reporting</td>
+<td>Self-hosted Sentry on the same VPS.</td>
+<td>Hosted Sentry / Bugsnag via <code>ErrorReporter</code> adapter.</td>
+</tr>
+<tr>
+<td>Logging</td>
+<td>Pino JSON → Vercel log drain → self-hosted Loki.</td>
+<td>Grafana Cloud / Datadog when volume justifies.</td>
+</tr>
+<tr>
+<td>Metrics</td>
+<td>Prometheus + Grafana self-hosted.</td>
+<td>Grafana Cloud / Datadog.</td>
+</tr>
+<tr>
+<td>App distribution</td>
+<td>Play Store internal + production tracks. App Store Connect for iOS v2.</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<h3>5.4 Release cadence</h3>
+<ul>
+<li><strong>Backend:</strong> continuous deploy via Vercel on merge to <code>main</code>.</li>
+<li><strong>Mobile:</strong> 2-week sprints, monthly store releases. Android first.</li>
+<li><strong>API contract versioning:</strong> <code>/api/mobile/v1/*</code>. Breaking changes require parallel <code>/v2/*</code> rollout with mobile min-version gate. Non-breaking additive changes within same major.</li>
+<li><strong>OTA updates:</strong> Android-only — Play Asset Packs for non-native bug fixes (config strings, color tweaks). iOS requires full store resubmit.</li>
+</ul>
+<hr>
+<h2>6. Components and Modules</h2>
+<h3>6.1 Backend modules</h3>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>payload.config.ts</code></td>
+<td>Adds collections: <code>customers</code>, <code>addresses</code>, <code>orders</code>, <code>payments</code>, <code>shipments</code>, <code>serviceablePincodes</code>, <code>otpRequests</code>, <code>devices</code>, <code>idempotencyKeys</code>, <code>revokedTokens</code>, <code>securityEvents</code>. Localized fields fall back to <code>en</code>.</td>
+</tr>
+<tr>
+<td><code>app/api/mobile/v1/*</code></td>
+<td>Thin route handlers. Validate JWT (or refresh token), delegate to services. No business logic in routes.</td>
+</tr>
+<tr>
+<td><code>app/api/admin/orders/[id]/status/route.ts</code></td>
+<td>Ops-only endpoint (Payload admin role) to advance delivery status. Triggers <code>OrderEventEmitter</code>.</td>
+</tr>
+<tr>
+<td><code>app/api/webhooks/razorpay/route.ts</code></td>
+<td>Razorpay webhook handler. Signature verification + idempotent update of <code>payments</code> doc.</td>
+</tr>
+<tr>
+<td><code>lib/commerce/CatalogService.ts</code></td>
+<td>Interface + <code>PayloadCatalogService</code> impl. Reads products, categories, search, filters. Future: <code>ShopifyStorefrontCatalogService</code>.</td>
+</tr>
+<tr>
+<td><code>lib/commerce/OrderService.ts</code></td>
+<td>Interface + <code>PayloadOrderService</code> impl. Cart validation → order creation → status transitions → refund initiation.</td>
+</tr>
+<tr>
+<td><code>lib/commerce/PaymentService.ts</code></td>
+<td>Interface + <code>RazorpayPaymentService</code> impl. Create-order, verify-signature, fetch-status, refund. Idempotent on <code>providerPaymentId</code>.</td>
+</tr>
+<tr>
+<td><code>lib/commerce/PincodeService.ts</code></td>
+<td>Reads <code>serviceablePincodes</code> collection. Returns tier (<code>fresh</code> / <code>shelf</code>), SLA, available cities.</td>
+</tr>
+<tr>
+<td><code>lib/commerce/DeliveryService.ts</code></td>
+<td>Interface. v1: <code>ManualDeliveryService</code> (ops updates status). v2: <code>CourierApiDeliveryService</code> (Delhivery/Shadowfax). v3: <code>LiveMapDeliveryService</code>.</td>
+</tr>
+<tr>
+<td><code>lib/auth/OtpService.ts</code></td>
+<td>Interface + <code>Msg91OtpService</code> impl. Rate-limit per phone (5/hr, 10/day). Hash stored in <code>otpRequests</code>. 6-digit, 5-min expiry.</td>
+</tr>
+<tr>
+<td><code>lib/auth/JwtService.ts</code></td>
+<td>RS256 JWT. Access (15 min) + refresh (30 d). Refresh rotation. Revocation list in <code>revokedTokens</code>.</td>
+</tr>
+<tr>
+<td><code>lib/auth/AuthProvider.ts</code></td>
+<td>Interface. v1: <code>JwtAuthProvider</code> (in-house OTP). v2: <code>AppleSignInProvider</code> (App Store rule 4.8). Future: <code>GoogleOAuthProvider</code>, <code>FirebaseAuthProvider</code>.</td>
+</tr>
+<tr>
+<td><code>lib/notifications/PushService.ts</code></td>
+<td>Interface + impls <code>FcmPushService</code>, <code>ApnsPushService</code>, <code>UnifiedPushService</code> (fans out to both).</td>
+</tr>
+<tr>
+<td><code>lib/notifications/OrderEventEmitter.ts</code></td>
+<td>Listens to order status transitions → fires push + (optional) SMS + analytics events.</td>
+</tr>
+<tr>
+<td><code>lib/notifications/SmsService.ts</code></td>
+<td>Interface + <code>Msg91SmsService</code> impl. Templates keyed, locale-aware.</td>
+</tr>
+<tr>
+<td><code>lib/email/EmailService.ts</code></td>
+<td>Interface + <code>ResendEmailService</code> impl. Order confirmation, delivery updates, refund receipts.</td>
+</tr>
+<tr>
+<td><code>lib/i18n/TranslationService.ts</code></td>
+<td>Interface. v1: <code>ManualTranslationService</code> (reads JSON from <code>packages/i18n-strings/</code>). Future: <code>GoogleTranslateService</code>, <code>DeepLService</code>, <code>OpenAiTranslationService</code> for marketing copy.</td>
+</tr>
+<tr>
+<td><code>lib/analytics/AnalyticsService.ts</code></td>
+<td><code>MultiAnalyticsService</code> fans out to children: <code>Ga4AnalyticsService</code>, <code>MetaPixelService</code>. Future: <code>MixpanelService</code>, <code>AmplitudeService</code>, <code>PosthogService</code> (self-hosted), <code>RudderStackService</code>.</td>
+</tr>
+<tr>
+<td><code>lib/files/StorageService.ts</code></td>
+<td>Interface. v1: <code>LocalDiskStorageService</code>. Future: <code>MinioStorageService</code>, <code>S3StorageService</code>, <code>CloudflareR2StorageService</code>.</td>
+</tr>
+<tr>
+<td><code>lib/search/SearchService.ts</code></td>
+<td>Interface. v1: <code>MongoSearchService</code> (<code>$text</code> + regex). Future: <code>MeilisearchService</code>, <code>TypesenseService</code>, <code>AlgoliaService</code>.</td>
+</tr>
+<tr>
+<td><code>lib/featureflags/FeatureFlagService.ts</code></td>
+<td>Interface. v1: <code>EnvFlagService</code>. Future: <code>GrowthBookService</code>, <code>LaunchDarklyService</code>, <code>PosthogFlagService</code>.</td>
+</tr>
+<tr>
+<td><code>lib/observability/ErrorReporter.ts</code></td>
+<td>Interface. v1: <code>SentryReporter</code> (self-hosted). Future: <code>BugsnagReporter</code>, <code>CrashlyticsReporter</code>.</td>
+</tr>
+<tr>
+<td><code>lib/container.ts</code></td>
+<td>DI container. Resolves each service by env var. Single point of vendor swap.</td>
+</tr>
+<tr>
+<td><code>lib/idempotency/</code></td>
+<td>Helper. Stores request hash + response for 24h in <code>idempotencyKeys</code>. Same key + same body returns cached response. Same key + diff body returns 409.</td>
+</tr>
+<tr>
+<td><code>lib/security/RateLimiter.ts</code></td>
+<td>Per-phone, per-IP, per-endpoint token-bucket limits. Mongo-backed.</td>
+</tr>
+</tbody></table>
+<h3>6.2 Shared packages</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>packages/api-contract/</code></td>
+<td><code>openapi.yaml</code> (single source of truth). Generated: TS types via <code>openapi-typescript</code>; Kotlin data classes via <code>openapi-generator</code>; Swift <code>Codable</code> structs via <code>swift-openapi-generator</code>. CI check blocks PRs that break contract without version bump.</td>
+</tr>
+<tr>
+<td><code>packages/brand-tokens/</code></td>
+<td><code>tokens.json</code> (colors, type scale, radii, shadows, spacing). Generated from web Tailwind config. Per-platform codegen: Compose <code>Color</code> / <code>Typography</code> objects; Swift <code>Color</code> / <code>Font</code> extensions; CSS variables for web.</td>
+</tr>
+<tr>
+<td><code>packages/i18n-strings/</code></td>
+<td>Per-locale JSON: <code>en.json</code>, <code>hi.json</code>, <code>kn.json</code>, <code>ta.json</code>, <code>te.json</code>, <code>mr.json</code>, <code>gu.json</code>, <code>bn.json</code>, <code>pa.json</code>. Tool checks for missing keys across locales on PR. Codegen: <code>strings.xml</code> per locale (Android); <code>Localizable.strings</code> per locale (iOS); <code>messages.json</code> per locale (web).</td>
+</tr>
+<tr>
+<td><code>packages/analytics-taxonomy/</code></td>
+<td><code>events.yaml</code> — event names + params + types. Codegen per platform.</td>
+</tr>
+<tr>
+<td><code>packages/feature-flags/</code></td>
+<td>GrowthBook config + per-platform SDK wrappers.</td>
+</tr>
+<tr>
+<td><code>packages/e2e-flows/</code></td>
+<td>Gherkin feature files consumed by Maestro (Android, iOS) and Playwright (web). Cross-platform parity.</td>
+</tr>
+</tbody></table>
+<h3>6.3 Android app structure</h3>
+<pre><code>apps/android/app/
+├── ui/                      # Jetpack Compose screens, Material 3
+│   ├── theme/               # MishranTheme.kt — colors/type from brand-tokens
+│   ├── home/                # HomeScreen, carousel, festival strip
+│   ├── catalog/             # CatalogScreen, search, filters
+│   ├── product/             # ProductDetailScreen, gallery, quantity
+│   ├── cart/                # CartScreen, edit qty, remove
+│   ├── checkout/            # Address, slot, payment selection
+│   ├── orders/              # OrderListScreen, OrderDetailScreen
+│   ├── account/             # ProfileScreen, AddressBook, Settings
+│   ├── auth/                # PhoneEntryScreen, OtpScreen, BiometricGate
+│   └── components/          # Reusable composables
+├── data/
+│   ├── remote/              # Retrofit interfaces (from api-contract)
+│   ├── local/               # Room DAOs (products cache, cart, addresses)
+│   ├── repository/          # CatalogRepository, OrderRepository, etc.
+│   └── sync/                # WorkManager workers (catalog refresh, push reg)
+├── domain/
+│   ├── model/               # Domain models (mapped from DTO)
+│   └── usecase/             # PlaceOrderUseCase, ValidatePincodeUseCase, etc.
+├── di/                      # Hilt modules
+├── push/                    # FCM messaging service
+├── widget/                  # OrderStatusWidget (Glance)
+├── navigation/              # NavGraph, deep links (mishran://order/{id})
+└── MishranApp.kt            # Application class
+</code></pre>
+<h3>6.4 iOS app structure (v2)</h3>
+<p>Mirrors Android. Swift + SwiftUI + Combine. Notable iOS-specific surfaces: <code>LiveActivity/</code> (ActivityKit order tracker), <code>Wallet/</code> (PassKit pass generation), Apple Sign-in flow per App Store rule 4.8.</p>
+<h3>6.5 Ops surfaces (within web admin)</h3>
+<p>Payload admin already at <code>/admin</code>. Extended with custom views:</p>
+<ul>
+<li><code>/admin/orders-board</code> — kanban of orders by delivery status. Drag to advance.</li>
+<li><code>/admin/pincode-manager</code> — CRUD on <code>serviceablePincodes</code>.</li>
+<li><code>/admin/customer-detail</code> — order history, addresses, devices.</li>
+<li><code>/admin/otp-logs</code> — OTP delivery audit, rate-limit hits.</li>
+<li><code>/admin/payment-reconciliation</code> — match Razorpay settlements to <code>payments</code> docs.</li>
+</ul>
+<hr>
+<h2>7. Adapter Layer — Provider Swap Matrix</h2>
+<p>Every external dependency has an interface + pluggable impl. Routes / ops / app code depend on <strong>interface only</strong>. Wiring lives in <code>lib/container.ts</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Interface</th>
+<th>Current impl</th>
+<th>Future swaps anticipated</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Payments</td>
+<td><code>PaymentService</code></td>
+<td>Razorpay</td>
+<td>Cashfree, PhonePe, Billdesk, BharatPe, Stripe (intl)</td>
+</tr>
+<tr>
+<td>OTP SMS</td>
+<td><code>OtpService</code></td>
+<td>MSG91</td>
+<td>Kaleyra, Twilio, Gupshup, SmsCountry, WhatsApp BSP</td>
+</tr>
+<tr>
+<td>Transactional SMS</td>
+<td><code>SmsService</code></td>
+<td>MSG91</td>
+<td>(same vendor list as OTP)</td>
+</tr>
+<tr>
+<td>Push (Android)</td>
+<td><code>PushService</code> impl</td>
+<td>FCM v1</td>
+<td>OneSignal, AWS SNS</td>
+</tr>
+<tr>
+<td>Push (iOS)</td>
+<td><code>PushService</code> impl</td>
+<td>APNs direct</td>
+<td>UnifiedPush, OneSignal, SNS</td>
+</tr>
+<tr>
+<td>Email</td>
+<td><code>EmailService</code></td>
+<td>Resend</td>
+<td>SES, Postmark, SendGrid, Mailgun, self-host SMTP</td>
+</tr>
+<tr>
+<td>Logistics</td>
+<td><code>DeliveryService</code></td>
+<td>Manual ops</td>
+<td>Delhivery, Shadowfax, Dunzo, Xpressbees, Ekart, Shiprocket</td>
+</tr>
+<tr>
+<td>Translation</td>
+<td><code>TranslationService</code></td>
+<td>Manual JSON</td>
+<td>Google Translate, DeepL, OpenAI</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td><code>AnalyticsService</code></td>
+<td>GA4 + Meta Pixel</td>
+<td>Mixpanel, Amplitude, Posthog (self-hosted), RudderStack</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td><code>AuthProvider</code></td>
+<td>JWT (in-house OTP)</td>
+<td>Google OAuth, Apple Sign-in, FirebaseAuth</td>
+</tr>
+<tr>
+<td>File storage</td>
+<td><code>StorageService</code></td>
+<td>Local disk</td>
+<td>MinIO, S3, GCS, R2</td>
+</tr>
+<tr>
+<td>Search</td>
+<td><code>SearchService</code></td>
+<td>Mongo $text + regex</td>
+<td>Meilisearch, Typesense, Elastic, Algolia</td>
+</tr>
+<tr>
+<td>Feature flags</td>
+<td><code>FeatureFlagService</code></td>
+<td>Env var</td>
+<td>GrowthBook, LaunchDarkly, Posthog, ConfigCat</td>
+</tr>
+<tr>
+<td>Error reporting</td>
+<td><code>ErrorReporter</code></td>
+<td>Sentry (self-hosted)</td>
+<td>Bugsnag, Crashlytics</td>
+</tr>
+<tr>
+<td>DB</td>
+<td>Mongo via Payload adapter</td>
+<td>Self-hosted replica set</td>
+<td>Atlas M10+, FerretDB, DocumentDB</td>
+</tr>
+</tbody></table>
+<h3>Vendor swap migration checklist (per adapter)</h3>
+<p>When swapping provider X → Y:</p>
+<ol>
+<li>Add new impl class implementing same interface.</li>
+<li>Add env var branch in <code>lib/container.ts</code>.</li>
+<li>Add config block for new vendor (key rotation, webhook URLs, IP allowlists).</li>
+<li>Data backfill if vendor-specific IDs stored (e.g., <code>providerPaymentId</code> semantics differ).</li>
+<li>Feature-flag the new impl behind <code>flag=&#39;use-new-{service}&#39;</code> for 1 week on 5% traffic.</li>
+<li>Cutover via env var change. Keep old impl class in code for rollback.</li>
+<li>Remove old impl after 30 days of clean production.</li>
+</ol>
+<hr>
+<h2>8. Data Flows</h2>
+<h3>8.1 Phone OTP + biometric login (first run)</h3>
+<ol>
+<li>User enters phone (<code>+91…</code>). App calls <code>POST /api/mobile/v1/auth/otp/send</code>.</li>
+<li>Backend checks rate limit (5/hr, 10/day per phone), generates 6-digit code, stores Argon2 hash in <code>otpRequests</code>, sends SMS via <code>OtpService</code> (MSG91).</li>
+<li>App starts 5-min countdown. SMS Retention API autofills OTP on Android.</li>
+<li>User submits OTP. App calls <code>POST /auth/otp/verify { requestId, code }</code>.</li>
+<li>Backend verifies hash + expiry, upserts <code>customers</code> doc, mints access JWT (15 min) + refresh JWT (30 d, rotated). Returns tokens + customer record.</li>
+<li>App stores tokens in Android EncryptedSharedPreferences. Prompts: &quot;Enable biometric quick login?&quot;</li>
+<li>User confirms. <code>BiometricPrompt</code> auth → refresh token stored in Android Keystore, key biometric-gated.</li>
+</ol>
+<p>Subsequent logins: biometric unlocks Keystore → refresh token used → new access token → home in &lt;300 ms.</p>
+<h3>8.2 Browse catalog (offline-first)</h3>
+<ol>
+<li>App cold start. <code>CatalogRepository.getCatalog(force=false)</code> checks Room for <code>products</code> with <code>stale_at &lt; now-15min</code>.</li>
+<li>If cached rows exist, emit to UI immediately.</li>
+<li>Fire <code>GET /api/mobile/v1/catalog/products?since={etag}</code> with <code>If-None-Match: {etag}</code>.</li>
+<li>Backend computes ETag from latest <code>products.updatedAt</code>. Returns <code>304 Not Modified</code> on match, else <code>200 + payload + new ETag</code>.</li>
+<li>On <code>200</code>: upsert into Room, update etag + stale_at. On <code>304</code>: refresh stale_at only. On network fail: keep cache, show &quot;Updated X min ago&quot; banner.</li>
+<li>WorkManager periodic job (every 6 h): background refresh.</li>
+</ol>
+<p>UI: shimmer skeleton while first load. After that, always shows cached instantly.</p>
+<h3>8.3 Place order (critical path)</h3>
+<ol>
+<li><strong>Cart screen</strong> (items locally in Room + DataStore). User taps <strong>Checkout</strong>.</li>
+<li><code>PincodeCheckUseCase</code> calls <code>GET /api/mobile/v1/catalog/serviceable?pincode={p}</code>. Backend looks up <code>serviceablePincodes</code> → tier + slaDays. If any cart item is <code>fresh</code> and pincode tier is <code>shelf</code>, hard-block with inline error.</li>
+<li><strong>Checkout screen</strong>: address (default or pick), delivery slot (for Delhi fresh: today/tomorrow slots), payment method (UPI / card / netbanking / wallet).</li>
+<li>User taps <strong>Pay ₹X</strong>. App calls <code>POST /api/mobile/v1/cart/validate</code> with <code>items[], address.pincode, slot</code>. Backend re-fetches prices from <code>products</code> (does not trust client), re-checks pincode, re-checks stock, computes totals (itemsTotal, deliveryFee, taxes, discount). Returns <code>{ cartSnapshot, totals, expiresAt: +10min }</code>.</li>
+<li>If cart changed since UI render, modal shows diff. User confirms.</li>
+<li>App calls <code>POST /api/mobile/v1/payments/razorpay/create-order</code> with <code>cartSnapshot.id</code>. Backend uses idempotency key <code>sha256(customerId + snapshot.id)</code>. Creates <code>orders</code> doc (status=<code>pending_payment</code>), <code>payments</code> doc (status=<code>created</code>), calls Razorpay API <code>POST /v1/orders</code>, stores <code>providerOrderId</code>. Returns <code>{ orderId, razorpayOrderId, amount, keyId }</code>.</li>
+<li>App opens Razorpay Android SDK. User completes UPI/card payment. SDK returns <code>{ razorpayPaymentId, signature }</code>.</li>
+<li>App calls <code>POST /api/mobile/v1/payments/razorpay/verify</code> with <code>{ orderId, razorpayPaymentId, signature }</code>. Backend verifies HMAC SHA256 signature with <code>RAZORPAY_KEY_SECRET</code>. On invalid: 400 + security event log + payment marked <code>failed</code>. On valid: updates <code>payments.status=&#39;captured&#39;</code>, <code>orders.status=&#39;confirmed&#39;</code>, creates <code>shipments</code> doc (stage=<code>confirmed</code>), emits <code>OrderEventEmitter(&#39;order.confirmed&#39;)</code>. Returns <code>{ order }</code>.</li>
+<li>App shows <strong>Order Confirmed</strong> screen with deep link <code>mishran://order/{orderId}</code>. Push notification <code>order.confirmed</code> fires to device. Order appears in <code>OrderListScreen</code> immediately (local cache upsert).</li>
+</ol>
+<h3>8.4 Delivery status update (ops → customer)</h3>
+<ol>
+<li>Ops staff opens <code>/admin/orders-board</code>, drags order from <strong>Confirmed</strong> to <strong>Packed</strong>.</li>
+<li>Admin endpoint <code>POST /api/admin/orders/{id}/status { newStatus, note? }</code> validates transition (confirmed→packed OK; skipped→packed blocked). Updates <code>orders.status</code>, pushes to <code>shipments.history[]</code>, updates <code>shipments.currentStage</code>, sets ETA if dispatch stage. Emits <code>OrderEventEmitter(&#39;order.status_changed&#39;, { order, stage })</code>.</li>
+<li><code>OrderEventEmitter</code> fans out:<ul>
+<li><code>PushService.send(customerId, event)</code> — looks up active tokens in <code>devices</code>, sends FCM v1 message (Android) or APNs request (iOS).</li>
+<li><code>SmsService.send</code> only on key stages: confirmed, out_for_delivery, delivered.</li>
+<li><code>AnalyticsService.track</code> server-side event.</li>
+</ul>
+</li>
+<li>Customer device receives FCM push. Foreground: in-app toast + order list refresh. Background: system notification (tap → deep link to OrderDetail). <code>OrderStatusWidget</code> updates via Glance state sync.</li>
+</ol>
+<h3>8.5 Push registration lifecycle</h3>
+<ol>
+<li>App first launch after login. <code>FirebaseMessaging.getInstance().token</code> retrieved.</li>
+<li>App calls <code>POST /api/mobile/v1/notifications/register-device { platform, pushToken, appVersion, deviceModel, osVersion }</code>. Backend upserts <code>devices</code> doc, marks <code>active=true</code>.</li>
+<li>On token rotation (FCM rotates periodically), WorkManager worker detects change → re-registers.</li>
+<li>On logout: <code>POST /notifications/unregister-device { pushToken }</code>. Backend marks <code>devices.active=false</code>.</li>
+</ol>
+<h3>8.6 i18n language switch</h3>
+<ol>
+<li>User picks <strong>தமிழ்</strong> (Tamil) in settings.</li>
+<li><code>LocaleManager.set(&#39;ta&#39;)</code>. Persists in DataStore. Server sync <code>PATCH /account/me { locale: &#39;ta&#39; }</code> so emails/notifications respect locale.</li>
+<li>Compose <code>LocaleDelegate</code> updates. All i18n strings re-resolve from bundled <code>strings_ta.xml</code>.</li>
+</ol>
+<hr>
+<h2>9. Error Handling</h2>
+<h3>9.1 Client error taxonomy</h3>
+<p>Wrapped in a sealed <code>ApiResult&lt;T&gt;</code> (Kotlin) / equivalent (Swift). Errors carry <code>ErrorCode</code> enum, <code>traceId</code> for correlation with server logs, and <code>retryable</code> flag.</p>
+<table>
+<thead>
+<tr>
+<th>ErrorCode</th>
+<th>HTTP</th>
+<th>Cause</th>
+<th>UI behavior</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>RATE_LIMITED</code></td>
+<td>429</td>
+<td>OTP/request budget hit</td>
+<td>Toast &quot;Too many attempts. Try in X min.&quot;</td>
+</tr>
+<tr>
+<td><code>OTP_INVALID</code></td>
+<td>400</td>
+<td>Wrong code</td>
+<td>Inline error, decrement remaining attempts</td>
+</tr>
+<tr>
+<td><code>OTP_EXPIRED</code></td>
+<td>410</td>
+<td>5-min window passed</td>
+<td>&quot;Resend OTP&quot; CTA highlighted</td>
+</tr>
+<tr>
+<td><code>PINCODE_NOT_SERVICEABLE</code></td>
+<td>422</td>
+<td>Pincode not in collection</td>
+<td>Hard block + suggest alternative</td>
+</tr>
+<tr>
+<td><code>CART_CHANGED</code></td>
+<td>409</td>
+<td>Price/stock changed</td>
+<td>Diff modal → confirm or back</td>
+</tr>
+<tr>
+<td><code>STOCK_INSUFFICIENT</code></td>
+<td>409</td>
+<td>Item qty &lt; requested</td>
+<td>Edit qty modal</td>
+</tr>
+<tr>
+<td><code>PAYMENT_FAILED</code></td>
+<td>402</td>
+<td>Razorpay verify failed</td>
+<td>&quot;Payment failed. Money will be refunded if deducted.&quot; + retry</td>
+</tr>
+<tr>
+<td><code>PAYMENT_ABANDONED</code></td>
+<td>—</td>
+<td>User closed Razorpay SDK</td>
+<td>Reusable order, restart from cart</td>
+</tr>
+<tr>
+<td><code>ORDER_NOT_FOUND</code></td>
+<td>404</td>
+<td>Deep link to deleted order</td>
+<td>&quot;This order no longer exists&quot; + back</td>
+</tr>
+<tr>
+<td><code>INVALID_STATE_TRANSITION</code></td>
+<td>409</td>
+<td>Ops API misuse</td>
+<td>Logged; ops sees toast in admin</td>
+</tr>
+<tr>
+<td><code>TOKEN_EXPIRED</code></td>
+<td>401</td>
+<td>Access JWT past 15 min</td>
+<td>Silent refresh; if refresh fails → relogin</td>
+</tr>
+<tr>
+<td><code>TOKEN_REVOKED</code></td>
+<td>401</td>
+<td>Refresh token on revocation list</td>
+<td>Force logout + biometric reset</td>
+</tr>
+<tr>
+<td><code>CONFLICT</code></td>
+<td>409</td>
+<td>Idempotency replay with diff body</td>
+<td>Surface conflict, keep original response</td>
+</tr>
+<tr>
+<td><code>VALIDATION</code></td>
+<td>422</td>
+<td>Field errors</td>
+<td>Map to form fields</td>
+</tr>
+<tr>
+<td><code>INTERNAL</code></td>
+<td>500</td>
+<td>Unhandled server error</td>
+<td>&quot;Something went wrong. Trace: {id}&quot; → support</td>
+</tr>
+</tbody></table>
+<h3>9.2 Retry policy</h3>
+<table>
+<thead>
+<tr>
+<th>Failure</th>
+<th>Strategy</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Network timeout (10s default)</td>
+<td>Exponential backoff: 1s, 2s, 4s — max 3 retries. Skip on non-idempotent POST unless <code>Idempotency-Key</code> set.</td>
+</tr>
+<tr>
+<td>5xx server error</td>
+<td>Same backoff if <code>retryable: true</code> (returned by backend).</td>
+</tr>
+<tr>
+<td>429 rate limited</td>
+<td>Honor <code>Retry-After</code> header. Queue non-critical calls.</td>
+</tr>
+<tr>
+<td>Payment <code>/verify</code> failure</td>
+<td>NEVER retry automatically — could double-charge. Surface to user, retry only on explicit tap.</td>
+</tr>
+<tr>
+<td>Token refresh failure</td>
+<td>One retry, then route to login.</td>
+</tr>
+</tbody></table>
+<h3>9.3 Backend error handling</h3>
+<ul>
+<li>HTTP layer: all errors serialized as <code>{ error: { code, message, fieldErrors?, traceId } }</code>. 5xx never leaks stack/message. <code>traceId</code> returned in <code>X-Request-Id</code>. Async wrappers catch all promise rejections.</li>
+<li>Data layer: Mongo transactions for multi-doc updates (e.g., order placement touches <code>orders</code>, <code>payments</code>, <code>shipments</code>). On transaction abort → 500 with <code>traceId</code>. Unique constraint violations caught as 409 <code>VALIDATION</code> with field-level error.</li>
+</ul>
+<p><strong>External API failures:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Partner</th>
+<th>Failure mode</th>
+<th>Handling</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Razorpay create-order</td>
+<td>Timeout / 5xx</td>
+<td>Mark <code>payments.status=&#39;create_failed&#39;</code>. Customer sees &quot;Payment init failed.&quot; Cleanup job reconciles orphan orders after 10 min.</td>
+</tr>
+<tr>
+<td>Razorpay webhook</td>
+<td>Signature invalid</td>
+<td>Log security event, 400 to Razorpay, no state change.</td>
+</tr>
+<tr>
+<td>MSG91 OTP send</td>
+<td>Timeout / non-200</td>
+<td>Return 503 <code>OTP_PROVIDER_DOWN</code>. Frontend shows &quot;SMS sending failed, tap to retry.&quot;</td>
+</tr>
+<tr>
+<td>FCM / APNs push</td>
+<td>Token invalid</td>
+<td>Mark <code>devices.active=false</code> on receipt of &quot;NotRegistered&quot; / &quot;Unregistered&quot;.</td>
+</tr>
+<tr>
+<td>Self-hosted Mongo</td>
+<td>Connection lost</td>
+<td>Health check (<code>/api/health</code>) returns degraded. App shows offline banner. PagerDuty alert.</td>
+</tr>
+</tbody></table>
+<h3>9.4 Idempotency</h3>
+<p>Every state-mutating endpoint accepts <code>Idempotency-Key</code> header (UUID v4). Backend stores request hash + response for 24h in <code>idempotencyKeys</code>. Replays:</p>
+<ul>
+<li>Same key + same body → return cached response.</li>
+<li>Same key + diff body → 409 <code>CONFLICT</code>, return original response metadata.</li>
+</ul>
+<p>Required on: <code>POST /orders</code>, <code>POST /payments/razorpay/create-order</code>, <code>POST /payments/razorpay/verify</code>, <code>POST /cart/validate</code>, <code>POST /auth/otp/send</code>.</p>
+<h3>9.5 Order state machine</h3>
+<pre><code>                  ┌────────────────────────────────┐
+                  ▼                                │
+created ──▶ pending_payment ──▶ confirmed ──▶ packed ──▶ dispatched ──▶ out_for_delivery ──▶ delivered
+   │              │                  │           │            │                  │
+   │              │                  │           │            │                  ├─▶ cancelled
+   │              │                  │           │            │                  ├─▶ returned
+   │              │                  │           │            │                  └─▶ failed_delivery
+   │              ▼                  ▼           ▼            ▼
+   │       payment_failed      cancelled   cancelled     cancelled
+   │       (auto)              (user)      (user,        (ops, refund flow)
+   │                                          if pre-dispatch)
+   └──── abandoned (24h TTL cleanup job)
+</code></pre>
+<p>Allowed transitions enforced by <code>OrderService.transition()</code>. Invalid → <code>INVALID_STATE_TRANSITION</code> 409.</p>
+<p>Refund flow: <code>delivered → returned</code> or <code>dispatched → failed_delivery</code> triggers <code>RefundService.initiate()</code> via Razorpay refund API. Manual ops approval required if &gt; 24h after delivery.</p>
+<h3>9.6 Payment failure recovery</h3>
+<p>Two paths converge:</p>
+<pre><code>A) Client /verify call          B) Razorpay webhook (server-to-server)
+   │                                 │
+   └─▶ both verifySignature()        └─▶ verifySignature()
+            │                                  │
+            └─▶ updatePaymentDoc(providerPaymentId, status)
+                  └─▶ atomic via Mongo upsert
+                  └─▶ first write wins, second is no-op (idempotent on providerPaymentId)
+</code></pre>
+<p>Reconciliation cron (every 15 min): query <code>payments</code> where <code>status=&#39;created&#39; AND createdAt &lt; now-15min</code>. Call Razorpay <code>GET /payments/{id}</code> to fetch authoritative status. Update local doc. Catches cases where both client verify and webhook failed.</p>
+<h3>9.7 Push delivery guarantees</h3>
+<ul>
+<li><strong>At-least-once.</strong> Customer may receive duplicate push for same event. App dedupes via <code>event_id</code> in payload (kept in <code>notifications_seen</code> Room table for 30d, TTL-indexed).</li>
+<li><strong>Ordering not guaranteed.</strong> App always fetches <code>/orders/{id}</code> fresh on notification tap rather than trusting payload body for state.</li>
+<li><strong>Silent failures.</strong> FCM may swallow pushes (low battery, doze). WorkManager periodic job (every 1h while on Wi-Fi) syncs <code>orders</code> list — surfaces missed status updates as in-app badge.</li>
+</ul>
+<h3>9.8 Crash and telemetry</h3>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Tool</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Android</td>
+<td>Firebase Crashlytics (free, deep native stack traces)</td>
+</tr>
+<tr>
+<td>iOS</td>
+<td>Firebase Crashlytics</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>Sentry (self-hosted)</td>
+</tr>
+<tr>
+<td>Server logs</td>
+<td>Pino JSON → stdout → Vercel log drain → self-hosted Loki</td>
+</tr>
+<tr>
+<td>Metrics</td>
+<td>Prometheus + Grafana (self-hosted). p50 / p95 / p99 latency, error rate per route, Razorpay/MSG91 call counts.</td>
+</tr>
+</tbody></table>
+<h3>9.9 Security incident handling</h3>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Detection</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OTP brute force</td>
+<td>≥5 failed <code>otpRequests</code> per phone in 5 min</td>
+<td>Auto-lock OTP for that phone 30 min. Log + Sentry alert.</td>
+</tr>
+<tr>
+<td>Bearer token reuse from new IP</td>
+<td><code>customers.lastIp</code> mismatch on refresh</td>
+<td>Soft challenge: re-biometric or re-OTP.</td>
+</tr>
+<tr>
+<td>Razorpay webhook signature fail</td>
+<td><code>/webhooks/razorpay</code> 400</td>
+<td>Log to <code>securityEvents</code> collection. Sentry page.</td>
+</tr>
+<tr>
+<td>Mass refund attempt</td>
+<td>≥3 refund requests in 10 min from one ops user</td>
+<td>Require admin approval above threshold.</td>
+</tr>
+<tr>
+<td>Unusual order pattern</td>
+<td>Order rate &gt; 10/min per customer</td>
+<td>Rate limit, log for review.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>10. Testing Strategy</h2>
+<h3>10.1 Test pyramid</h3>
+<pre><code>                    ┌──────────────┐
+                    │   Manual /   │   ← Exploratory, UAT, store review
+                    │  Smoke (5%)  │      pre-release
+                    └──────────────┘
+                  ┌──────────────────┐
+                  │   E2E (10%)      │   ← Maestro (mobile), Playwright (web)
+                  │   Critical paths │      flows: login, browse, checkout,
+                  └──────────────────┘      payment, order tracking
+              ┌──────────────────────────┐
+              │  Integration (25%)        │   ← API contract tests, DB round-trip,
+              │  Service ↔ Adapter        │      adapter fakes per vendor, Razorpay
+              └──────────────────────────┘      webhook signature tests
+        ┌──────────────────────────────────┐
+        │   Unit (60%)                      │   ← Pure functions, viewmodels,
+        │   Pure logic, mappers, validators │      composables, use cases
+        └──────────────────────────────────┘
+</code></pre>
+<h3>10.2 Shared packages</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Tooling</th>
+<th>Tests</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>api-contract/</code></td>
+<td><code>openapi-cli</code> + <code>redocly</code> spectral ruleset</td>
+<td>Schema lint on PR. <code>oasdiff</code> against main for breaking-change detection. Block PR if breaking change without <code>/v2/</code> route or <code>x-backward-compatible: true</code> marker.</td>
+</tr>
+<tr>
+<td><code>brand-tokens/</code></td>
+<td>Vitest</td>
+<td>Token round-trip: <code>tokens.json</code> → platform codegen → re-parse → equals input.</td>
+</tr>
+<tr>
+<td><code>i18n-strings/</code></td>
+<td>Custom script</td>
+<td>Per-locale key coverage. Missing-key check across 9 locales blocks PR. Pseudo-translation smoke for layout-stress testing.</td>
+</tr>
+<tr>
+<td><code>analytics-taxonomy/</code></td>
+<td>Custom</td>
+<td>Event schema validation against regex + type rules.</td>
+</tr>
+<tr>
+<td><code>feature-flags/</code></td>
+<td>Vitest</td>
+<td>Flag evaluator truth table.</td>
+</tr>
+</tbody></table>
+<h3>10.3 Backend</h3>
+<p><strong>Framework:</strong> Vitest + Supertest (route tests) + MongoDB Memory Server (in-process replica).</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>What</th>
+<th>Coverage gate</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Unit</td>
+<td><code>lib/commerce/*</code> services against fake adapters. <code>JwtService</code> sign/verify/rotate. <code>OtpService</code> rate-limit logic. Validators. Mappers.</td>
+<td>≥85% line, ≥75% branch</td>
+</tr>
+<tr>
+<td>Integration</td>
+<td>Route handlers against real Mongo + fake external services (<code>nock</code> for Razorpay/MSG91). Cart validate → order place → payment verify full flow. Webhook signature pass + fail.</td>
+<td>≥70% line on <code>/api/mobile/v1/*</code></td>
+</tr>
+<tr>
+<td>Contract</td>
+<td>Pact or Schemathesis. Each <code>/api/mobile/v1/*</code> route tested against OpenAPI spec.</td>
+<td>100% of routes</td>
+</tr>
+<tr>
+<td>Adapter fakes</td>
+<td>Each interface has an in-process fake (e.g., <code>FakePaymentService</code>, <code>FakeOtpService</code>). Used by integration tests + as scaffold for new vendors.</td>
+<td>One fake per adapter interface</td>
+</tr>
+<tr>
+<td>Idempotency</td>
+<td>Replay same request twice with same <code>Idempotency-Key</code>. Assert same response, single DB write.</td>
+<td>One test per mutating endpoint</td>
+</tr>
+<tr>
+<td>Migration</td>
+<td>Mongo migrations tested forward + backward against fixture DB.</td>
+<td>100% of migrations</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>OWASP ZAP scan in CI weekly. Dependency scan (<code>pnpm audit</code>) on every PR. JWT secret rotation test.</td>
+<td>Critical CVEs block release</td>
+</tr>
+<tr>
+<td>Load</td>
+<td>k6 scripts: login + browse + checkout 1000 RPS sustained 5 min. p95 &lt; 500 ms. Trigger nightly against staging.</td>
+<td>SLO gates per route</td>
+</tr>
+<tr>
+<td>Razorpay webhook</td>
+<td>Replayed real webhook payloads (anonymized). Signature validation must succeed on legit, fail on tampered.</td>
+<td>10 historical payloads per event type</td>
+</tr>
+</tbody></table>
+<h3>10.4 Android</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Tool</th>
+<th>What</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Unit (JVM)</td>
+<td>JUnit5 + MockK + Turbine (Flow)</td>
+<td>ViewModels, use cases, mappers, validators. Fakes for repository interfaces.</td>
+</tr>
+<tr>
+<td>Compose UI</td>
+<td><code>compose-ui-test</code> + <code>hilt-android-testing</code></td>
+<td>Screen-level: render, assert state transitions, click through flows. Robolectric (fast) + emulator (visual).</td>
+</tr>
+<tr>
+<td>Screenshot</td>
+<td>Paparazzi or Shot</td>
+<td>Per-screen, per-locale, per-theme snapshot. Pixel-diff blocks PR if &gt; 2% delta. Re-baseline requires review.</td>
+</tr>
+<tr>
+<td>Integration</td>
+<td>Hilt + Room + real Retrofit against MockWebServer</td>
+<td>Repository tests. DB cache invalidation. Offline behavior.</td>
+</tr>
+<tr>
+<td>E2E</td>
+<td>Maestro (recommended) or Espresso</td>
+<td>Critical flows: OTP login → browse → add to cart → checkout → payment (mocked Razorpay SDK via test mode) → order placed → push received → order in list. Run on real device farm.</td>
+</tr>
+<tr>
+<td>Widget</td>
+<td>Robolectric + Glance test APIs</td>
+<td>Order status widget renders all 5 states. Data source updates propagate.</td>
+</tr>
+<tr>
+<td>Push</td>
+<td>FCM test message via Firebase Admin + listener in instrumentation test</td>
+<td>Token registration round-trip.</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>Macrobenchmark (Jetpack Metrics) + Perfetto</td>
+<td>Cold start &lt; 1.5s on mid-tier device (Pixel 4a equivalent). P95 frame drop &lt; 5% scroll. Catalog search p95 &lt; 200 ms local.</td>
+</tr>
+<tr>
+<td>A11y</td>
+<td><code>compose-ui-test</code> accessibility checks + TalkBack on emulator</td>
+<td>All tap targets ≥ 48dp. Contrast WCAG AA per theme. Focus order sane.</td>
+</tr>
+<tr>
+<td>Lint</td>
+<td>Android Lint + Detekt + ktlint</td>
+<td>Block release on ≥ medium severity.</td>
+</tr>
+<tr>
+<td>Bundle size</td>
+<td>Bundlelint</td>
+<td>AAB download size &lt; 25 MB.</td>
+</tr>
+</tbody></table>
+<h3>10.5 iOS (v2 — placeholder)</h3>
+<p>Same shape, different tooling: XCTest, ViewInspector, Maestro (cross-platform), <code>xcodebuild</code> test plans. Snapshot testing via swift-snapshot-testing. Performance via XCTest <code>measure {}</code>.</p>
+<h3>10.6 Cross-platform parity tests</h3>
+<p>Each critical user flow has a <strong>shared Gherkin spec</strong> in <code>packages/e2e-flows/</code>. Android Maestro, iOS Maestro (later), and backend Playwright each consume the same flow file with platform-specific step implementations. Ensures feature parity.</p>
+<p>Example (<code>packages/e2e-flows/login_checkout.feature</code>):</p>
+<pre><code class="language-gherkin">Feature: Phone OTP login → place order
+  Scenario: New user, fresh mithai to Delhi NCR
+    Given the catalog has Kaju Katli in stock
+    And pincode 110001 is tier=fresh
+    When I start the app with no session
+    And I log in with phone 9999999999 and OTP 123456
+    And I add 500g Kaju Katli to cart
+    And I checkout to address at 110001
+    And I pay via UPI mock
+    Then I see the order confirmation screen
+    And the order appears in my order list
+    And I receive a push notification &quot;Order confirmed&quot;
+</code></pre>
+<h3>10.7 Pre-release gate</h3>
+<p>Before each store release (monthly cadence):</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Gate</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>All unit + integration green</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>E2E on staging backend green</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>95th percentile cold start ≤ 1.5s on Pixel 4a</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>No new Sentries in canary build for 24h</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Lighthouse / macrobenchmark scores not regressed &gt; 5%</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Screenshot diffs reviewed</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Localization coverage at 100% keys for shipped locales</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Privacy policy + permissions manifest reviewed</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Store listing metadata localized for shipped locales</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Razorpay test mode end-to-end checkout passes</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Internal QA bug bash (1 day) signed off</td>
+<td>Required</td>
+</tr>
+</tbody></table>
+<h3>10.8 Production monitoring + canary</h3>
+<ul>
+<li><strong>Canary channel (Android):</strong> Play Staged Rollout → 5% → watch Sentry + crash-free rate ≥ 99.5% + payment success rate ≥ 97% for 48h → ramp to 20% → 50% → 100%. Auto-halt on regression.</li>
+<li><strong>iOS (later):</strong> Phased Release over 7 days via App Store Connect.</li>
+<li><strong>Backend:</strong> Vercel deployments + canary flag via feature flags per route. Auto-rollback on <code>/api/health</code> degraded for 60s.</li>
+</ul>
+<h3>10.9 Test data + secrets</h3>
+<ul>
+<li>Staging backend at <code>staging-api.mishran.app</code> — separate Mongo DB, separate Razorpay test-mode keys, separate MSG91 test sender ID.</li>
+<li>Device farm: BrowserStack or Firebase Test Lab. ~30 devices covering Android 10–15, low/mid/high tier.</li>
+<li>E2E accounts: hard-coded test phone numbers on staging bypass MSG91 → auto-approve OTP <code>123456</code> for test numbers only (server env-gated).</li>
+<li>Seed data: <code>scripts/seed-staging.ts</code> populates catalog, addresses, sample orders. Reset nightly.</li>
+</ul>
+<h3>10.10 Coverage reporting</h3>
+<ul>
+<li>Backend: <code>c8</code> coverage → Codecov.</li>
+<li>Android: Kover report → Codecov.</li>
+<li>Coverage trends visible in PR check. Coverage drops &gt; 2% block merge unless explicitly justified.</li>
+</ul>
+<hr>
+<h2>11. Constraints and Locked Decisions</h2>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Locked value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Mobile timeline</td>
+<td>Before Shopify migration. Custom commerce backend.</td>
+</tr>
+<tr>
+<td>Mobile stack</td>
+<td>Native Android (Kotlin + Compose) first, native iOS (Swift + SwiftUI) 2–3 months later.</td>
+</tr>
+<tr>
+<td>Backend shape</td>
+<td>Extend existing Next.js + Payload + MongoDB. <code>/api/mobile/v1/*</code> REST + RS256 JWT.</td>
+</tr>
+<tr>
+<td>Delivery tracking</td>
+<td>v1 = status-only. v2 = courier API (TODO). v3 = live map (TODO).</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>Phone OTP (MSG91) + biometric. JWT (RS256, 15-min access, 30-day rotated refresh).</td>
+</tr>
+<tr>
+<td>Languages</td>
+<td>9: en, hi, kn, ta, te, mr, gu, bn, pa.</td>
+</tr>
+<tr>
+<td>Delivery geography</td>
+<td>Two-tier: Delhi NCR = fresh mithai; top 8–10 metros = shelf-stable (dryfruit, namkeen, merch, gift boxes).</td>
+</tr>
+<tr>
+<td>Payments</td>
+<td>Razorpay. UPI + cards + netbanking + wallets. No COD, no EMI in v1.</td>
+</tr>
+<tr>
+<td>Mongo</td>
+<td>Self-hosted single-node replica set (Docker). Cloud migration via connection-string swap.</td>
+</tr>
+<tr>
+<td>Adapter layer</td>
+<td>Every external service behind an interface. Vendor swap = env var + impl change.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>12. Roadmap (v1 → v2 → v3)</h2>
+<h3>v1 — Android app ship (~3 months)</h3>
+<ul>
+<li>Backend extensions: OTP auth, catalog/orders/payments/shipments collections, REST routes under <code>/api/mobile/v1/*</code>.</li>
+<li>Adapter layer with current-impl classes for every external service.</li>
+<li>Android app: phone OTP + biometric, browse + search + filter, cart + checkout + Razorpay, order history, status-only delivery tracking, Android home-screen widget, push notifications, 9 locales.</li>
+<li>Ops surfaces in Payload admin: orders board, pincode manager, customer detail, OTP logs, payment reconciliation.</li>
+<li>Self-hosted infra: Mongo replica set, Sentry, Loki, Grafana, MinIO.</li>
+</ul>
+<h3>v2 — iOS app + courier API (~3–6 months after v1)</h3>
+<ul>
+<li>iOS native app (Swift + SwiftUI): same feature parity as Android v1.</li>
+<li>iOS-specific: Live Activity for delivery tracking, Apple Wallet pass (loyalty), Apple Sign-in (App Store rule 4.8), APNs push.</li>
+<li>Backend: <code>CourierApiDeliveryService</code> adapter impl (Delhivery or Shadowfax TBD).</li>
+<li>Reorder one-tap from history.</li>
+<li>Wishlist / favorites.</li>
+<li>Ratings and reviews on PDP.</li>
+<li>Refund flow self-serve.</li>
+<li>GST invoice download in-app.</li>
+</ul>
+<h3>v3 — Live map + COD + EMI (~6–9 months after v1)</h3>
+<ul>
+<li><code>LiveMapDeliveryService</code> adapter impl. Driver-side component or partner with driver-tracking API (Shadowfax On-Demand, Dunzo).</li>
+<li>WebSocket / SSE for live location.</li>
+<li>COD (after ops capacity for cash handling).</li>
+<li>EMI + pay-later.</li>
+<li>AR gift preview (non-goal unless explicitly pulled in).</li>
+<li>Multi-warehouse inventory (per-city allocation logic).</li>
+</ul>
+<hr>
+<h2>13. Open Questions (to resolve before plan)</h2>
+<p>These do not block spec approval but should be answered before the implementation plan:</p>
+<ol>
+<li><strong>Ops team capacity</strong> — who updates order status during v1 (before courier API)? Same team as web ops? Dedicated mobile ops?</li>
+<li><strong>Delhi NCR warehouse address</strong> — concrete address for pickup/delivery SLA calculations.</li>
+<li><strong>Serviceable pincode seed list</strong> — concrete Delhi NCR + top-8-metro pincode list for initial <code>serviceablePincodes</code> collection.</li>
+<li><strong>Razorpay account</strong> — existing or new? KYC status. Test-mode keys access.</li>
+<li><strong>MSG91 account</strong> — existing or new? Sender ID approval timeline.</li>
+<li><strong>Domain</strong> — <code>mishran.app</code> or different? Backend at <code>api.mishran.app</code>, staging at <code>staging-api.mishran.app</code>.</li>
+<li><strong>Google Play developer account</strong> — existing or new? DUNS / organization verification status.</li>
+<li><strong>Apple Developer Program enrollment</strong> — required for v2 but enroll early (weeks to activate).</li>
+<li><strong>Translation vendor</strong> — for non-en/hi/kn locales (ta, te, mr, gu, bn, pa). In-house? Agency? Community?</li>
+<li><strong>SMS template approvals</strong> — TRAI/MLN registration for transactional SMS via MSG91. Lead time ~1 week per template.</li>
+</ol>
+<hr>
+<h2>14. Success Metrics</h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>v1 target</th>
+<th>v2 target</th>
+<th>v3 target</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Android crash-free sessions</td>
+<td>≥ 99.5%</td>
+<td>≥ 99.5%</td>
+<td>≥ 99.5%</td>
+</tr>
+<tr>
+<td>Payment success rate (Razorpay verified)</td>
+<td>≥ 97%</td>
+<td>≥ 98%</td>
+<td>≥ 98%</td>
+</tr>
+<tr>
+<td>Cold start (p95, Pixel 4a)</td>
+<td>≤ 1.5s</td>
+<td>≤ 1.2s</td>
+<td>≤ 1.0s</td>
+</tr>
+<tr>
+<td>Catalog search p95 (local)</td>
+<td>≤ 200ms</td>
+<td>≤ 150ms</td>
+<td>≤ 100ms</td>
+</tr>
+<tr>
+<td>Order placement success rate (from cart)</td>
+<td>≥ 95%</td>
+<td>≥ 97%</td>
+<td>≥ 98%</td>
+</tr>
+<tr>
+<td>MAU (Android)</td>
+<td>10k @ 6mo</td>
+<td>50k @ 12mo</td>
+<td>100k @ 18mo</td>
+</tr>
+<tr>
+<td>Repeat purchase rate (30d)</td>
+<td>≥ 25%</td>
+<td>≥ 35%</td>
+<td>≥ 45%</td>
+</tr>
+<tr>
+<td>Average order value</td>
+<td>₹1,500</td>
+<td>₹1,800</td>
+<td>₹2,000</td>
+</tr>
+<tr>
+<td>Push notification opt-in</td>
+<td>≥ 60%</td>
+<td>≥ 65%</td>
+<td>≥ 70%</td>
+</tr>
+<tr>
+<td>4+ star Play Store rating</td>
+<td>≥ 4.3</td>
+<td>≥ 4.5</td>
+<td>≥ 4.6</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>15. Glossary</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Adapter</strong></td>
+<td>Interface that abstracts an external dependency. Concrete implementations are pluggable via DI.</td>
+</tr>
+<tr>
+<td><strong>Karigar</strong></td>
+<td>Traditional mithai craftsman. One of Mishran&#39;s four brand pillars.</td>
+</tr>
+<tr>
+<td><strong>Karigari</strong></td>
+<td>The craft technique — tradition-driven process.</td>
+</tr>
+<tr>
+<td><strong>Pincode tier</strong></td>
+<td><code>fresh</code> (perishable mithai, Delhi NCR only) or <code>shelf</code> (shelf-stable, top metros).</td>
+</tr>
+<tr>
+<td><strong>Serviceable pincode</strong></td>
+<td>A pincode Mishran delivers to, with tier + SLA metadata.</td>
+</tr>
+<tr>
+<td><strong>Snapshot (cart)</strong></td>
+<td>Server-side immutable copy of cart state at validation time, used as basis for order.</td>
+</tr>
+<tr>
+<td><strong>Live Activity</strong></td>
+<td>iOS 16.1+ lock-screen widget showing real-time app state. Used for delivery tracking in v2.</td>
+</tr>
+<tr>
+<td><strong>Stage / Stage Rollout</strong></td>
+<td>Google Play&#39;s phased release mechanism (5% → 20% → 50% → 100%).</td>
+</tr>
+<tr>
+<td><strong>OTP</strong></td>
+<td>One-time password (6-digit SMS).</td>
+</tr>
+<tr>
+<td><strong>MOQ</strong></td>
+<td>Minimum order quantity. Used for wedding / corporate.</td>
+</tr>
+</tbody></table>
+
+</main>
+</body>
+</html>

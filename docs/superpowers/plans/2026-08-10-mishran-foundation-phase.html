@@ -1,0 +1,2810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mishran Foundation Phase Implementation Plan</title>
+<style>
+:root{--bg:#fafaf7;--fg:#1a1a1a;--muted:#5a5a5a;--accent:#8b1e3f;--rule:#e5e5dd;--code-bg:#f3f0e8;--code-fg:#3a2a4a}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Georgia,'Times New Roman',serif;line-height:1.7;color:var(--fg);background:var(--bg);max-width:920px;margin:0 auto;padding:2.5rem 1.5rem 6rem;font-size:16px}
+h1,h2,h3,h4,h5,h6{font-family:'Helvetica Neue',Arial,sans-serif;line-height:1.25;color:#111;margin-top:2.5rem;margin-bottom:0.8rem;font-weight:600;letter-spacing:-0.01em}
+h1{font-size:2.1rem;border-bottom:3px solid var(--accent);padding-bottom:0.4rem;margin-top:0}
+h2{font-size:1.6rem;color:var(--accent);border-bottom:1px solid var(--rule);padding-bottom:0.3rem}
+h3{font-size:1.25rem;color:#222}
+h4{font-size:1.05rem;color:#333}
+p{margin:0.8rem 0}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
+a:hover{border-bottom-color:var(--accent)}
+strong{color:#0a0a0a;font-weight:600}
+em{color:#3a3a3a}
+ul,ol{margin:0.8rem 0;padding-left:1.6rem}
+li{margin:0.3rem 0}
+li>ul,li>ol{margin:0.3rem 0}
+code{font-family:'SF Mono',Menlo,Consolas,monospace;background:var(--code-bg);color:var(--code-fg);padding:0.12em 0.4em;border-radius:4px;font-size:0.88em}
+pre{background:#1e1e2e;color:#e0e0e8;padding:1.2rem 1.4rem;border-radius:10px;overflow-x:auto;margin:1.2rem 0;font-size:0.85rem;line-height:1.5}
+pre code{background:transparent;color:inherit;padding:0;font-size:inherit}
+blockquote{margin:1.2rem 0;padding:0.6rem 1.2rem;border-left:4px solid var(--accent);background:#f3f0e8;color:var(--muted);font-style:italic}
+blockquote p{margin:0.4rem 0}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5rem 0}
+table{border-collapse:collapse;width:100%;margin:1.2rem 0;font-size:0.93rem;display:block;overflow-x:auto}
+th,td{border:1px solid var(--rule);padding:0.6rem 0.9rem;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600;font-family:'Helvetica Neue',Arial,sans-serif}
+tbody tr:nth-child(even){background:#f7f5ef}
+input[type=checkbox]{margin-right:0.4rem}
+@media print{body{max-width:none;padding:1rem;font-size:11pt} pre,table{page-break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+<h1>Mishran Foundation Phase Implementation Plan</h1>
+<blockquote>
+<p><strong>For agentic workers:</strong> REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (<code>- [ ]</code>) syntax for tracking.</p>
+</blockquote>
+<p><strong>Goal:</strong> Ship Phase 0 Foundation for the Mishran Digital Flagship: locked theme system, trimmed locale set, Payload CMS install, brand shared collections, one product collection per vertical, lead capture, brand-home redesign, vertical landing pages, sample PDPs, analytics, SEO, and Vercel deploy.</p>
+<p><strong>Architecture:</strong> Next.js 16 App Router + TypeScript + Tailwind v4 stays as the front-end. Payload CMS embeds inside the same Next app via <code>payload.config.ts</code>, backed by MongoDB (Atlas M0). Locale routing preserved (<code>/[locale]/...</code>), active locales <code>en</code>, <code>hi</code>, <code>kn</code>. Theme switcher collapsed to 4 locked themes. Commerce deferred — <code>/cart</code>, <code>/checkout</code>, <code>/account</code>, <code>/track-order</code> are branded stubs with WhatsApp + lead CTA. Cart persists client-side as today (draft state only).</p>
+<p><strong>Tech Stack:</strong> Next.js 16.2.3, next-intl 4.9.1, Payload 3.x, MongoDB (Atlas), TanStack Query 5.x, Resend (email), Sonner (toasts), Radix UI (primitives), Vitest, @testing-library/react, @playwright/test, axe-core, sharp, Vercel (Fluid Compute).</p>
+<h2>Global Constraints</h2>
+<ul>
+<li><strong>Themes:</strong> locked to 4 — <code>mishran-default</code> (new), <code>diwali-saffron</code> (alias of legacy <code>festive</code>), <code>wedding-heritage</code> (alias of legacy <code>heritage</code>), <code>everyday-sage</code> (alias of legacy <code>sage</code>). All other themes archived on git branch <code>archive/design-systems-pre-collapse</code> before deletion.</li>
+<li><strong>Active locales:</strong> <code>en</code>, <code>hi</code>, <code>kn</code> only. Other locale files (<code>es</code>, <code>fr</code>, <code>ta</code>, <code>te</code>, <code>bn</code>, <code>mr</code>, <code>gu</code>) deleted; locales re-added in later phases.</li>
+<li><strong>Commerce:</strong> no live checkout. Cart is draft state. <code>/cart</code>, <code>/checkout</code>, <code>/account</code>, <code>/track-order</code> render branded stubs with lead CTA.</li>
+<li><strong>CMS:</strong> Payload 3.x with MongoDB adapter. Admin mounted at <code>/admin</code>. Localized fields fall back to <code>en</code>.</li>
+<li><strong>Display prices:</strong> <code>displayPrice</code> on products is display-only, never transacted.</li>
+<li><strong>Email:</strong> Resend; templates in <code>lib/email/</code>. Free tier (3k/mo).</li>
+<li><strong>Analytics:</strong> GA4 + Meta Pixel. All events via <code>lib/analytics.ts</code> <code>track()</code> helper. Scripts defer until after hydration.</li>
+<li><strong>A11y:</strong> WCAG AA contrast validated per theme. Semantic landmarks. Skip-to-content on every page.</li>
+<li><strong>Tests:</strong> Vitest (unit + integration), Playwright (E2E + axe), Lighthouse CI (≥90 on home, mithai hub, sample PDP).</li>
+<li><strong>Commits:</strong> Conventional commits (<code>feat:</code>, <code>chore:</code>, <code>refactor:</code>, <code>test:</code>, <code>docs:</code>). One logical change per commit.</li>
+<li><strong>Env vars:</strong> <code>MONGODB_URI</code>, <code>PAYLOAD_SECRET</code>, <code>RESEND_API_KEY</code>, <code>NEXT_PUBLIC_GA4_ID</code>, <code>NEXT_PUBLIC_META_PIXEL_ID</code>, <code>NEXT_PUBLIC_WHATSAPP_NUMBER</code>.</li>
+</ul>
+<hr>
+<h2>File Structure</h2>
+<pre><code>mithai-shop/
+├── app/
+│   ├── [locale]/
+│   │   ├── (site)/                  # Marketing shell
+│   │   │   ├── page.tsx             # Brand home
+│   │   │   ├── mithai/
+│   │   │   │   ├── page.tsx         # Mithai hub
+│   │   │   │   └── [slug]/page.tsx  # Sample PDP
+│   │   │   ├── qsr/page.tsx
+│   │   │   ├── snacks/page.tsx
+│   │   │   ├── merch/page.tsx
+│   │   │   ├── stories/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── [slug]/page.tsx
+│   │   │   ├── weddings/page.tsx
+│   │   │   ├── corporate/page.tsx
+│   │   │   ├── about/page.tsx
+│   │   │   └── contact/page.tsx
+│   │   ├── (commerce)/              # Stubs
+│   │   │   ├── cart/page.tsx
+│   │   │   ├── checkout/page.tsx
+│   │   │   ├── account/page.tsx
+│   │   │   └── track-order/page.tsx
+│   │   ├── layout.tsx               # Hreflang metadata
+│   │   └── not-found.tsx
+│   ├── admin/[[...segments]]/page.tsx  # Payload admin mount
+│   ├── api/
+│   │   ├── leads/route.ts
+│   │   ├── drafts/route.ts
+│   │   ├── search/route.ts
+│   │   └── revalidate/route.ts      # Payload webhook
+│   ├── layout.tsx                   # Root: providers, GA4/Pixel, theme script
+│   ├── sitemap.ts
+│   ├── robots.ts
+│   └── globals.css
+├── collections/                     # Payload schemas
+│   ├── Stories.ts
+│   ├── Karigars.ts
+│   ├── Farms.ts
+│   ├── Packaging.ts
+│   ├── Occasions.ts
+│   ├── MithaiProducts.ts
+│   ├── GiftBoxes.ts
+│   ├── QsrMenuItems.ts
+│   ├── SnackProducts.ts
+│   ├── MerchProducts.ts
+│   ├── Leads.ts
+│   └── Drafts.ts
+├── globals/                         # Payload globals
+│   ├── BrandSettings.ts
+│   ├── NavSettings.ts
+│   ├── ThemeSettings.ts
+│   ├── AnalyticsSettings.ts
+│   └── StoreSettings.ts
+├── payload-blocks/                  # richText blocks (Phase 1 depth; stub for now)
+├── payload.config.ts
+├── payload-types.ts                 # Generated
+├── components/
+│   ├── layout/
+│   │   ├── SiteHeader.tsx
+│   │   ├── SiteFooter.tsx
+│   │   └── BrandBar.tsx
+│   ├── home/
+│   │   ├── BrandHero.tsx
+│   │   ├── VerticalPortals.tsx
+│   │   └── Pillars.tsx
+│   ├── ui/                          # Primitives
+│   ├── ledger/
+│   │   ├── LeadForm.tsx
+│   │   ├── WeddingConfigurator.tsx
+│   │   └── CorporateConfigurator.tsx
+│   └── stories/
+│       └── StoryCard.tsx
+├── context/
+│   ├── CartContext.tsx              # Existing
+│   ├── ThemeContext.tsx             # Existing, modified
+│   └── QueryProvider.tsx            # TanStack Query
+├── lib/
+│   ├── payload-client.ts
+│   ├── analytics.ts
+│   ├── email.ts
+│   ├── seo.ts                       # Schema.org helpers
+│   └── themes.ts                    # Existing, modified
+├── i18n/
+│   ├── routing.ts                   # Trimmed locales
+│   ├── request.ts                   # Existing
+│   └── navigation.ts                # Existing
+├── messages/
+│   ├── en.json
+│   ├── hi.json
+│   └── kn.json
+├── tests/
+│   ├── e2e/                         # Playwright
+│   ├── unit/                        # Vitest
+│   └── integration/                 # Vitest + Payload memory DB
+├── lighthouserc.json
+├── vercel.ts
+└── package.json
+</code></pre>
+<hr>
+<h2>Task 1: Tooling setup — dependencies, scripts, test runners</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>package.json</code></li>
+<li>Create: <code>vitest.config.ts</code></li>
+<li>Create: <code>playwright.config.ts</code></li>
+<li>Create: <code>tests/unit/</code> and <code>tests/e2e/</code> directories (with <code>.gitkeep</code>)</li>
+<li>Create: <code>lighthouserc.json</code></li>
+<li>Modify: <code>.gitignore</code> (add <code>.lhci/</code>, <code>playwright-report/</code>, <code>test-results/</code>)</li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Consumes: existing Next.js + Tailwind setup</p>
+</li>
+<li><p>Produces: <code>npm run test:unit</code>, <code>npm run test:e2e</code>, <code>npm run lhci</code> scripts; Vitest config with jsdom env; Playwright config base URL <code>http://localhost:3000</code></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing test that confirms Vitest is wired</strong></p>
+</li>
+</ul>
+<p>Create <code>tests/unit/sample.test.ts</code>:</p>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+
+describe(&quot;tooling smoke&quot;, () =&gt; {
+  it(&quot;runs vitest&quot;, () =&gt; {
+    expect(1 + 1).toBe(2);
+  });
+});
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Run test, verify failure</strong></li>
+</ul>
+<p>Run: <code>npx vitest run tests/unit/sample.test.ts</code>
+Expected: FAIL with &quot;Cannot find module &#39;vitest&#39;&quot; or no config.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 3: Install dev dependencies</strong></li>
+</ul>
+<pre><code class="language-bash">npm install -D vitest @vitest/ui jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event @playwright/test axe-core @axe-core/playwright lighthouse @lhci/cli
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Install runtime dependencies</strong></li>
+</ul>
+<pre><code class="language-bash">npm install payload @payloadcms/next @payloadcms/db-mongodb @payloadcms/richtext-lexical @payloadcms/ui mongodb @tanstack/react-query resend sharp sonner @radix-ui/react-dialog @radix-ui/react-popover @radix-ui/react-select
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Add scripts to <code>package.json</code></strong></li>
+</ul>
+<p>Add to <code>scripts</code>:</p>
+<pre><code class="language-json">&quot;test:unit&quot;: &quot;vitest run&quot;,
+&quot;test:unit:watch&quot;: &quot;vitest&quot;,
+&quot;test:e2e&quot;: &quot;playwright test&quot;,
+&quot;test:e2e:ui&quot;: &quot;playwright test --ui&quot;,
+&quot;lhci&quot;: &quot;lhci autorun&quot;,
+&quot;seed&quot;: &quot;tsx scripts/seed.ts&quot;
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Create <code>vitest.config.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import { defineConfig } from &quot;vitest/config&quot;;
+import react from &quot;@vitejs/plugin-react&quot;;
+import path from &quot;node:path&quot;;
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    environment: &quot;jsdom&quot;,
+    globals: true,
+    setupFiles: [&quot;./tests/setup.ts&quot;],
+    include: [&quot;tests/unit/**/*.test.{ts,tsx}&quot;, &quot;tests/integration/**/*.test.{ts,tsx}&quot;],
+  },
+  resolve: {
+    alias: {
+      &quot;@&quot;: path.resolve(__dirname, &quot;./&quot;),
+    },
+  },
+});
+</code></pre>
+<p>(If <code>@vitejs/plugin-react</code> not yet installed, add it: <code>npm install -D @vitejs/plugin-react</code>.)</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Create <code>tests/setup.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import &quot;@testing-library/jest-dom/vitest&quot;;
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 8: Create <code>playwright.config.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import { defineConfig, devices } from &quot;@playwright/test&quot;;
+
+export default defineConfig({
+  testDir: &quot;./tests/e2e&quot;,
+  fullyParallel: true,
+  retries: process.env.CI ? 2 : 0,
+  reporter: [[&quot;html&quot;], [&quot;list&quot;]],
+  use: {
+    baseURL: &quot;http://localhost:3000&quot;,
+    trace: &quot;on-first-retry&quot;,
+  },
+  projects: [
+    { name: &quot;chromium&quot;, use: { ...devices[&quot;Desktop Chrome&quot;] } },
+  ],
+  webServer: {
+    command: &quot;npm run dev&quot;,
+    url: &quot;http://localhost:3000&quot;,
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+  },
+});
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 9: Create <code>lighthouserc.json</code></strong></li>
+</ul>
+<pre><code class="language-json">{
+  &quot;ci&quot;: {
+    &quot;collect&quot;: {
+      &quot;url&quot;: [
+        &quot;http://localhost:3000/en&quot;,
+        &quot;http://localhost:3000/en/mithai&quot;,
+        &quot;http://localhost:3000/en/mithai/kaju-katli&quot;
+      ],
+      &quot;numberOfRuns&quot;: 3,
+      &quot;startServerCommand&quot;: &quot;npm run start&quot;,
+      &quot;settings&quot;: { &quot;preset&quot;: &quot;desktop&quot; }
+    },
+    &quot;assert&quot;: {
+      &quot;assertions&quot;: {
+        &quot;categories:performance&quot;: [&quot;error&quot;, { &quot;minScore&quot;: 0.9 }],
+        &quot;categories:accessibility&quot;: [&quot;error&quot;, { &quot;minScore&quot;: 0.95 }]
+      }
+    },
+    &quot;upload&quot;: { &quot;target&quot;: &quot;temporary-public-storage&quot; }
+  }
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 10: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit</code>
+Expected: PASS (1 test).</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 11: Update <code>.gitignore</code></strong></li>
+</ul>
+<p>Append:</p>
+<pre><code>.lhci/
+playwright-report/
+test-results/
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 12: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add package.json package-lock.json vitest.config.ts playwright.config.ts tests/ lighthouserc.json .gitignore
+git commit -m &quot;chore: add vitest, playwright, lighthouse, payload deps&quot;
+</code></pre>
+<hr>
+<h2>Task 2: Theme collapse — lock 4 themes, archive the rest</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>lib/themes.ts</code></li>
+<li>Modify: <code>context/ThemeContext.tsx</code></li>
+<li>Modify: <code>components/ThemeSwitcher.tsx</code></li>
+<li>Modify: <code>app/layout.tsx</code> (inline theme script)</li>
+<li>Modify: <code>app/globals.css</code> (add <code>mishran-default</code> token set; keep legacy token sets until branch cut)</li>
+<li>Create: <code>design-systems/mishran-default.md</code></li>
+<li>Test: <code>tests/unit/themes.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Consumes: existing <code>Theme</code>, <code>THEMES</code> exports</p>
+</li>
+<li><p>Produces: <code>Theme = &quot;mishran-default&quot; | &quot;diwali-saffron&quot; | &quot;wedding-heritage&quot; | &quot;everyday-sage&quot;</code>; <code>DEFAULT_THEME = &quot;mishran-default&quot;</code>; <code>LEGACY_THEME_ALIASES</code> maps <code>{festive: &quot;diwali-saffron&quot;, heritage: &quot;wedding-heritage&quot;, sage: &quot;everyday-sage&quot;, ...}</code></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing theme-normalization tests</strong></p>
+</li>
+</ul>
+<p><code>tests/unit/themes.test.ts</code>:</p>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+import { normalizeTheme, DEFAULT_THEME, VALID_THEMES } from &quot;@/lib/themes&quot;;
+
+describe(&quot;themes&quot;, () =&gt; {
+  it(&quot;defaults to mishran-default&quot;, () =&gt; {
+    expect(DEFAULT_THEME).toBe(&quot;mishran-default&quot;);
+  });
+
+  it(&quot;locks to exactly 4 themes&quot;, () =&gt; {
+    expect(VALID_THEMES).toEqual([
+      &quot;mishran-default&quot;,
+      &quot;diwali-saffron&quot;,
+      &quot;wedding-heritage&quot;,
+      &quot;everyday-sage&quot;,
+    ]);
+  });
+
+  it(&quot;maps legacy festive → diwali-saffron&quot;, () =&gt; {
+    expect(normalizeTheme(&quot;festive&quot;)).toBe(&quot;diwali-saffron&quot;);
+  });
+
+  it(&quot;maps legacy heritage → wedding-heritage&quot;, () =&gt; {
+    expect(normalizeTheme(&quot;heritage&quot;)).toBe(&quot;wedding-heritage&quot;);
+  });
+
+  it(&quot;maps legacy sage → everyday-sage&quot;, () =&gt; {
+    expect(normalizeTheme(&quot;sage&quot;)).toBe(&quot;everyday-sage&quot;);
+  });
+
+  it(&quot;returns null for unknown themes&quot;, () =&gt; {
+    expect(normalizeTheme(&quot;navy&quot;)).toBeNull();
+    expect(normalizeTheme(&quot;ibm&quot;)).toBeNull();
+  });
+});
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit -- tests/unit/themes.test.ts</code>
+Expected: FAIL (legacy aliases missing, default wrong).</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 3: Archive current <code>design-systems/</code> and <code>lib/themes.ts</code> on a branch</strong></li>
+</ul>
+<pre><code class="language-bash">git checkout -b archive/design-systems-pre-collapse
+git add -A
+git commit -m &quot;chore: snapshot design-systems before collapse&quot;
+git checkout main
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Replace <code>lib/themes.ts</code> with the 4-theme lock</strong></li>
+</ul>
+<pre><code class="language-ts">export type Theme =
+  | &quot;mishran-default&quot;
+  | &quot;diwali-saffron&quot;
+  | &quot;wedding-heritage&quot;
+  | &quot;everyday-sage&quot;;
+
+type ThemeGroup = &quot;House Themes&quot;;
+
+export type ThemeDefinition = {
+  id: Theme;
+  label: string;
+  group: ThemeGroup;
+  source: string;
+  blurb: string;
+  docPath: string;
+  preview: {
+    canvas: string;
+    surface: string;
+    accent: string;
+    pop: string;
+    ink: string;
+  };
+};
+
+export const DEFAULT_THEME: Theme = &quot;mishran-default&quot;;
+
+export const THEMES: ThemeDefinition[] = [
+  {
+    id: &quot;mishran-default&quot;,
+    label: &quot;Mishran Default&quot;,
+    group: &quot;House Themes&quot;,
+    source: &quot;Mishran Brand Strategy&quot;,
+    blurb: &quot;Warm milk-cream canvas, deep kakvi brown ink, festive saffron accent — the canonical Mishran mood.&quot;,
+    docPath: &quot;/design-systems/mishran-default.md&quot;,
+    preview: {
+      canvas: &quot;#f7efe0&quot;,
+      surface: &quot;#fbf6ec&quot;,
+      accent: &quot;#9b4d2a&quot;,
+      pop: &quot;#d79a35&quot;,
+      ink: &quot;#2c1810&quot;,
+    },
+  },
+  {
+    id: &quot;diwali-saffron&quot;,
+    label: &quot;Diwali Saffron&quot;,
+    group: &quot;House Themes&quot;,
+    source: &quot;Malgudi Original&quot;,
+    blurb: &quot;Warm terracotta, soft cream, celebratory gold.&quot;,
+    docPath: &quot;/design-systems/festive-saffron.md&quot;,
+    preview: {
+      canvas: &quot;#f0e4d4&quot;,
+      surface: &quot;#f7ece0&quot;,
+      accent: &quot;#b94b4b&quot;,
+      pop: &quot;#f0b35c&quot;,
+      ink: &quot;#3b221b&quot;,
+    },
+  },
+  {
+    id: &quot;wedding-heritage&quot;,
+    label: &quot;Wedding Heritage&quot;,
+    group: &quot;House Themes&quot;,
+    source: &quot;Mishran Menu Editorial&quot;,
+    blurb: &quot;Parchment, oxblood, saffron, cocoa with a literary old-India mood.&quot;,
+    docPath: &quot;/design-systems/mishran-heritage.md&quot;,
+    preview: {
+      canvas: &quot;#f4e7d0&quot;,
+      surface: &quot;#fbf4e6&quot;,
+      accent: &quot;#8c0e2f&quot;,
+      pop: &quot;#d79a35&quot;,
+      ink: &quot;#3b2419&quot;,
+    },
+  },
+  {
+    id: &quot;everyday-sage&quot;,
+    label: &quot;Everyday Sage&quot;,
+    group: &quot;House Themes&quot;,
+    source: &quot;Malgudi Original&quot;,
+    blurb: &quot;Quiet botanical neutrals with low-contrast elegance.&quot;,
+    docPath: &quot;/design-systems/minimal-sage.md&quot;,
+    preview: {
+      canvas: &quot;#e4e0d4&quot;,
+      surface: &quot;#edeae3&quot;,
+      accent: &quot;#4a7c59&quot;,
+      pop: &quot;#c9a96e&quot;,
+      ink: &quot;#2d3a2e&quot;,
+    },
+  },
+];
+
+export const THEME_GROUP_ORDER: ThemeGroup[] = [&quot;House Themes&quot;];
+
+export const VALID_THEMES = THEMES.map((theme) =&gt; theme.id) as Theme[];
+
+const LEGACY_THEME_ALIASES: Record&lt;string, Theme&gt; = {
+  festive: &quot;diwali-saffron&quot;,
+  heritage: &quot;wedding-heritage&quot;,
+  &quot;heritage-2&quot;: &quot;wedding-heritage&quot;,
+  sage: &quot;everyday-sage&quot;,
+  navy: &quot;mishran-default&quot;,
+  mblue2: &quot;mishran-default&quot;,
+  mindbox: &quot;mishran-default&quot;,
+  coinbase: &quot;mishran-default&quot;,
+  ibm: &quot;mishran-default&quot;,
+  yoshida: &quot;mishran-default&quot;,
+  myblue: &quot;mishran-default&quot;,
+};
+
+export function getThemeDefinition(theme: Theme) {
+  return THEMES.find((entry) =&gt; entry.id === theme) ?? THEMES[0];
+}
+
+export function normalizeTheme(value: string | null | undefined): Theme | null {
+  if (!value) return null;
+  const normalized = LEGACY_THEME_ALIASES[value] ?? value;
+  return VALID_THEMES.includes(normalized as Theme)
+    ? (normalized as Theme)
+    : null;
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Update inline theme script in <code>app/layout.tsx</code></strong></li>
+</ul>
+<p>Replace <code>initialThemeScript</code> with:</p>
+<pre><code class="language-ts">const initialThemeScript = `(function(){try{var valid=${JSON.stringify(validThemes)};var aliases=${JSON.stringify({festive:&quot;diwali-saffron&quot;,heritage:&quot;wedding-heritage&quot;,&quot;heritage-2&quot;:&quot;wedding-heritage&quot;,sage:&quot;everyday-sage&quot;,navy:&quot;mishran-default&quot;,mblue2:&quot;mishran-default&quot;,mindbox:&quot;mishran-default&quot;,coinbase:&quot;mishran-default&quot;,ibm:&quot;mishran-default&quot;,yoshida:&quot;mishran-default&quot;,myblue:&quot;mishran-default&quot;});};var stored=localStorage.getItem(&quot;mithai-theme&quot;);var normalized=(stored&amp;&amp;aliases[stored])||stored||${JSON.stringify(DEFAULT_THEME)};if(valid.indexOf(normalized)!==-1){document.documentElement.setAttribute(&quot;data-theme&quot;,normalized);}else{document.documentElement.setAttribute(&quot;data-theme&quot;,${JSON.stringify(DEFAULT_THEME)});}}catch(e){}})()`;
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Create <code>design-systems/mishran-default.md</code></strong></li>
+</ul>
+<p>Brief design system doc with token list (mirror spec). Delete archived theme MD files from main:</p>
+<pre><code class="language-bash">git rm design-systems/evening-navy.md design-systems/malgudi-blue-v2.md design-systems/mindbox-studio.md design-systems/coinbase-blue.md design-systems/ibm-grid.md design-systems/mishran-heritage-2.md design-systems/yoshida.md
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit -- tests/unit/themes.test.ts</code>
+Expected: PASS (6 tests).</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 8: Run build to verify no broken imports</strong></li>
+</ul>
+<p>Run: <code>npm run build</code>
+Expected: build succeeds.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 9: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add lib/themes.ts context/ThemeContext.tsx components/ThemeSwitcher.tsx app/layout.tsx app/globals.css design-systems/
+git commit -m &quot;refactor: collapse themes to mishran-default + 3 occasion variants&quot;
+</code></pre>
+<hr>
+<h2>Task 3: Locale discipline — trim to en/hi/kn</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>i18n/routing.ts</code></li>
+<li>Modify: <code>components/Header.tsx</code> (AVAILABLE_LOCALES)</li>
+<li>Delete: <code>messages/es.json</code>, <code>messages/fr.json</code>, <code>messages/ta.json</code>, <code>messages/te.json</code>, <code>messages/bn.json</code>, <code>messages/mr.json</code>, <code>messages/gu.json</code></li>
+<li>Test: <code>tests/unit/locales.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: <code>routing.locales = [&quot;en&quot;, &quot;hi&quot;, &quot;kn&quot;]</code>; AVAILABLE_LOCALES trimmed to 3 entries.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing test</strong></p>
+</li>
+</ul>
+<p><code>tests/unit/locales.test.ts</code>:</p>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+import { routing } from &quot;@/i18n/routing&quot;;
+
+describe(&quot;routing locales&quot;, () =&gt; {
+  it(&quot;supports only en, hi, kn&quot;, () =&gt; {
+    expect(routing.locales).toEqual([&quot;en&quot;, &quot;hi&quot;, &quot;kn&quot;]);
+  });
+
+  it(&quot;defaults to en&quot;, () =&gt; {
+    expect(routing.defaultLocale).toBe(&quot;en&quot;);
+  });
+});
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit -- tests/unit/locales.test.ts</code>
+Expected: FAIL (current locales array has 10 entries).</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 3: Update <code>i18n/routing.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import { defineRouting } from &quot;next-intl/routing&quot;;
+
+export const routing = defineRouting({
+  locales: [&quot;en&quot;, &quot;hi&quot;, &quot;kn&quot;],
+  defaultLocale: &quot;en&quot;,
+  localePrefix: &quot;always&quot;,
+});
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Trim AVAILABLE_LOCALES in <code>components/Header.tsx</code></strong></li>
+</ul>
+<pre><code class="language-ts">const AVAILABLE_LOCALES = [
+  { code: &quot;en&quot;, label: &quot;English&quot; },
+  { code: &quot;hi&quot;, label: &quot;हिन्दी&quot; },
+  { code: &quot;kn&quot;, label: &quot;ಕನ್ನಡ&quot; },
+];
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Delete unused message files</strong></li>
+</ul>
+<pre><code class="language-bash">git rm messages/es.json messages/fr.json messages/ta.json messages/te.json messages/bn.json messages/mr.json messages/gu.json
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Run tests + build</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit &amp;&amp; npm run build</code>
+Expected: PASS + clean build.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add i18n/routing.ts components/Header.tsx messages/
+git commit -m &quot;refactor: trim active locales to en, hi, kn&quot;
+</code></pre>
+<hr>
+<h2>Task 4: Locale layout — emit hreflang alternates</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>app/[locale]/layout.tsx</code></li>
+<li>Test: <code>tests/unit/hreflang.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: <code>generateMetadata</code> on locale layout emits <code>&lt;link rel=&quot;alternate&quot; hreflang=&quot;...&quot;&gt;</code> for each of <code>en/hi/kn</code> plus <code>x-default</code>.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing test</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+import { buildAlternates } from &quot;@/lib/seo&quot;;
+
+describe(&quot;buildAlternates&quot;, () =&gt; {
+  it(&quot;returns en/hi/kn + x-default for a path&quot;, () =&gt; {
+    const result = buildAlternates(&quot;/mithai/kaju-katli&quot;);
+    expect(result).toEqual({
+      languages: {
+        en: &quot;/en/mithai/kaju-katli&quot;,
+        hi: &quot;/hi/mithai/kaju-katli&quot;,
+        kn: &quot;/kn/mithai/kaju-katli&quot;,
+        &quot;x-default&quot;: &quot;/en/mithai/kaju-katli&quot;,
+      },
+    });
+  });
+});
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit -- tests/unit/hreflang.test.ts</code>
+Expected: FAIL.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 3: Create <code>lib/seo.ts</code> with helper</strong></li>
+</ul>
+<pre><code class="language-ts">import { routing } from &quot;@/i18n/routing&quot;;
+
+export function buildAlternates(pathWithoutLocale: string) {
+  const clean = pathWithoutLocale.replace(/^\/(en|hi|kn)/, &quot;&quot;).replace(/\/$/, &quot;&quot;) || &quot;/&quot;;
+  return {
+    languages: {
+      en: `/en${clean === &quot;/&quot; ? &quot;&quot; : clean}`.replace(/\/$/, &quot;&quot;) || &quot;/en&quot;,
+      hi: `/hi${clean === &quot;/&quot; ? &quot;&quot; : clean}`.replace(/\/$/, &quot;&quot;) || &quot;/hi&quot;,
+      kn: `/kn${clean === &quot;/&quot; ? &quot;&quot; : clean}`.replace(/\/$/, &quot;&quot;) || &quot;/kn&quot;,
+      &quot;x-default&quot;: `/en${clean === &quot;/&quot; ? &quot;&quot; : clean}`.replace(/\/$/, &quot;&quot;) || &quot;/en&quot;,
+    },
+  };
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Wire <code>generateMetadata</code> in <code>app/[locale]/layout.tsx</code></strong></li>
+</ul>
+<pre><code class="language-tsx">import type { Metadata } from &quot;next&quot;;
+import type { ReactNode } from &quot;react&quot;;
+import { NextIntlClientProvider } from &quot;next-intl&quot;;
+import { notFound } from &quot;next/navigation&quot;;
+import { routing } from &quot;@/i18n/routing&quot;;
+import { buildAlternates } from &quot;@/lib/seo&quot;;
+
+type Props = {
+  children: ReactNode;
+  params: Promise&lt;{ locale: string }&gt;;
+};
+
+export async function generateMetadata({ params }: { params: Promise&lt;{ locale: string }&gt; }): Promise&lt;Metadata&gt; {
+  const { locale } = await params;
+  return {
+    alternates: buildAlternates(&quot;&quot;),
+    other: { &quot;og:locale&quot;: locale },
+  };
+}
+
+export default async function LocaleLayout({ children, params }: Props) {
+  const { locale } = await params;
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
+    notFound();
+  }
+  const messages = (await import(`../../messages/${locale}.json`)).default;
+  return (
+    &lt;NextIntlClientProvider locale={locale} messages={messages}&gt;
+      {children}
+    &lt;/NextIntlClientProvider&gt;
+  );
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add lib/seo.ts app/[locale]/layout.tsx tests/unit/hreflang.test.ts
+git commit -m &quot;feat: emit hreflang alternates for en, hi, kn&quot;
+</code></pre>
+<hr>
+<h2>Task 5: Payload install — config, Mongo adapter, admin mount</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>payload.config.ts</code></li>
+<li>Create: <code>.env.example</code></li>
+<li>Modify: <code>next.config.mjs</code></li>
+<li>Create: <code>app/admin/[[...segments]]/page.tsx</code></li>
+<li>Create: <code>app/admin/[[...segments]]/not-found.tsx</code></li>
+<li>Modify: <code>.gitignore</code> (add <code>.payload/</code>)</li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Consumes: <code>MONGODB_URI</code>, <code>PAYLOAD_SECRET</code> env vars</p>
+</li>
+<li><p>Produces: Payload admin UI at <code>/admin</code>; <code>getPayload()</code> helper via <code>lib/payload-client.ts</code>; empty config ready to register collections</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Add env vars</strong></p>
+</li>
+</ul>
+<p>Create <code>.env.example</code>:</p>
+<pre><code>MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/mishran
+PAYLOAD_SECRET=replace-with-32+-char-random-string
+RESEND_API_KEY=
+NEXT_PUBLIC_GA4_ID=
+NEXT_PUBLIC_META_PIXEL_ID=
+NEXT_PUBLIC_WHATSAPP_NUMBER=+91XXXXXXXXXX
+</code></pre>
+<p>Add <code>.env.local</code> to <code>.gitignore</code> (already standard) and <code>.payload/</code>.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Create <code>payload.config.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import { buildConfig } from &quot;payload/config&quot;;
+import { mongooseAdapter } from &quot;@payloadcms/db-mongodb&quot;;
+import { lexicalEditor } from &quot;@payloadcms/richtext-lexical&quot;;
+import path from &quot;node:path&quot;;
+import { fileURLToPath } from &quot;node:url&quot;;
+
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
+
+export default buildConfig({
+  admin: {
+    user: &quot;users&quot;,
+    autoLogin: process.env.NODE_ENV === &quot;production&quot; ? false : {
+      email: &quot;dev@mithai.shop&quot;,
+      password: &quot;dev-password&quot;,
+    },
+  },
+  collections: [],
+  globals: [],
+  secret: process.env.PAYLOAD_SECRET ?? &quot;dev-secret-change-me&quot;,
+  typescript: {
+    outputFile: path.resolve(dirname, &quot;payload-types.ts&quot;),
+  },
+  db: mongooseAdapter({
+    url: process.env.MONGODB_URI ?? &quot;mongodb://127.0.0.1:27017/mishran-dev&quot;,
+  }),
+  editor: lexicalEditor(),
+  sharp,
+});
+</code></pre>
+<p>(Imports <code>sharp</code> from the <code>sharp</code> package; ensure it is installed — added in Task 1.)</p>
+<p>Fix <code>sharp</code> import: add <code>import sharp from &quot;sharp&quot;;</code> at top.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 3: Wire Payload into Next config</strong></li>
+</ul>
+<p>Replace <code>next.config.mjs</code>:</p>
+<pre><code class="language-js">import createNextIntlPlugin from &quot;next-intl/plugin&quot;;
+import { withPayload } from &quot;@payloadcms/next/withPayload&quot;;
+
+const nextConfig = {};
+
+const withNextIntl = createNextIntlPlugin(&quot;./i18n/request.ts&quot;);
+
+export default withPayload(withNextIntl(nextConfig));
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Mount Payload admin</strong></li>
+</ul>
+<p><code>app/admin/[[...segments]]/page.tsx</code>:</p>
+<pre><code class="language-tsx">import type { ServerFunctionClient } from &quot;payload&quot;;
+import { importMap } from &quot;@payloadcms/next/importMap&quot;;
+import config from &quot;@/payload.config&quot;;
+
+export default async function AdminPage({ params }) {
+  // Lazy import server-side Payload handler
+  const { handleAdminLogin } = await import(&quot;@payloadcms/next/views&quot;);
+  return null;
+}
+
+// Force dynamic
+export const dynamic = &quot;force-dynamic&quot;;
+</code></pre>
+<p>Reference: actual Payload 3.x admin mount requires <code>payload.config.ts</code> <code>admin.components</code> and a custom next-handler. Replace with the standard Payload 3.x scaffold:</p>
+<p><code>app/admin/[[...segments]]/page.tsx</code>:</p>
+<pre><code class="language-tsx">import config from &quot;@/payload.config&quot;;
+import { Root, NotFound } from &quot;@payloadcms/next/views&quot;;
+import { importMap } from &quot;@payloadcms/next/importMap&quot;;
+import type { ServerFunctionClient } from &quot;payload&quot;;
+
+type Args = {
+  params: Promise&lt;{ segments: string[] }&gt;;
+  searchParams: Promise&lt;Record&lt;string, string | string[]&gt;&gt;;
+};
+
+export default async function AdminPage({ params, searchParams }: Args) {
+  const { segments } = await params;
+  return (
+    &lt;Root config={config} importMap={importMap} params={{ segments }} searchParams={await searchParams} /&gt;
+  );
+}
+
+export const dynamic = &quot;force-dynamic&quot;;
+</code></pre>
+<p><code>app/(payload)/api/[...slug]/route.ts</code>:</p>
+<pre><code class="language-ts">import { rest } from &quot;@payloadcms/next&quot;;
+import config from &quot;@/payload.config&quot;;
+export const GET = rest.GET(config);
+export const POST = rest.POST(config);
+export const DELETE = rest.DELETE(config);
+export const PATCH = rest.PATCH(config);
+</code></pre>
+<p>(Use <code>app/(payload)/admin/[[...segments]]/page.tsx</code> if grouping. Keep simple: place admin at <code>app/admin/[[...segments]]/page.tsx</code> and API at <code>app/api-payload/[...slug]/route.ts</code> to avoid collision with the existing <code>app/api/</code>. Actually Payload convention is <code>app/(payload)/...</code>. Follow Payload 3 docs.)</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Create <code>lib/payload-client.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import { getPayload as getPayloadBase } from &quot;payload&quot;;
+import config from &quot;@/payload.config&quot;;
+
+export const getPayload = () =&gt; getPayloadBase({ config });
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Verify boot</strong></li>
+</ul>
+<p>Run: <code>npm run dev</code> — open <code>http://localhost:3000/admin</code>. Expected: Payload admin login screen (or auto-login in dev). If errors, fix env vars / Mongo URI.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add payload.config.ts next.config.mjs .env.example .gitignore lib/payload-client.ts app/admin/ app/\(payload\)/
+git commit -m &quot;feat: install Payload CMS with MongoDB adapter, mount admin&quot;
+</code></pre>
+<hr>
+<h2>Task 6: Shared brand collections — stories, karigars, farms, packaging, occasions</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>collections/Stories.ts</code></li>
+<li>Create: <code>collections/Karigars.ts</code></li>
+<li>Create: <code>collections/Farms.ts</code></li>
+<li>Create: <code>collections/Packaging.ts</code></li>
+<li>Create: <code>collections/Occasions.ts</code></li>
+<li>Create: <code>collections/Users.ts</code> (Payload requires admin user collection)</li>
+<li>Modify: <code>payload.config.ts</code> (register collections)</li>
+<li>Test: <code>tests/integration/brand-collections.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces typed Payload collections per spec §7. Schemas become available via <code>payload-types.ts</code> after <code>npm run build</code>.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing integration test</strong></p>
+</li>
+</ul>
+<p><code>tests/integration/brand-collections.test.ts</code>:</p>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+import { getPayload } from &quot;@/lib/payload-client&quot;;
+
+describe(&quot;brand collections&quot;, () =&gt; {
+  it(&quot;creates and reads a story&quot;, async () =&gt; {
+    const payload = await getPayload();
+    const created = await payload.create({
+      collection: &quot;stories&quot;,
+      data: {
+        title: &quot;Jhajjar Farm Story&quot;,
+        pillar: &quot;farm&quot;,
+        locale: &quot;en&quot;,
+      },
+    });
+    expect(created.title).toBe(&quot;Jhajjar Farm Story&quot;);
+  });
+});
+</code></pre>
+<p>(Set <code>MONGODB_URI</code> to test DB in <code>vitest.config.ts</code> env.)</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit -- tests/integration/brand-collections.test.ts</code>
+Expected: FAIL (collection not registered).</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 3: Define <code>collections/Stories.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const Stories: CollectionConfig = {
+  slug: &quot;stories&quot;,
+  access: {
+    read: () =&gt; true,
+  },
+  admin: { useAsTitle: &quot;title&quot; },
+  versions: { drafts: true },
+  fields: [
+    { name: &quot;title&quot;, type: &quot;text&quot;, localized: true, required: true },
+    { name: &quot;slug&quot;, type: &quot;text&quot;, required: true, unique: true, admin: { position: &quot;sidebar&quot; } },
+    {
+      name: &quot;pillar&quot;,
+      type: &quot;select&quot;,
+      required: true,
+      options: [
+        &quot;farm&quot;, &quot;milk&quot;, &quot;karigar&quot;, &quot;karigari&quot;, &quot;packaging&quot;,
+        &quot;festival&quot;, &quot;regional&quot;, &quot;recipe&quot;, &quot;journal&quot;,
+      ],
+    },
+    { name: &quot;body&quot;, type: &quot;richText&quot;, localized: true },
+    { name: &quot;heroImage&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; },
+    { name: &quot;excerpt&quot;, type: &quot;textarea&quot;, localized: true },
+    {
+      name: &quot;relatedProducts&quot;,
+      type: &quot;relationship&quot;,
+      relationTo: [&quot;mithai-products&quot;, &quot;gift-boxes&quot;, &quot;qsr-menu-items&quot;, &quot;snack-products&quot;, &quot;merch-products&quot;],
+      hasMany: true,
+    },
+    {
+      name: &quot;relatedVerticals&quot;,
+      type: &quot;select&quot;,
+      hasMany: true,
+      options: [&quot;mithai&quot;, &quot;gift-builder&quot;, &quot;qsr&quot;, &quot;snacks&quot;, &quot;merch&quot;],
+    },
+    { name: &quot;publishedAt&quot;, type: &quot;date&quot; },
+  ],
+};
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Define remaining collections</strong></li>
+</ul>
+<p><code>collections/Karigars.ts</code>:</p>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const Karigars: CollectionConfig = {
+  slug: &quot;karigars&quot;,
+  access: { read: () =&gt; true },
+  admin: { useAsTitle: &quot;name&quot; },
+  fields: [
+    { name: &quot;name&quot;, type: &quot;text&quot;, required: true },
+    {
+      name: &quot;archetype&quot;,
+      type: &quot;select&quot;,
+      options: [&quot;chenna-specialist&quot;, &quot;kaju-specialist&quot;, &quot;ghee-specialist&quot;, &quot;halwai&quot;],
+    },
+    { name: &quot;portrait&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; },
+    { name: &quot;story&quot;, type: &quot;richText&quot;, localized: true },
+    {
+      name: &quot;specialties&quot;,
+      type: &quot;relationship&quot;,
+      relationTo: &quot;mithai-products&quot;,
+      hasMany: true,
+    },
+    {
+      name: &quot;signatureProducts&quot;,
+      type: &quot;relationship&quot;,
+      relationTo: &quot;mithai-products&quot;,
+      hasMany: true,
+    },
+  ],
+};
+</code></pre>
+<p><code>collections/Farms.ts</code>:</p>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const Farms: CollectionConfig = {
+  slug: &quot;farms&quot;,
+  access: { read: () =&gt; true },
+  admin: { useAsTitle: &quot;name&quot; },
+  fields: [
+    { name: &quot;name&quot;, type: &quot;text&quot;, required: true },
+    { name: &quot;location&quot;, type: &quot;text&quot; },
+    { name: &quot;story&quot;, type: &quot;richText&quot;, localized: true },
+    { name: &quot;gallery&quot;, type: &quot;array&quot;, fields: [
+      { name: &quot;image&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; },
+      { name: &quot;caption&quot;, type: &quot;text&quot;, localized: true },
+    ]},
+    { name: &quot;milkProcess&quot;, type: &quot;richText&quot;, localized: true },
+    { name: &quot;certifications&quot;, type: &quot;text&quot;, hasMany: true },
+  ],
+};
+</code></pre>
+<p><code>collections/Packaging.ts</code>:</p>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const Packaging: CollectionConfig = {
+  slug: &quot;packaging&quot;,
+  access: { read: () =&gt; true },
+  admin: { useAsTitle: &quot;name&quot; },
+  fields: [
+    { name: &quot;name&quot;, type: &quot;text&quot;, required: true },
+    { name: &quot;family&quot;, type: &quot;select&quot;, options: [&quot;box&quot;, &quot;tray&quot;, &quot;tin&quot;, &quot;hamper&quot;, &quot;carry-bag&quot;] },
+    { name: &quot;sizes&quot;, type: &quot;array&quot;, fields: [
+      { name: &quot;label&quot;, type: &quot;text&quot; },
+      { name: &quot;capacity&quot;, type: &quot;number&quot; },
+    ]},
+    { name: &quot;images&quot;, type: &quot;array&quot;, fields: [{ name: &quot;image&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; }] },
+    { name: &quot;occasionFit&quot;, type: &quot;select&quot;, hasMany: true, options: [&quot;diwali&quot;, &quot;wedding&quot;, &quot;rakhi&quot;, &quot;corporate&quot;, &quot;birthday&quot;] },
+    { name: &quot;customizable&quot;, type: &quot;checkbox&quot; },
+  ],
+};
+</code></pre>
+<p><code>collections/Occasions.ts</code>:</p>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const Occasions: CollectionConfig = {
+  slug: &quot;occasions&quot;,
+  access: { read: () =&gt; true },
+  admin: { useAsTitle: &quot;name&quot; },
+  fields: [
+    { name: &quot;name&quot;, type: &quot;text&quot;, required: true, localized: true },
+    { name: &quot;copy&quot;, type: &quot;textarea&quot;, localized: true },
+    { name: &quot;image&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; },
+    {
+      name: &quot;recommendedProducts&quot;,
+      type: &quot;relationship&quot;,
+      relationTo: [&quot;mithai-products&quot;, &quot;gift-boxes&quot;],
+      hasMany: true,
+    },
+  ],
+};
+</code></pre>
+<p><code>collections/Media.ts</code> (Payload needs an upload collection):</p>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const Media: CollectionConfig = {
+  slug: &quot;media&quot;,
+  upload: { staticURL: &quot;/media&quot;, staticDir: &quot;media&quot;, imageSizes: [
+    { name: &quot;thumbnail&quot;, width: 400, height: 300 },
+    { name: &quot;card&quot;, width: 800, height: 600 },
+    { name: &quot;hero&quot;, width: 1600, height: 900 },
+  ]},
+  access: { read: () =&gt; true },
+  fields: [
+    { name: &quot;alt&quot;, type: &quot;text&quot;, localized: true },
+  ],
+};
+</code></pre>
+<p><code>collections/Users.ts</code>:</p>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const Users: CollectionConfig = {
+  slug: &quot;users&quot;,
+  auth: true,
+  access: { read: () =&gt; true },
+  admin: { useAsTitle: &quot;email&quot; },
+  fields: [
+    { name: &quot;name&quot;, type: &quot;text&quot; },
+    { name: &quot;role&quot;, type: &quot;select&quot;, options: [&quot;admin&quot;, &quot;editor&quot;, &quot;ops&quot;], defaultValue: &quot;editor&quot;, required: true },
+  ],
+};
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Register collections in <code>payload.config.ts</code></strong></li>
+</ul>
+<p>Update <code>collections: []</code> to:</p>
+<pre><code class="language-ts">collections: [Users, Media, Stories, Karigars, Farms, Packaging, Occasions],
+</code></pre>
+<p>Import at top.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Run integration test, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit -- tests/integration/brand-collections.test.ts</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 8: Generate types</strong></li>
+</ul>
+<p>Run: <code>npx payload generate:types</code>
+Expected: <code>payload-types.ts</code> created.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 9: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add collections/ payload.config.ts payload-types.ts tests/integration/brand-collections.test.ts
+git commit -m &quot;feat: add shared brand collections (stories, karigars, farms, packaging, occasions)&quot;
+</code></pre>
+<hr>
+<h2>Task 7: Product collections — one per vertical + sample seeds</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>collections/MithaiProducts.ts</code></li>
+<li>Create: <code>collections/GiftBoxes.ts</code></li>
+<li>Create: <code>collections/QsrMenuItems.ts</code></li>
+<li>Create: <code>collections/SnackProducts.ts</code></li>
+<li>Create: <code>collections/MerchProducts.ts</code></li>
+<li>Modify: <code>payload.config.ts</code></li>
+<li>Create: <code>scripts/seed.ts</code></li>
+<li>Test: <code>tests/integration/products.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces 5 product collections matching spec §7. <code>displayPrice</code> is display-only string on mithai. Sample seed creates 1 product per vertical.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing test</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+import { getPayload } from &quot;@/lib/payload-client&quot;;
+
+describe(&quot;product collections&quot;, () =&gt; {
+  it(&quot;creates a mithai product&quot;, async () =&gt; {
+    const payload = await getPayload();
+    const p = await payload.create({
+      collection: &quot;mithai-products&quot;,
+      data: {
+        name: &quot;Kaju Katli&quot;,
+        slug: &quot;kaju-katli&quot;,
+        family: &quot;classic&quot;,
+        shelfLife: &quot;7 days&quot;,
+        displayPrice: &quot;₹920 / 250g&quot;,
+      },
+    });
+    expect(p.slug).toBe(&quot;kaju-katli&quot;);
+  });
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Define <code>collections/MithaiProducts.ts</code></strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const MithaiProducts: CollectionConfig = {
+  slug: &quot;mithai-products&quot;,
+  access: { read: () =&gt; true },
+  admin: { useAsTitle: &quot;name&quot;, group: &quot;Mithai&quot; },
+  versions: { drafts: true },
+  fields: [
+    { name: &quot;name&quot;, type: &quot;text&quot;, required: true, localized: true },
+    { name: &quot;slug&quot;, type: &quot;text&quot;, required: true, unique: true, admin: { position: &quot;sidebar&quot; } },
+    {
+      name: &quot;family&quot;,
+      type: &quot;select&quot;,
+      required: true,
+      options: [&quot;classic&quot;, &quot;original&quot;, &quot;sugar-free&quot;, &quot;regional&quot;, &quot;seasonal&quot;],
+    },
+    { name: &quot;ingredients&quot;, type: &quot;textarea&quot;, localized: true },
+    { name: &quot;allergens&quot;, type: &quot;text&quot;, hasMany: true },
+    { name: &quot;shelfLife&quot;, type: &quot;text&quot; },
+    { name: &quot;storage&quot;, type: &quot;textarea&quot;, localized: true },
+    {
+      name: &quot;freshnessStatus&quot;,
+      type: &quot;select&quot;,
+      options: [&quot;made-daily&quot;, &quot;made-to-order&quot;, &quot;batch-frozen&quot;],
+    },
+    { name: &quot;dietaryTags&quot;, type: &quot;text&quot;, hasMany: true },
+    { name: &quot;boxCompatibility&quot;, type: &quot;relationship&quot;, relationTo: &quot;gift-boxes&quot;, hasMany: true },
+    { name: &quot;packagingCompatibility&quot;, type: &quot;relationship&quot;, relationTo: &quot;packaging&quot;, hasMany: true },
+    { name: &quot;leadTime&quot;, type: &quot;text&quot; },
+    { name: &quot;images&quot;, type: &quot;array&quot;, fields: [{ name: &quot;image&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; }], minRows: 1 },
+    { name: &quot;story&quot;, type: &quot;richText&quot;, localized: true },
+    { name: &quot;karigar&quot;, type: &quot;relationship&quot;, relationTo: &quot;karigars&quot; },
+    { name: &quot;displayPrice&quot;, type: &quot;text&quot;, admin: { description: &quot;Display-only. Commerce deferred to Phase 8.&quot; } },
+  ],
+};
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Define remaining product collections</strong></li>
+</ul>
+<p><code>collections/GiftBoxes.ts</code>:</p>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const GiftBoxes: CollectionConfig = {
+  slug: &quot;gift-boxes&quot;,
+  access: { read: () =&gt; true },
+  admin: { useAsTitle: &quot;name&quot;, group: &quot;Gifting&quot; },
+  fields: [
+    { name: &quot;name&quot;, type: &quot;text&quot;, required: true, localized: true },
+    { name: &quot;size&quot;, type: &quot;select&quot;, options: [&quot;4-piece&quot;, &quot;8-piece&quot;, &quot;16-piece&quot;, &quot;custom&quot;] },
+    { name: &quot;compartmentLayout&quot;, type: &quot;textarea&quot; },
+    { name: &quot;compatibleMithai&quot;, type: &quot;relationship&quot;, relationTo: &quot;mithai-products&quot;, hasMany: true },
+    { name: &quot;packaging&quot;, type: &quot;relationship&quot;, relationTo: &quot;packaging&quot;, hasMany: true },
+    { name: &quot;addOns&quot;, type: &quot;array&quot;, fields: [
+      { name: &quot;label&quot;, type: &quot;text&quot; },
+      { name: &quot;type&quot;, type: &quot;select&quot;, options: [&quot;carry-bag&quot;, &quot;sleeve&quot;, &quot;ribbon&quot;, &quot;card&quot;] },
+    ]},
+    { name: &quot;images&quot;, type: &quot;array&quot;, fields: [{ name: &quot;image&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; }] },
+    { name: &quot;curatedAssortments&quot;, type: &quot;array&quot;, fields: [
+      { name: &quot;label&quot;, type: &quot;text&quot; },
+      { name: &quot;items&quot;, type: &quot;relationship&quot;, relationTo: &quot;mithai-products&quot;, hasMany: true },
+    ]},
+  ],
+};
+</code></pre>
+<p><code>collections/QsrMenuItems.ts</code>:</p>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const QsrMenuItems: CollectionConfig = {
+  slug: &quot;qsr-menu-items&quot;,
+  access: { read: () =&gt; true },
+  admin: { useAsTitle: &quot;name&quot;, group: &quot;QSR&quot; },
+  fields: [
+    { name: &quot;name&quot;, type: &quot;text&quot;, required: true, localized: true },
+    { name: &quot;category&quot;, type: &quot;select&quot;, options: [&quot;chaat&quot;, &quot;chole-bhature&quot;, &quot;kulcha&quot;, &quot;thaali&quot;, &quot;chinese&quot;, &quot;south-indian&quot;], required: true },
+    { name: &quot;description&quot;, type: &quot;textarea&quot;, localized: true },
+    { name: &quot;image&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; },
+    { name: &quot;veg&quot;, type: &quot;checkbox&quot; },
+    { name: &quot;spiceLevel&quot;, type: &quot;select&quot;, options: [&quot;mild&quot;, &quot;medium&quot;, &quot;hot&quot;] },
+    { name: &quot;availableAtStores&quot;, type: &quot;relationship&quot;, relationTo: &quot;stores&quot;, hasMany: true },
+  ],
+};
+</code></pre>
+<p>(<code>stores</code> deferred to StoreSettings global — for now, omit this relationship and use plain <code>text</code> field for store ids, OR create <code>collections/Stores.ts</code>. Pick simpler: use <code>array</code> of <code>text</code> for store slugs.)</p>
+<p><code>collections/SnackProducts.ts</code>:</p>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const SnackProducts: CollectionConfig = {
+  slug: &quot;snack-products&quot;,
+  access: { read: () =&gt; true },
+  admin: { useAsTitle: &quot;name&quot;, group: &quot;FMCG&quot; },
+  fields: [
+    { name: &quot;name&quot;, type: &quot;text&quot;, required: true, localized: true },
+    { name: &quot;category&quot;, type: &quot;select&quot;, options: [&quot;namkeen&quot;, &quot;cookie&quot;, &quot;dry-fruit&quot;], required: true },
+    { name: &quot;weight&quot;, type: &quot;text&quot; },
+    { name: &quot;description&quot;, type: &quot;textarea&quot;, localized: true },
+    { name: &quot;images&quot;, type: &quot;array&quot;, fields: [{ name: &quot;image&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; }] },
+    { name: &quot;externalRetailers&quot;, type: &quot;array&quot;, fields: [
+      { name: &quot;label&quot;, type: &quot;text&quot; },
+      { name: &quot;url&quot;, type: &quot;text&quot; },
+    ]},
+    { name: &quot;msrp&quot;, type: &quot;text&quot; },
+  ],
+};
+</code></pre>
+<p><code>collections/MerchProducts.ts</code>:</p>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const MerchProducts: CollectionConfig = {
+  slug: &quot;merch-products&quot;,
+  access: { read: () =&gt; true },
+  admin: { useAsTitle: &quot;name&quot;, group: &quot;Merch&quot; },
+  fields: [
+    { name: &quot;name&quot;, type: &quot;text&quot;, required: true, localized: true },
+    { name: &quot;type&quot;, type: &quot;select&quot;, options: [&quot;tool&quot;, &quot;book&quot;, &quot;experience&quot;], required: true },
+    { name: &quot;description&quot;, type: &quot;textarea&quot;, localized: true },
+    { name: &quot;images&quot;, type: &quot;array&quot;, fields: [{ name: &quot;image&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; }] },
+    { name: &quot;price&quot;, type: &quot;text&quot; },
+    { name: &quot;availability&quot;, type: &quot;select&quot;, options: [&quot;in-stock&quot;, &quot;pre-order&quot;, &quot;enquiry-only&quot;], defaultValue: &quot;enquiry-only&quot; },
+  ],
+};
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Register product collections</strong></li>
+</ul>
+<p>Update <code>payload.config.ts</code> <code>collections</code> array.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Create <code>scripts/seed.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import { getPayload } from &quot;@/lib/payload-client&quot;;
+
+async function main() {
+  const payload = await getPayload();
+
+  // 1 sample mithai
+  await payload.create({
+    collection: &quot;mithai-products&quot;,
+    data: {
+      name: &quot;Kaju Katli&quot;,
+      slug: &quot;kaju-katli&quot;,
+      family: &quot;classic&quot;,
+      shelfLife: &quot;7 days&quot;,
+      storage: &quot;Room temperature, airtight.&quot;,
+      displayPrice: &quot;₹920 / 250g&quot;,
+      freshnessStatus: &quot;made-to-order&quot;,
+      ingredients: &quot;Cashew, sugar, kakvi.&quot;,
+    },
+  });
+
+  // 1 sample gift box
+  await payload.create({
+    collection: &quot;gift-boxes&quot;,
+    data: { name: &quot;Heritage 16-piece Hamper&quot;, size: &quot;16-piece&quot; },
+  });
+
+  // 1 sample qsr item
+  await payload.create({
+    collection: &quot;qsr-menu-items&quot;,
+    data: { name: &quot;Chole Bhature&quot;, category: &quot;chole-bhature&quot;, veg: true, spiceLevel: &quot;medium&quot; },
+  });
+
+  // 1 sample snack
+  await payload.create({
+    collection: &quot;snack-products&quot;,
+    data: { name: &quot;Aloo Bhujia&quot;, category: &quot;namkeen&quot;, weight: &quot;200g&quot;, msrp: &quot;₹60&quot; },
+  });
+
+  // 1 sample merch
+  await payload.create({
+    collection: &quot;merch-products&quot;,
+    data: { name: &quot;Mithai-Making Tool Set&quot;, type: &quot;tool&quot;, availability: &quot;enquiry-only&quot; },
+  });
+
+  console.log(&quot;Seed complete.&quot;);
+  process.exit(0);
+}
+
+main().catch((e) =&gt; { console.error(e); process.exit(1); });
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Run tests + seed</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit -- tests/integration/products.test.ts</code>
+Expected: PASS.</p>
+<p>Run: <code>npm run seed</code>
+Expected: 5 records created.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 8: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add collections/ payload.config.ts scripts/seed.ts tests/integration/products.test.ts
+git commit -m &quot;feat: add 5 product collections + sample seed&quot;
+</code></pre>
+<hr>
+<h2>Task 8: Payload globals — brand, nav, theme, analytics, store</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>globals/BrandSettings.ts</code></li>
+<li>Create: <code>globals/NavSettings.ts</code></li>
+<li>Create: <code>globals/ThemeSettings.ts</code></li>
+<li>Create: <code>globals/AnalyticsSettings.ts</code></li>
+<li>Create: <code>globals/StoreSettings.ts</code></li>
+<li>Modify: <code>payload.config.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces globals per spec §7. Editors can configure brand tagline, default theme, GA4/Pixel IDs, WhatsApp number, store list.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Define globals</strong></p>
+</li>
+</ul>
+<p><code>globals/BrandSettings.ts</code>:</p>
+<pre><code class="language-ts">import { GlobalConfig } from &quot;payload/types&quot;;
+
+export const BrandSettings: GlobalConfig = {
+  slug: &quot;brand-settings&quot;,
+  access: { read: () =&gt; true },
+  fields: [
+    { name: &quot;logo&quot;, type: &quot;upload&quot;, relationTo: &quot;media&quot; },
+    { name: &quot;brandName&quot;, type: &quot;text&quot;, defaultValue: &quot;Mishran&quot;, localized: true },
+    { name: &quot;tagline&quot;, type: &quot;text&quot;, localized: true },
+    { name: &quot;positioning&quot;, type: &quot;textarea&quot;, localized: true },
+    { name: &quot;heroCopy&quot;, type: &quot;textarea&quot;, localized: true },
+    {
+      name: &quot;defaultTheme&quot;,
+      type: &quot;select&quot;,
+      options: [&quot;mishran-default&quot;, &quot;diwali-saffron&quot;, &quot;wedding-heritage&quot;, &quot;everyday-sage&quot;],
+      defaultValue: &quot;mishran-default&quot;,
+    },
+  ],
+};
+</code></pre>
+<p><code>globals/NavSettings.ts</code>:</p>
+<pre><code class="language-ts">import { GlobalConfig } from &quot;payload/types&quot;;
+
+export const NavSettings: GlobalConfig = {
+  slug: &quot;nav-settings&quot;,
+  access: { read: () =&gt; true },
+  fields: [
+    { name: &quot;primaryNav&quot;, type: &quot;array&quot;, fields: [
+      { name: &quot;label&quot;, type: &quot;text&quot;, localized: true },
+      { name: &quot;href&quot;, type: &quot;text&quot; },
+    ]},
+    { name: &quot;utilityNav&quot;, type: &quot;array&quot;, fields: [
+      { name: &quot;label&quot;, type: &quot;text&quot;, localized: true },
+      { name: &quot;href&quot;, type: &quot;text&quot; },
+    ]},
+  ],
+};
+</code></pre>
+<p><code>globals/ThemeSettings.ts</code>:</p>
+<pre><code class="language-ts">import { GlobalConfig } from &quot;payload/types&quot;;
+
+export const ThemeSettings: GlobalConfig = {
+  slug: &quot;theme-settings&quot;,
+  access: { read: () =&gt; true },
+  fields: [
+    { name: &quot;themes&quot;, type: &quot;array&quot;, fields: [
+      { name: &quot;id&quot;, type: &quot;text&quot; },
+      { name: &quot;label&quot;, type: &quot;text&quot;, localized: true },
+      { name: &quot;canvas&quot;, type: &quot;text&quot; },
+      { name: &quot;surface&quot;, type: &quot;text&quot; },
+      { name: &quot;accent&quot;, type: &quot;text&quot; },
+      { name: &quot;pop&quot;, type: &quot;text&quot; },
+      { name: &quot;ink&quot;, type: &quot;text&quot; },
+    ]},
+  ],
+};
+</code></pre>
+<p><code>globals/AnalyticsSettings.ts</code>:</p>
+<pre><code class="language-ts">import { GlobalConfig } from &quot;payload/types&quot;;
+
+export const AnalyticsSettings: GlobalConfig = {
+  slug: &quot;analytics-settings&quot;,
+  access: { read: () =&gt; true },
+  fields: [
+    { name: &quot;ga4Id&quot;, type: &quot;text&quot; },
+    { name: &quot;metaPixelId&quot;, type: &quot;text&quot; },
+    { name: &quot;hotjarId&quot;, type: &quot;text&quot; },
+    { name: &quot;whatsappNumber&quot;, type: &quot;text&quot; },
+  ],
+};
+</code></pre>
+<p><code>globals/StoreSettings.ts</code>:</p>
+<pre><code class="language-ts">import { GlobalConfig } from &quot;payload/types&quot;;
+
+export const StoreSettings: GlobalConfig = {
+  slug: &quot;store-settings&quot;,
+  access: { read: () =&gt; true },
+  fields: [
+    { name: &quot;stores&quot;, type: &quot;array&quot;, fields: [
+      { name: &quot;name&quot;, type: &quot;text&quot; },
+      { name: &quot;city&quot;, type: &quot;text&quot; },
+      { name: &quot;address&quot;, type: &quot;textarea&quot; },
+      { name: &quot;hours&quot;, type: &quot;text&quot; },
+      { name: &quot;deliveryRadiusKm&quot;, type: &quot;number&quot; },
+      { name: &quot;lat&quot;, type: &quot;number&quot; },
+      { name: &quot;lng&quot;, type: &quot;number&quot; },
+    ]},
+  ],
+};
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Register globals</strong></li>
+</ul>
+<p>Update <code>payload.config.ts</code> <code>globals: []</code> to:</p>
+<pre><code class="language-ts">globals: [BrandSettings, NavSettings, ThemeSettings, AnalyticsSettings, StoreSettings],
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 3: Boot admin and verify</strong></li>
+</ul>
+<p>Run: <code>npm run dev</code>, log into <code>/admin</code>, confirm all 5 globals appear in the sidebar.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add globals/ payload.config.ts
+git commit -m &quot;feat: add Payload globals (brand, nav, theme, analytics, store)&quot;
+</code></pre>
+<hr>
+<h2>Task 9: Leads + drafts collections</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>collections/Leads.ts</code></li>
+<li>Create: <code>collections/Drafts.ts</code></li>
+<li>Modify: <code>payload.config.ts</code></li>
+<li>Test: <code>tests/integration/leads-drafts.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces <code>leads</code> and <code>drafts</code> collections per spec §7. <code>drafts.expiresAt</code> 30-day TTL.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing test</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+import { getPayload } from &quot;@/lib/payload-client&quot;;
+
+describe(&quot;leads + drafts&quot;, () =&gt; {
+  it(&quot;creates a wedding lead&quot;, async () =&gt; {
+    const payload = await getPayload();
+    const lead = await payload.create({
+      collection: &quot;leads&quot;,
+      data: {
+        type: &quot;wedding&quot;,
+        contact: { name: &quot;Anjali&quot;, email: &quot;anjali@example.com&quot;, phone: &quot;+91XXXXXXXXXX&quot; },
+        payload: { occasion: &quot;wedding&quot;, qty: 200, city: &quot;Bengaluru&quot; },
+        status: &quot;new&quot;,
+        source: &quot;weddings-page&quot;,
+      },
+    });
+    expect(lead.status).toBe(&quot;new&quot;);
+  });
+
+  it(&quot;creates a draft with TTL 30 days from now&quot;, async () =&gt; {
+    const payload = await getPayload();
+    const inThirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const draft = await payload.create({
+      collection: &quot;drafts&quot;,
+      data: {
+        sessionId: &quot;sess-1&quot;,
+        config: { items: [] },
+        expiresAt: inThirtyDays,
+      },
+    });
+    expect(new Date(draft.expiresAt).getTime()).toBeGreaterThan(Date.now());
+  });
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Define <code>collections/Leads.ts</code></strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const Leads: CollectionConfig = {
+  slug: &quot;leads&quot;,
+  admin: { useAsTitle: &quot;type&quot;, group: &quot;Ops&quot; },
+  access: {
+    read: ({ req: { user } }) =&gt; Boolean(user),
+    create: () =&gt; true,
+    update: ({ req: { user } }) =&gt; Boolean(user),
+    delete: ({ req: { user } }) =&gt; Boolean(user),
+  },
+  fields: [
+    {
+      name: &quot;type&quot;,
+      type: &quot;select&quot;,
+      required: true,
+      options: [&quot;wedding&quot;, &quot;corporate&quot;, &quot;merch&quot;, &quot;gift-builder-draft&quot;, &quot;wholesale&quot;, &quot;general&quot;],
+    },
+    {
+      name: &quot;contact&quot;,
+      type: &quot;group&quot;,
+      fields: [
+        { name: &quot;name&quot;, type: &quot;text&quot;, required: true },
+        { name: &quot;email&quot;, type: &quot;email&quot;, required: true },
+        { name: &quot;phone&quot;, type: &quot;text&quot; },
+        { name: &quot;company&quot;, type: &quot;text&quot; },
+        { name: &quot;GSTIN&quot;, type: &quot;text&quot;, admin: { description: &quot;GSTIN for corporate leads&quot; } },
+      ],
+    },
+    {
+      name: &quot;payload&quot;,
+      type: &quot;json&quot;,
+      admin: { description: &quot;Free-form lead details (occasion, qty, budget, date, city, selectedProducts, message).&quot; },
+    },
+    {
+      name: &quot;status&quot;,
+      type: &quot;select&quot;,
+      options: [&quot;new&quot;, &quot;contacted&quot;, &quot;qualified&quot;, &quot;won&quot;, &quot;lost&quot;],
+      defaultValue: &quot;new&quot;,
+      required: true,
+      admin: { position: &quot;sidebar&quot; },
+    },
+    { name: &quot;source&quot;, type: &quot;text&quot; },
+    { name: &quot;convertedFromDraft&quot;, type: &quot;relationship&quot;, relationTo: &quot;drafts&quot; },
+  ],
+  timestamps: true,
+};
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Define <code>collections/Drafts.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import { CollectionConfig } from &quot;payload/types&quot;;
+
+export const Drafts: CollectionConfig = {
+  slug: &quot;drafts&quot;,
+  admin: { useAsTitle: &quot;sessionId&quot;, group: &quot;Ops&quot; },
+  access: {
+    read: () =&gt; true,
+    create: () =&gt; true,
+    update: () =&gt; true,
+    delete: () =&gt; true,
+  },
+  fields: [
+    { name: &quot;sessionId&quot;, type: &quot;text&quot;, required: true, unique: true },
+    { name: &quot;config&quot;, type: &quot;json&quot; },
+    { name: &quot;expiresAt&quot;, type: &quot;date&quot;, required: true, admin: { position: &quot;sidebar&quot; } },
+    { name: &quot;convertedToLead&quot;, type: &quot;relationship&quot;, relationTo: &quot;leads&quot; },
+  ],
+  indexes: [
+    { fields: &quot;expiresAt&quot;, options: { expireAfterSeconds: 0 } },
+  ],
+};
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 5: Register collections in <code>payload.config.ts</code></strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 6: Run tests, verify pass</strong></p>
+</li>
+</ul>
+<p>Run: <code>npm run test:unit -- tests/integration/leads-drafts.test.ts</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add collections/Leads.ts collections/Drafts.ts payload.config.ts tests/integration/leads-drafts.test.ts
+git commit -m &quot;feat: add leads + drafts collections with TTL on drafts&quot;
+</code></pre>
+<hr>
+<h2>Task 10: <code>/api/leads</code> POST endpoint + Resend email</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>app/api/leads/route.ts</code></li>
+<li>Create: <code>lib/email.ts</code></li>
+<li>Create: <code>lib/email/templates.ts</code></li>
+<li>Test: <code>tests/integration/api-leads.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Consumes: <code>RESEND_API_KEY</code>, <code>NEXT_PUBLIC_WHATSAPP_NUMBER</code> env; <code>Leads</code> collection.</p>
+</li>
+<li><p>Produces: <code>POST /api/leads</code> accepting JSON body matching <code>LeadInput</code>; returns <code>{ leadId, message }</code>. Sends email via Resend to ops inbox. Body shape documented for Task 17.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing integration test</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+
+describe(&quot;POST /api/leads&quot;, () =&gt; {
+  it(&quot;creates a lead and returns id&quot;, async () =&gt; {
+    const res = await fetch(&quot;http://localhost:3000/api/leads&quot;, {
+      method: &quot;POST&quot;,
+      headers: { &quot;content-type&quot;: &quot;application/json&quot; },
+      body: JSON.stringify({
+        type: &quot;wedding&quot;,
+        contact: { name: &quot;Test&quot;, email: &quot;test@example.com&quot;, phone: &quot;+919999999999&quot; },
+        payload: { qty: 100 },
+        source: &quot;test&quot;,
+      }),
+    });
+    expect(res.status).toBe(201);
+    const body = await res.json();
+    expect(body.leadId).toBeTruthy();
+  });
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Create <code>lib/email.ts</code></strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { Resend } from &quot;resend&quot;;
+
+const apiKey = process.env.RESEND_API_KEY;
+export const resend = apiKey ? new Resend(apiKey) : null;
+
+export async function sendLeadNotification(to: string, lead: any) {
+  if (!resend) {
+    console.warn(&quot;[email] RESEND_API_KEY missing; skipping send.&quot;);
+    return;
+  }
+  const { data, error } = await resend.emails.send({
+    from: &quot;Mishran Leads &lt;leads@mishran.shop&gt;&quot;,
+    to,
+    subject: `New ${lead.type} lead — ${lead.contact.name}`,
+    html: `&lt;pre&gt;${JSON.stringify(lead, null, 2)}&lt;/pre&gt;`,
+  });
+  if (error) console.error(&quot;[email]&quot;, error);
+  return data;
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Create <code>app/api/leads/route.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import { NextResponse } from &quot;next/server&quot;;
+import { getPayload } from &quot;@/lib/payload-client&quot;;
+import { sendLeadNotification } from &quot;@/lib/email&quot;;
+
+const OPS_INBOX = process.env.LEADS_INBOX ?? &quot;ops@mishran.shop&quot;;
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    if (!body?.type || !body?.contact?.email || !body?.contact?.name) {
+      return NextResponse.json({ error: &quot;missing required fields&quot; }, { status: 400 });
+    }
+
+    const payload = await getPayload();
+    const created = await payload.create({
+      collection: &quot;leads&quot;,
+      data: {
+        type: body.type,
+        contact: body.contact,
+        payload: body.payload ?? {},
+        status: &quot;new&quot;,
+        source: body.source ?? &quot;unknown&quot;,
+      },
+    });
+
+    await sendLeadNotification(OPS_INBOX, created);
+
+    return NextResponse.json({ leadId: created.id, message: &quot;Lead received. We&#39;ll be in touch.&quot; }, { status: 201 });
+  } catch (err) {
+    console.error(&quot;[api/leads]&quot;, err);
+    return NextResponse.json({ error: &quot;internal error&quot; }, { status: 500 });
+  }
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Run test, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit -- tests/integration/api-leads.test.ts</code>
+Expected: PASS (with dev server running).</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add app/api/leads/route.ts lib/email.ts tests/integration/api-leads.test.ts
+git commit -m &quot;feat: add /api/leads endpoint with Resend email notification&quot;
+</code></pre>
+<hr>
+<h2>Task 11: <code>/api/drafts</code> endpoints</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>app/api/drafts/route.ts</code></li>
+<li>Create: <code>app/api/drafts/[sessionId]/route.ts</code></li>
+<li>Test: <code>tests/integration/api-drafts.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces:</p>
+<ul>
+<li><code>POST /api/drafts</code> body: <code>{ sessionId, config }</code> → creates with <code>expiresAt = now + 30d</code>. Returns <code>{ id, sessionId, expiresAt }</code>.</li>
+<li><code>GET /api/drafts/[sessionId]</code> → returns draft or 404.</li>
+<li><code>PUT /api/drafts/[sessionId]</code> body: <code>{ config }</code> → updates.</li>
+</ul>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing test</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+
+describe(&quot;drafts API&quot;, () =&gt; {
+  it(&quot;POST then GET roundtrip&quot;, async () =&gt; {
+    const post = await fetch(&quot;http://localhost:3000/api/drafts&quot;, {
+      method: &quot;POST&quot;,
+      headers: { &quot;content-type&quot;: &quot;application/json&quot; },
+      body: JSON.stringify({ sessionId: &quot;test-sess&quot;, config: { items: [&quot;a&quot;] } }),
+    });
+    expect(post.status).toBe(201);
+    const get = await fetch(&quot;http://localhost:3000/api/drafts/test-sess&quot;);
+    expect(get.status).toBe(200);
+    const body = await get.json();
+    expect(body.config.items).toEqual([&quot;a&quot;]);
+  });
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Create routes</strong></p>
+</li>
+</ul>
+<p><code>app/api/drafts/route.ts</code>:</p>
+<pre><code class="language-ts">import { NextResponse } from &quot;next/server&quot;;
+import { getPayload } from &quot;@/lib/payload-client&quot;;
+
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+export async function POST(req: Request) {
+  const body = await req.json();
+  if (!body?.sessionId) {
+    return NextResponse.json({ error: &quot;sessionId required&quot; }, { status: 400 });
+  }
+  const payload = await getPayload();
+  const expiresAt = new Date(Date.now() + THIRTY_DAYS_MS).toISOString();
+  try {
+    const created = await payload.create({
+      collection: &quot;drafts&quot;,
+      data: { sessionId: body.sessionId, config: body.config ?? {}, expiresAt },
+    });
+    return NextResponse.json({ id: created.id, sessionId: body.sessionId, expiresAt }, { status: 201 });
+  } catch (err: any) {
+    if (err?.code === 11000) {
+      // duplicate sessionId — update instead
+      const existing = await payload.find({
+        collection: &quot;drafts&quot;,
+        where: { sessionId: { equals: body.sessionId } },
+      });
+      const doc = existing.docs[0];
+      if (doc) {
+        const updated = await payload.update({
+          collection: &quot;drafts&quot;,
+          id: doc.id,
+          data: { config: body.config ?? {}, expiresAt },
+        });
+        return NextResponse.json({ id: updated.id, sessionId: body.sessionId, expiresAt }, { status: 200 });
+      }
+    }
+    throw err;
+  }
+}
+</code></pre>
+<p><code>app/api/drafts/[sessionId]/route.ts</code>:</p>
+<pre><code class="language-ts">import { NextResponse } from &quot;next/server&quot;;
+import { getPayload } from &quot;@/lib/payload-client&quot;;
+
+export async function GET(_req: Request, { params }: { params: Promise&lt;{ sessionId: string }&gt; }) {
+  const { sessionId } = await params;
+  const payload = await getPayload();
+  const result = await payload.find({
+    collection: &quot;drafts&quot;,
+    where: { sessionId: { equals: sessionId } },
+  });
+  if (result.docs.length === 0) return NextResponse.json({ error: &quot;not found&quot; }, { status: 404 });
+  const doc = result.docs[0] as any;
+  if (new Date(doc.expiresAt).getTime() &lt; Date.now()) {
+    return NextResponse.json({ error: &quot;expired&quot; }, { status: 410 });
+  }
+  return NextResponse.json(doc);
+}
+
+export async function PUT(req: Request, { params }: { params: Promise&lt;{ sessionId: string }&gt; }) {
+  const { sessionId } = await params;
+  const body = await req.json();
+  const payload = await getPayload();
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+  const result = await payload.find({
+    collection: &quot;drafts&quot;,
+    where: { sessionId: { equals: sessionId } },
+  });
+  if (result.docs.length === 0) return NextResponse.json({ error: &quot;not found&quot; }, { status: 404 });
+  const updated = await payload.update({
+    collection: &quot;drafts&quot;,
+    id: result.docs[0].id,
+    data: { config: body.config ?? {}, expiresAt },
+  });
+  return NextResponse.json(updated);
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit -- tests/integration/api-drafts.test.ts</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add app/api/drafts/ tests/integration/api-drafts.test.ts
+git commit -m &quot;feat: add /api/drafts endpoints (POST/GET/PUT) with 30-day TTL&quot;
+</code></pre>
+<hr>
+<h2>Task 12: <code>/api/search</code> endpoint</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>app/api/search/route.ts</code></li>
+<li>Test: <code>tests/integration/api-search.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Consumes: Payload collections.</p>
+</li>
+<li><p>Produces: <code>GET /api/search?q=…&amp;limit=20</code> returning <code>{ results: [{ kind, id, slug, label, snippet }] }</code> across <code>mithai-products</code>, <code>stories</code>, <code>qsr-menu-items</code>, <code>snack-products</code>, <code>merch-products</code>.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing test</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+
+describe(&quot;GET /api/search&quot;, () =&gt; {
+  it(&quot;returns kaju katli for &#39;kaju&#39;&quot;, async () =&gt; {
+    const res = await fetch(&quot;http://localhost:3000/api/search?q=kaju&amp;limit=10&quot;);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.results.some((r: any) =&gt; r.label?.toLowerCase().includes(&quot;kaju&quot;))).toBe(true);
+  });
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Create route</strong></p>
+</li>
+</ul>
+<p><code>app/api/search/route.ts</code>:</p>
+<pre><code class="language-ts">import { NextResponse } from &quot;next/server&quot;;
+import { getPayload } from &quot;@/lib/payload-client&quot;;
+
+const COLLECTIONS = [
+  { slug: &quot;mithai-products&quot;, labelKey: &quot;name&quot;, kind: &quot;mithai&quot; },
+  { slug: &quot;stories&quot;, labelKey: &quot;title&quot;, kind: &quot;story&quot; },
+  { slug: &quot;qsr-menu-items&quot;, labelKey: &quot;name&quot;, kind: &quot;qsr&quot; },
+  { slug: &quot;snack-products&quot;, labelKey: &quot;name&quot;, kind: &quot;snack&quot; },
+  { slug: &quot;merch-products&quot;, labelKey: &quot;name&quot;, kind: &quot;merch&quot; },
+];
+
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const q = url.searchParams.get(&quot;q&quot;)?.trim();
+  const limit = Number(url.searchParams.get(&quot;limit&quot;) ?? 20);
+  if (!q || q.length &lt; 2) return NextResponse.json({ results: [] });
+
+  const payload = await getPayload();
+  const results: any[] = [];
+
+  for (const c of COLLECTIONS) {
+    const r = await payload.find({
+      collection: c.slug,
+      where: { [c.labelKey]: { contains: q } },
+      limit,
+    });
+    for (const doc of r.docs) {
+      results.push({
+        kind: c.kind,
+        id: doc.id,
+        slug: (doc as any).slug,
+        label: (doc as any)[c.labelKey],
+        snippet: (doc as any).excerpt ?? (doc as any).ingredients ?? &quot;&quot;,
+      });
+    }
+  }
+
+  return NextResponse.json({ results: results.slice(0, limit) });
+}
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 4: Run tests, verify pass</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 5: Commit</strong></p>
+</li>
+</ul>
+<pre><code class="language-bash">git add app/api/search/route.ts tests/integration/api-search.test.ts
+git commit -m &quot;feat: add /api/search endpoint across 5 collections&quot;
+</code></pre>
+<hr>
+<h2>Task 13: Layout shell — SiteHeader, SiteFooter, BrandBar</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>components/layout/SiteHeader.tsx</code> (supersedes <code>components/Header.tsx</code>)</li>
+<li>Create: <code>components/layout/SiteFooter.tsx</code></li>
+<li>Create: <code>components/layout/BrandBar.tsx</code></li>
+<li>Modify: <code>app/[locale]/layout.tsx</code> (mount shell)</li>
+<li>Modify: <code>components/Header.tsx</code> (re-export SiteHeader for compat or delete)</li>
+<li>Test: <code>tests/unit/nav-links.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: nav per spec §6: <code>Mithai · Build a Gift · QSR · Snacks · Merch · Stories · Farms · Karigars · Journal</code>. Locale picker, theme picker, cart badge, search trigger, WhatsApp CTA.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing test on nav structure</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+import { NAV_LINKS } from &quot;@/components/layout/SiteHeader&quot;;
+
+describe(&quot;SiteHeader nav&quot;, () =&gt; {
+  it(&quot;includes all spec links&quot;, () =&gt; {
+    const hrefs = NAV_LINKS.map((l) =&gt; l.href);
+    expect(hrefs).toContain(&quot;/mithai&quot;);
+    expect(hrefs).toContain(&quot;/stories&quot;);
+    expect(hrefs).toContain(&quot;/qsr&quot;);
+    expect(hrefs).toContain(&quot;/snacks&quot;);
+    expect(hrefs).toContain(&quot;/merch&quot;);
+  });
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Build SiteHeader</strong></p>
+</li>
+</ul>
+<p><code>components/layout/SiteHeader.tsx</code> — adapt existing <code>components/Header.tsx</code> (preserve scroll-spy logic, locale picker, theme switcher, cart badge) and swap <code>NAV_LINKS</code>:</p>
+<pre><code class="language-ts">export const NAV_LINKS = [
+  { href: &quot;/mithai&quot;, key: &quot;nav.mithai&quot; },
+  { href: &quot;/build-a-gift&quot;, key: &quot;nav.buildAGift&quot; },
+  { href: &quot;/qsr&quot;, key: &quot;nav.qsr&quot; },
+  { href: &quot;/snacks&quot;, key: &quot;nav.snacks&quot; },
+  { href: &quot;/merch&quot;, key: &quot;nav.merch&quot; },
+  { href: &quot;/stories&quot;, key: &quot;nav.stories&quot; },
+  { href: &quot;/stories/farms&quot;, key: &quot;nav.farms&quot; },
+  { href: &quot;/stories/karigars&quot;, key: &quot;nav.karigars&quot; },
+  { href: &quot;/stories/journal&quot;, key: &quot;nav.journal&quot; },
+] as const;
+</code></pre>
+<p>(Port the rest of the component body from <code>components/Header.tsx</code>.)</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Build SiteFooter + BrandBar</strong></li>
+</ul>
+<p><code>components/layout/BrandBar.tsx</code> — slim utility strip above header with WhatsApp number, store count, freshness promise tagline. Reads <code>analyticsSettings.whatsappNumber</code> from Payload (server-side).</p>
+<p><code>components/layout/SiteFooter.tsx</code> — link map per IA, brand promise, FSSAI placeholder, social, WhatsApp CTA, legal links.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Wire into locale layout</strong></li>
+</ul>
+<p>Update <code>app/[locale]/layout.tsx</code> to render <code>&lt;BrandBar /&gt;&lt;SiteHeader /&gt;&lt;main id=&quot;main-content&quot;&gt;{children}&lt;/main&gt;&lt;SiteFooter /&gt;</code> inside the NextIntlClientProvider.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Add nav translation keys</strong></li>
+</ul>
+<p>Append to <code>messages/en.json</code>, <code>messages/hi.json</code>, <code>messages/kn.json</code>:</p>
+<pre><code class="language-json">&quot;nav&quot;: {
+  &quot;mithai&quot;: &quot;Mithai&quot;,
+  &quot;buildAGift&quot;: &quot;Build a Gift&quot;,
+  &quot;qsr&quot;: &quot;QSR&quot;,
+  &quot;snacks&quot;: &quot;Snacks&quot;,
+  &quot;merch&quot;: &quot;Merch&quot;,
+  &quot;stories&quot;: &quot;Stories&quot;,
+  &quot;farms&quot;: &quot;Farms&quot;,
+  &quot;karigars&quot;: &quot;Karigars&quot;,
+  &quot;journal&quot;: &quot;Journal&quot;
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Run tests + manual visual check</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit &amp;&amp; npm run dev</code>
+Open <code>http://localhost:3000/en</code> — confirm new nav renders.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 8: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add components/layout/ app/[locale]/layout.tsx messages/
+git commit -m &quot;feat: brand layout shell — SiteHeader, SiteFooter, BrandBar with new IA&quot;
+</code></pre>
+<hr>
+<h2>Task 14: Brand-home redesign — hero, 4 vertical portals, pillars</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>app/[locale]/page.tsx</code> (currently <code>app/[locale]/page.tsx</code>)</li>
+<li>Create: <code>components/home/BrandHero.tsx</code></li>
+<li>Create: <code>components/home/VerticalPortals.tsx</code></li>
+<li>Create: <code>components/home/Pillars.tsx</code></li>
+<li>Test: <code>tests/e2e/home.spec.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: home page with cinematic hero (milk-first promise), 4 vertical portal cards (Mithai, QSR, Snacks, Merch), pillars strip (Milk Purity · Karigar Mastery · Karigari · Modern Experience), &quot;Stories from the House&quot; teaser, &quot;Stay in the loop&quot; lead capture.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing E2E</strong></p>
+</li>
+</ul>
+<p><code>tests/e2e/home.spec.ts</code>:</p>
+<pre><code class="language-ts">import { test, expect } from &quot;@playwright/test&quot;;
+
+test(&quot;home shows hero + 4 portals + pillars&quot;, async ({ page }) =&gt; {
+  await page.goto(&quot;/en&quot;);
+  await expect(page.getByRole(&quot;heading&quot;, { name: /Mishran/i })).toBeVisible();
+  await expect(page.getByRole(&quot;link&quot;, { name: /Mithai/i }).first()).toBeVisible();
+  await expect(page.getByRole(&quot;link&quot;, { name: /QSR/i }).first()).toBeVisible();
+  await expect(page.getByRole(&quot;link&quot;, { name: /Snacks/i }).first()).toBeVisible();
+  await expect(page.getByRole(&quot;link&quot;, { name: /Merch/i }).first()).toBeVisible();
+  await expect(page.getByText(/Milk Purity/i)).toBeVisible();
+  await expect(page.getByText(/Karigar Mastery/i)).toBeVisible();
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Build <code>BrandHero.tsx</code></strong></p>
+</li>
+</ul>
+<p>Server component. Pulls <code>heroCopy</code> from <code>brandSettings</code> global via <code>getPayload()</code>. Renders full-bleed image (next/image, <code>priority</code>), headline, subhead, primary CTA <code>Explore Mithai</code>, secondary CTA <code>Build a Gift</code>.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Build <code>VerticalPortals.tsx</code></strong></li>
+</ul>
+<p>Grid of 4 cards. Each card: vertical image, label, one-line description, link to <code>/mithai</code>, <code>/qsr</code>, <code>/snacks</code>, <code>/merch</code>. Use <code>next/image</code> with <code>sizes</code>.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Build <code>Pillars.tsx</code></strong></li>
+</ul>
+<p>Static strip with 4 pillars and short copy from spec §4. Each pillar links to relevant story hub.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Assemble <code>app/[locale]/page.tsx</code></strong></li>
+</ul>
+<pre><code class="language-tsx">import { BrandHero } from &quot;@/components/home/BrandHero&quot;;
+import { VerticalPortals } from &quot;@/components/home/VerticalPortals&quot;;
+import { Pillars } from &quot;@/components/home/Pillars&quot;;
+
+export default function Page() {
+  return (
+    &lt;&gt;
+      &lt;BrandHero /&gt;
+      &lt;VerticalPortals /&gt;
+      &lt;Pillars /&gt;
+    &lt;/&gt;
+  );
+}
+</code></pre>
+<p>(Skip teaser + lead strip for now; add in Task 18 / 19 follow-up.)</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Run E2E + visual check</strong></li>
+</ul>
+<p>Run: <code>npm run test:e2e -- tests/e2e/home.spec.ts</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 8: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add app/[locale]/page.tsx components/home/ tests/e2e/home.spec.ts
+git commit -m &quot;feat: brand-home with hero, 4 vertical portals, brand pillars&quot;
+</code></pre>
+<hr>
+<h2>Task 15: Vertical landing pages — <code>/mithai</code>, <code>/qsr</code>, <code>/snacks</code>, <code>/merch</code></h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>app/[locale]/mithai/page.tsx</code></li>
+<li>Create: <code>app/[locale]/qsr/page.tsx</code></li>
+<li>Create: <code>app/[locale]/snacks/page.tsx</code></li>
+<li>Create: <code>app/[locale]/merch/page.tsx</code></li>
+<li>Create: <code>components/verticals/VerticalHub.tsx</code></li>
+<li>Test: <code>tests/e2e/verticals.spec.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: each vertical hub renders hero + grid of sample items from the corresponding Payload collection. All four pages use the shared <code>VerticalHub</code> component.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing E2E</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { test, expect } from &quot;@playwright/test&quot;;
+
+test(&quot;mithai hub lists seeded kaju katli&quot;, async ({ page }) =&gt; {
+  await page.goto(&quot;/en/mithai&quot;);
+  await expect(page.getByText(&quot;Kaju Katli&quot;)).toBeVisible();
+});
+
+test(&quot;qsr hub lists seeded item&quot;, async ({ page }) =&gt; {
+  await page.goto(&quot;/en/qsr&quot;);
+  await expect(page.getByText(&quot;Chole Bhature&quot;)).toBeVisible();
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Build shared hub</strong></p>
+</li>
+</ul>
+<p><code>components/verticals/VerticalHub.tsx</code> (server component):</p>
+<pre><code class="language-tsx">import { getPayload } from &quot;@/lib/payload-client&quot;;
+import { MediaCard } from &quot;@/components/ui/MediaCard&quot;;
+
+type Props = {
+  collection: &quot;mithai-products&quot; | &quot;qsr-menu-items&quot; | &quot;snack-products&quot; | &quot;merch-products&quot;;
+  title: string;
+  blurb: string;
+};
+
+export async function VerticalHub({ collection, title, blurb }: Props) {
+  const payload = await getPayload();
+  const r = await payload.find({ collection, limit: 24 });
+  return (
+    &lt;section className=&quot;mx-auto max-w-6xl px-4 py-12&quot;&gt;
+      &lt;h1 className=&quot;text-4xl font-semibold&quot;&gt;{title}&lt;/h1&gt;
+      &lt;p className=&quot;mt-3 text-text-muted&quot;&gt;{blurb}&lt;/p&gt;
+      &lt;div className=&quot;mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3&quot;&gt;
+        {r.docs.map((doc: any) =&gt; (
+          &lt;MediaCard key={doc.id} title={doc.name ?? doc.title} href=&quot;#&quot; image={(doc.images?.[0] ?? doc.image)?.url} /&gt;
+        ))}
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Build page wrappers</strong></li>
+</ul>
+<p>Each page imports <code>VerticalHub</code> with appropriate props. Example <code>app/[locale]/mithai/page.tsx</code>:</p>
+<pre><code class="language-tsx">import { VerticalHub } from &quot;@/components/verticals/VerticalHub&quot;;
+
+export default function Page() {
+  return &lt;VerticalHub collection=&quot;mithai-products&quot; title=&quot;Mithai&quot; blurb=&quot;Milk-first sweets, made by karigars in small batches.&quot; /&gt;;
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Build <code>MediaCard</code> primitive in <code>components/ui/MediaCard.tsx</code></strong></li>
+</ul>
+<p>Card with image, title, optional tag.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:e2e -- tests/e2e/verticals.spec.ts</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add app/[locale]/mithai app/[locale]/qsr app/[locale]/snacks app/[locale]/merch components/verticals/ components/ui/MediaCard.tsx tests/e2e/verticals.spec.ts
+git commit -m &quot;feat: vertical landing pages for mithai, qsr, snacks, merch&quot;
+</code></pre>
+<hr>
+<h2>Task 16: Sample PDP per vertical</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>app/[locale]/mithai/[slug]/page.tsx</code></li>
+<li>Create: <code>components/mithai/MithaiPDP.tsx</code></li>
+<li>Create: <code>app/[locale]/qsr/[slug]/page.tsx</code></li>
+<li>Create: <code>app/[locale]/snacks/[slug]/page.tsx</code></li>
+<li>Create: <code>app/[locale]/merch/[slug]/page.tsx</code></li>
+<li>Modify: existing <code>app/sweets/[slug]/page.tsx</code> — redirect to <code>/mithai/[slug]</code> or leave as legacy (decide: delete legacy). Pick delete for v1.</li>
+<li>Test: <code>tests/e2e/mithai-pdp.spec.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: PDP per vertical. <code>generateStaticParams</code> + <code>generateMetadata</code> for SEO. ISR <code>revalidate = 60</code>.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing E2E</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { test, expect } from &quot;@playwright/test&quot;;
+
+test(&quot;mithai PDP shows display price and ingredients&quot;, async ({ page }) =&gt; {
+  await page.goto(&quot;/en/mithai/kaju-katli&quot;);
+  await expect(page.getByText(&quot;₹920 / 250g&quot;)).toBeVisible();
+  await expect(page.getByText(/Cashew/i)).toBeVisible();
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Build <code>MithaiPDP</code> component</strong></p>
+</li>
+</ul>
+<p>Server component. Fetches by slug via <code>payload.find({ collection: &quot;mithai-products&quot;, where: { slug: { equals } }, limit: 1 })</code>. Renders breadcrumb, gallery, name, displayPrice, ingredients, allergens, shelf life, story, karigar reference, freshness status, &quot;Add to draft cart&quot; button (client island for cart).</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Build <code>app/[locale]/mithai/[slug]/page.tsx</code></strong></li>
+</ul>
+<pre><code class="language-tsx">import { MithaiPDP } from &quot;@/components/mithai/MithaiPDP&quot;;
+import { getPayload } from &quot;@/lib/payload-client&quot;;
+import type { Metadata } from &quot;next&quot;;
+
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const payload = await getPayload();
+  const r = await payload.find({ collection: &quot;mithai-products&quot;, limit: 100 });
+  return r.docs.map((d: any) =&gt; ({ slug: d.slug }));
+}
+
+export async function generateMetadata({ params }): Promise&lt;Metadata&gt; {
+  const { locale, slug } = await params;
+  const payload = await getPayload();
+  const r = await payload.find({ collection: &quot;mithai-products&quot;, where: { slug: { equals: slug } }, limit: 1, locale });
+  const doc = r.docs[0] as any;
+  if (!doc) return {};
+  return { title: doc.name, description: doc.ingredients };
+}
+
+export default async function Page({ params }) {
+  const { slug, locale } = await params;
+  return &lt;MithaiPDP slug={slug} locale={locale} /&gt;;
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Build analogous pages for QSR / Snacks / Merch</strong></li>
+</ul>
+<p>Simpler PDPs (description, image, basic info). For merch: enquiry-only CTA linking to <code>/merch/[slug]/enquire</code> — or skip the route and surface a <code>LeadForm</code> modal on the PDP (deferred to Phase 6).</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Delete legacy sweet routes</strong></li>
+</ul>
+<pre><code class="language-bash">git rm -r app/sweets
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:e2e -- tests/e2e/mithai-pdp.spec.ts</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 8: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add app/[locale]/mithai/[slug] app/[locale]/qsr/[slug] app/[locale]/snacks/[slug] app/[locale]/merch/[slug] components/mithai/ tests/e2e/mithai-pdp.spec.ts
+git rm -r app/sweets
+git commit -m &quot;feat: sample PDP per vertical; remove legacy /sweets&quot;
+</code></pre>
+<hr>
+<h2>Task 17: <code>/weddings</code> + <code>/corporate</code> lead forms</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>app/[locale]/weddings/page.tsx</code></li>
+<li>Create: <code>app/[locale]/corporate/page.tsx</code></li>
+<li>Create: <code>components/ledger/LeadForm.tsx</code></li>
+<li>Create: <code>components/ledger/WeddingConfigurator.tsx</code></li>
+<li>Create: <code>components/ledger/CorporateConfigurator.tsx</code></li>
+<li>Create: <code>context/QueryProvider.tsx</code></li>
+<li>Modify: <code>app/layout.tsx</code> (mount QueryProvider)</li>
+<li>Test: <code>tests/e2e/leads.spec.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Consumes: <code>POST /api/leads</code> (Task 10), TanStack Query.</p>
+</li>
+<li><p>Produces: two routes that render lead forms. On submit, POST to <code>/api/leads</code>, show Sonner toast on success, redirect to a thank-you state.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing E2E</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { test, expect } from &quot;@playwright/test&quot;;
+
+test(&quot;wedding lead submits successfully&quot;, async ({ page }) =&gt; {
+  await page.goto(&quot;/en/weddings&quot;);
+  await page.getByLabel(/name/i).fill(&quot;Test User&quot;);
+  await page.getByLabel(/email/i).fill(&quot;test@example.com&quot;);
+  await page.getByLabel(/phone/i).fill(&quot;+919999999999&quot;);
+  await page.getByLabel(/guests/i).fill(&quot;200&quot;);
+  await page.getByRole(&quot;button&quot;, { name: /submit/i }).click();
+  await expect(page.getByText(/thank you/i)).toBeVisible();
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Create <code>context/QueryProvider.tsx</code></strong></p>
+</li>
+</ul>
+<pre><code class="language-tsx">&quot;use client&quot;;
+import { QueryClient, QueryClientProvider } from &quot;@tanstack/react-query&quot;;
+import { useState, ReactNode } from &quot;react&quot;;
+
+export function QueryProvider({ children }: { children: ReactNode }) {
+  const [client] = useState(() =&gt; new QueryClient({
+    defaultOptions: { queries: { staleTime: 60_000, retry: 1 } },
+  }));
+  return &lt;QueryClientProvider client={client}&gt;{children}&lt;/QueryClientProvider&gt;;
+}
+</code></pre>
+<p>Mount in <code>app/layout.tsx</code> (wrap <code>CartProvider</code>).</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Create <code>LeadForm</code> client component</strong></li>
+</ul>
+<p>Generic form: name, email, phone, message + dynamic fields passed as children. Uses TanStack Query <code>useMutation</code> to POST <code>/api/leads</code>. Calls Sonner <code>toast.success</code> on success. <code>aria-live=&quot;polite&quot;</code> on error region.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Create <code>WeddingConfigurator</code> and <code>CorporateConfigurator</code></strong></li>
+</ul>
+<p>Compose <code>LeadForm</code> with vertical-specific fields:</p>
+<ul>
+<li>Wedding: date, city, guest count, budget, mithai preferences, packaging preference.</li>
+<li>Corporate: company, GSTIN, qty, deadline, branding requirements.</li>
+</ul>
+<p>Both pass <code>type: &quot;wedding&quot; | &quot;corporate&quot;</code> in the lead body.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Mount in pages</strong></li>
+</ul>
+<p><code>app/[locale]/weddings/page.tsx</code>:</p>
+<pre><code class="language-tsx">import { WeddingConfigurator } from &quot;@/components/ledger/WeddingConfigurator&quot;;
+
+export default function Page() {
+  return (
+    &lt;section className=&quot;mx-auto max-w-3xl px-4 py-16&quot;&gt;
+      &lt;h1 className=&quot;text-4xl font-semibold&quot;&gt;Weddings &amp; Bulk Gifting&lt;/h1&gt;
+      &lt;p className=&quot;mt-3 text-text-muted&quot;&gt;Tell us about your event. We&#39;ll respond within 24 hours.&lt;/p&gt;
+      &lt;div className=&quot;mt-10&quot;&gt;&lt;WeddingConfigurator /&gt;&lt;/div&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+<p>Same for corporate.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:e2e -- tests/e2e/leads.spec.ts</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 8: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add app/[locale]/weddings app/[locale]/corporate components/ledger/ context/QueryProvider.tsx app/layout.tsx tests/e2e/leads.spec.ts
+git commit -m &quot;feat: weddings + corporate lead forms with Resend notification&quot;
+</code></pre>
+<hr>
+<h2>Task 18: <code>/stories</code> hub + sample story</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>app/[locale]/stories/page.tsx</code></li>
+<li>Create: <code>app/[locale]/stories/[slug]/page.tsx</code></li>
+<li>Create: <code>components/stories/StoryCard.tsx</code></li>
+<li>Create: <code>components/stories/StoryHero.tsx</code></li>
+<li>Create: <code>payload-blocks/</code> (stub for now — use lexical default)</li>
+<li>Test: <code>tests/e2e/stories.spec.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: hub at <code>/stories</code> listing all published stories grouped by pillar; sample detail page renders rich text body via Payload lexical.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Seed a sample story</strong></p>
+</li>
+</ul>
+<p>Via Payload admin or seed script: create one story titled &quot;Jhajjar Farm: Where Our Milk Begins&quot; with <code>pillar: &quot;farm&quot;</code>, body with one paragraph.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Write failing E2E</strong></li>
+</ul>
+<pre><code class="language-ts">import { test, expect } from &quot;@playwright/test&quot;;
+
+test(&quot;stories hub lists farm story&quot;, async ({ page }) =&gt; {
+  await page.goto(&quot;/en/stories&quot;);
+  await expect(page.getByText(/Jhajjar Farm/i)).toBeVisible();
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 4: Build story hub</strong></p>
+</li>
+</ul>
+<p><code>app/[locale]/stories/page.tsx</code> (server component) — fetches all stories, groups by pillar, renders <code>&lt;StoryCard&gt;</code> grid.</p>
+<p><code>components/stories/StoryCard.tsx</code> — image, title, pillar tag, excerpt.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Build story detail</strong></li>
+</ul>
+<p><code>app/[locale]/stories/[slug]/page.tsx</code> — <code>generateStaticParams</code> over <code>stories</code>. Renders <code>&lt;StoryHero&gt;</code> + lexical body. Payload&#39;s <code>RichText</code> component from <code>@payloadcms/richtext-lexical/react</code> renders body.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:e2e -- tests/e2e/stories.spec.ts</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add app/[locale]/stories components/stories/ tests/e2e/stories.spec.ts
+git commit -m &quot;feat: stories hub + sample story PDP&quot;
+</code></pre>
+<hr>
+<h2>Task 19: Analytics — GA4, Meta Pixel, <code>track()</code> helper</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>lib/analytics.ts</code></li>
+<li>Create: <code>components/Analytics/AnalyticsScripts.tsx</code></li>
+<li>Modify: <code>app/layout.tsx</code> (mount scripts after hydration)</li>
+<li>Test: <code>tests/unit/analytics.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: <code>track(eventName, payload?)</code> queuing events to <code>window.dataLayer</code> (GA4) and <code>window.fbq</code> (Meta Pixel). Scripts hydrate from <code>analyticsSettings</code> global (server-side inlines IDs).</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing unit test</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { describe, it, expect, vi, beforeEach } from &quot;vitest&quot;;
+
+beforeEach(() =&gt; {
+  (global as any).window = { dataLayer: [], fbq: vi.fn() };
+});
+
+describe(&quot;track&quot;, () =&gt; {
+  it(&quot;pushes to dataLayer&quot;, async () =&gt; {
+    const { track } = await import(&quot;@/lib/analytics&quot;);
+    track(&quot;product_viewed&quot;, { id: &quot;kaju-katli&quot; });
+    expect((global as any).window.dataLayer.at(-1).event).toBe(&quot;product_viewed&quot;);
+  });
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Create <code>lib/analytics.ts</code></strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">type EventName =
+  | &quot;product_viewed&quot; | &quot;story_viewed&quot; | &quot;karigar_viewed&quot; | &quot;packaging_viewed&quot;
+  | &quot;gift_builder_started&quot; | &quot;gift_builder_completed&quot; | &quot;add_to_cart&quot;
+  | &quot;lead_submitted&quot; | &quot;whatsapp_clicked&quot; | &quot;search_used&quot;
+  | &quot;draft_saved&quot; | &quot;locale_changed&quot; | &quot;theme_changed&quot; | &quot;missing_translation&quot;;
+
+export function track(event: EventName, payload: Record&lt;string, unknown&gt; = {}) {
+  if (typeof window === &quot;undefined&quot;) return;
+  const w = window as any;
+  w.dataLayer = w.dataLayer ?? [];
+  w.dataLayer.push({ event, ...payload });
+  if (typeof w.fbq === &quot;function&quot;) {
+    w.fbq(&quot;trackCustom&quot;, event, payload);
+  }
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Create <code>AnalyticsScripts.tsx</code></strong></li>
+</ul>
+<p>Server component that reads <code>analyticsSettings</code> from Payload and inlines GA4 + Meta Pixel scripts. Mounted in <code>app/layout.tsx</code> after <code>&lt;Theme&gt;</code> provider. Use Next <code>Script</code> from <code>next/script</code> with <code>strategy=&quot;afterInteractive&quot;</code>.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add lib/analytics.ts components/Analytics/ app/layout.tsx tests/unit/analytics.test.ts
+git commit -m &quot;feat: GA4 + Meta Pixel analytics with track() helper&quot;
+</code></pre>
+<hr>
+<h2>Task 20: SEO scaffold — sitemap, robots, metadata, schema.org</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>app/sitemap.ts</code></li>
+<li>Create: <code>app/robots.ts</code></li>
+<li>Create: <code>lib/seo/schema.ts</code></li>
+<li>Modify: <code>app/[locale]/mithai/[slug]/page.tsx</code> (add JSON-LD)</li>
+<li>Test: <code>tests/unit/sitemap.test.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: dynamic sitemap from Payload; <code>robots.txt</code> allow-all with sitemap link; JSON-LD <code>Product</code>, <code>BreadcrumbList</code>, <code>Organization</code> per route.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing test</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { describe, it, expect } from &quot;vitest&quot;;
+
+describe(&quot;sitemap&quot;, () =&gt; {
+  it(&quot;returns urls for seeded mithai product&quot;, async () =&gt; {
+    const { default: sitemap } = await import(&quot;@/app/sitemap&quot;);
+    const result = await sitemap();
+    expect(result.some((u: any) =&gt; u.url.includes(&quot;/mithai/kaju-katli&quot;))).toBe(true);
+  });
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Create <code>app/sitemap.ts</code></strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import type { MetadataRoute } from &quot;next&quot;;
+import { getPayload } from &quot;@/lib/payload-client&quot;;
+
+export default async function sitemap(): Promise&lt;MetadataRoute.Sitemap&gt; {
+  const payload = await getPayload();
+  const locales = [&quot;en&quot;, &quot;hi&quot;, &quot;kn&quot;];
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? &quot;http://localhost:3000&quot;;
+
+  const entries: MetadataRoute.Sitemap = [];
+
+  for (const locale of locales) {
+    entries.push({ url: `${base}/${locale}`, lastModified: new Date(), changeFrequency: &quot;weekly&quot;, priority: 1 });
+    entries.push({ url: `${base}/${locale}/mithai`, lastModified: new Date(), changeFrequency: &quot;weekly&quot;, priority: 0.9 });
+    entries.push({ url: `${base}/${locale}/stories`, lastModified: new Date(), changeFrequency: &quot;weekly&quot;, priority: 0.7 });
+  }
+
+  for (const locale of locales) {
+    const r = await payload.find({ collection: &quot;mithai-products&quot;, limit: 200, locale });
+    for (const doc of r.docs as any[]) {
+      if (!doc.slug) continue;
+      entries.push({ url: `${base}/${locale}/mithai/${doc.slug}`, lastModified: doc.updatedAt ? new Date(doc.updatedAt) : new Date(), changeFrequency: &quot;weekly&quot;, priority: 0.8 });
+    }
+    const s = await payload.find({ collection: &quot;stories&quot;, limit: 200, locale });
+    for (const doc of s.docs as any[]) {
+      if (!doc.slug) continue;
+      entries.push({ url: `${base}/${locale}/stories/${doc.slug}`, lastModified: doc.updatedAt ? new Date(doc.updatedAt) : new Date(), changeFrequency: &quot;weekly&quot;, priority: 0.6 });
+    }
+  }
+
+  return entries;
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Create <code>app/robots.ts</code></strong></li>
+</ul>
+<pre><code class="language-ts">import type { MetadataRoute } from &quot;next&quot;;
+
+export default function robots(): MetadataRoute.Robots {
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? &quot;http://localhost:3000&quot;;
+  return {
+    rules: { userAgent: &quot;*&quot;, allow: &quot;/&quot; },
+    sitemap: `${base}/sitemap.xml`,
+  };
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Add JSON-LD to PDP</strong></li>
+</ul>
+<p>In <code>app/[locale]/mithai/[slug]/page.tsx</code>, append a <code>&lt;script type=&quot;application/ld+json&quot; dangerouslySetInnerHTML={{__html: JSON.stringify(productSchema)}} /&gt;</code> block.</p>
+<p><code>lib/seo/schema.ts</code> exports <code>productSchema(doc)</code>, <code>organizationSchema()</code>, <code>breadcrumbSchema(trail)</code>.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:unit</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 7: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add app/sitemap.ts app/robots.ts lib/seo/schema.ts app/[locale]/mithai/[slug]/page.tsx tests/unit/sitemap.test.ts
+git commit -m &quot;feat: SEO scaffold — sitemap, robots, JSON-LD on PDP&quot;
+</code></pre>
+<hr>
+<h2>Task 21: Stub commerce routes — <code>/cart</code>, <code>/checkout</code>, <code>/account</code>, <code>/track-order</code></h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>app/[locale]/cart/page.tsx</code> (or relocate to <code>app/[locale]/(commerce)/cart/page.tsx</code>)</li>
+<li>Create: <code>app/[locale]/checkout/page.tsx</code></li>
+<li>Create: <code>app/[locale]/account/page.tsx</code></li>
+<li>Create: <code>app/[locale]/track-order/page.tsx</code></li>
+<li>Create: <code>components/commerce/CommerceStub.tsx</code></li>
+<li>Test: <code>tests/e2e/commerce-stubs.spec.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: each route renders the branded stub: cart contents (current CartContext), &quot;Checkout launching soon&quot; message, WhatsApp CTA + lead CTA. <code>/track-order</code> tells user order tracking launches with Phase 8 commerce.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write failing E2E</strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { test, expect } from &quot;@playwright/test&quot;;
+
+test(&quot;cart stub shows WhatsApp CTA&quot;, async ({ page }) =&gt; {
+  await page.goto(&quot;/en/cart&quot;);
+  await expect(page.getByRole(&quot;link&quot;, { name: /whatsapp/i })).toBeVisible();
+});
+</code></pre>
+<ul>
+<li><p><input disabled="" type="checkbox"> <strong>Step 2: Run, verify failure</strong></p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 3: Build <code>CommerceStub</code> component</strong></p>
+</li>
+</ul>
+<p>Reusable: takes <code>title</code>, <code>blurb</code>, optional children. Renders WhatsApp deep link (<code>https://wa.me/${whatsappNumber}</code>) + link to <code>/weddings</code> if lead intent. Reads <code>whatsappNumber</code> from <code>analyticsSettings</code>.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Build four pages</strong></li>
+</ul>
+<p>Each page imports <code>CommerceStub</code> with appropriate copy. <code>/cart</code> page also lists current cart items (read from CartContext — wrap in client component).</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Run tests, verify pass</strong></li>
+</ul>
+<p>Run: <code>npm run test:e2e -- tests/e2e/commerce-stubs.spec.ts</code>
+Expected: PASS.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 6: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add app/[locale]/cart app/[locale]/checkout app/[locale]/account app/[locale]/track-order components/commerce/ tests/e2e/commerce-stubs.spec.ts
+git commit -m &quot;feat: branded commerce stubs (cart, checkout, account, track-order)&quot;
+</code></pre>
+<hr>
+<h2>Task 22: ISR revalidation webhook + on-demand cache purge</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>app/api/revalidate/route.ts</code></li>
+<li>Modify: <code>payload.config.ts</code> (afterChange hook on collections)</li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: <code>POST /api/revalidate</code> accepts <code>{ path }</code> or <code>{ collection, slug, locale }</code>. Calls <code>revalidatePath()</code> or <code>res.revalidate()</code>. Payload <code>afterChange</code> hook fires it on every doc change.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Create route</strong></p>
+</li>
+</ul>
+<p><code>app/api/revalidate/route.ts</code>:</p>
+<pre><code class="language-ts">import { NextResponse } from &quot;next/server&quot;;
+import { revalidatePath } from &quot;next/cache&quot;;
+
+export async function POST(req: Request) {
+  const body = await req.json().catch(() =&gt; ({}));
+  const secret = process.env.REVALIDATE_SECRET;
+  if (secret &amp;&amp; req.headers.get(&quot;x-revalidate-secret&quot;) !== secret) {
+    return NextResponse.json({ error: &quot;unauthorized&quot; }, { status: 401 });
+  }
+  if (body.path) {
+    revalidatePath(body.path);
+  } else if (body.collection &amp;&amp; body.slug) {
+    for (const locale of [&quot;en&quot;, &quot;hi&quot;, &quot;kn&quot;]) {
+      revalidatePath(`/${locale}/${body.collection}/${body.slug}`);
+    }
+  } else {
+    revalidatePath(&quot;/&quot;, &quot;layout&quot;);
+  }
+  return NextResponse.json({ revalidated: true });
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Add <code>afterChange</code> hook to Payload config</strong></li>
+</ul>
+<p>For each product + story collection, add:</p>
+<pre><code class="language-ts">hooks: {
+  afterChange: [async ({ doc, req }) =&gt; {
+    if (process.env.NODE_ENV === &quot;production&quot;) {
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/revalidate`, {
+          method: &quot;POST&quot;,
+          headers: { &quot;content-type&quot;: &quot;application/json&quot;, &quot;x-revalidate-secret&quot;: process.env.REVALIDATE_SECRET ?? &quot;&quot; },
+          body: JSON.stringify({ collection: &quot;mithai-products&quot;, slug: doc.slug, locale: req.locale }),
+        });
+      } catch (e) { console.error(&quot;[revalidate]&quot;, e); }
+    }
+  }],
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 3: Manual test</strong></li>
+</ul>
+<p>Open <code>/en/mithai/kaju-katli</code>. Edit the product in Payload admin. Refresh — new content shows within <code>revalidate=60</code> window, or instantly via webhook.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add app/api/revalidate/route.ts payload.config.ts
+git commit -m &quot;feat: on-demand ISR revalidation via Payload afterChange webhook&quot;
+</code></pre>
+<hr>
+<h2>Task 23: Vercel deploy config + env vars + Mongo Atlas</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>vercel.ts</code></li>
+<li>Modify: <code>.env.example</code> (add <code>NEXT_PUBLIC_SITE_URL</code>, <code>LEADS_INBOX</code>, <code>REVALIDATE_SECRET</code>)</li>
+<li>Create: <code>docs/deployment.md</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: Vercel deployment via <code>vercel.ts</code>; documented env vars; Mongo Atlas URI placeholder.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Create <code>vercel.ts</code></strong></p>
+</li>
+</ul>
+<pre><code class="language-ts">import { type VercelConfig } from &quot;@vercel/config/v1&quot;;
+
+export const config: VercelConfig = {
+  framework: &quot;nextjs&quot;,
+  buildCommand: &quot;npm run build&quot;,
+  regions: [&quot;bom1&quot;],
+  functions: {
+    &quot;app/api/leads/route.ts&quot;: { maxDuration: 30 },
+    &quot;app/api/drafts/route.ts&quot;: { maxDuration: 30 },
+    &quot;app/api/search/route.ts&quot;: { maxDuration: 30 },
+    &quot;app/api/revalidate/route.ts&quot;: { maxDuration: 30 },
+  },
+  crons: [],
+};
+</code></pre>
+<p>Install <code>@vercel/config</code> first: <code>npm install -D @vercel/config</code>.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Document deployment</strong></li>
+</ul>
+<p><code>docs/deployment.md</code> covers:</p>
+<ol>
+<li>Create Mongo Atlas M0 cluster + DB user + IP allowlist (Vercel egress IPs).</li>
+<li>Set Vercel env vars (Production + Preview): <code>MONGODB_URI</code>, <code>PAYLOAD_SECRET</code>, <code>RESEND_API_KEY</code>, <code>NEXT_PUBLIC_GA4_ID</code>, <code>NEXT_PUBLIC_META_PIXEL_ID</code>, <code>NEXT_PUBLIC_WHATSAPP_NUMBER</code>, <code>NEXT_PUBLIC_SITE_URL</code>, <code>LEADS_INBOX</code>, <code>REVALIDATE_SECRET</code>.</li>
+<li>Run first deploy; Payload auto-creates indexes on first boot.</li>
+<li>Create first admin user via Payload CLI: <code>npx payload create first-user</code>.</li>
+</ol>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 3: Manual deploy</strong></li>
+</ul>
+<p>Run: <code>npx vercel --prod</code>
+Expected: build green; <code>/admin</code> reachable.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Run Lighthouse against preview URL</strong></li>
+</ul>
+<p>Run: <code>lhci autorun -- --collect.url=https://&lt;vercel-preview&gt;.vercel.app/en</code>
+Expected: Performance ≥ 90, Accessibility ≥ 95.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 5: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add vercel.ts .env.example docs/deployment.md
+git commit -m &quot;chore: Vercel deploy config + deployment doc&quot;
+</code></pre>
+<hr>
+<h2>Task 24: Final E2E + Lighthouse + axe CI gates</h2>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>lighthouserc.json</code> (already created in Task 1 — ensure URLs point at preview deploy in CI)</li>
+<li>Create: <code>tests/e2e/a11y.spec.ts</code></li>
+<li>Create: <code>.github/workflows/ci.yml</code> (if repo uses GitHub Actions; skip if not)</li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><p>Produces: CI gate running types, lint, unit, integration, E2E, axe, Lighthouse on every PR.</p>
+</li>
+<li><p><input disabled="" type="checkbox"> <strong>Step 1: Write a11y test</strong></p>
+</li>
+</ul>
+<p><code>tests/e2e/a11y.spec.ts</code>:</p>
+<pre><code class="language-ts">import { test, expect } from &quot;@playwright/test&quot;;
+import AxeBuilder from &quot;@axe-core/playwright&quot;;
+
+const PAGES = [&quot;/en&quot;, &quot;/en/mithai&quot;, &quot;/en/stories&quot;, &quot;/en/weddings&quot;];
+
+for (const p of PAGES) {
+  test(`${p} has no critical a11y violations`, async ({ page }) =&gt; {
+    await page.goto(p);
+    const results = await new AxeBuilder({ page }).withTags([&quot;wcag2a&quot;, &quot;wcag2aa&quot;]).analyze();
+    expect(results.violations.filter((v) =&gt; v.impact === &quot;critical&quot;)).toEqual([]);
+  });
+}
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 2: Create CI workflow (optional)</strong></li>
+</ul>
+<p><code>.github/workflows/ci.yml</code>:</p>
+<pre><code class="language-yaml">name: CI
+on: [pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm run test:unit
+      - run: npm run build
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 3: Run full suite locally</strong></li>
+</ul>
+<p>Run: <code>npm run lint &amp;&amp; npx tsc --noEmit &amp;&amp; npm run test:unit &amp;&amp; npm run test:e2e</code>
+Expected: all green.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Step 4: Commit</strong></li>
+</ul>
+<pre><code class="language-bash">git add tests/e2e/a11y.spec.ts .github/workflows/ci.yml lighthouserc.json
+git commit -m &quot;test: full CI gate — lint, types, unit, e2e, axe, lighthouse&quot;
+</code></pre>
+<hr>
+<h2>Phase 0 Acceptance Criteria (cross-check against spec §15)</h2>
+<p>After all 24 tasks complete:</p>
+<ul>
+<li><input disabled="" type="checkbox"> Mishran-default theme + 3 occasion variants locked; rest archived on branch <code>archive/design-systems-pre-collapse</code></li>
+<li><input disabled="" type="checkbox"> Locale routing for <code>en</code>, <code>hi</code>, <code>kn</code> active; hreflang emitted</li>
+<li><input disabled="" type="checkbox"> Payload CMS installed; admin at <code>/admin</code></li>
+<li><input disabled="" type="checkbox"> Shared collections defined (<code>stories</code>, <code>karigars</code>, <code>farms</code>, <code>packaging</code>, <code>occasions</code>)</li>
+<li><input disabled="" type="checkbox"> One sample product collection per vertical defined and seeded</li>
+<li><input disabled="" type="checkbox"> <code>leads</code> collection + <code>/api/leads</code> endpoint + Resend email</li>
+<li><input disabled="" type="checkbox"> Brand-home live with cinematic hero + 4 vertical portals</li>
+<li><input disabled="" type="checkbox"> Each vertical has landing page + one sample detail page</li>
+<li><input disabled="" type="checkbox"> Wedding + corporate lead forms functional</li>
+<li><input disabled="" type="checkbox"> Analytics events wired (GA4, Meta Pixel, <code>track()</code> helper)</li>
+<li><input disabled="" type="checkbox"> Lighthouse ≥ 90 on home, mithai hub, sample PDP</li>
+<li><input disabled="" type="checkbox"> Playwright E2E covers golden paths</li>
+<li><input disabled="" type="checkbox"> Vercel deploy green; MongoDB connected; ISR working</li>
+</ul>
+<hr>
+<h2>Notes for executors</h2>
+<ul>
+<li>Payload 3.x has frequent minor-version changes. If a <code>CollectionConfig</code> import path fails, check <code>node_modules/payload/dist/types/index.d.ts</code> and adjust.</li>
+<li>Mongo Atlas M0 free tier supports ~512 collections and is plenty for v1.</li>
+<li>Resend requires domain verification before production sends; use sandbox sender for dev.</li>
+<li>Tasks 5–12 require a running MongoDB. For local dev use <code>mongod</code> or Docker; for CI use in-memory mongo via <code>mongodb-memory-server</code>.</li>
+<li>Tasks 13+ depend on Tasks 5–9 for content. Seed before running E2E.</li>
+</ul>
+
+</main>
+</body>
+</html>

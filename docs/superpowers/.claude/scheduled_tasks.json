@@ -1,0 +1,13 @@
+{
+  "tasks": [
+    {
+      "id": "c2276f3a",
+      "cron": "7 9 10 9 *",
+      "prompt": "Reminder (scheduled 2026-08-11 by user): Revisit Mishran deferred-decisions register. Read memory file `mishran_deferred_register.md` (via memory_recall or direct read of /Users/ravibyakod/.claude/projects/-Users-ravibyakod-WORK-mithai-shop-mithai-shop/memory/mishran_deferred_register.md). Summarize to user: (1) which v2 items are due to revisit now that ~30 days have passed since spec, (2) any provider swaps worth considering given current build progress, (3) any items that should be promoted from deferred into active roadmap. Ask user which to action.",
+      "createdAt": 1786462475993,
+      "createdBySessionId": "30c98920-b274-492a-9ee0-7bf3ce140c14",
+      "createdByPid": 18468,
+      "createdByProcStart": "Tue Aug 11 04:20:50 2026"
+    }
+  ]
+}

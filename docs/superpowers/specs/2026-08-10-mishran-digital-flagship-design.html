@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mishran Digital Flagship — Umbrella PRD and Foundation Design</title>
+<style>
+:root{--bg:#fafaf7;--fg:#1a1a1a;--muted:#5a5a5a;--accent:#8b1e3f;--rule:#e5e5dd;--code-bg:#f3f0e8;--code-fg:#3a2a4a}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Georgia,'Times New Roman',serif;line-height:1.7;color:var(--fg);background:var(--bg);max-width:920px;margin:0 auto;padding:2.5rem 1.5rem 6rem;font-size:16px}
+h1,h2,h3,h4,h5,h6{font-family:'Helvetica Neue',Arial,sans-serif;line-height:1.25;color:#111;margin-top:2.5rem;margin-bottom:0.8rem;font-weight:600;letter-spacing:-0.01em}
+h1{font-size:2.1rem;border-bottom:3px solid var(--accent);padding-bottom:0.4rem;margin-top:0}
+h2{font-size:1.6rem;color:var(--accent);border-bottom:1px solid var(--rule);padding-bottom:0.3rem}
+h3{font-size:1.25rem;color:#222}
+h4{font-size:1.05rem;color:#333}
+p{margin:0.8rem 0}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
+a:hover{border-bottom-color:var(--accent)}
+strong{color:#0a0a0a;font-weight:600}
+em{color:#3a3a3a}
+ul,ol{margin:0.8rem 0;padding-left:1.6rem}
+li{margin:0.3rem 0}
+li>ul,li>ol{margin:0.3rem 0}
+code{font-family:'SF Mono',Menlo,Consolas,monospace;background:var(--code-bg);color:var(--code-fg);padding:0.12em 0.4em;border-radius:4px;font-size:0.88em}
+pre{background:#1e1e2e;color:#e0e0e8;padding:1.2rem 1.4rem;border-radius:10px;overflow-x:auto;margin:1.2rem 0;font-size:0.85rem;line-height:1.5}
+pre code{background:transparent;color:inherit;padding:0;font-size:inherit}
+blockquote{margin:1.2rem 0;padding:0.6rem 1.2rem;border-left:4px solid var(--accent);background:#f3f0e8;color:var(--muted);font-style:italic}
+blockquote p{margin:0.4rem 0}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5rem 0}
+table{border-collapse:collapse;width:100%;margin:1.2rem 0;font-size:0.93rem;display:block;overflow-x:auto}
+th,td{border:1px solid var(--rule);padding:0.6rem 0.9rem;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600;font-family:'Helvetica Neue',Arial,sans-serif}
+tbody tr:nth-child(even){background:#f7f5ef}
+input[type=checkbox]{margin-right:0.4rem}
+@media print{body{max-width:none;padding:1rem;font-size:11pt} pre,table{page-break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+<h1>Mishran Digital Flagship — Umbrella PRD and Foundation Design</h1>
+<p><strong>Status:</strong> Spec (brainstorming output, awaiting user review)
+<strong>Date:</strong> 2026-08-10
+<strong>Sources:</strong></p>
+<ul>
+<li><code>Mishran Digital Flagship PRD v1.0</code> (HTML, July 2026)</li>
+<li><code>Mishran Brand Strategy Summary Draft 1.0</code> (PDF)</li>
+<li><code>PersonaPlex / Jarvis Agent Integration Guide</code> (HTML, NVIDIA Moshi)</li>
+</ul>
+<hr>
+<h2>1. Executive Summary</h2>
+<p>Mishran is positioned as the modern house of traditional mithai — built on milk-first purity, karigar mastery, karigari technique, and modern professionalism. The brand operates four business lines (Mithai &amp; Gifting, QSR restaurant, FMCG snacks, and Merch &amp; museum) that share a common trust story but serve distinct buyer journeys.</p>
+<p>This umbrella PRD defines a digital flagship experience on the existing Next.js App Router codebase that:</p>
+<ol>
+<li>Establishes a unified brand spine across all four verticals.</li>
+<li>Treats commerce as deferred (Shopify migration planned for a later phase). v1 is storytelling + lead generation.</li>
+<li>Ships a foundation phase with a thin slice across all four verticals, followed by per-vertical depth sub-projects.</li>
+<li>Uses Payload CMS (free, self-hostable, Next-native) for editorial and structured content.</li>
+<li>Locks the theme system to one Mishran-default identity plus 2–3 occasion variants.</li>
+</ol>
+<p>The PersonaPlex/Jarvis voice-agent guide is recognized as Phase 9 (AI concierge) and is out of scope for this spec.</p>
+<hr>
+<h2>2. Goals and Non-Goals</h2>
+<h3>Goals</h3>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Goal</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Brand</td>
+<td>Make the four pillars (milk purity, karigar mastery, karigari, modern professionalism) visible across every vertical and route.</td>
+</tr>
+<tr>
+<td>Storytelling</td>
+<td>Build an editorial engine (Payload CMS) that scales across journal, festivals, regional stories, and craft education.</td>
+</tr>
+<tr>
+<td>Lead generation</td>
+<td>Convert high-intent buyers (wedding, corporate, merch, gift-builder drafts) into Payload <code>leads</code> routed to operations.</td>
+</tr>
+<tr>
+<td>Differentiation</td>
+<td>Ship the gift-builder as a signature product experience, even in non-transactional form.</td>
+</tr>
+<tr>
+<td>Foundation</td>
+<td>Establish theme, IA, i18n, analytics, content framework, and admin tooling that subsequent sub-projects build on.</td>
+</tr>
+<tr>
+<td>Operations</td>
+<td>Surface real constraints (freshness, shelf life, packaging compatibility, MOQ, lead times) honestly.</td>
+</tr>
+</tbody></table>
+<h3>Non-Goals (v1)</h3>
+<ul>
+<li>No live checkout, payment, or GST invoice generation. Commerce deferred to Shopify phase.</li>
+<li>No corporate procurement portal, AR packaging preview, rewards, subscriptions, or referrals.</li>
+<li>No voice concierge (PersonaPlex). Out of scope until Phase 9.</li>
+<li>No multi-address bulk upload for corporate orders.</li>
+<li>No customer accounts, order history, or saved-address functionality.</li>
+<li>Not every vertical reaches full depth in the foundation phase — only thin slices.</li>
+</ul>
+<hr>
+<h2>3. Audience and Use Cases</h2>
+<table>
+<thead>
+<tr>
+<th>Audience</th>
+<th>Primary need</th>
+<th>Experience requirement</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Everyday premium buyer</td>
+<td>Fresh mithai for home, hosting, table</td>
+<td>Fast discovery, freshness signals, easy add-to-cart (draft), delivery clarity</td>
+</tr>
+<tr>
+<td>Gift buyer</td>
+<td>Thoughtful, polished, personalized box</td>
+<td>Gift-builder canvas, packaging preview, scheduling intent capture</td>
+</tr>
+<tr>
+<td>Wedding buyer</td>
+<td>Bulk gifting for invitations, favours, return gifts</td>
+<td>Dedicated wedding configurator, MOQ, lead-time transparency, consultative lead form</td>
+</tr>
+<tr>
+<td>Corporate buyer</td>
+<td>GST-friendly, branded, repeat orders</td>
+<td>Corporate lead form with GST fields, sample request, account-manager handoff</td>
+</tr>
+<tr>
+<td>Health-conscious buyer</td>
+<td>Sugar-free without compromise</td>
+<td>Sugar-free collection, dietary filters, ingredient clarity</td>
+</tr>
+<tr>
+<td>Discovery-led buyer</td>
+<td>Regional mithai, modern originals</td>
+<td>Regional collections, Mishran Originals, editorial storytelling</td>
+</tr>
+<tr>
+<td>QSR customer</td>
+<td>Chaat, thaali, South Indian, Chinese nearby</td>
+<td>Menu browsing, store finder, pickup intent</td>
+</tr>
+<tr>
+<td>FMCG customer</td>
+<td>Namkeens, cookies, dry fruits via retail</td>
+<td>Retailer redirect (Amazon, Instamart, Blinkit), subscription intent</td>
+</tr>
+<tr>
+<td>Merch customer</td>
+<td>Collectibles, books, experience-store events</td>
+<td>Enquiry-first storefront, pre-order flow where applicable</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>4. Brand Strategy → Design Principles</h2>
+<p>Carried directly from the Brand Strategy PDF into design rules:</p>
+<ol>
+<li><strong>Milk-First Purity</strong> — every mithai PDP and the home page surface the Jhajjar farm story and freshness promise with sensory, specific language.</li>
+<li><strong>The Karigar &amp; His Mastery</strong> — karigar archetype profiles (Chenna, Kaju, Ghee specialists) are first-class content, not a footer link.</li>
+<li><strong>Karigari — Technique Driven by Tradition</strong> — technique glossary (<code>resham jaisa syrup</code>, <code>rabri ki lehr</code>, <code>thad padhna</code>, etc.) appears on relevant product and story pages.</li>
+<li><strong>Modern Experience</strong> — site performance, accessibility, and clarity are non-negotiable. Heritage does not excuse friction.</li>
+<li><strong>Copy principle</strong> — warm, specific, sensory. Avoid generic claims (&quot;premium quality&quot;) unless immediately backed by proof (farm milk, small batches, karigar skill).</li>
+</ol>
+<hr>
+<h2>5. Architecture Overview</h2>
+<pre><code>mishran-shop/  (current Next.js App Router repo)
+├── app/[locale]/              # Routes (i18n)
+│   ├── (site)/                # Marketing shell: home, verticals, stories
+│   ├── (commerce)/            # Stubbed: /cart, /checkout (lead-capture CTA)
+│   ├── (ledger)/              # Wedding, corporate, merch enquiry flows
+│   └── admin/                 # Payload admin UI mount
+├── payload.config.ts          # Payload CMS config (collections, globals, access)
+├── payload-blocks/            # Reusable richText content blocks
+├── collections/               # Payload schemas
+├── components/                # Next components
+├── context/                   # CartContext (existing), DraftContext (new)
+├── i18n/ messages/            # next-intl strings
+├── design-systems/            # Mishran-default + 3 occasion variants (locked)
+└── lib/                       # payload client, analytics, helpers
+</code></pre>
+<p><strong>Key architectural moves:</strong></p>
+<ol>
+<li><strong>Next.js remains the front-end.</strong> No Shopify in v1. Commerce stubs capture intent.</li>
+<li><strong>Payload CMS embeds in the same Next app</strong> via <code>payload.config.ts</code>. MongoDB backing (Atlas M0 free or self-hosted Docker). Single Vercel deploy.</li>
+<li><strong>Locale routing preserved</strong> (<code>/[locale]/...</code>). Defaults to <code>en</code>; ships <code>hi</code>, <code>kn</code> at launch; <code>ta</code>, <code>te</code>, <code>bn</code>, <code>mr</code>, <code>gu</code>, <code>pa</code>, <code>es</code>, <code>fr</code> later.</li>
+<li><strong>Theme switcher collapsed</strong> to 4 options: Mishran-default + Diwali Saffron + Wedding Heritage + Everyday Sage. Existing switcher UI kept; options trimmed; remaining design-system files archived on a branch.</li>
+<li><strong>Brand spine</strong> — shared Payload collections (<code>stories</code>, <code>karigars</code>, <code>farms</code>, <code>packaging</code>, <code>occasions</code>) referenced across all four verticals so brand content is not duplicated.</li>
+</ol>
+<hr>
+<h2>6. Information Architecture &amp; Routes</h2>
+<p><strong>Primary nav:</strong></p>
+<pre><code>Mishran  |  Mithai  ·  Build a Gift  ·  QSR  ·  Snacks  ·  Merch
+         |  Stories  ·  Farms  ·  Karigars  ·  Journal
+         |  [search]  [locale]  [theme]  [cart]
+</code></pre>
+<p><strong>Route map:</strong></p>
+<pre><code>/[locale]
+├── /                        # Brand home — cinematic, 4 vertical portals
+├── /mithai                  # Vertical hub
+│   ├── /classics
+│   ├── /originals
+│   ├── /sugar-free
+│   ├── /regional
+│   ├── /seasonal
+│   ├── /search
+│   └── /[slug]              # PDP
+├── /build-a-gift            # Gift-builder canvas (draft save + lead convert)
+├── /gift-boxes              # Curated ready-to-gift boxes showcase
+├── /qsr                     # QSR hub
+│   ├── /menu
+│   ├── /[category]          # chaat / thaali / south-indian / chinese / chole-bhature / kulcha
+│   └── /stores
+├── /snacks                  # FMCG hub
+│   ├── /namkeens
+│   ├── /cookies
+│   ├── /dry-fruits
+│   └── /[slug]
+├── /merch                   # Merch &amp; museum hub
+│   ├── /tools
+│   ├── /book
+│   └── /experience-store
+├── /weddings                # Consultative configurator + lead form
+├── /corporate               # Consultative configurator + lead form (GST)
+├── /stories
+│   ├── /farms
+│   ├── /milk
+│   ├── /karigars
+│   ├── /karigari
+│   ├── /packaging
+│   └── /journal/[slug]
+├── /stores                  # Store locator
+├── /track-order             # Stub (future Shopify)
+├── /cart                    # Stub: &quot;Checkout launching soon&quot; + lead CTA
+├── /checkout                # Stub
+├── /account                 # Stub
+├── /contact
+├── /about                   # Brand strategy summary, mission, promise
+└── /legal/[policy]          # Terms, privacy, refund, shipping, FSSAI
+</code></pre>
+<p>Route groups: <code>(site)</code> marketing shell, <code>(commerce)</code> stubs, <code>(ledger)</code> lead-gen flows.</p>
+<hr>
+<h2>7. Data Model — Payload Collections</h2>
+<h3>Shared brand collections</h3>
+<table>
+<thead>
+<tr>
+<th>Collection</th>
+<th>Purpose</th>
+<th>Key fields</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>stories</code></td>
+<td>Editorial: journal, festivals, regional, recipes</td>
+<td><code>title</code>, <code>pillar</code> (farm/milk/karigar/karigari/packaging/festival/regional/recipe), <code>body</code> (richText), <code>heroImage</code>, <code>relatedProducts[]</code>, <code>relatedVerticals[]</code>, <code>locale</code></td>
+</tr>
+<tr>
+<td><code>karigars</code></td>
+<td>Karigar archetype profiles</td>
+<td><code>name</code>, <code>archetype</code> (chenna/kaju/ghee specialist), <code>specialties[]</code>, <code>portrait</code>, <code>story</code>, <code>signatureProducts[]</code></td>
+</tr>
+<tr>
+<td><code>farms</code></td>
+<td>Farm stories + supply chain</td>
+<td><code>name</code>, <code>location</code>, <code>story</code>, <code>gallery[]</code>, <code>milkProcess</code>, <code>certifications[]</code></td>
+</tr>
+<tr>
+<td><code>packaging</code></td>
+<td>Packaging families</td>
+<td><code>name</code>, <code>family</code>, <code>sizes[]</code>, <code>compatibleMithai[]</code>, <code>images[]</code>, <code>occasionFit[]</code>, <code>customizable</code></td>
+</tr>
+<tr>
+<td><code>occasions</code></td>
+<td>Birthday, wedding, Diwali, Rakhi, corporate</td>
+<td><code>name</code>, <code>copy</code>, <code>image</code>, <code>recommendedProducts[]</code></td>
+</tr>
+</tbody></table>
+<h3>Per-vertical product collections</h3>
+<table>
+<thead>
+<tr>
+<th>Collection</th>
+<th>Key fields</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mithai-products</code></td>
+<td><code>name</code>, <code>slug</code>, <code>family</code> (classic/original/sugarFree/regional/seasonal), <code>ingredients</code>, <code>allergens</code>, <code>shelfLife</code>, <code>storage</code>, <code>freshnessStatus</code>, <code>dietaryTags[]</code>, <code>boxCompatibility[]</code>, <code>packagingCompatibility[]</code>, <code>leadTime</code>, <code>images[]</code>, <code>story</code>, <code>karigar</code> (rel), <code>displayPrice</code> (display-only; not transacted in v1)</td>
+</tr>
+<tr>
+<td><code>gift-boxes</code></td>
+<td><code>name</code>, <code>size</code> (4/8/16-piece), <code>compartmentLayout</code>, <code>compatibleMithai[]</code>, <code>packaging[]</code>, <code>addOns[]</code> (carry-bag/sleeve/ribbon/card), <code>images[]</code>, <code>curatedAssortments[]</code></td>
+</tr>
+<tr>
+<td><code>qsr-menu-items</code></td>
+<td><code>name</code>, <code>category</code> (chaat/chole-bhature/kulcha/thaali/chinese/south-indian), <code>description</code>, <code>availableAtStores[]</code>, <code>image</code>, <code>veg</code>, <code>spiceLevel</code></td>
+</tr>
+<tr>
+<td><code>snack-products</code></td>
+<td><code>name</code>, <code>category</code> (namkeen/cookie/dry-fruit), <code>weight</code>, <code>description</code>, <code>images[]</code>, <code>externalRetailers[]</code> (Amazon/Instamart/Blinkit URLs), <code>msrp</code></td>
+</tr>
+<tr>
+<td><code>merch-products</code></td>
+<td><code>name</code>, <code>type</code> (tool/book/experience), <code>description</code>, <code>images[]</code>, <code>price</code>, <code>availability</code> (in-stock/pre-order/enquiry-only)</td>
+</tr>
+</tbody></table>
+<h3>Lead-capture collections</h3>
+<table>
+<thead>
+<tr>
+<th>Collection</th>
+<th>Purpose</th>
+<th>Key fields</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>leads</code></td>
+<td>All consultative enquiries</td>
+<td><code>type</code> (wedding/corporate/merch/gift-builder-draft/wholesale), <code>contact</code> (name, email, phone, company, GSTIN), <code>payload</code> (JSON: occasion, qty, budget, date, city, selectedProducts, message), <code>status</code>, <code>createdAt</code>, <code>source</code></td>
+</tr>
+<tr>
+<td><code>drafts</code></td>
+<td>Saved gift-builder configurations</td>
+<td><code>sessionId</code>, <code>config</code> (JSON), <code>expiresAt</code> (TTL 30 days), <code>convertedToLeadId</code></td>
+</tr>
+</tbody></table>
+<h3>Globals</h3>
+<ul>
+<li><code>brandSettings</code> — logo, tagline, positioning, hero copy, default theme</li>
+<li><code>navSettings</code> — primary nav structure, utility nav links</li>
+<li><code>themeSettings</code> — palettes for default + occasion variants</li>
+<li><code>analyticsSettings</code> — GA4 id, Meta pixel, Hotjar, WhatsApp number</li>
+<li><code>storeSettings</code> — locations, hours, delivery radius</li>
+</ul>
+<p><strong>i18n:</strong> Payload <code>localized: true</code> on text fields. Editors write per-locale content. Fallback chain: requested locale → <code>en</code>.</p>
+<p><strong>Legacy theme transition:</strong> Existing <code>data-theme</code> values not in the locked set (<code>mishran-default</code>, <code>diwali-saffron</code>, <code>wedding-heritage</code>, <code>everyday-sage</code>) silently fall back to <code>mishran-default</code> on next page load. The ThemeSwitcher UI exposes only the 4 locked options. Removed design-system files preserved on git branch <code>archive/design-systems-pre-collapse</code> before deletion from main.</p>
+<hr>
+<h2>8. Component Architecture</h2>
+<p>Three layers:</p>
+<p><strong>Layer 1 — Layout shell</strong> (<code>components/layout/</code>):</p>
+<ul>
+<li><code>SiteHeader</code> — sticky, nav, locale picker, theme picker (4 options), cart badge</li>
+<li><code>SiteFooter</code> — link map, brand promise, social, WhatsApp CTA, FSSAI, legal</li>
+<li><code>BrandBar</code> — top utility strip</li>
+<li><code>PageBackground</code> — themed backdrop (existing, refactored)</li>
+<li><code>LocaleRouter</code></li>
+</ul>
+<p><strong>Layer 2 — Content blocks</strong> (<code>payload-blocks/</code>):</p>
+<p>Editors compose stories from these richText blocks:</p>
+<p><code>HeroBlock</code>, <code>StoryBlock</code>, <code>ProductCarouselBlock</code>, <code>PillarBlock</code>, <code>FreshnessBlock</code>, <code>PackagingGalleryBlock</code>, <code>GiftBuilderEmbedBlock</code>, <code>TestimonialBlock</code>, <code>CTABlock</code>, <code>WeddingLeadBlock</code>, <code>CorporateLeadBlock</code>, <code>StoryListBlock</code>, <code>KarigarArchetypeBlock</code>, <code>MapBlock</code>, <code>FAQBlock</code>.</p>
+<p><strong>Layer 3 — UI primitives</strong> (<code>components/ui/</code>):</p>
+<p><code>Button</code>, <code>IconButton</code>, <code>Link</code>, <code>Badge</code>, <code>Tag</code>, <code>Pill</code>, <code>Card</code>, <code>MediaCard</code>, <code>ProductCard</code>, <code>StoryCard</code>, <code>Modal</code>, <code>Drawer</code>, <code>Popover</code> (Radix-based), <code>FormRow</code>, <code>Input</code>, <code>Select</code>, <code>TextArea</code>, <code>Checkbox</code>, <code>Breadcrumbs</code>, <code>Pagination</code>, <code>Tabs</code>, <code>ThemeSwitcher</code> (existing, trimmed), <code>LocaleSwitcher</code>.</p>
+<p><strong>Vertical-specific components:</strong></p>
+<ul>
+<li><code>mithai/</code> — <code>MithaiCard</code>, <code>FamilyFilter</code>, <code>MithaiPDP</code></li>
+<li><code>gift-builder/</code> — <code>BoxCanvas</code>, <code>CompartmentGrid</code>, <code>AddOnPicker</code>, <code>PricePreview</code>, <code>DraftSaveBar</code></li>
+<li><code>qsr/</code> — <code>MenuItemCard</code>, <code>StoreCard</code>, <code>StoreFinder</code></li>
+<li><code>snacks/</code> — <code>SnackCard</code>, <code>RetailerRedirect</code></li>
+<li><code>merch/</code> — <code>MerchCard</code>, <code>EnquiryButton</code></li>
+<li><code>stories/</code> — <code>StoryHero</code>, <code>PillarNav</code>, <code>KarigarPortrait</code>, <code>TimelineBlock</code>, <code>GlossaryTerm</code></li>
+<li><code>ledger/</code> — <code>LeadForm</code>, <code>WeddingConfigurator</code>, <code>CorporateConfigurator</code>, <code>GSTFields</code></li>
+</ul>
+<p><strong>State management:</strong></p>
+<ul>
+<li>React Context for cart + draft state (no Redux)</li>
+<li>TanStack Query for Payload data fetching</li>
+<li><code>next-intl</code> for UI strings</li>
+<li>Theme via <code>data-theme</code> attribute on <code>&lt;html&gt;</code></li>
+</ul>
+<hr>
+<h2>9. Data Flow</h2>
+<p><strong>Read paths:</strong></p>
+<pre><code>[Browser]
+   │
+   ▼
+[Next.js Server Component / Route Handler]
+   │
+   ├──[next-intl]──▶ messages/{locale}.json         (UI strings)
+   ├──[Payload server-side]──▶ MongoDB              (products, stories, etc.)
+   └──[TanStack Query hydrate]──▶ client cache
+</code></pre>
+<p>Server Components fetch; Client Components receive hydrated props. Client-side Payload calls restricted to live search and gift-builder draft saves.</p>
+<p><strong>Write paths:</strong></p>
+<ol>
+<li><p><strong>Lead capture:</strong></p>
+<pre><code>Client form → POST /api/leads → Payload leads.create()
+     → email notification (Resend)
+     → optional webhook to CRM (future)
+     → return lead id + confirmation
+</code></pre>
+</li>
+<li><p><strong>Draft autosave:</strong></p>
+<pre><code>Client state → debounce 2s → POST/PUT /api/drafts
+     → Payload drafts.create/update
+     → draftId stored in localStorage
+</code></pre>
+</li>
+<li><p><strong>Admin edits:</strong> Editor → <code>/admin</code> → Payload Local API → MongoDB.</p>
+</li>
+</ol>
+<p><strong>Search:</strong> Payload full-text across <code>mithai-products</code>, <code>stories</code>, <code>qsr-menu-items</code>, <code>snack-products</code>, <code>merch-products</code>. Client instant-search hits <code>/api/search?q=…</code>.</p>
+<p><strong>Theming flow:</strong> Default theme from <code>themeSettings</code> global → client reads localStorage override → sets <code>data-theme</code> on <code>&lt;html&gt;</code>. Inline script in layout reads localStorage before hydration to prevent flash.</p>
+<p><strong>Locale flow:</strong> <code>[locale]</code> segment enforces routing. Middleware negotiates locale. Payload content fetched with <code>locale=</code> param, fallback to <code>en</code>.</p>
+<p><strong>Analytics events</strong> (per PRD §15):</p>
+<p><code>product_viewed</code>, <code>story_viewed</code>, <code>karigar_viewed</code>, <code>packaging_viewed</code>, <code>gift_builder_started</code>, <code>gift_builder_completed</code>, <code>add_to_cart</code> (draft), <code>lead_submitted</code>, <code>whatsapp_clicked</code>, <code>search_used</code>, <code>draft_saved</code>, <code>locale_changed</code>, <code>theme_changed</code>, <code>missing_translation</code>.</p>
+<p>Emitted through <code>lib/analytics.ts</code> to GA4 + Meta Pixel dataLayers.</p>
+<hr>
+<h2>10. Error Handling, Performance, Accessibility, SEO</h2>
+<h3>Error handling</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Strategy</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Route errors</td>
+<td>Next <code>error.tsx</code> + <code>not-found.tsx</code> per locale. Branded pages with search + WhatsApp CTA.</td>
+</tr>
+<tr>
+<td>Payload fetch failures</td>
+<td>Server Components catch → null + fallback block. Route does not crash.</td>
+</tr>
+<tr>
+<td>Form submission failures</td>
+<td>Toast (Sonner) + inline error + retry. Input preserved.</td>
+</tr>
+<tr>
+<td>Draft save failures</td>
+<td>Queue in localStorage, retry next visit. Subtle &quot;draft unsaved&quot; badge.</td>
+</tr>
+<tr>
+<td>Locale fallback</td>
+<td>Missing translation → fall back to <code>en</code>; log <code>missing_translation</code> event.</td>
+</tr>
+<tr>
+<td>Image load failures</td>
+<td><code>&lt;Image&gt;</code> onError → blurhash placeholder.</td>
+</tr>
+<tr>
+<td>Payload admin unreachable</td>
+<td>Maintenance page; site serves from ISR cache.</td>
+</tr>
+</tbody></table>
+<h3>Performance targets</h3>
+<ul>
+<li>LCP &lt; 2.0s on mobile 4G (key landing pages)</li>
+<li>CLS &lt; 0.1, INP &lt; 200ms</li>
+<li>Lighthouse Performance ≥ 90 (home, mithai hub, PDP)</li>
+<li>TBT &lt; 200ms</li>
+</ul>
+<h3>Performance tactics</h3>
+<ul>
+<li><code>next/image</code> everywhere; AVIF/WebP auto; <code>sizes</code> + <code>priority</code> for LCP only</li>
+<li>ISR: <code>revalidate = 60</code> on product/story routes; on-demand revalidate via Payload <code>afterChange</code> webhook</li>
+<li>Self-host fonts (single weight family); no Google Fonts CDN</li>
+<li>Tree-shake Payload admin out of public bundle</li>
+<li>Defer analytics until after hydration</li>
+<li>Lazy-mount gift-builder canvas (heavy)</li>
+</ul>
+<h3>Accessibility (WCAG AA)</h3>
+<ul>
+<li>Semantic landmarks (<code>header</code>, <code>nav</code>, <code>main</code>, <code>footer</code>, <code>aside</code>)</li>
+<li>Skip-to-content link on every page</li>
+<li>Keyboard-navigable gift-builder (arrow keys move compartment focus, Enter selects)</li>
+<li>All tags have text labels; never icon-only</li>
+<li>Theme palettes validated for AA contrast before locking</li>
+<li>Form errors announced via <code>aria-live=&quot;polite&quot;</code></li>
+<li>Respect <code>prefers-reduced-motion</code> for hero video and transitions</li>
+<li>All images meaningful alt; decorative <code>alt=&quot;&quot;</code></li>
+<li>Locale switch announced to AT</li>
+</ul>
+<h3>SEO</h3>
+<ul>
+<li>Metadata API per route (<code>generateMetadata</code>)</li>
+<li>Schema.org: <code>Product</code>, <code>Offer</code> (<code>priceSpecification</code>), <code>BreadcrumbList</code>, <code>FAQPage</code>, <code>Organization</code>, <code>LocalBusiness</code> (stores), <code>Article</code> (journal)</li>
+<li>Sitemap auto-generated from Payload collections (<code>app/sitemap.ts</code>)</li>
+<li><code>robots.txt</code> allow-all in v1</li>
+<li>Indexable collection pages: classics, originals, sugar-free, regional, gift-boxes, journal/festivals</li>
+<li>Canonical URLs per locale; <code>hreflang</code> alternates for all enabled locales</li>
+<li>No client-only routes for indexable content</li>
+</ul>
+<hr>
+<h2>11. Testing Strategy</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Tooling</th>
+<th>Coverage targets</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Unit</td>
+<td>Vitest</td>
+<td>Cart math, draft expiry, locale fallback, pricing display</td>
+</tr>
+<tr>
+<td>Component</td>
+<td>React Testing Library</td>
+<td>Form validation, gift-builder capacity logic, theme + locale switchers</td>
+</tr>
+<tr>
+<td>Integration</td>
+<td>Vitest + Payload memory DB</td>
+<td>Lead submission, draft save, ISR revalidation webhook</td>
+</tr>
+<tr>
+<td>E2E</td>
+<td>Playwright</td>
+<td>Home → mithai → PDP; gift-builder; wedding lead; search; locale switch</td>
+</tr>
+<tr>
+<td>Visual</td>
+<td>Playwright screenshot diffs (CI)</td>
+<td>Home, mithai hub, PDP, gift-builder, story — for each theme</td>
+</tr>
+<tr>
+<td>A11y</td>
+<td>axe-core in Playwright</td>
+<td>Every page passes WCAG AA</td>
+</tr>
+<tr>
+<td>Perf</td>
+<td>Lighthouse CI</td>
+<td>Home + PDP + mithai hub ≥ 90</td>
+</tr>
+<tr>
+<td>Type</td>
+<td><code>tsc --noEmit</code></td>
+<td>0 errors</td>
+</tr>
+<tr>
+<td>Lint</td>
+<td>ESLint (existing)</td>
+<td>0 errors</td>
+</tr>
+</tbody></table>
+<p><strong>CI gates:</strong> types + lint + unit + integration on every PR. E2E + Lighthouse on staging deploys.</p>
+<hr>
+<h2>12. Roadmap (Umbrella)</h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Sub-project</th>
+<th>Outcome</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>0 — Foundation</strong></td>
+<td>Theme unification, IA, i18n, Payload install, story framework, analytics, thin-slice routes for all 4 verticals</td>
+<td>Site live; every vertical has landing + sample detail page; lead forms work</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Mithai &amp; Gifting flagship depth</td>
+<td>Full mithai catalog, PDP system, gift-builder canvas v1, packaging showcase</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Wedding configurator</td>
+<td>Wedding configurator + lead routing</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Corporate configurator</td>
+<td>GST fields, sample request, account routing</td>
+</tr>
+<tr>
+<td>4</td>
+<td>QSR depth</td>
+<td>Full menu, store finder, pickup lead</td>
+</tr>
+<tr>
+<td>5</td>
+<td>FMCG depth</td>
+<td>Snack catalog, retailer redirect, subscribe-to-stock</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Merch &amp; museum depth</td>
+<td>Collectibles, book pre-order, experience-store enquiries</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Journal &amp; content engine</td>
+<td>Editorial workflow, festival campaigns, regional language expansion</td>
+</tr>
+<tr>
+<td>8 (future)</td>
+<td>Commerce migration</td>
+<td>Shopify headless; transactions enabled</td>
+</tr>
+<tr>
+<td>9 (future)</td>
+<td>AI concierge</td>
+<td>Text-based concierge; voice via PersonaPlex later</td>
+</tr>
+</tbody></table>
+<p>The first implementation plan (next skill: writing-plans) covers <strong>Phase 0 — Foundation</strong> only.</p>
+<hr>
+<h2>13. Risks and Mitigations</h2>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Four-vertical scope balloons</td>
+<td>Foundation ships thin slices only. Each depth phase = separate sub-plan.</td>
+</tr>
+<tr>
+<td>Payload runtime cost</td>
+<td>Mongo Atlas M0 (free) + Vercel hobby for v1; documented upgrade path.</td>
+</tr>
+<tr>
+<td>Theme collapse breaks existing references</td>
+<td>Audit <code>design-systems/*.md</code> usage before deletion; archive branch.</td>
+</tr>
+<tr>
+<td>Multi-locale content entry overhead</td>
+<td>Ship with EN + minimal HI + KN. Fallback chain.</td>
+</tr>
+<tr>
+<td>Gift-builder canvas is heavy</td>
+<td>Lazy-load; static preview until user interacts.</td>
+</tr>
+<tr>
+<td>Lead routing unclear</td>
+<td>Capture everything to <code>leads</code> with <code>status = new</code>; ops triages in Payload admin.</td>
+</tr>
+<tr>
+<td>Asset delivery (photography/copy) gates vertical depth</td>
+<td>Each depth phase gated on asset availability.</td>
+</tr>
+<tr>
+<td>Free email tier exhaustion</td>
+<td>Start with Resend (3k/mo); upgrade before wedding season.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>14. Open Decisions (parked, not blocking v1)</h2>
+<ul>
+<li>Final product lists per vertical (founders/ops)</li>
+<li>Photography asset delivery schedule</li>
+<li>Final MOQ + lead times per packaging family</li>
+<li>Delivery radius + windows (operations)</li>
+<li>CRM target (Zoho/HubSpot/Freshsales)</li>
+<li>Razorpay vs deferred Shopify checkout</li>
+<li>Voice concierge scope (Phase 9)</li>
+</ul>
+<hr>
+<h2>15. Foundation Phase — Acceptance Criteria</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Mishran-default theme + 3 occasion variants locked; rest archived on branch</li>
+<li><input disabled="" type="checkbox"> Locale routing for <code>en</code>, <code>hi</code>, <code>kn</code> active; hreflang emitted</li>
+<li><input disabled="" type="checkbox"> Payload CMS installed; admin at <code>/admin</code></li>
+<li><input disabled="" type="checkbox"> Shared collections defined (<code>stories</code>, <code>karigars</code>, <code>farms</code>, <code>packaging</code>, <code>occasions</code>)</li>
+<li><input disabled="" type="checkbox"> One sample product collection per vertical defined</li>
+<li><input disabled="" type="checkbox"> <code>leads</code> collection + <code>/api/leads</code> endpoint + email notification</li>
+<li><input disabled="" type="checkbox"> Brand-home live with cinematic hero + 4 vertical portals</li>
+<li><input disabled="" type="checkbox"> Each vertical has landing page + one sample detail page</li>
+<li><input disabled="" type="checkbox"> Wedding + corporate lead forms functional</li>
+<li><input disabled="" type="checkbox"> Analytics events wired (GA4, Meta Pixel)</li>
+<li><input disabled="" type="checkbox"> Lighthouse ≥ 90 on home, mithai hub, sample PDP</li>
+<li><input disabled="" type="checkbox"> Playwright E2E covers golden paths</li>
+<li><input disabled="" type="checkbox"> Vercel deploy green; MongoDB connected; ISR working</li>
+</ul>
+<hr>
+<h2>16. Source Document Reconciliation</h2>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>How it informs this spec</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Mishran Brand Strategy PDF</strong></td>
+<td>Brand pillars, master narrative, brand polarity, content universe (origin/craft/milk/karigar/technique stories), karigar archetypes, social-content framing — all carried into shared collections and storytelling framework.</td>
+</tr>
+<tr>
+<td><strong>Mishran Digital Flagship PRD v1.0</strong></td>
+<td>Homepage requirements, gift-builder flow, wedding + corporate flows, packaging requirements, analytics events, performance/SEO/a11y targets — all preserved. Shopify-specific sections reinterpreted as &quot;future commerce phase&quot; per platform decision.</td>
+</tr>
+<tr>
+<td><strong>PersonaPlex / Jarvis Guide</strong></td>
+<td>Recognized but out of scope. Will inform Phase 9 (AI concierge). Voice integration explicitly deferred.</td>
+</tr>
+</tbody></table>
+<p><strong>Conflicts resolved during brainstorming:</strong></p>
+<ul>
+<li>PRD specified Shopify; user chose Next.js marketing + lead-gen only (commerce deferred).</li>
+<li>Brand strategy covers four business lines; PRD narrowed to mithai+gifting; user chose all four as first-class verticals.</li>
+<li>Repo ships ~7 themes; brand strategy argues for one identity; user chose one default + 2–3 occasion variants.</li>
+<li>PRD asks for heavy editorial; user chose Payload CMS (free, self-hostable, Next-native).</li>
+<li>PersonaPlex/Jarvis not in PRD; user chose to drop from v1.</li>
+</ul>
+
+</main>
+</body>
+</html>
