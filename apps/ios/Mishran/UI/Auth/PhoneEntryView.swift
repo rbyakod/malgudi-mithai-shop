@@ -6,6 +6,8 @@ import SwiftUI
 struct PhoneEntryView: View {
     @Bindable var viewModel: AuthViewModel
     var onSent: (() -> Void)? = nil
+    /// SIWA completes the whole sign-in in one step (no OTP stage).
+    var onSignedIn: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: .mishranSpacingLg) {
@@ -65,6 +67,14 @@ struct PhoneEntryView: View {
             .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
             .disabled(!viewModel.canSubmit)
             .accessibilityLabel("Send code")
+
+            // Task 15.2: Sign in with Apple sits below the phone path.
+            Text("or")
+                .font(.mishranBodyMd)
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+
+            AppleSignInButton(viewModel: viewModel, onSignedIn: onSignedIn)
 
             Spacer()
         }

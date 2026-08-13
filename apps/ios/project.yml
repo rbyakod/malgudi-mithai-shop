@@ -58,6 +58,9 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.mishran.app
         TARGETED_DEVICE_FAMILY: "1" # iPhone-only in v1 (iPad = deferred)
+        # Task 15.2: Sign in with Apple. Not embedded in simulator builds
+        # (CODE_SIGNING_ALLOWED=NO above); applies to signed device/Cloud builds.
+        CODE_SIGN_ENTITLEMENTS: Mishran/Mishran.entitlements
 
   MishranUITests:
     type: bundle.ui-testing

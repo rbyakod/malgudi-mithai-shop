@@ -19,10 +19,19 @@ struct MishranApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                PlaceholderHomeView(router: router)
-                    .navigationDestination(for: Route.self) { route in
-                        PlaceholderDestinationView(route: route)
+                Group {
+                    // `-authScreen` launch argument previews the sign-in flow
+                    // for UI tests (15.2) until the app shell routes there on
+                    // its own.
+                    if ProcessInfo.processInfo.arguments.contains("-authScreen") {
+                        PhoneEntryView(viewModel: AuthViewModel(client: MishranAPIClient()))
+                    } else {
+                        PlaceholderHomeView(router: router)
                     }
+                }
+                .navigationDestination(for: Route.self) { route in
+                    PlaceholderDestinationView(route: route)
+                }
             }
             .mishranTheme()
             .onOpenURL { url in

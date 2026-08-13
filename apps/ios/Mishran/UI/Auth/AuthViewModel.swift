@@ -95,6 +95,30 @@ final class AuthViewModel {
         }
     }
 
+    /// Sign in with Apple — credential values come from the coordinator
+    /// funnel (or the SIWA button's own callback). A missing identity token
+    /// means Apple didn't hand one over; surface it like a failed request.
+    func signInWithApple(_ credential: AppleSignInCoordinator.Credential) async {
+        guard let identityToken = credential.identityToken, !identityToken.isEmpty else {
+            errorMessage = "Apple sign-in didn't return a token. Try again."
+            errorCode = .tokenExpired
+            return
+        }
+        isLoading = true
+        errorMessage = nil
+        errorCode = nil
+        defer { isLoading = false }
+        do {
+            let response = try await client.authApple(identityToken: identityToken, name: credential.fullName)
+            signedInCustomer = response.customer
+            isSignedIn = true
+        } catch let error as APIError {
+            apply(error)
+        } catch {
+            errorMessage = "Something went wrong. Try again."
+        }
+    }
+
     /// Back to phone entry (user tapped "wrong number").
     func restart() {
         stage = .phone

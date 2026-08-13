@@ -85,4 +85,13 @@ extension Endpoint {
     static var authRefresh: Endpoint {
         Endpoint(path: "auth/refresh", method: .post, requiresAuth: false)
     }
+
+    static func authApple(identityToken: String, name: String?) -> Endpoint {
+        Endpoint(
+            path: "auth/apple",
+            method: .post,
+            body: try? JSONEncoder().encode(AppleAuthRequestDTO(identityToken: identityToken, name: name)),
+            requiresAuth: false
+        )
+    }
 }

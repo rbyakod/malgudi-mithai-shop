@@ -36,7 +36,9 @@ struct OtpVerifyRequestDTO: Encodable {
 
 struct CustomerDTO: Decodable, Equatable {
     let id: String
-    let phone: String
+    /// Apple-only customers have no phone — nullable in the /auth/apple
+    /// response (the 15.2 tests caught the non-optional mismatch).
+    let phone: String?
     let name: String?
     let email: String?
     let locale: String?
@@ -53,6 +55,18 @@ struct RefreshResponseDTO: Decodable {
     let accessToken: String
     let refreshToken: String
 }
+
+// MARK: - Sign in with Apple
+
+/// POST /auth/apple — {identityToken, name?}. Synthesized Encodable uses
+/// encodeIfPresent for optionals, so a nil name is omitted from the body.
+struct AppleAuthRequestDTO: Encodable {
+    let identityToken: String
+    let name: String?
+}
+
+/// Same shape as otp/verify: tokens + customer (backend upserts by appleSub).
+typealias AppleAuthResponseDTO = OtpVerifyResponseDTO
 
 // MARK: - Catalog
 

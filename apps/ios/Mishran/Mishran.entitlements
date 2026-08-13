@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Task 15.2: Sign in with Apple capability. Simulator builds run with
+	     CODE_SIGNING_ALLOWED=NO (entitlement not embedded — SIWA works in the
+	     simulator regardless); Xcode Cloud / device signing embeds it. The
+	     associated App ID capability is toggled once Apple Developer Program
+	     enrollment lands (plan Open Question #8). -->
+	<key>com.apple.developer.applesignin</key>
+	<string>Default</string>
+</dict>
+</plist>

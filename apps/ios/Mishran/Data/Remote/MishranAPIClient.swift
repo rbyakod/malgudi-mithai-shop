@@ -92,6 +92,18 @@ actor MishranAPIClient {
         return response
     }
 
+    /// Sign in with Apple — same response shape as otp/verify, same token
+    /// rotation on success. 401 TOKEN_EXPIRED surfaces for a bad identity
+    /// token; 409 CONFLICT is the backend's replay guard.
+    func authApple(identityToken: String, name: String?) async throws -> AppleAuthResponseDTO {
+        let response = try await send(
+            Endpoint.authApple(identityToken: identityToken, name: name),
+            as: AppleAuthResponseDTO.self
+        )
+        await authenticator.storeTokens(access: response.accessToken, refresh: response.refreshToken)
+        return response
+    }
+
     // MARK: - Core transport
 
     /// Raw send returning data + response, applying auth + retries.
