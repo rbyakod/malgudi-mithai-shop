@@ -9,23 +9,47 @@ struct MishranApp: App {
     @State private var router = Router()
     private let deepLinkHandler: DeepLinkHandler
 
+    /// Launch gate (Task 15.4): biometric unlock when the user enabled it
+    /// AND a refresh token survives in the keychain.
+    private enum LaunchScreen {
+        case home, biometricGate, signIn
+    }
+
+    @State private var launchScreen: LaunchScreen
+
     init() {
         let router = Router()
         _router = State(initialValue: router)
         // Same instance the stack binds to — deep links move the real path.
         deepLinkHandler = DeepLinkHandler(router: router)
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("-authScreen") {
+            // UI-test preview of the sign-in flow (15.2) until the app shell
+            // routes there on its own.
+            _launchScreen = State(initialValue: .signIn)
+        } else if BiometricSettings.isEnabled, KeychainTokenStore().refreshToken != nil {
+            _launchScreen = State(initialValue: .biometricGate)
+        } else {
+            _launchScreen = State(initialValue: .home)
+        }
     }
 
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
                 Group {
-                    // `-authScreen` launch argument previews the sign-in flow
-                    // for UI tests (15.2) until the app shell routes there on
-                    // its own.
-                    if ProcessInfo.processInfo.arguments.contains("-authScreen") {
+                    switch launchScreen {
+                    case .biometricGate:
+                        BiometricGateView(
+                            onUnlocked: { launchScreen = .home },
+                            onFallbackToSignIn: { launchScreen = .signIn }
+                        )
+                    case .signIn:
+                        // `-authScreen` launch argument previews the sign-in
+                        // flow for UI tests (15.2) until the app shell routes
+                        // there on its own.
                         PhoneEntryView(viewModel: AuthViewModel(client: MishranAPIClient()))
-                    } else {
+                    case .home:
                         PlaceholderHomeView(router: router)
                     }
                 }
