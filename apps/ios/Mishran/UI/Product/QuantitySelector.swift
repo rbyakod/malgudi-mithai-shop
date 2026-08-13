@@ -13,16 +13,19 @@ struct QuantitySelector: View {
                 Image(systemName: "minus.circle.fill")
                     .font(.mishranBodyXxl)
                     .foregroundStyle(Color.mishranBrandAccent)
-                    .frame(minWidth: 44, minHeight: 44)
             }
             .disabled(quantity <= bounds.lowerBound)
-            .accessibilityLabel("Decrease quantity")
+            .mishranIconAction(
+                label: "Decrease quantity",
+                hint: quantity <= bounds.lowerBound ? nil : "Current quantity \(quantity)"
+            )
 
             Text("\(quantity)")
                 .font(.mishranBodyXxl.weight(.semibold))
                 .monospacedDigit()
                 .frame(minWidth: 44)
-                .accessibilityLabel("Quantity, \(quantity)")
+                .accessibilityLabel("Quantity")
+                .accessibilityValue("\(quantity)")
 
             Button {
                 quantity = min(quantity + 1, bounds.upperBound)
@@ -30,10 +33,12 @@ struct QuantitySelector: View {
                 Image(systemName: "plus.circle.fill")
                     .font(.mishranBodyXxl)
                     .foregroundStyle(Color.mishranBrandAccent)
-                    .frame(minWidth: 44, minHeight: 44)
             }
             .disabled(quantity >= bounds.upperBound)
-            .accessibilityLabel("Increase quantity")
+            .mishranIconAction(
+                label: "Increase quantity",
+                hint: quantity >= bounds.upperBound ? nil : "Current quantity \(quantity)"
+            )
         }
     }
 }

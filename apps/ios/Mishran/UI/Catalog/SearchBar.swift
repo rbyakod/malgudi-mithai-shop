@@ -24,7 +24,7 @@ struct SearchBar: View {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(.secondary)
                     }
-                    .accessibilityLabel("Clear search")
+                    .mishranIconAction(label: "Clear search")
                 }
             }
             .padding(.mishranSpacingSm)
@@ -43,10 +43,11 @@ struct SearchBar: View {
                 Image(systemName: "line.3.horizontal.decrease.circle")
                     .font(.mishranBodyXxl)
                     .foregroundStyle(Color.mishranBrandAccent)
-                    .frame(minWidth: 44, minHeight: 44)
             }
-            .accessibilityLabel("Filters")
-            .accessibilityHint("Filter by category and dietary needs")
+            .mishranIconAction(
+                label: "Filters",
+                hint: "Filter by category and dietary needs"
+            )
         }
         .padding(.horizontal, .mishranSpacingMd)
         .padding(.top, .mishranSpacingSm)

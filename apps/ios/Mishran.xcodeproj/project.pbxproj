@@ -49,6 +49,7 @@
 		70D91A7E60501EDD5F1E5E82 /* RazorpayCheckout in Frameworks */ = {isa = PBXBuildFile; productRef = 231294D2DC7536DD79AE9C48 /* RazorpayCheckout */; };
 		71A09F51493AA909ACF73DAD /* OrderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7F44D92EAA043CCF853F9D /* OrderListView.swift */; };
 		721D5519FC94CE225A22E89D /* DeliveryActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75C7CF7D17CA0225AAABD5AD /* DeliveryActivity.swift */; };
+		74641FE7A551132C119ADE0E /* AccessibilityHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650E7C3E56C1E00A96507EC /* AccessibilityHelpers.swift */; };
 		7546055FCC0B770CA6412842 /* WalletPassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2B5903318B7854CFD9D7D0 /* WalletPassView.swift */; };
 		761CCC593D07CFC0546F0BA0 /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42DE5E76A474C16C34FC4633 /* APIClientTests.swift */; };
 		80207BD0EF821270C8BC6ABA /* OrderStatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F731821077C0CABDF68A8AB7 /* OrderStatusBadge.swift */; };
@@ -84,6 +85,7 @@
 		C2EFA9133A34076358A8935B /* OTPView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B404AD75DE1DA281F709981F /* OTPView.swift */; };
 		C92FE9C121D4433806A99794 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E57BE829A139A016A5663CF /* SearchBar.swift */; };
 		CB6CE45AEA7D48EB3A3A00FE /* CartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F152053B0471C98B970B6E31 /* CartViewModel.swift */; };
+		D1A709FD27EB85DD3CA54052 /* AccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6575E90C61D6190AA687E88 /* AccessibilityTests.swift */; };
 		D54483EDE2136689A3AA93A4 /* CatalogCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE2A19642D9E59D00AE0A0C /* CatalogCache.swift */; };
 		D80C102F7326BD58228313B8 /* CatalogViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F4465B83E8F544B1DDB616 /* CatalogViewModelTests.swift */; };
 		D90B8AB29B8ABD84F8318EB4 /* CatalogRefreshTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4FB88456F99489105CD541 /* CatalogRefreshTask.swift */; };
@@ -179,6 +181,7 @@
 		608A8F33A9B70154DC268F53 /* CheckoutViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutViewModelTests.swift; sourceTree = "<group>"; };
 		64620CDA70359F2FAF3E0AC9 /* NavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationUITests.swift; sourceTree = "<group>"; };
 		64AEDA2A6A9F574895B11C19 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		6650E7C3E56C1E00A96507EC /* AccessibilityHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityHelpers.swift; sourceTree = "<group>"; };
 		6836CBCA9A6BB2BBD587BF74 /* OrderDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewModel.swift; sourceTree = "<group>"; };
 		69EF5FFF260D8EBC69A3ED5A /* AddressPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressPicker.swift; sourceTree = "<group>"; };
 		6D0E622CC322FD71D228D9A1 /* DTOs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTOs.swift; sourceTree = "<group>"; };
@@ -201,6 +204,7 @@
 		A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTests.swift; sourceTree = "<group>"; };
 		A48A5980852C073E51B9FBFF /* ProductDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailViewModelTests.swift; sourceTree = "<group>"; };
 		A6568E092C76DE87C87CC8B6 /* AppleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInButton.swift; sourceTree = "<group>"; };
+		A6575E90C61D6190AA687E88 /* AccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTests.swift; sourceTree = "<group>"; };
 		A88C81BF2201A0146A1CC9A6 /* AccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewModel.swift; sourceTree = "<group>"; };
 		AA438316FABC42993AEAC8DD /* MishranAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranAPIClient.swift; sourceTree = "<group>"; };
 		AC83CE02DB09238F8FF3887C /* BiometricGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricGateView.swift; sourceTree = "<group>"; };
@@ -376,6 +380,7 @@
 		6FCE1B0A562DFF922CA88B6C /* MishranUITests */ = {
 			isa = PBXGroup;
 			children = (
+				A6575E90C61D6190AA687E88 /* AccessibilityTests.swift */,
 				CBCD922D98E4F596E91C2BB3 /* AuthUITests.swift */,
 				E8AD84061607513B2822EFFA /* MishranUITests.swift */,
 				64620CDA70359F2FAF3E0AC9 /* NavigationUITests.swift */,
@@ -440,6 +445,7 @@
 				7ACC75BEA637550855532CA3 /* Info.plist */,
 				BDE71F58C13E6FF43A4F0680 /* Mishran.entitlements */,
 				D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */,
+				E3F0B410FAE52CE718CD4E6E /* Accessibility */,
 				B6BBCFE354652AF6E8CADEAD /* Data */,
 				67EACA78FC84220DADB2E69E /* LiveActivity */,
 				83F9AD1D5FF3891E471A09B6 /* Navigation */,
@@ -491,6 +497,14 @@
 				ED91007C15EEF6F6939E19F7 /* MishranTheme.swift */,
 			);
 			path = Theme;
+			sourceTree = "<group>";
+		};
+		E3F0B410FAE52CE718CD4E6E /* Accessibility */ = {
+			isa = PBXGroup;
+			children = (
+				6650E7C3E56C1E00A96507EC /* AccessibilityHelpers.swift */,
+			);
+			path = Accessibility;
 			sourceTree = "<group>";
 		};
 		ED64B27DDAA28359E9CF63A8 /* Wallet */ = {
@@ -723,6 +737,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1A709FD27EB85DD3CA54052 /* AccessibilityTests.swift in Sources */,
 				9F0470D37E60CB3A0B5F97A1 /* AuthUITests.swift in Sources */,
 				BD20E249EB84D2D509889488 /* MishranUITests.swift in Sources */,
 				01426908FD705FCA1750E7E6 /* NavigationUITests.swift in Sources */,
@@ -744,6 +759,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3985EE883EE06FF0E9483AD /* APIError.swift in Sources */,
+				74641FE7A551132C119ADE0E /* AccessibilityHelpers.swift in Sources */,
 				3B9C5158DBB467780360AF16 /* AccountView.swift in Sources */,
 				E14B6A24E318771875AD4B37 /* AccountViewModel.swift in Sources */,
 				9DBF95F3B4960A255A17CF7A /* AddToCartButton.swift in Sources */,
