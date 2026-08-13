@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Brand seed colors (mirror packages/brand-tokens + lib/themes.ts):
+  kakvi brown ink  #9b4d2a, saffron accent #d79a35, cream canvas #fff8f0.
+  The Compose MishranTheme (Task 7.2) is the source of truth; these XML
+  values back the launch-screen window + adaptive launcher icon only.
+-->
+<resources>
+    <color name="mishran_background">#F7EFE0</color>
+    <color name="mishran_ink">#2C1810</color>
+    <color name="mishran_accent">#9B4D2A</color>
+    <color name="mishran_pop">#D79A35</color>
+    <color name="ic_launcher_background">#9B4D2A</color>
+</resources>
