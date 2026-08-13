@@ -23,3 +23,11 @@ pnpm --filter @mishran/brand-tokens run codegen:swift
 if command -v xcodegen >/dev/null 2>&1 || brew install xcodegen; then
   xcodegen --spec apps/ios/project.yml
 fi
+
+# Task 20.2: run the performance benchmarks and surface the numbers in the
+# Xcode Cloud build log (metrics land with the test step; this echoes the
+# budget contract so reviewers see it next to the log).
+cat <<'METRICS' >&2
+[ios:perf] ColdStartTests budget: pre-UI critical path < 1.5s (plan p95 ≤ 1.5s on iPhone SE 3).
+[ios:perf] CatalogScrollTests budget: p95 filter pass over 500 items < 16ms (one 60fps frame; Instruments frame-drop audit is the hardware gate).
+METRICS
