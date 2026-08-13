@@ -13,6 +13,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.mishran.app.work.CatalogWorkScheduler
+import com.mishran.app.work.OrderWorkScheduler
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -21,6 +22,7 @@ class MishranApp : Application(), Configuration.Provider {
 
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var catalogWorkScheduler: CatalogWorkScheduler
+    @Inject lateinit var orderWorkScheduler: OrderWorkScheduler
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
@@ -30,5 +32,6 @@ class MishranApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         catalogWorkScheduler.schedulePeriodicRefresh()
+        orderWorkScheduler.schedulePeriodicRefresh()
     }
 }

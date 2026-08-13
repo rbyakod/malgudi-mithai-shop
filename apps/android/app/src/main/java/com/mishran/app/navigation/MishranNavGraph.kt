@@ -42,6 +42,8 @@ import com.mishran.app.ui.cart.CartScreen
 import com.mishran.app.ui.catalog.CatalogScreen
 import com.mishran.app.ui.checkout.CheckoutScreen
 import com.mishran.app.ui.orderconfirmed.OrderConfirmedScreen
+import com.mishran.app.ui.orders.OrderDetailScreen
+import com.mishran.app.ui.orders.OrderListScreen
 import com.mishran.app.ui.product.ProductDetailScreen
 
 /**
@@ -172,7 +174,23 @@ fun MishranAppRoot() {
                     },
                 )
             }
-            composable(Routes.ORDERS) { PlaceholderScreen("Orders") }
+            composable(Routes.ORDERS) {
+                // Task 11.1: offline-first order history (Room cache + refresh).
+                OrderListScreen(
+                    onOrderClick = { orderId ->
+                        navController.navigate(Routes.orderDetail(orderId))
+                    },
+                    onBrowse = {
+                        navController.navigate(Routes.CATALOG) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
+            }
             composable(
                 route = Routes.ORDER_CONFIRMED,
                 arguments = listOf(navArgument("id") { type = NavType.StringType }),
@@ -201,7 +219,18 @@ fun MishranAppRoot() {
                 arguments = listOf(navArgument("id") { type = NavType.StringType }),
                 deepLinks = listOf(navDeepLink { uriPattern = Routes.ORDER_DEEPLINK_PATTERN }),
             ) { entry ->
-                PlaceholderScreen("Order detail — id=${entry.arguments?.getString("id")}")
+                // Task 11.1: serves the Orders tab, Track-order CTA, and the
+                // mishran://order/{id} push deep link. Support CTA dials the
+                // support line (placeholder number until launch).
+                OrderDetailScreen(
+                    onCallSupport = {
+                        val dial = android.content.Intent(
+                            android.content.Intent.ACTION_DIAL,
+                            android.net.Uri.parse("tel:${com.mishran.app.ui.orders.SUPPORT_PHONE}"),
+                        )
+                        entry.context?.startActivity(dial)
+                    },
+                )
             }
             composable(Routes.ACCOUNT) { PlaceholderScreen("Account") }
             composable(Routes.ADDRESSES) { PlaceholderScreen("Addresses") }

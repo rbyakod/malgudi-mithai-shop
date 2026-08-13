@@ -1,9 +1,10 @@
-// apps/android/app/src/main/java/com/mishran/app/data/local/Database.kt — Task 9.1 / 10.1.
+// apps/android/app/src/main/java/com/mishran/app/data/local/Database.kt — Tasks 9.1 / 10.1 / 11.1.
 //
-// Room database for the offline-first catalog + local cart. v2 adds the
-// cart_items table; destructive fallback is still acceptable pre-launch.
-// exportSchema is off for now — flip on (and configure room.schemaLocation)
-// once the schema stabilizes so migration tests can golden-file it.
+// Room database for the offline-first catalog + local cart + order cache.
+// v2 added the cart_items table; v3 adds the orders cache; destructive
+// fallback is still acceptable pre-launch. exportSchema is off for now —
+// flip on (and configure room.schemaLocation) once the schema stabilizes
+// so migration tests can golden-file it.
 package com.mishran.app.data.local
 
 import androidx.room.Database
@@ -11,19 +12,22 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.mishran.app.data.local.dao.CartDao
+import com.mishran.app.data.local.dao.OrderDao
 import com.mishran.app.data.local.dao.ProductDao
 import com.mishran.app.data.local.entity.CartItemEntity
+import com.mishran.app.data.local.entity.OrderEntity
 import com.mishran.app.data.local.entity.ProductEntity
 
 @TypeConverters(Converters::class)
 @Database(
-    entities = [ProductEntity::class, CartItemEntity::class],
-    version = 2,
+    entities = [ProductEntity::class, CartItemEntity::class, OrderEntity::class],
+    version = 3,
     exportSchema = false,
 )
 abstract class MishranDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao
     abstract fun cartDao(): CartDao
+    abstract fun orderDao(): OrderDao
 }
 
 /**
