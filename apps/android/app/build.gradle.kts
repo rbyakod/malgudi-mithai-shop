@@ -8,13 +8,16 @@
 // Deviations from the plan brief (correctness — see root build.gradle.kts):
 //   - Kotlin 2.0 Compose: use the org.jetbrains.kotlin.plugin.compose plugin
 //     instead of composeOptions.kotlinCompilerExtensionVersion (legacy).
-//   - +kotlinx-serialization plugin (Retrofit converter needs it).
+//   - JSON = Moshi (reflective, via moshi-kotlin KotlinJsonAdapterFactory).
+//     The OpenAPI-generated Kotlin DTOs (packages/api-contract) target Moshi
+//     (@Json/@JsonClass), so Moshi keeps the client + contract drift-free.
+//     The data classes are NOT @JsonClass(generateAdapter=true), hence the
+//     reflective adapter rather than moshi-kotlin-codegen.
 //   - compileOptions Java 17 (AGP 8.5 floor).
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
-    id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.dagger.hilt.android")
     // google-services + crashlytics plugins are applied via the release-build
     // flavor once google-services.json is provisioned (Task 11.3 / 13.3). They
@@ -35,6 +38,14 @@ android {
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        // Production base URL (mobile v1 contract). Must end in "/". Overridden
+        // to the emulator host-loopback in the debug build type so a local
+        // `npm run dev` on :3000 is reachable from the Android emulator.
+        buildConfigField(
+            "String",
+            "API_BASE_URL",
+            "\"https://api.mishran.app/api/mobile/v1/\"",
+        )
     }
 
     buildTypes {
@@ -42,6 +53,12 @@ android {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
+            // 10.0.2.2 is the emulator's alias for the host machine's localhost.
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"http://10.0.2.2:3000/api/mobile/v1/\"",
+            )
         }
         release {
             isMinifyEnabled = true
@@ -65,12 +82,20 @@ android {
         compose = true
         buildConfig = true
     }
-    // Monorepo generated sources: brand tokens (Kotlin) + i18n strings (res).
-    // Added directly as source roots so they compile in place — zero duplication
-    // and always in sync with packages/brand-tokens + packages/i18n-strings
-    // (the plan suggested a copy task; srcDir is the idiomatic monorepo form).
+    // Monorepo generated sources, compiled in place (zero duplication, always
+    // in sync with packages/*). The plan suggested copy tasks; srcDir is the
+    // idiomatic monorepo form.
+    //   - brand tokens (full generated/kotlin tree: com.mishran.app.ui.theme).
+    //   - api-contract DTOs: ONLY the models/ package is wired, not the
+    //     generator's own apis/ + infrastructure/ (which would pull a competing
+    //     networking stack). Models are plain @Serializable-via-Moshi data
+    //     classes in com.mishran.api.models.
+    //   - i18n strings (Android res).
     sourceSets["main"].kotlin.srcDir(
         layout.projectDirectory.dir("../../../packages/brand-tokens/generated/kotlin"),
+    )
+    sourceSets["main"].kotlin.srcDir(
+        layout.projectDirectory.dir("../../../packages/api-contract/generated/kotlin/src/main/kotlin/com/mishran/api/models"),
     )
     sourceSets["main"].res.srcDir(
         layout.projectDirectory.dir("../../../packages/i18n-strings/generated/android"),
@@ -104,12 +129,16 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
-    // --- Networking: Retrofit + OkHttp + kotlinx-serialization ---
+    // --- Networking: Retrofit + OkHttp + Moshi ---
+    // Moshi matches the OpenAPI-generated DTOs (@Json/@JsonClass). Reflective
+    // adapter (moshi-kotlin) because the generated data classes are not marked
+    // @JsonClass(generateAdapter=true), so codegen would skip them.
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-kotlinx-serialization:1.0.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+    implementation("com.squareup.moshi:moshi:1.15.1")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
 
     // --- Local persistence: Room + DataStore ---
     implementation("androidx.room:room-runtime:2.6.1")

@@ -1,23 +1,23 @@
-# apps/android/app/proguard-rules.pro — Task 7.1.
+# apps/android/app/proguard-rules.pro — Task 7.1 / 7.3.
 # Release minify (buildTypes.release) keeps the app <25MB. Keep rules for the
-# reflection/annotation-driven libs: kotlinx-serialization, Retrofit, Room,
-# Razorpay. Hilt + Compose need no manual rules (R8 handles generated code).
+# reflection/annotation-driven libs: Moshi, Retrofit, Room, Razorpay. Hilt +
+# Compose need no manual rules (R8 handles generated code).
 
-# --- kotlinx-serialization ---
+# --- Moshi (reflective KotlinJsonAdapterFactory) ---
+# The generated DTOs use moshi-kotlin's reflective adapter (no codegen), so R8
+# must retain the @Json field names + the reflective metadata. Keep the
+# generated models package wholesale and let Moshi's documented rules handle
+# the reflective plumbing.
 -keepattributes *Annotation*, InnerClasses
--dontnote kotlinx.serialization.**
-# Keep @Serializable companions + generated serializers.
--if @kotlinx.serialization.Serializable class **
--keepclassmembers class <1> {
-    static <1>$Companion Companion;
+-keep class com.mishran.api.models.** { *; }
+-keepclassmembers class * {
+    @com.squareup.moshi.* <methods>;
+    @com.squareup.moshi.* <fields>;
 }
--if @kotlinx.serialization.Serializable class ** {
-    static **$* *;
-}
--keepclassmembers class <2>$<3> {
-    kotlinx.serialization.KSerializer serializer(...);
-}
--keep,includedescriptorclasses class **$$serializer { *; }
+-keep @com.squareup.moshi.JsonQualifier interface *
+-keep class com.squareup.moshi.** { *; }
+-dontwarn com.squareup.moshi.**
+-dontwarn org.jetbrains.annotations.**
 
 # --- Retrofit ---
 -keepattributes Signature, Exceptions
