@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "predev": "node --import tsx scripts/regen-importmap.mjs",
-    "prebuild": "node --import tsx scripts/regen-importmap.mjs",
+    "prebuild": "node --import tsx scripts/regen-importmap.mjs && pnpm codegen:ts",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -22,6 +22,7 @@
     "test:e2e:ui": "playwright test --ui",
     "lhci": "lhci autorun",
     "codegen": "pnpm -r --filter './packages/*' run codegen",
+    "codegen:ts": "pnpm -r --filter '@mishran/api-contract' run codegen:ts",
     "build:packages": "pnpm -r --filter './packages/*' run build",
     "seed": "tsx scripts/seed.ts",
     "seed:staging": "tsx scripts/seed-staging.ts",
