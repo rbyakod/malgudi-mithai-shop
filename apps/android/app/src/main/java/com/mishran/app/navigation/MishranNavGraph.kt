@@ -20,11 +20,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -35,9 +40,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import dagger.hilt.android.EntryPointAccessors
 import com.mishran.app.ui.auth.BiometricGate
 import com.mishran.app.ui.auth.OtpScreen
 import com.mishran.app.ui.auth.PhoneEntryScreen
+import com.mishran.app.data.sync.PushRegistrationScheduler
+import com.mishran.app.push.PushEventBusEntryPoint
+import com.mishran.app.push.notificationBody
 import com.mishran.app.ui.cart.CartScreen
 import com.mishran.app.ui.catalog.CatalogScreen
 import com.mishran.app.ui.checkout.CheckoutScreen
@@ -56,7 +65,23 @@ fun MishranAppRoot() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
+    // Task 11.3: pushes landing while the app is foregrounded surface as an
+    // in-app snackbar instead of only a system notification.
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val pushEventBus = remember {
+        EntryPointAccessors.fromApplication<PushEventBusEntryPoint>(
+            context.applicationContext,
+        ).pushEventBus()
+    }
+    LaunchedEffect(pushEventBus) {
+        pushEventBus.events.collect { event ->
+            snackbarHostState.showSnackbar(notificationBody(event.stage))
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             if (currentRoute in Routes.topLevel) {
                 MishranBottomBar(
@@ -117,6 +142,8 @@ fun MishranAppRoot() {
             ) {
                 OtpScreen(
                     onVerified = {
+                        // Session exists now — upload the FCM token (Task 11.3).
+                        PushRegistrationScheduler.enqueue(context)
                         // Clear the entire back stack (splash + auth) so HOME is the
                         // new root: Back from Home exits the app, never returns to login.
                         navController.navigate(Routes.HOME) {

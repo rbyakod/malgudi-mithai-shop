@@ -58,5 +58,16 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/order_status_widget_info" />
         </receiver>
+
+        <!-- Task 11.3: FCM order-update pushes. The google-services plugin is
+             deliberately not applied until google-services.json is provisioned
+             (release-build flavor, Task 13.3) — see app/build.gradle.kts. -->
+        <service
+            android:name=".push.MishranFcmService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>

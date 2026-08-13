@@ -15,6 +15,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import com.mishran.app.data.local.MishranDatabase
 import com.mishran.app.data.local.dao.CartDao
+import com.mishran.app.data.local.dao.NotificationSeenDao
 import com.mishran.app.data.local.dao.OrderDao
 import com.mishran.app.data.local.dao.ProductDao
 import dagger.Module
@@ -64,5 +65,9 @@ object DatabaseModule {
 
     @Provides
     fun provideOrderDao(database: MishranDatabase): OrderDao = database.orderDao()
+
+    @Provides
+    fun provideNotificationSeenDao(database: MishranDatabase): NotificationSeenDao =
+        database.notificationSeenDao()
 }
 
