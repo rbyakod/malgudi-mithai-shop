@@ -1,31 +1,146 @@
-// Minimal DI container stub — Task 2.6.
-// Task 2.9 will replace this with full DI wiring (Mongo-backed RateLimiter,
-// real JwtService instance, etc.). For now this lets auth routes compile and
-// allows tests to mock the container via vi.mock.
+// DI container — Task 2.9 (scoped).
+//
+// Wires the services that exist today: jwtService, otpService, rateLimiter,
+// logger. Other services (payment, push, sms, email, analytics, storage,
+// search, feature flags, error reporter) land in later tasks (4.3, 5.2, …)
+// and will be appended here as their impl files are introduced.
+//
+// API contract preserved for callers in app/api/mobile/v1/auth/**:
+//   - container.jwtService           — sync instance (JwtService)
+//   - container.otpService           — sync instance (OtpService impl)
+//   - container.rateLimiter.check()  — async method on sync facade object
+//   - container.logger               — sync Pino logger
+//
+// The rateLimiter facade defers Mongo connection until first use; the
+// surface stays `await container.rateLimiter.check(...)` so no route code
+// changes when the Mongo-backed impl lands.
+
+import { MongoClient, type Db } from 'mongodb';
+import { JwtService } from './auth/JwtService';
+import { Msg91OtpService } from './auth/impl/Msg91OtpService';
 import { FakeOtpService } from './auth/impl/FakeOtpService';
+import type { OtpService } from './auth/OtpService';
+import type { RateLimiter } from './security/rateLimiter';
 import { logger } from './observability/Logger';
+import { config } from './config';
 
-interface RateLimiterLike {
-  check(key: string, limit: number, windowSeconds: number): Promise<void>;
+// ---------------------------------------------------------------------------
+// JwtService
+// ---------------------------------------------------------------------------
+//
+// `isRevoked` callback is wired to a Payload `revokedTokens` lookup. The
+// callback holds a lazy Payload singleton so we do not force Payload init at
+// module load — important for unit tests that mock the container wholesale.
+// The inline getPayload() inside JwtService.revoke() remains; see Task 2.3
+// deferred-decisions register. TODO: when a second consumer needs the
+// revokedTokens collection, lift this into a shared RevokedTokenRepo.
+
+let payloadSingleton: Promise<PayloadLike> | null = null;
+async function getPayloadSingleton(): Promise<PayloadLike> {
+  if (!payloadSingleton) {
+    const { getPayload } = await import('payload');
+    const payloadConfig = (await import('../payload.config')).default;
+    payloadSingleton = getPayload({ config: payloadConfig }) as Promise<PayloadLike>;
+  }
+  return payloadSingleton;
 }
 
-interface JwtServiceLike {
-  verify(token: string, expectedKind: string): Promise<{ customerId: string; jti?: string; exp?: number; kind: string }>;
-  revoke(jti: string, customerId: string, reason: string, exp: Date): Promise<void>;
-  issueAccessToken(customerId: string): Promise<string>;
-  issueRefreshToken(customerId: string): Promise<string>;
+interface PayloadLike {
+  find(args: {
+    collection: string;
+    where: Record<string, unknown>;
+    limit?: number;
+  }): Promise<{ docs: Array<{ id: string | number }> }>;
 }
 
-export const container: {
-  otpService: FakeOtpService;
-  rateLimiter: RateLimiterLike;
-  jwtService: JwtServiceLike;
-  logger: typeof logger;
-} = {
-  otpService: new FakeOtpService(),
-  // No-op rate limiter until Task 2.9 wires the Mongo-backed implementation.
-  rateLimiter: { check: async () => undefined },
-  // Set by Task 2.9 once JwtService deps (keys, ttls) are configured.
-  jwtService: undefined as unknown as JwtServiceLike,
+const jwtService = new JwtService({
+  privateKey: config.jwtPrivateKey,
+  publicKey: config.jwtPublicKey,
+  accessTtlSeconds: config.jwt.accessTtlSeconds,
+  refreshTtlSeconds: config.jwt.refreshTtlSeconds,
+  isRevoked: async (jti: string): Promise<boolean> => {
+    const payload = await getPayloadSingleton();
+    const found = await payload.find({
+      collection: 'revokedTokens',
+      where: { jti: { equals: jti } },
+      limit: 1,
+    });
+    return found.docs.length > 0;
+  },
+});
+
+// ---------------------------------------------------------------------------
+// OtpService — env-driven, resolved sync at module load
+// ---------------------------------------------------------------------------
+
+function resolveOtp(): OtpService {
+  const provider = process.env.OTP_PROVIDER ?? (config.nodeEnv === 'test' ? 'fake' : 'msg91');
+  if (provider === 'fake') return new FakeOtpService();
+  if (provider === 'msg91') {
+    return new Msg91OtpService({
+      authKey: config.msg91AuthKey,
+      senderId: config.msg91SenderId,
+      templateId: config.msg91TemplateOtp,
+    });
+  }
+  throw new Error(`Unknown OTP_PROVIDER "${provider}"`);
+}
+
+const otpService: OtpService = resolveOtp();
+
+// ---------------------------------------------------------------------------
+// RateLimiter — async-init behind a sync facade
+// ---------------------------------------------------------------------------
+//
+// Mongo `Db` handle is acquired via a shared MongoClient connected on first
+// use. A direct MongoClient is used (rather than `payload.db`) so the
+// container does not depend on Payload init order. The facade preserves the
+// sync `container.rateLimiter.check(...)` call site.
+
+let mongoClient: MongoClient | null = null;
+let rateLimiterInstance: RateLimiter | null = null;
+let rateLimiterPromise: Promise<RateLimiter> | null = null;
+
+async function getRateLimiter(): Promise<RateLimiter> {
+  if (rateLimiterInstance) return rateLimiterInstance;
+  if (!rateLimiterPromise) {
+    rateLimiterPromise = (async () => {
+      const { RateLimiter } = await import('./security/rateLimiter');
+      if (!mongoClient) {
+        mongoClient = new MongoClient(config.mongoUri);
+        await mongoClient.connect();
+      }
+      const db: Db = mongoClient.db();
+      rateLimiterInstance = new RateLimiter(db);
+      return rateLimiterInstance;
+    })();
+  }
+  return rateLimiterPromise;
+}
+
+const rateLimiterFacade = {
+  async check(key: string, limit: number, windowSeconds: number): Promise<void> {
+    const limiter = await getRateLimiter();
+    return limiter.check(key, limit, windowSeconds);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Container
+// ---------------------------------------------------------------------------
+
+export const container = {
+  jwtService,
+  otpService,
+  rateLimiter: rateLimiterFacade,
   logger,
+  // TODO(Task 4.3): paymentService — RazorpayPaymentService / FakePaymentService
+  // TODO(Task 5.2): pushService — FcmPushService / FakePushService
+  // TODO(Task 5.2): smsService — Msg91SmsService / fake
+  // TODO(later): emailService — ResendEmailService
+  // TODO(later): analyticsService — MultiAnalyticsService
+  // TODO(later): storageService — LocalDiskStorageService
+  // TODO(later): searchService — MongoSearchService
+  // TODO(later): flagService — EnvFlagService
+  // TODO(later): errorReporter — SentryReporter / FakeErrorReporter
 };
