@@ -34,6 +34,7 @@ import { Msg91SmsService } from './notifications/impl/Msg91SmsService';
 import { FakeSmsService } from './notifications/impl/FakeSmsService';
 import type { SmsService } from './notifications/SmsService';
 import type { AppleAuthService } from './auth/AppleAuthService';
+import type { WalletPassService } from './wallet/WalletPassService';
 import type { RateLimiter } from './security/rateLimiter';
 import { logger } from './observability/Logger';
 import { config } from './config';
@@ -226,6 +227,53 @@ function resolveAppleAuth(): AppleAuthService {
 const appleAuthService: AppleAuthService = resolveAppleAuth();
 
 // ---------------------------------------------------------------------------
+// WalletPassService — env-driven, resolved sync at module load (Task 18.5)
+// ---------------------------------------------------------------------------
+//
+// WALLET_PROVIDER=fake (or NODE_ENV=test) selects the in-memory fake;
+// 'node-passbook' selects the real Apple Wallet adapter. Falls back to fake
+// when PASSBOOK_CERT_PATH / PASSBOOK_WWDR_PATH are unset — a fully valid
+// .pkpass requires Apple Developer Program certs (plan Open Question #8),
+// so a box without them never silently serves unsigned passes. Mirrors the
+// FCM/Apple gating pattern. The real NodePassbookWalletService also needs
+// object-storage creds (self-hosted MinIO by default) to host the signed pass.
+
+function resolveWallet(): WalletPassService {
+  const provider =
+    process.env.WALLET_PROVIDER ?? (config.nodeEnv === 'test' ? 'fake' : 'node-passbook');
+  if (provider === 'fake') {
+    const { FakeWalletService } = require('./wallet/impl/FakeWalletService');
+    return new FakeWalletService() as WalletPassService;
+  }
+  if (provider === 'node-passbook') {
+    if (!config.passbookCertPath || !config.passbookWwdrPath) {
+      logger.warn(
+        { passbookCertPath: config.passbookCertPath, passbookWwdrPath: config.passbookWwdrPath },
+        'PASSBOOK_CERT_PATH / PASSBOOK_WWDR_PATH missing — wallet falling back to FakeWalletService',
+      );
+      const { FakeWalletService } = require('./wallet/impl/FakeWalletService');
+      return new FakeWalletService() as WalletPassService;
+    }
+    const { NodePassbookWalletService } = require('./wallet/impl/NodePassbookWalletService');
+    return new NodePassbookWalletService({
+      passbookCertPath: config.passbookCertPath,
+      passbookCertPassword: config.passbookCertPassword,
+      wwdrCertPath: config.passbookWwdrPath,
+      storageEndpoint: config.storageEndpoint,
+      storageRegion: config.storageRegion,
+      storageAccessKey: config.storageAccessKey,
+      storageSecretKey: config.storageSecretKey,
+      storageBucket: config.walletPassesBucket,
+      teamIdentifier: config.appleTeamIdentifier,
+      passTypeIdentifier: config.applePassTypeIdentifier,
+    }) as WalletPassService;
+  }
+  throw new Error(`Unknown WALLET_PROVIDER "${provider}"`);
+}
+
+const walletPassService: WalletPassService = resolveWallet();
+
+// ---------------------------------------------------------------------------
 // RateLimiter — async-init behind a sync facade
 // ---------------------------------------------------------------------------
 //
@@ -275,6 +323,7 @@ export const container = {
   pushService,
   smsService,
   appleAuthService,
+  walletPassService,
   // TODO(later): emailService — ResendEmailService
   // TODO(later): analyticsService — MultiAnalyticsService
   // TODO(later): storageService — LocalDiskStorageService

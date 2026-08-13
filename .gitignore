@@ -24,6 +24,11 @@ node_modules
 .DS_Store
 *.pem
 
+# Apple passbook credentials (Task 18.5). Never commit secrets.
+certs/*.p12
+certs/*.key
+certs/*.pem
+
 # debug
 npm-debug.log*
 yarn-debug.log*

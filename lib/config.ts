@@ -30,6 +30,22 @@ const schema = z.object({
   // Sign-in-with-Apple (Task 15.3). Services ID / Client ID used as the JWT
   // audience. Optional — absent in test; container falls back to the fake.
   appleClientId: z.string().optional(),
+  // Apple Wallet (Task 18.5). Passbook P12 + WWDR cert paths + object-storage
+  // creds for hosting signed .pkpass bundles. All optional — absent in test
+  // and in any box without Apple Developer certs; container falls back to the
+  // fake. WALLET_PROVIDER=node-passbook is the real adapter.
+  passbookCertPath: z.string().optional(),
+  passbookCertPassword: z.string().optional(),
+  passbookWwdrPath: z.string().optional(),
+  appleTeamIdentifier: z.string().optional(),
+  applePassTypeIdentifier: z.string().optional(),
+  walletPassesBucket: z.string().default('mithai-wallet-passes'),
+  // Shared S3/MinIO object-storage connection (self-hosted MinIO first,
+  // cloud S3 swap is config-only per the infra-first ADR).
+  storageEndpoint: z.string().optional(),
+  storageRegion: z.string().optional(),
+  storageAccessKey: z.string().optional(),
+  storageSecretKey: z.string().optional(),
 });
 
 export type Config = z.infer<typeof schema> & {
@@ -68,6 +84,16 @@ const env = {
   ga4Id: process.env.GA4_ID,
   metaPixelId: process.env.META_PIXEL_ID,
   appleClientId: process.env.APPLE_CLIENT_ID,
+  passbookCertPath: process.env.PASSBOOK_CERT_PATH,
+  passbookCertPassword: process.env.PASSBOOK_CERT_PASSWORD,
+  passbookWwdrPath: process.env.PASSBOOK_WWDR_PATH,
+  appleTeamIdentifier: process.env.APPLE_TEAM_ID,
+  applePassTypeIdentifier: process.env.APPLE_PASS_TYPE_ID,
+  walletPassesBucket: process.env.WALLET_PASSES_BUCKET,
+  storageEndpoint: process.env.STORAGE_ENDPOINT,
+  storageRegion: process.env.STORAGE_REGION,
+  storageAccessKey: process.env.STORAGE_ACCESS_KEY,
+  storageSecretKey: process.env.STORAGE_SECRET_KEY,
 };
 
 export const config: Config = {
