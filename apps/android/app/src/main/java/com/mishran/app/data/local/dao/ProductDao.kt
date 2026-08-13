@@ -37,6 +37,10 @@ interface ProductDao {
     @Query("DELETE FROM products WHERE staleAt < :now")
     suspend fun deleteStale(now: Long): Int
 
+    /** Push every row's freshness cutoff out to [staleAt] (called on a 304 — server confirms the cache is still valid). */
+    @Query("UPDATE products SET staleAt = :staleAt")
+    suspend fun extendFreshness(staleAt: Long)
+
     @Query("SELECT COUNT(*) FROM products")
     suspend fun count(): Int
 }

@@ -148,6 +148,10 @@ dependencies {
 
     // --- Background work + widgets ---
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+    // @HiltWorker injection (Task 9.2): the manifest removes WorkManager's
+    // default initializer so MishranApp supplies a HiltWorkerFactory instead.
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
     implementation("androidx.glance:glance-appwidget:1.0.0")
 
     // --- Biometric (in-app auth gate, Task 8.2) ---

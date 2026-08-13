@@ -6,7 +6,8 @@
   network_security_config (production uses https). Firebase messaging service +
   additional intent filters land in their own tasks (11.3, 13.1).
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -38,5 +39,12 @@
                 <data android:scheme="mishran" android:host="order" />
             </intent-filter>
         </activity>
+
+        <!-- Task 9.2: on-demand WorkManager init via MishranApp's
+             HiltWorkerFactory (the default initializer can't inject workers). -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
     </application>
 </manifest>
