@@ -82,8 +82,13 @@ export async function emitOrderEvent(orderId: string, stage: string): Promise<vo
     where: { and: [{ customerId: { equals: customerId } }, { active: { equals: true } }] },
     limit: 10,
   });
-  const tokens = devices.docs
-    .map((d) => (d as { pushToken?: string }).pushToken)
+  const deviceDocs = devices.docs as Array<{
+    pushToken?: string;
+    platform?: string;
+    liveActivityToken?: string;
+  }>;
+  const tokens = deviceDocs
+    .map((d) => d.pushToken)
     .filter((t): t is string => typeof t === "string" && t.length > 0);
 
   const eventId = crypto.randomUUID();
@@ -103,6 +108,45 @@ export async function emitOrderEvent(orderId: string, stage: string): Promise<vo
         { err, orderId, stage, eventId, channel: "push" },
         "emitOrderEvent push failed",
       );
+    }
+  }
+
+  // --- Live Activity update (Task 18.4) ---------------------------------
+  // iOS devices that have started a delivery Live Activity carry an
+  // ActivityKit push token. Each gets a `.liveactivity` content-state update
+  // via container.apnsService. The activity ends (dismissal-date) when the
+  // order reaches a terminal stage (spec §8.8 step 5).
+  const liveActivityDevices = deviceDocs.filter(
+    (d) =>
+      d.platform === "ios" &&
+      typeof d.liveActivityToken === "string" &&
+      d.liveActivityToken.length > 0,
+  );
+  if (liveActivityDevices.length > 0) {
+    // 'delivered' ends the activity. NOTE: 'cancelled' is a side-state not in
+    // TEMPLATE_BY_STAGE (the emitter returns early for it); a cancelled-order
+    // Live Activity dismissal would need its own emission path — deferred.
+    const isTerminal = stage === "delivered";
+    const updatedAt = new Date().toISOString();
+    const contentState = {
+      status: stage,
+      statusLabel: template.titleKey,
+      body: template.bodyKey,
+      updatedAt,
+    };
+    for (const device of liveActivityDevices) {
+      try {
+        await container.apnsService.sendLiveActivityUpdate(
+          device.liveActivityToken as string,
+          contentState,
+          isTerminal ? { dismissalDate: new Date(updatedAt) } : undefined,
+        );
+      } catch (err) {
+        container.logger.error(
+          { err, orderId, stage, eventId, channel: "live-activity", token: device.liveActivityToken },
+          "emitOrderEvent live-activity update failed",
+        );
+      }
     }
   }
 

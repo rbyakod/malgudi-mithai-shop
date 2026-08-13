@@ -46,6 +46,13 @@ const schema = z.object({
   storageRegion: z.string().optional(),
   storageAccessKey: z.string().optional(),
   storageSecretKey: z.string().optional(),
+  // APNs (iOS push + Live Activity — Task 18.4). Token-based auth (.p8 key).
+  // Optional — absent in test; container resolves apnsService to FakePushService
+  // so a box without APNs creds never attempts an unreachable APNs call.
+  apnsTeamId: z.string().optional(),
+  apnsKeyId: z.string().optional(),
+  apnsPrivateKey: z.string().optional(),
+  apnsBundleId: z.string().optional(),
 });
 
 export type Config = z.infer<typeof schema> & {
@@ -94,6 +101,10 @@ const env = {
   storageRegion: process.env.STORAGE_REGION,
   storageAccessKey: process.env.STORAGE_ACCESS_KEY,
   storageSecretKey: process.env.STORAGE_SECRET_KEY,
+  apnsTeamId: process.env.APNS_TEAM_ID,
+  apnsKeyId: process.env.APNS_KEY_ID,
+  apnsPrivateKey: process.env.APNS_PRIVATE_KEY,
+  apnsBundleId: process.env.APNS_BUNDLE_ID,
 };
 
 export const config: Config = {

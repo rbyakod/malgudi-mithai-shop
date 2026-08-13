@@ -274,6 +274,45 @@ function resolveWallet(): WalletPassService {
 const walletPassService: WalletPassService = resolveWallet();
 
 // ---------------------------------------------------------------------------
+// ApnsService — iOS push + Live Activity (Task 18.4)
+// ---------------------------------------------------------------------------
+//
+// APNS_PROVIDER=fake (or NODE_ENV=test) selects FakePushService (doubles as
+// the Live Activity fake — its liveActivityCalls array lets integration tests
+// assert content-state); 'apns' selects ApnsPushService. Falls back to fake
+// when APNS_KEY_ID / APNS_TEAM_ID / APNS_PRIVATE_KEY are unset — a box without
+// APNs creds (awaiting Apple Developer Program enrollment, Open Question #8)
+// never attempts an unreachable APNs call. Mirrors the FCM/Apple/wallet gating.
+
+function resolveApns(): PushService {
+  const provider =
+    process.env.APNS_PROVIDER ?? (config.nodeEnv === 'test' ? 'fake' : 'apns');
+  if (provider === 'fake') {
+    return new FakePushService();
+  }
+  if (provider === 'apns') {
+    if (!config.apnsKeyId || !config.apnsTeamId || !config.apnsPrivateKey) {
+      logger.warn(
+        { apnsKeyId: config.apnsKeyId, apnsTeamId: config.apnsTeamId },
+        'APNS_KEY_ID / APNS_TEAM_ID / APNS_PRIVATE_KEY missing — apnsService falling back to FakePushService',
+      );
+      return new FakePushService();
+    }
+    const { ApnsPushService } = require('./notifications/impl/ApnsPushService');
+    return new ApnsPushService({
+      teamId: config.apnsTeamId,
+      keyId: config.apnsKeyId,
+      privateKey: config.apnsPrivateKey,
+      bundleId: config.apnsBundleId ?? 'com.mishran.app',
+      production: config.nodeEnv === 'production',
+    }) as PushService;
+  }
+  throw new Error(`Unknown APNS_PROVIDER "${provider}"`);
+}
+
+const apnsService: PushService = resolveApns();
+
+// ---------------------------------------------------------------------------
 // RateLimiter — async-init behind a sync facade
 // ---------------------------------------------------------------------------
 //
@@ -324,6 +363,7 @@ export const container = {
   smsService,
   appleAuthService,
   walletPassService,
+  apnsService,
   // TODO(later): emailService — ResendEmailService
   // TODO(later): analyticsService — MultiAnalyticsService
   // TODO(later): storageService — LocalDiskStorageService

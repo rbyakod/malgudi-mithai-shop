@@ -33,6 +33,25 @@ export const Devices: CollectionConfig = {
     // pushToken is required, so unique is safe (no null-conflict risk).
     // Field-level `unique: true` auto-creates the unique index.
     { name: "pushToken", type: "text", required: true, unique: true },
+    // pushType distinguishes the APNs transport: 'alert' (standard iOS push),
+    // 'liveactivity' (ActivityKit token for the delivery Live Activity, Task
+    // 18.4), or 'pass' (Wallet pass update token, Task 19.2). Defaults to
+    // 'alert' — the pre-existing alert-push behavior.
+    {
+      name: "pushType",
+      type: "select",
+      defaultValue: "alert",
+      options: [
+        { label: "Alert", value: "alert" },
+        { label: "Live Activity", value: "liveactivity" },
+        { label: "Pass", value: "pass" },
+      ],
+    },
+    // ActivityKit push token issued by Apple when the iOS app starts a Live
+    // Activity (spec §8.8). iOS-only; present only while a delivery Live
+    // Activity is in flight. Used by OrderEventEmitter to fire .liveactivity
+    // content-state updates (Task 18.4).
+    { name: "liveActivityToken", type: "text" },
     { name: "appVersion", type: "text" },
     { name: "deviceModel", type: "text" },
     { name: "osVersion", type: "text" },

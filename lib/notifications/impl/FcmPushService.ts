@@ -29,7 +29,13 @@ import {
 // v14 split messaging into a subpath export; the modular getMessaging(app)
 // replaces the old app.messaging() namespace method.
 import { getMessaging } from "firebase-admin/messaging";
-import type { PushMessage, PushResult, PushService } from "../PushService";
+import type {
+  PushMessage,
+  PushResult,
+  PushService,
+  LiveActivityContentState,
+  LiveActivityUpdateOptions,
+} from "../PushService";
 
 export class FcmPushService implements PushService {
   private app: App;
@@ -65,5 +71,20 @@ export class FcmPushService implements PushService {
       }
     });
     return { success, failed };
+  }
+
+  /**
+   * Live Activity is iOS-only (ActivityKit + APNs `.liveactivity` push).
+   * FCM serves Android, which has no Live Activity, so this is a documented
+   * no-op — the real work happens in ApnsPushService (container.apnsService).
+   * The OrderEventEmitter only routes Live Activity updates to iOS devices
+   * with an ActivityKit token, so this path is not hit in practice.
+   */
+  async sendLiveActivityUpdate(
+    _deviceToken: string,
+    _contentState: LiveActivityContentState,
+    _options?: LiveActivityUpdateOptions,
+  ): Promise<void> {
+    // Intentionally empty.
   }
 }
