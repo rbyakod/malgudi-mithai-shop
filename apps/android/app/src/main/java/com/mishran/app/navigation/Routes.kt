@@ -24,6 +24,7 @@ object Routes {
     const val CART = "cart"
     const val CHECKOUT = "checkout"
     const val ORDERS = "orders"
+    const val ORDER_CONFIRMED = "order-confirmed/{id}"
     const val ORDER_DETAIL = "order/{id}"
     const val ACCOUNT = "account"
     const val ADDRESSES = "addresses"
@@ -33,6 +34,7 @@ object Routes {
 
     fun authOtp(requestId: String): String = "auth/otp/$requestId"
     fun product(slug: String): String = "product/$slug"
+    fun orderConfirmed(id: String): String = "order-confirmed/$id"
     fun orderDetail(id: String): String = "order/$id"
 
     /** Routes that show the bottom navigation bar. */

@@ -41,6 +41,7 @@ import com.mishran.app.ui.auth.PhoneEntryScreen
 import com.mishran.app.ui.cart.CartScreen
 import com.mishran.app.ui.catalog.CatalogScreen
 import com.mishran.app.ui.checkout.CheckoutScreen
+import com.mishran.app.ui.orderconfirmed.OrderConfirmedScreen
 import com.mishran.app.ui.product.ProductDetailScreen
 
 /**
@@ -161,16 +162,40 @@ fun MishranAppRoot() {
             }
             composable(Routes.CHECKOUT) {
                 // Task 10.3: validate → create-order → Razorpay → verify.
-                // Task 10.4 replaces the ORDERS hop with OrderConfirmed/{id}.
+                // Task 10.4: success lands on the confirmation screen, not the
+                // order list; back from there returns Home (cart is gone).
                 CheckoutScreen(
                     onOrderPlaced = { orderId ->
-                        navController.navigate(Routes.orderDetail(orderId)) {
+                        navController.navigate(Routes.orderConfirmed(orderId)) {
                             popUpTo(Routes.HOME) { inclusive = false }
                         }
                     },
                 )
             }
             composable(Routes.ORDERS) { PlaceholderScreen("Orders") }
+            composable(
+                route = Routes.ORDER_CONFIRMED,
+                arguments = listOf(navArgument("id") { type = NavType.StringType }),
+            ) { entry ->
+                val orderId = entry.arguments?.getString("id").orEmpty()
+                OrderConfirmedScreen(
+                    orderId = orderId,
+                    onTrackOrder = { id ->
+                        navController.navigate(Routes.orderDetail(id)) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onContinueShopping = {
+                        navController.navigate(Routes.CATALOG) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
+            }
             composable(
                 route = Routes.ORDER_DETAIL,
                 arguments = listOf(navArgument("id") { type = NavType.StringType }),
