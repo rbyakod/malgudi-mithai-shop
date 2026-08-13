@@ -43,6 +43,7 @@ components:
                 - PAYMENT_FAILED
                 - PAYMENT_ABANDONED
                 - ORDER_NOT_FOUND
+                - SNAPSHOT_NOT_FOUND
                 - INVALID_STATE_TRANSITION
                 - TOKEN_EXPIRED
                 - TOKEN_REVOKED
@@ -239,6 +240,105 @@ components:
           type: [string, 'null']
           description: Service tier of the resolved pincode (e.g. shelf, fresh).
         expiresAt: { type: string, format: date-time }
+    RazorpayCreateOrderRequest:
+      type: object
+      required: [snapshotId, deliveryAddressId]
+      properties:
+        snapshotId:
+          type: string
+          description: |
+            Cart snapshot id returned by POST /cart/validate. The snapshot
+            must belong to the calling customer and must not be expired.
+        deliveryAddressId:
+          type: string
+          description: Customer address id to ship the order to.
+    RazorpayCreateOrderResponse:
+      type: object
+      required: [orderId, razorpayOrderId, amountInPaise, keyId]
+      properties:
+        orderId:
+          type: string
+          description: Internal Mishran order id (also used as Razorpay receipt).
+        razorpayOrderId:
+          type: string
+          description: Provider-side order id; pass to the Razorpay checkout widget.
+        amountInPaise:
+          type: integer
+          description: Order total in paise (1 INR = 100 paise).
+        keyId:
+          type: string
+          description: Public Razorpay key id for the checkout widget (NEXT_PUBLIC_RAZORPAY_KEY_ID).
+    RazorpayVerifyRequest:
+      type: object
+      required: [orderId, razorpayPaymentId, signature]
+      properties:
+        orderId:
+          type: string
+          description: Internal Mishran order id returned by create-order.
+        razorpayPaymentId:
+          type: string
+          description: Razorpay payment id from the checkout callback.
+        signature:
+          type: string
+          description: HMAC signature returned by Razorpay at checkout completion.
+    Order:
+      type: object
+      required:
+        - id
+        - customerId
+        - items
+        - totals
+        - status
+        - paymentStatus
+        - deliveryAddressId
+        - source
+        - createdAt
+        - updatedAt
+      properties:
+        id: { type: string }
+        customerId: { type: string }
+        items:
+          type: array
+          items:
+            type: object
+            required: [productId, slug, name, quantity, unit, priceInPaise]
+            properties:
+              productId: { type: string }
+              slug: { type: string }
+              name: { type: string }
+              quantity: { type: integer, minimum: 1 }
+              unit: { type: string }
+              priceInPaise: { type: integer, minimum: 0 }
+              image:
+                type: [string, 'null']
+        totals: { $ref: '#/components/schemas/OrderTotals' }
+        status:
+          type: string
+          enum:
+            [created, pending_payment, confirmed, packed, dispatched,
+             out_for_delivery, delivered, payment_failed, cancelled,
+             returned, failed_delivery, abandoned]
+        paymentStatus:
+          type: string
+          enum: [pending, paid, failed, refunded, partially_refunded]
+        deliveryAddressId: { type: string }
+        slot:
+          type: [object, 'null']
+          properties:
+            date: { type: string }
+            window: { type: string }
+        source:
+          type: string
+          enum: [mobile-android, mobile-ios, web]
+        razorpayOrderId:
+          type: [string, 'null']
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    RazorpayVerifyResponse:
+      type: object
+      required: [order]
+      properties:
+        order: { $ref: '#/components/schemas/Order' }
 
 security:
   - bearerAuth: []
@@ -463,7 +563,8 @@ paths:
       description: |
         Validate the customer's cart: authenticate, re-check pincode
         serviceability, re-fetch each product to confirm it still exists,
-        and return a cart snapshot valid for 10 minutes.
+        persist a tamper-evident cart snapshot, and return the snapshot
+        id + shape valid for 10 minutes.
 
         NOTE: totals are all zero today — commerce / variant pricing on
         MithaiProducts is deferred to Phase 8. This endpoint gives mobile
@@ -490,6 +591,122 @@ paths:
               schema: { $ref: '#/components/schemas/Error' }
         '422':
           description: Unprocessable Entity — invalid body or unserviceable pincode.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /payments/razorpay/create-order:
+    post:
+      tags: [payments]
+      description: |
+        Create an internal order + a Razorpay order from a persisted cart
+        snapshot. Idempotent: a replay with the same Idempotency-Key and
+        body returns the cached response without re-running side effects.
+        The X-Client-Source header selects the order `source` field
+        (mobile-android | mobile-ios | web); defaults to mobile-android.
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: false
+          schema: { type: string }
+          description: Optional. When set, the response is cached for 24h.
+        - in: header
+          name: X-Client-Source
+          required: false
+          schema:
+            type: string
+            enum: [mobile-android, mobile-ios, web]
+            default: mobile-android
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RazorpayCreateOrderRequest' }
+      responses:
+        '200':
+          description: OK — order + Razorpay order created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/RazorpayCreateOrderResponse' }
+        '401':
+          description: Unauthorized — missing or invalid bearer token.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Not Found — snapshot does not exist or belongs to another customer.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '409':
+          description: Conflict — Idempotency-Key reused with a different body.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: |
+            Unprocessable Entity — invalid body, unsupported X-Client-Source,
+            or the cart snapshot has expired.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '500':
+          description: |
+            Internal Server Error — Razorpay order creation failed. The
+            internal order row is left in pending_payment. Retry with a
+            new Idempotency-Key.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /payments/razorpay/verify:
+    post:
+      tags: [payments]
+      description: |
+        Verify the Razorpay checkout signature, capture the payment, and
+        transition the order from pending_payment to confirmed. Safe to
+        retry: signature is always re-verified, and an already-captured
+        payment row short-circuits the transition path. Idempotent at the
+        HTTP layer when an Idempotency-Key is supplied.
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: false
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RazorpayVerifyRequest' }
+      responses:
+        '200':
+          description: OK — payment verified, order confirmed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/RazorpayVerifyResponse' }
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '402':
+          description: Payment Failed — signature invalid or no Razorpay order bound.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Not Found — order id unknown or belongs to another customer.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: Unprocessable Entity — invalid body.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }

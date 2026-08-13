@@ -1,13 +1,15 @@
 // DI container — Task 2.9 (scoped).
 //
-// Wires the services that exist today: jwtService, otpService, rateLimiter,
-// logger. Other services (payment, push, sms, email, analytics, storage,
-// search, feature flags, error reporter) land in later tasks (4.3, 5.2, …)
-// and will be appended here as their impl files are introduced.
+// Wires the services that exist today: jwtService, otpService,
+// paymentService, rateLimiter, logger. Other services (push, sms, email,
+// analytics, storage, search, feature flags, error reporter) land in
+// later tasks (5.2, …) and will be appended here as their impl files are
+// introduced.
 //
 // API contract preserved for callers in app/api/mobile/v1/auth/**:
 //   - container.jwtService           — sync instance (JwtService)
 //   - container.otpService           — sync instance (OtpService impl)
+//   - container.paymentService       — sync instance (PaymentService impl)
 //   - container.rateLimiter.check()  — async method on sync facade object
 //   - container.logger               — sync Pino logger
 //
@@ -20,6 +22,9 @@ import { JwtService } from './auth/JwtService';
 import { Msg91OtpService } from './auth/impl/Msg91OtpService';
 import { FakeOtpService } from './auth/impl/FakeOtpService';
 import type { OtpService } from './auth/OtpService';
+import { RazorpayPaymentService } from './commerce/impl/RazorpayPaymentService';
+import { FakePaymentService } from './commerce/impl/FakePaymentService';
+import type { PaymentService } from './commerce/PaymentService';
 import type { RateLimiter } from './security/rateLimiter';
 import { logger } from './observability/Logger';
 import { config } from './config';
@@ -89,6 +94,29 @@ function resolveOtp(): OtpService {
 const otpService: OtpService = resolveOtp();
 
 // ---------------------------------------------------------------------------
+// PaymentService — env-driven, resolved sync at module load
+// ---------------------------------------------------------------------------
+//
+// Mirrors the OTP pattern: PAYMENT_PROVIDER=fake (or NODE_ENV=test) selects
+// the in-memory fake; otherwise RazorpayPaymentService is wired with the
+// shared config. Vendor swap is config + impl change (adapter ADR).
+
+function resolvePayment(): PaymentService {
+  const provider =
+    process.env.PAYMENT_PROVIDER ?? (config.nodeEnv === 'test' ? 'fake' : 'razorpay');
+  if (provider === 'fake') return new FakePaymentService();
+  if (provider === 'razorpay') {
+    return new RazorpayPaymentService({
+      keyId: config.razorpayKeyId,
+      keySecret: config.razorpayKeySecret,
+    });
+  }
+  throw new Error(`Unknown PAYMENT_PROVIDER "${provider}"`);
+}
+
+const paymentService: PaymentService = resolvePayment();
+
+// ---------------------------------------------------------------------------
 // RateLimiter — async-init behind a sync facade
 // ---------------------------------------------------------------------------
 //
@@ -132,9 +160,9 @@ const rateLimiterFacade = {
 export const container = {
   jwtService,
   otpService,
+  paymentService,
   rateLimiter: rateLimiterFacade,
   logger,
-  // TODO(Task 4.3): paymentService — RazorpayPaymentService / FakePaymentService
   // TODO(Task 5.2): pushService — FcmPushService / FakePushService
   // TODO(Task 5.2): smsService — Msg91SmsService / fake
   // TODO(later): emailService — ResendEmailService

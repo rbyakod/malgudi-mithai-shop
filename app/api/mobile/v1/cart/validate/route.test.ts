@@ -28,7 +28,16 @@ vi.mock('payload', () => {
     const id = args && args.id;
     return productById[id] ?? null;
   });
-  const payloadStub = { find: find, findByID: findByID };
+  const create = vi.fn(async function (args: any) {
+    // Minimal snapshot persistence: return a doc whose id is stable enough
+    // for the route to surface as snapshotId. Real persistence is exercised
+    // via integration tests against Mongo.
+    if (args && args.collection === 'snapshots') {
+      return { id: 'snap-mock-1', ...args.data };
+    }
+    return { id: 'mock-1' };
+  });
+  const payloadStub = { find: find, findByID: findByID, create: create };
   const getPayload = vi.fn(async function () {
     return payloadStub;
   });

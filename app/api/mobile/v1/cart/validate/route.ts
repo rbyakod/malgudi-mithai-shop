@@ -17,6 +17,8 @@ import { requireCustomer } from '../../../../../../lib/api/authMiddleware';
 // header comment. This endpoint therefore:
 //   - validates request shape + authn + pincode serviceability,
 //   - re-fetches each product to confirm it still exists,
+//   - persists a cart snapshot (Task 4.4) so the subsequent create-order
+//     route can re-read it server-side rather than trusting a client cart,
 //   - returns a stable cart snapshot whose totals are all zero with
 //     prominent TODOs pointing at Phase 8.
 //
@@ -123,8 +125,25 @@ export async function POST(req: NextRequest) {
       totalInPaise: 0,
     };
 
-    const snapshotId = randomUUID();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+    // Persist the snapshot (Task 4.4). The doc id becomes the snapshotId
+    // handed back to the client and re-presented to /payments/razorpay/
+    // create-order. Stamping items/totals/pincode server-side gives the
+    // create-order route a tamper-evident cart to work from.
+    const snapshotDoc = await payload.create({
+      collection: 'snapshots',
+      data: {
+        customerId,
+        items,
+        totals,
+        pincode: parsed.data.pincode,
+        pincodeTier,
+        slot: parsed.data.slot,
+        expiresAt,
+      },
+    });
+    const snapshotId = String(snapshotDoc.id);
 
     return jsonResponse({
       snapshotId,

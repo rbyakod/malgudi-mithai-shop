@@ -49,6 +49,8 @@ import { Orders } from "./collections/Orders";
 import { Payments } from "./collections/Payments";
 import { Shipments } from "./collections/Shipments";
 import { ServiceablePincodes } from "./collections/ServiceablePincodes";
+// Mobile app (Task 4.4): persisted cart snapshots (server-trust for create-order).
+import { Snapshots } from "./collections/Snapshots";
 // Mobile app (Task 1.7): auth + ops collections.
 import { OtpRequests } from "./collections/OtpRequests";
 import { Devices } from "./collections/Devices";
@@ -132,6 +134,8 @@ export default buildConfig({
     Payments,
     Shipments,
     ServiceablePincodes,
+    // Mobile app (Task 4.4): cart snapshots.
+    Snapshots,
     // Mobile app (Task 1.7): auth + ops collections.
     OtpRequests,
     Devices,
