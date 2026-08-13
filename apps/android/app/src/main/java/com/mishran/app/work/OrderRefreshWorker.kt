@@ -7,10 +7,12 @@
 package com.mishran.app.work
 
 import android.content.Context
+import androidx.glance.appwidget.updateAll
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.mishran.app.data.repository.OrderRepository
+import com.mishran.app.widget.OrderStatusWidget
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -22,6 +24,9 @@ class OrderRefreshWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result = if (orderRepository.refreshOrders()) {
+        // Fresh cache landed — repaint the widget too (pushes do the same
+        // from MishranFcmService in Task 11.3).
+        runCatching { OrderStatusWidget().updateAll(applicationContext) }
         Result.success()
     } else {
         if (runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.failure()

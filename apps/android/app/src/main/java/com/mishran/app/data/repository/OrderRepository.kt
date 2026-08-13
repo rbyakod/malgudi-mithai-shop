@@ -33,7 +33,7 @@ class OrderRepository @Inject constructor(
 ) {
 
     private val itemsAdapter: com.squareup.moshi.JsonAdapter<List<OrderItemsInner>> =
-        moshi.adapter(Types.newParameterizedType(List::class.java, OrderItemsInner::class.java))
+        orderItemsAdapter(moshi)
 
     /** Live cached orders, newest first (max 20 rows). */
     fun observeOrders(): Flow<List<Order>> =
@@ -76,6 +76,15 @@ class OrderRepository @Inject constructor(
         const val PAGE_SIZE = 20
     }
 }
+
+/**
+ * Moshi adapter for the order line-item blob — top-level so the 11.2 widget
+ * decodes rows through the same path as the repository.
+ */
+internal fun orderItemsAdapter(
+    moshi: Moshi,
+): com.squareup.moshi.JsonAdapter<List<OrderItemsInner>> =
+    moshi.adapter(Types.newParameterizedType(List::class.java, OrderItemsInner::class.java))
 
 /** Map a fetched order to its cache row; [itemsJson] carries the line items. */
 internal fun Order.toEntity(itemsJson: String): OrderEntity = OrderEntity(
