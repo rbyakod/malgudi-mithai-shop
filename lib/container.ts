@@ -1,10 +1,10 @@
 // DI container — Task 2.9 (scoped).
 //
 // Wires the services that exist today: jwtService, otpService,
-// paymentService, rateLimiter, logger. Other services (push, sms, email,
-// analytics, storage, search, feature flags, error reporter) land in
-// later tasks (5.2, …) and will be appended here as their impl files are
-// introduced.
+// paymentService, rateLimiter, logger, pushService, smsService. Other
+// services (email, analytics, storage, search, feature flags, error
+// reporter) land in later tasks and will be appended here as their impl
+// files are introduced.
 //
 // API contract preserved for callers in app/api/mobile/v1/auth/**:
 //   - container.jwtService           — sync instance (JwtService)
@@ -12,6 +12,8 @@
 //   - container.paymentService       — sync instance (PaymentService impl)
 //   - container.rateLimiter.check()  — async method on sync facade object
 //   - container.logger               — sync Pino logger
+//   - container.pushService          — sync instance (PushService impl)   [Task 5.2]
+//   - container.smsService           — sync instance (SmsService impl)    [Task 5.2]
 //
 // The rateLimiter facade defers Mongo connection until first use; the
 // surface stays `await container.rateLimiter.check(...)` so no route code
@@ -25,6 +27,12 @@ import type { OtpService } from './auth/OtpService';
 import { RazorpayPaymentService } from './commerce/impl/RazorpayPaymentService';
 import { FakePaymentService } from './commerce/impl/FakePaymentService';
 import type { PaymentService } from './commerce/PaymentService';
+import { FcmPushService } from './notifications/impl/FcmPushService';
+import { FakePushService } from './notifications/impl/FakePushService';
+import type { PushService } from './notifications/PushService';
+import { Msg91SmsService } from './notifications/impl/Msg91SmsService';
+import { FakeSmsService } from './notifications/impl/FakeSmsService';
+import type { SmsService } from './notifications/SmsService';
 import type { RateLimiter } from './security/rateLimiter';
 import { logger } from './observability/Logger';
 import { config } from './config';
@@ -117,6 +125,77 @@ function resolvePayment(): PaymentService {
 const paymentService: PaymentService = resolvePayment();
 
 // ---------------------------------------------------------------------------
+// PushService — env-driven, resolved sync at module load
+// ---------------------------------------------------------------------------
+//
+// Mirrors the OTP/payment pattern: PUSH_PROVIDER=fake (or NODE_ENV=test)
+// selects the in-memory fake; otherwise FcmPushService is wired with the
+// shared config. FCM is only initialized when the provider resolves to
+// 'fcm' — important so tests that import container never initialize a real
+// Firebase app.
+
+function resolvePush(): PushService {
+  const provider = process.env.PUSH_PROVIDER ?? (config.nodeEnv === 'test' ? 'fake' : 'fcm');
+  if (provider === 'fake') return new FakePushService();
+  if (provider === 'fcm') {
+    if (!config.fcmProjectId) {
+      // Without a project id FCM init would throw at send time anyway; fall
+      // back to fake so a misconfigured prod box still serves orders.
+      logger.warn(
+        { fcmProjectId: config.fcmProjectId },
+        'FCM_PROJECT_ID missing — push falling back to FakePushService',
+      );
+      return new FakePushService();
+    }
+    return new FcmPushService({
+      projectId: config.fcmProjectId,
+      serviceAccountJson: config.fcmServiceAccountJson,
+    });
+  }
+  throw new Error(`Unknown PUSH_PROVIDER "${provider}"`);
+}
+
+const pushService: PushService = resolvePush();
+
+// ---------------------------------------------------------------------------
+// SmsService — env-driven, resolved sync at module load
+// ---------------------------------------------------------------------------
+//
+// Template IDs are collected from the per-stage MSG91_TEMPLATE_SMS_<STAGE>
+// env vars. Stages without a template ID are simply absent from the map;
+// Msg91SmsService.send throws on a missing template, and OrderEventEmitter
+// logs + skips SMS for that stage. The shipped SMS-enabled stages are
+// confirmed/dispatched/out_for_delivery/delivered.
+
+function resolveSms(): SmsService {
+  const provider = process.env.SMS_PROVIDER ?? (config.nodeEnv === 'test' ? 'fake' : 'msg91');
+  if (provider === 'fake') return new FakeSmsService();
+  if (provider === 'msg91') {
+    const templateIds: Record<string, string> = {};
+    if (config.msg91TemplateSmsConfirmed) {
+      templateIds['push.order.confirmed.body'] = config.msg91TemplateSmsConfirmed;
+    }
+    if (config.msg91TemplateSmsDispatched) {
+      templateIds['push.order.dispatched.body'] = config.msg91TemplateSmsDispatched;
+    }
+    if (config.msg91TemplateSmsOutForDelivery) {
+      templateIds['push.order.out_for_delivery.body'] = config.msg91TemplateSmsOutForDelivery;
+    }
+    if (config.msg91TemplateSmsDelivered) {
+      templateIds['push.order.delivered.body'] = config.msg91TemplateSmsDelivered;
+    }
+    return new Msg91SmsService({
+      authKey: config.msg91AuthKey,
+      senderId: config.msg91SenderId,
+      templateIds,
+    });
+  }
+  throw new Error(`Unknown SMS_PROVIDER "${provider}"`);
+}
+
+const smsService: SmsService = resolveSms();
+
+// ---------------------------------------------------------------------------
 // RateLimiter — async-init behind a sync facade
 // ---------------------------------------------------------------------------
 //
@@ -163,8 +242,8 @@ export const container = {
   paymentService,
   rateLimiter: rateLimiterFacade,
   logger,
-  // TODO(Task 5.2): pushService — FcmPushService / FakePushService
-  // TODO(Task 5.2): smsService — Msg91SmsService / fake
+  pushService,
+  smsService,
   // TODO(later): emailService — ResendEmailService
   // TODO(later): analyticsService — MultiAnalyticsService
   // TODO(later): storageService — LocalDiskStorageService

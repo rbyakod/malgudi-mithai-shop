@@ -24,7 +24,7 @@
 //   8. Idempotent short-circuit: payment already captured -> 200 ok.
 //   9. Otherwise: mark payment captured + append raw event for audit,
 //      mark order paid, transition order pending_payment -> confirmed.
-//  10. TODO(Task 5.2): emit order.confirmed via OrderEventEmitter.
+//  10. Emit order.confirmed via OrderEventEmitter (push + SMS fan-out).
 //
 // BRIEF FIXES applied here:
 //   - #1 Path depth: app/api/webhooks/razorpay/ = 4 dirs under app/, so
@@ -35,7 +35,7 @@
 //     500. No `!` non-null assertion, no crash.
 //   - #4 New verifyRazorpayWebhookSignature helper does timing-safe
 //     compare (length check + timingSafeEqual). No string `!==`.
-//   - #5 emitOrderEvent does not exist yet (Task 5.2). TODO comment only.
+//   - #5 emitOrderEvent now wired (Task 5.2 landed).
 //   - #6 JSON.parse wrapped in try/catch. Malformed body -> 400 +
 //     webhook_signature_fail securityEvent (not a separate event type;
 //     the body is untrusted, signature passed only because we signed the
@@ -48,6 +48,7 @@ import { NextRequest } from 'next/server';
 import { getPayload } from 'payload';
 import config from '../../../../payload.config';
 import { PayloadOrderService } from '../../../../lib/commerce/impl/PayloadOrderService';
+import { emitOrderEvent } from '../../../../lib/notifications/OrderEventEmitter';
 import { verifyRazorpayWebhookSignature } from '../../../../lib/security/hmac';
 
 export async function POST(req: NextRequest) {
@@ -203,11 +204,13 @@ export async function POST(req: NextRequest) {
     // is captured, order is paid; nothing left to do.
   }
 
-  // TODO(Task 5.2): emit order.confirmed event via OrderEventEmitter.
-  //   const { emitOrderEvent } = await import(
-  //     '../../../../lib/notifications/OrderEventEmitter'
-  //   );
-  //   await emitOrderEvent(orderId, 'confirmed');
+  // Emit order.confirmed (push + SMS). The transition above may have thrown
+  // in the webhook-vs-verify race, but in that case the order is ALREADY
+  // confirmed — emitting again is safe: OrderEventEmitter is idempotent from
+  // the client's perspective (distinct event_id, same orderId+stage; the
+  // mobile client dedupes). Fault-tolerant: a notification outage never
+  // changes the 200 ok we return to Razorpay.
+  await emitOrderEvent(orderId, 'confirmed');
 
   return new Response('ok', { status: 200 });
 }

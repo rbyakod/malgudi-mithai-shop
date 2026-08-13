@@ -11,7 +11,7 @@
 //      return the order without re-transitioning.
 //   6. Otherwise: mark payment captured, mark order paid, transition
 //      order status pending_payment -> confirmed.
-//   7. TODO(Task 5.2): emit order.confirmed via OrderEventEmitter.
+//   7. Emit order.confirmed via OrderEventEmitter (push + SMS fan-out).
 //
 // IDEMPOTENCY: same wrapping strategy as create-order — the whole body
 // is inside withIdempotency, so a replay returns the cached response
@@ -23,7 +23,7 @@
 //
 // BRIEF FIXES applied here:
 //   - #1 withIdempotency wraps the WHOLE handler.
-//   - #4 emitOrderEvent import removed; replaced with a TODO comment.
+//   - #4 emitOrderEvent now wired (Task 5.2 landed).
 //   - #5 path depth is 7 `../` (verified).
 //   - #8 explicit null check on paymentDoc.docs[0] (no `!` assertion).
 //   - #9 throws ApiError with proper codes instead of bare Error.
@@ -37,6 +37,7 @@ import { withIdempotency } from '../../../../../../../lib/idempotency/idempotenc
 import { jsonResponse, errorResponse } from '../../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../../lib/api/errors';
 import { PayloadOrderService } from '../../../../../../../lib/commerce/impl/PayloadOrderService';
+import { emitOrderEvent } from '../../../../../../../lib/notifications/OrderEventEmitter';
 
 const Body = z.object({
   orderId: z.string().min(1),
@@ -132,9 +133,10 @@ export async function POST(req: NextRequest) {
         actor: 'system:razorpay-verify',
       });
 
-      // TODO(Task 5.2): emit order.confirmed event via OrderEventEmitter.
-      // import { emitOrderEvent } from '../../../../../../../lib/notifications/OrderEventEmitter';
-      // await emitOrderEvent(order.id, 'confirmed');
+      // Fan out the confirmed notification (push + SMS). Fault-tolerant:
+      // emitOrderEvent swallows adapter failures and logs them, so a push/
+      // SMS outage never rolls back the payment transition above.
+      await emitOrderEvent(order.id, 'confirmed');
 
       const final = await orderService.getById(order.id, customerId);
       return jsonResponse({ order: final });

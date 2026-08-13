@@ -17,15 +17,16 @@
 // `payload.authenticate` middleware or JWT verify against `users`) is
 // deferred; the 401-without-auth guarantee is covered by route tests.
 //
-// TODO(Task 5.2): emit order.status.changed event via OrderEventEmitter once
-// that module lands. The emission is intentionally omitted here — there is no
-// import or call.
+// Notifications (Task 5.2): after a successful transition, emitOrderEvent
+// fans the new status out to push + SMS. No-ops on non-customer-facing
+// stages; fault-tolerant (never rolls back the transition).
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { jsonResponse, errorResponse } from "../../../../../../lib/api/response";
 import { ApiError, ErrorCode } from "../../../../../../lib/api/errors";
 import { getPayloadAdminUser } from "../../../../../../lib/api/adminAuth";
 import { PayloadOrderService } from "../../../../../../lib/commerce/impl/PayloadOrderService";
+import { emitOrderEvent } from "../../../../../../lib/notifications/OrderEventEmitter";
 import type { OrderStatus } from "../../../../../../lib/commerce/types";
 
 // Compile-time-validated enum from the OrderStatus union (lib/commerce/types.ts).
@@ -95,10 +96,11 @@ export async function POST(
       note: parsed.data.note,
     });
 
-    // TODO(Task 5.2): emit order.status.changed event via OrderEventEmitter.
-    // Skipping the import + call on purpose — OrderEventEmitter does not exist
-    // yet (Task 5.2). When it lands, add:
-    //   await emitOrderEvent(id, parsed.data.newStatus, { actor, note: parsed.data.note });
+    // Fan out the notification for the new status. emitOrderEvent no-ops on
+    // stages with no template (created, pending_payment, payment_failed,
+    // cancelled, etc.) — only customer-facing delivery stages push/SMS.
+    // Fault-tolerant: a notification outage never rolls back the transition.
+    await emitOrderEvent(id, parsed.data.newStatus);
     return jsonResponse({ order: updated }, { headers: { "X-Request-Id": traceId } });
   } catch (err) {
     return errorResponse(err, traceId);

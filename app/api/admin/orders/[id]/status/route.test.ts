@@ -6,12 +6,13 @@
 // admin-auth helper `getPayloadAdminUser`.
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { stores, adminUser } = vi.hoisted(() => ({
+const { stores, adminUser, emitOrderEvent } = vi.hoisted(() => ({
   stores: {
     orders: new Map<string, Record<string, unknown>>(),
     shipments: new Map<string, Record<string, unknown>>(),
   },
   adminUser: vi.fn(),
+  emitOrderEvent: vi.fn(),
 }));
 
 vi.mock("payload", () => ({
@@ -86,6 +87,15 @@ vi.mock("../../../../../../lib/api/adminAuth", () => ({
   getPayloadAdminUser: adminUser,
 }));
 
+// Mock the notification fan-out so the route test stays focused on the
+// transition + response. This also breaks the transitive import chain
+// (emitter -> container -> Logger -> config) that would otherwise crash on
+// the required-env schema.parse in the test environment. The emitter has
+// its own dedicated unit tests in lib/notifications/OrderEventEmitter.test.ts.
+vi.mock("../../../../../../lib/notifications/OrderEventEmitter", () => ({
+  emitOrderEvent,
+}));
+
 import { POST } from "./route";
 
 function resetStores() {
@@ -153,6 +163,8 @@ describe("POST /api/admin/orders/:id/status", () => {
     resetStores();
     adminUser.mockReset();
     adminUser.mockResolvedValue({ id: "admin-1" });
+    emitOrderEvent.mockReset();
+    emitOrderEvent.mockResolvedValue(undefined);
   });
 
   it("200 happy path: admin transitions order confirmed -> packed", async () => {
@@ -165,6 +177,8 @@ describe("POST /api/admin/orders/:id/status", () => {
     expect(body.data.order.status).toBe("packed");
     // PayloadOrderService mirrors shipment-touching stages into the Shipments row.
     expect(stores.orders.get("order-1")!.status).toBe("packed");
+    // Notification fan-out fires with the order id + new status.
+    expect(emitOrderEvent).toHaveBeenCalledWith("order-1", "packed");
   });
 
   it("200 includes optional note propagation", async () => {
