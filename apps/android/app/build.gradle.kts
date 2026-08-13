@@ -19,11 +19,20 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.dagger.hilt.android")
-    // google-services + crashlytics plugins are applied via the release-build
-    // flavor once google-services.json is provisioned (Task 11.3 / 13.3). They
-    // are intentionally NOT applied in the scaffold so a clean checkout without
-    // the gitignored google-services.json still configures.
+    // google-services + crashlytics plugins are applied conditionally below,
+    // only when the gitignored google-services.json exists (provisioned by CI
+    // from a secret — Task 13.3; see the googleServicesFile block).
     kotlin("kapt")
+}
+
+// Task 13.3: Firebase plugins applied only when google-services.json is
+// provisioned (CI writes it from a secret before building; the file is
+// gitignored). Without it, Firebase deps are inert at runtime — clean
+// checkouts still configure and build.
+val googleServicesFile = file("google-services.json")
+if (googleServicesFile.exists()) {
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
 }
 
 android {
@@ -48,6 +57,23 @@ android {
         )
     }
 
+    signingConfigs {
+        // Task 13.3: release signing is env-driven — the keystore never lives
+        // in the repo. CI decodes the base64 secret to a runner-local file and
+        // points MISHRAN_RELEASE_KEYSTORE at it; local builds without the env
+        // vars leave this config empty and the release build type falls back
+        // to the debug key (assembleRelease still works for size checks).
+        create("release") {
+            val keystorePath = System.getenv("MISHRAN_RELEASE_KEYSTORE")
+            if (keystorePath != null) {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("MISHRAN_RELEASE_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("MISHRAN_RELEASE_KEY_ALIAS")
+                keyPassword = System.getenv("MISHRAN_RELEASE_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
@@ -63,6 +89,12 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            // Env-gated signing (Task 13.3): real key in CI, debug key locally.
+            signingConfig = if (System.getenv("MISHRAN_RELEASE_KEYSTORE") != null) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
