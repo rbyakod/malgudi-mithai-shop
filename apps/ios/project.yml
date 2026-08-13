@@ -1,0 +1,73 @@
+# apps/ios/project.yml — Task 14.1 (Mishran Mobile Apps v1).
+# XcodeGen spec: the .xcodeproj is GENERATED from this file, never hand-edited
+# (regenerate with `pnpm ios:xcodegen` / `xcodegen --spec apps/ios/project.yml`).
+#
+# iOS 17+ deployment floor per plan. Bundle id com.mishran.app (matches the
+# Android applicationId and the backend's X-Client-Source contract).
+# DEVELOPMENT_TEAM / code-signing stay unset until Apple Developer Program
+# enrollment lands (plan Open Question #8) — simulator builds don't sign.
+name: Mishran
+
+options:
+  bundleIdPrefix: com.mishran
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGNING_ALLOWED: "NO"
+
+targets:
+  Mishran:
+    type: application
+    platform: iOS
+    sources:
+      - path: Mishran
+    info:
+      path: Mishran/Info.plist
+      properties:
+        CFBundleDisplayName: Mishran
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        # Plain-text wordmark until brand fonts land (Task 14.2 codegen).
+        UILaunchScreen:
+          UIColorName: AccentColor
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        # mishran://order/{id} deep links (parity with Android's intent
+        # filter; routes arrive in 18.x notification handling).
+        CFBundleURLTypes:
+          - CFBundleURLName: com.mishran.app
+            CFBundleURLSchemes:
+              - mishran
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mishran.app
+        TARGETED_DEVICE_FAMILY: "1" # iPhone-only in v1 (iPad = deferred)
+
+  MishranUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: MishranUITests
+    dependencies:
+      - target: Mishran
+    settings:
+      base:
+        TEST_TARGET_NAME: Mishran
+
+schemes:
+  Mishran:
+    build:
+      targets:
+        Mishran: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - MishranUITests

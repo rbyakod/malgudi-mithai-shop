@@ -26,7 +26,10 @@
     "build:packages": "pnpm -r --filter './packages/*' run build",
     "seed": "tsx scripts/seed.ts",
     "seed:staging": "tsx scripts/seed-staging.ts",
-    "regen:importmap": "node --import tsx scripts/regen-importmap.mjs"
+    "regen:importmap": "node --import tsx scripts/regen-importmap.mjs",
+    "ios:xcodegen": "xcodegen --spec apps/ios/project.yml",
+    "ios:build": "xcodebuild -project apps/ios/Mishran.xcodeproj -scheme Mishran -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=17.2' build",
+    "ios:test": "xcodebuild test -project apps/ios/Mishran.xcodeproj -scheme Mishran -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=17.2'"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1107.0",
