@@ -38,6 +38,7 @@ import androidx.navigation.navDeepLink
 import com.mishran.app.ui.auth.BiometricGate
 import com.mishran.app.ui.auth.OtpScreen
 import com.mishran.app.ui.auth.PhoneEntryScreen
+import com.mishran.app.ui.catalog.CatalogScreen
 
 /**
  * Root of the app UI. Wire this into [com.mishran.app.MainActivity]; it owns
@@ -123,7 +124,14 @@ fun MishranAppRoot() {
                 )
             }
             composable(Routes.HOME) { PlaceholderScreen("Home") }
-            composable(Routes.CATALOG) { PlaceholderScreen("Catalog") }
+            // Task 9.3: offline-first catalog browse (grid + search + filters).
+            composable(Routes.CATALOG) {
+                CatalogScreen(
+                    onProductClick = { product ->
+                        navController.navigate(Routes.product(product.slug))
+                    },
+                )
+            }
             composable(
                 route = Routes.PRODUCT,
                 arguments = listOf(navArgument("slug") { type = NavType.StringType }),

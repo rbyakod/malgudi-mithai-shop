@@ -124,6 +124,9 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
+    // --- Image loading (Task 9.3): Coil for catalog/product imagery ---
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
     // --- Hilt (DI) ---
     implementation("com.google.dagger:hilt-android:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
