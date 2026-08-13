@@ -16,6 +16,9 @@ enum APIErrorCode: String, Decodable, CaseIterable, Sendable {
     case paymentAbandoned = "PAYMENT_ABANDONED"
     case orderNotFound = "ORDER_NOT_FOUND"
     case snapshotNotFound = "SNAPSHOT_NOT_FOUND"
+    case productNotFound = "PRODUCT_NOT_FOUND"
+    /// Generic 404 for resources without a dedicated code (addresses, devices).
+    case notFound = "NOT_FOUND"
     case invalidStateTransition = "INVALID_STATE_TRANSITION"
     case tokenExpired = "TOKEN_EXPIRED"
     case tokenRevoked = "TOKEN_REVOKED"

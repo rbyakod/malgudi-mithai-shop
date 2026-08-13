@@ -11,7 +11,10 @@
 		040407FBCA86270831AB6065 /* CatalogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA52F7BFE031ED8E4342964 /* CatalogViewModel.swift */; };
 		0F8936B3B493D50EC8605D2E /* KeychainAndBiometricTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D12DD757BE134A9B7406611 /* KeychainAndBiometricTests.swift */; };
 		11E5D63EF7D33F646CFE7B67 /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E15EA367D070805A633A6C /* Authenticator.swift */; };
+		25C19354A1430F709BA572A3 /* ProductDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057EA831416672A410B8A983 /* ProductDetailView.swift */; };
+		315E701EE458F89C88DE27C1 /* ProductDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A48A5980852C073E51B9FBFF /* ProductDetailViewModelTests.swift */; };
 		333556C8D78846566DF80474 /* ThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */; };
+		3FAA8FDEBCBA2525DDDE120D /* ProductDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3958B3310C55B430C1A8788B /* ProductDetailViewModel.swift */; };
 		425D41BA0C51A30BEAB5B3DD /* CatalogRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA54984EE19823EDAE55EBC /* CatalogRepositoryTests.swift */; };
 		4CE6542461877B26241C34F3 /* BiometricGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9676FDF11354D50F0311FE96 /* BiometricGate.swift */; };
 		50179D7DB34E1CE9D50AB3E7 /* MishranTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED91007C15EEF6F6939E19F7 /* MishranTheme.swift */; };
@@ -28,6 +31,7 @@
 		8E2667EF644522F496C20C20 /* MishranApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */; };
 		95803D6C83C1B4DC3A1E71E4 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */; };
 		9C9AFBD5F27AE26EBF166126 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68431822FCFD10052C69E84 /* AuthViewModel.swift */; };
+		9DBF95F3B4960A255A17CF7A /* AddToCartButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3AFCB15CC82712F4325C44 /* AddToCartButton.swift */; };
 		9E4748531BA06BC94A2C484F /* AppleSignInTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4B0CA54764C50EF5E7288E /* AppleSignInTests.swift */; };
 		9F0470D37E60CB3A0B5F97A1 /* AuthUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBCD922D98E4F596E91C2BB3 /* AuthUITests.swift */; };
 		9FD03ADFDD9C9409D7C60BF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38C61D8573D8238A69276ACD /* Assets.xcassets */; };
@@ -46,6 +50,7 @@
 		D54483EDE2136689A3AA93A4 /* CatalogCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE2A19642D9E59D00AE0A0C /* CatalogCache.swift */; };
 		D80C102F7326BD58228313B8 /* CatalogViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F4465B83E8F544B1DDB616 /* CatalogViewModelTests.swift */; };
 		D90B8AB29B8ABD84F8318EB4 /* CatalogRefreshTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4FB88456F99489105CD541 /* CatalogRefreshTask.swift */; };
+		DFC97BC9292838CD64A337E2 /* QuantitySelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E74593A6376B6833A2DEDF /* QuantitySelector.swift */; };
 		EE7F140846CF5EB22A6CFF6C /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74A4A9D1DB2500B7A437F297 /* KeychainHelper.swift */; };
 		F04D40EE38856295308A145D /* AppleSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008BA765E8DCAF04F9892DD /* AppleSignInCoordinator.swift */; };
 		F2BD4A59463083692303DBE5 /* ProductCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B64F03123BBD6412145B49 /* ProductCard.swift */; };
@@ -70,6 +75,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		057EA831416672A410B8A983 /* ProductDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailView.swift; sourceTree = "<group>"; };
+		0B3AFCB15CC82712F4325C44 /* AddToCartButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToCartButton.swift; sourceTree = "<group>"; };
 		0D6EE45F8BABD45F7382D47E /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
 		131DE0E7667A8BBA133CE155 /* FilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSheet.swift; sourceTree = "<group>"; };
@@ -78,7 +85,9 @@
 		2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModelTests.swift; sourceTree = "<group>"; };
 		2ECCEF7E4112394AACFA9906 /* CatalogRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogRepository.swift; sourceTree = "<group>"; };
 		38C61D8573D8238A69276ACD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3958B3310C55B430C1A8788B /* ProductDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailViewModel.swift; sourceTree = "<group>"; };
 		42DE5E76A474C16C34FC4633 /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
+		46E74593A6376B6833A2DEDF /* QuantitySelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuantitySelector.swift; sourceTree = "<group>"; };
 		47991E844FC2618D4D5A5DBA /* CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogView.swift; sourceTree = "<group>"; };
 		4A1A994EB9D1587A43329B4B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		58465808FD09EC9AEA493F2D /* PhoneEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneEntryView.swift; sourceTree = "<group>"; };
@@ -95,6 +104,7 @@
 		9D530C7E3563C4D49DEF96BB /* MishranUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MishranUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FE3F782C4272E71BD283282 /* Mishran.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Mishran.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTests.swift; sourceTree = "<group>"; };
+		A48A5980852C073E51B9FBFF /* ProductDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailViewModelTests.swift; sourceTree = "<group>"; };
 		A6568E092C76DE87C87CC8B6 /* AppleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInButton.swift; sourceTree = "<group>"; };
 		AA438316FABC42993AEAC8DD /* MishranAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranAPIClient.swift; sourceTree = "<group>"; };
 		AC83CE02DB09238F8FF3887C /* BiometricGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricGateView.swift; sourceTree = "<group>"; };
@@ -187,8 +197,20 @@
 			children = (
 				4FA00A45371BA26DDBF33A0C /* Auth */,
 				FB541AAA5FA595EF0C236AD0 /* Catalog */,
+				6DB8AA1BF3E08D5AF6B49F7D /* Product */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		6DB8AA1BF3E08D5AF6B49F7D /* Product */ = {
+			isa = PBXGroup;
+			children = (
+				0B3AFCB15CC82712F4325C44 /* AddToCartButton.swift */,
+				057EA831416672A410B8A983 /* ProductDetailView.swift */,
+				3958B3310C55B430C1A8788B /* ProductDetailViewModel.swift */,
+				46E74593A6376B6833A2DEDF /* QuantitySelector.swift */,
+			);
+			path = Product;
 			sourceTree = "<group>";
 		};
 		6FCE1B0A562DFF922CA88B6C /* MishranUITests */ = {
@@ -288,6 +310,7 @@
 				91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */,
 				5D12DD757BE134A9B7406611 /* KeychainAndBiometricTests.swift */,
 				B5A462F19B1C8E989A459CDE /* ProductCardSnapshotTests.swift */,
+				A48A5980852C073E51B9FBFF /* ProductDetailViewModelTests.swift */,
 				2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */,
 				A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */,
 			);
@@ -432,6 +455,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3985EE883EE06FF0E9483AD /* APIError.swift in Sources */,
+				9DBF95F3B4960A255A17CF7A /* AddToCartButton.swift in Sources */,
 				BDCE79859C11C7B37686B446 /* AppleSignInButton.swift in Sources */,
 				F04D40EE38856295308A145D /* AppleSignInCoordinator.swift in Sources */,
 				9C9AFBD5F27AE26EBF166126 /* AuthViewModel.swift in Sources */,
@@ -456,6 +480,9 @@
 				C2EFA9133A34076358A8935B /* OTPView.swift in Sources */,
 				F4576857819DFBE595478C4A /* PhoneEntryView.swift in Sources */,
 				F2BD4A59463083692303DBE5 /* ProductCard.swift in Sources */,
+				25C19354A1430F709BA572A3 /* ProductDetailView.swift in Sources */,
+				3FAA8FDEBCBA2525DDDE120D /* ProductDetailViewModel.swift in Sources */,
+				DFC97BC9292838CD64A337E2 /* QuantitySelector.swift in Sources */,
 				8C167D518B491CBC4E136210 /* Route.swift in Sources */,
 				BDCB0C231117C2D7A860D61E /* Router.swift in Sources */,
 				C92FE9C121D4433806A99794 /* SearchBar.swift in Sources */,
@@ -475,6 +502,7 @@
 				ADD7CCDC3C37DC330F12A408 /* DeepLinkTests.swift in Sources */,
 				0F8936B3B493D50EC8605D2E /* KeychainAndBiometricTests.swift in Sources */,
 				BC1E4E42C0A73854841E9E77 /* ProductCardSnapshotTests.swift in Sources */,
+				315E701EE458F89C88DE27C1 /* ProductDetailViewModelTests.swift in Sources */,
 				ABF0BF37C890C6A8E909992C /* SwiftDataModelTests.swift in Sources */,
 				333556C8D78846566DF80474 /* ThemeTests.swift in Sources */,
 			);
