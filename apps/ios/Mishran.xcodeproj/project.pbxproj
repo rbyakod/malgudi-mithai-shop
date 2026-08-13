@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		01426908FD705FCA1750E7E6 /* NavigationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64620CDA70359F2FAF3E0AC9 /* NavigationUITests.swift */; };
 		040407FBCA86270831AB6065 /* CatalogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA52F7BFE031ED8E4342964 /* CatalogViewModel.swift */; };
+		0BB50EF4FF9169EB606587D8 /* RazorpayCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82730F53B7A9C3AE55E3ADCD /* RazorpayCoordinatorTests.swift */; };
 		0F8936B3B493D50EC8605D2E /* KeychainAndBiometricTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D12DD757BE134A9B7406611 /* KeychainAndBiometricTests.swift */; };
 		11E5D63EF7D33F646CFE7B67 /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E15EA367D070805A633A6C /* Authenticator.swift */; };
 		16AFAC411B397963C72D750C /* CheckoutViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608A8F33A9B70154DC268F53 /* CheckoutViewModelTests.swift */; };
@@ -31,6 +32,7 @@
 		5DCF00EBFACD0A6E0F37D9DF /* DTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0E622CC322FD71D228D9A1 /* DTOs.swift */; };
 		6B2A9A756E587C152AC0F7D2 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D23986BE08057D412B120B /* DeepLinkHandler.swift */; };
 		6CCC747B899B6C9881054032 /* FilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131DE0E7667A8BBA133CE155 /* FilterSheet.swift */; };
+		70D91A7E60501EDD5F1E5E82 /* RazorpayCheckout in Frameworks */ = {isa = PBXBuildFile; productRef = 231294D2DC7536DD79AE9C48 /* RazorpayCheckout */; };
 		761CCC593D07CFC0546F0BA0 /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42DE5E76A474C16C34FC4633 /* APIClientTests.swift */; };
 		83973606D789D3E21B7B8528 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAED0D2ACB563E649EF0B480 /* Endpoint.swift */; };
 		84F381E7BA4D6C9C295196A1 /* MishranTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15083CDE49B78AEB7CE5C9D /* MishranTokens.swift */; };
@@ -38,6 +40,7 @@
 		8C167D518B491CBC4E136210 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6EE45F8BABD45F7382D47E /* Route.swift */; };
 		8E2667EF644522F496C20C20 /* MishranApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */; };
 		95803D6C83C1B4DC3A1E71E4 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */; };
+		9C7A6B6FB71F40282BEF70AD /* RazorpayCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557BDC90C27B02C28EE85F24 /* RazorpayCoordinator.swift */; };
 		9C9AFBD5F27AE26EBF166126 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68431822FCFD10052C69E84 /* AuthViewModel.swift */; };
 		9DBF95F3B4960A255A17CF7A /* AddToCartButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3AFCB15CC82712F4325C44 /* AddToCartButton.swift */; };
 		9E4748531BA06BC94A2C484F /* AppleSignInTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4B0CA54764C50EF5E7288E /* AppleSignInTests.swift */; };
@@ -103,6 +106,7 @@
 		47991E844FC2618D4D5A5DBA /* CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogView.swift; sourceTree = "<group>"; };
 		4A1A994EB9D1587A43329B4B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		5384924CE7B94056D974BAAC /* CheckoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutView.swift; sourceTree = "<group>"; };
+		557BDC90C27B02C28EE85F24 /* RazorpayCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RazorpayCoordinator.swift; sourceTree = "<group>"; };
 		56520E6F1D7EFAAB5C70A16B /* SlotPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotPicker.swift; sourceTree = "<group>"; };
 		58465808FD09EC9AEA493F2D /* PhoneEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneEntryView.swift; sourceTree = "<group>"; };
 		5A3C9B2094A54AD694C17BCB /* CartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartView.swift; sourceTree = "<group>"; };
@@ -117,6 +121,7 @@
 		74A4A9D1DB2500B7A437F297 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		7ACC75BEA637550855532CA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8008BA765E8DCAF04F9892DD /* AppleSignInCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInCoordinator.swift; sourceTree = "<group>"; };
+		82730F53B7A9C3AE55E3ADCD /* RazorpayCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RazorpayCoordinatorTests.swift; sourceTree = "<group>"; };
 		91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkTests.swift; sourceTree = "<group>"; };
 		9676FDF11354D50F0311FE96 /* BiometricGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricGate.swift; sourceTree = "<group>"; };
 		9D530C7E3563C4D49DEF96BB /* MishranUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MishranUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -150,6 +155,17 @@
 		F152053B0471C98B970B6E31 /* CartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewModel.swift; sourceTree = "<group>"; };
 		FB4B0CA54764C50EF5E7288E /* AppleSignInTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F6633F932A26180FAE92E672 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70D91A7E60501EDD5F1E5E82 /* RazorpayCheckout in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		006873865E87C142649BE17A /* Repository */ = {
@@ -262,6 +278,7 @@
 				5384924CE7B94056D974BAAC /* CheckoutView.swift */,
 				60104183AB6B52BD81194EF5 /* CheckoutViewModel.swift */,
 				216B46F1EBE74875531A80EE /* PaymentMethodPicker.swift */,
+				557BDC90C27B02C28EE85F24 /* RazorpayCoordinator.swift */,
 				56520E6F1D7EFAAB5C70A16B /* SlotPicker.swift */,
 			);
 			path = Checkout;
@@ -357,6 +374,7 @@
 				5D12DD757BE134A9B7406611 /* KeychainAndBiometricTests.swift */,
 				B5A462F19B1C8E989A459CDE /* ProductCardSnapshotTests.swift */,
 				A48A5980852C073E51B9FBFF /* ProductDetailViewModelTests.swift */,
+				82730F53B7A9C3AE55E3ADCD /* RazorpayCoordinatorTests.swift */,
 				2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */,
 				A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */,
 			);
@@ -420,6 +438,7 @@
 			buildPhases = (
 				7453360AB9162D9E0B5671C8 /* Sources */,
 				FDB4F1096A02DB0888F80F9E /* Resources */,
+				F6633F932A26180FAE92E672 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -427,6 +446,7 @@
 			);
 			name = Mishran;
 			packageProductDependencies = (
+				231294D2DC7536DD79AE9C48 /* RazorpayCheckout */,
 			);
 			productName = Mishran;
 			productReference = 9FE3F782C4272E71BD283282 /* Mishran.app */;
@@ -462,6 +482,9 @@
 			);
 			mainGroup = 3B29749DEA5CABF32922E983;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				708011D80731D252F592FDB8 /* XCRemoteSwiftPackageReference "razorpay-pod" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEAA4CCE4A3E1D6A2C15B94B /* Products */;
 			projectDirPath = "";
@@ -536,6 +559,7 @@
 				25C19354A1430F709BA572A3 /* ProductDetailView.swift in Sources */,
 				3FAA8FDEBCBA2525DDDE120D /* ProductDetailViewModel.swift in Sources */,
 				DFC97BC9292838CD64A337E2 /* QuantitySelector.swift in Sources */,
+				9C7A6B6FB71F40282BEF70AD /* RazorpayCoordinator.swift in Sources */,
 				8C167D518B491CBC4E136210 /* Route.swift in Sources */,
 				BDCB0C231117C2D7A860D61E /* Router.swift in Sources */,
 				C92FE9C121D4433806A99794 /* SearchBar.swift in Sources */,
@@ -559,6 +583,7 @@
 				0F8936B3B493D50EC8605D2E /* KeychainAndBiometricTests.swift in Sources */,
 				BC1E4E42C0A73854841E9E77 /* ProductCardSnapshotTests.swift in Sources */,
 				315E701EE458F89C88DE27C1 /* ProductDetailViewModelTests.swift in Sources */,
+				0BB50EF4FF9169EB606587D8 /* RazorpayCoordinatorTests.swift in Sources */,
 				ABF0BF37C890C6A8E909992C /* SwiftDataModelTests.swift in Sources */,
 				333556C8D78846566DF80474 /* ThemeTests.swift in Sources */,
 			);
@@ -845,6 +870,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		708011D80731D252F592FDB8 /* XCRemoteSwiftPackageReference "razorpay-pod" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/razorpay/razorpay-pod";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.6;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		231294D2DC7536DD79AE9C48 /* RazorpayCheckout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 708011D80731D252F592FDB8 /* XCRemoteSwiftPackageReference "razorpay-pod" */;
+			productName = RazorpayCheckout;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 068F6588F6E5AA439AA8F934 /* Project object */;
 }

@@ -66,7 +66,7 @@ struct CheckoutView: View {
 
             Section {
                 Button {
-                    onPlaceOrder?(viewModel)
+                    Task { await viewModel.placeOrder() }
                 } label: {
                     Text("Place order")
                         .font(.mishranBodyLg.weight(.semibold))
@@ -77,14 +77,38 @@ struct CheckoutView: View {
                 .foregroundStyle(Color.mishranBrandCanvas)
                 .controlSize(.large)
                 .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
-                .disabled(!viewModel.canPlaceOrder)
+                .disabled(!viewModel.canPlaceOrder || viewModel.isPlacingOrder)
                 .accessibilityLabel("Place order")
+
+                if viewModel.isPlacingOrder {
+                    HStack {
+                        ProgressView()
+                        Text(viewModel.placingOrderStatus)
+                            .font(.mishranBodyMd)
+                    }
+                }
             }
 
             if let message = viewModel.errorMessage {
                 Text(message)
                     .font(.mishranBodyMd)
                     .foregroundStyle(Color.mishranStateError)
+            }
+
+            // Terminal payment states (Task 17.3). Confirmed routes to the
+            // order detail view once 18.x lands it; for now the banner is
+            // the confirmation surface.
+            switch viewModel.paymentState {
+            case .confirmed(let orderId):
+                Label("Order confirmed — \(orderId)", systemImage: "checkmark.seal.fill")
+                    .font(.mishranBodyLg.weight(.semibold))
+                    .foregroundStyle(Color.mishranBrandAccent)
+                    .accessibilityLabel("Order confirmed")
+            case .abandoned:
+                Label("Payment cancelled — your cart is saved.", systemImage: "arrow.uturn.backward")
+                    .font(.mishranBodyMd)
+            default:
+                EmptyView()
             }
         }
         .navigationTitle("Checkout")

@@ -117,3 +117,60 @@ enum CatalogResult: Equatable {
     case fresh(ProductPageDTO, etag: String?)
     case notModified
 }
+
+// MARK: - Cart snapshot + Razorpay payments (Task 17.3)
+
+/// POST /cart/validate item — the server re-fetches products and prices; the
+/// client only asserts what it wants to buy.
+struct CartValidateItemDTO: Encodable, Equatable {
+    let productId: String
+    let quantity: Int
+}
+
+/// Slot as the snapshot contract stores it ({date, window}).
+struct DeliverySlotDTO: Encodable, Equatable {
+    let date: String
+    let window: String
+}
+
+/// Synthesized Encodable omits a nil slot (optional per contract).
+struct CartValidateRequestDTO: Encodable {
+    let items: [CartValidateItemDTO]
+    let pincode: String
+    let slot: DeliverySlotDTO?
+}
+
+struct CartValidateResponseDTO: Decodable {
+    let snapshotId: String
+    let customerId: String
+    let pincodeTier: String
+    let expiresAt: String
+}
+
+struct CreateOrderRequestDTO: Encodable {
+    let snapshotId: String
+    let deliveryAddressId: String
+}
+
+struct CreateOrderResponseDTO: Decodable, Equatable {
+    let orderId: String
+    let razorpayOrderId: String
+    let amountInPaise: Int
+    let keyId: String
+}
+
+struct VerifyPaymentRequestDTO: Encodable {
+    let orderId: String
+    let razorpayPaymentId: String
+    let signature: String
+}
+
+/// Minimal order projection — the confirm path only needs id + status.
+struct OrderDTO: Decodable, Equatable {
+    let id: String
+    let status: String
+}
+
+struct VerifyPaymentResponseDTO: Decodable {
+    let order: OrderDTO
+}

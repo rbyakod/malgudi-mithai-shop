@@ -24,6 +24,14 @@ settings:
     # hosted unit tests (Task 15.4). Xcode Cloud overrides with real signing.
     CODE_SIGN_IDENTITY: "-"
 
+# Task 17.3: Razorpay Checkout SDK via SPM. The repo publishes the
+# RazorpayCheckout product (source wrapper `RazorpaySwift` + binary
+# Razorpay/RazorpayCore/RazorpayStandard frameworks).
+packages:
+  Razorpay:
+    url: https://github.com/razorpay/razorpay-pod
+    from: 1.5.6
+
 targets:
   Mishran:
     type: application
@@ -39,6 +47,10 @@ targets:
       # selectable from Xcode Cloud and usable via `xcodebuild -testPlan`.
       - path: Mishran.xctestplan
         buildPhase: none
+    dependencies:
+      # The repo publishes one product: RazorpayCheckout (name != repo name).
+      - package: Razorpay
+        product: RazorpayCheckout
     info:
       path: Mishran/Info.plist
       properties:

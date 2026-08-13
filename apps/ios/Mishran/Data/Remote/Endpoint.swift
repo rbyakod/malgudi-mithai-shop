@@ -104,4 +104,63 @@ extension Endpoint {
             requiresAuth: false
         )
     }
+
+    /// POST /cart/validate — persists a server-side cart snapshot and hands
+    /// back the snapshotId create-order re-reads (tamper-evident cart).
+    static func cartValidate(
+        items: [CartValidateItemDTO],
+        pincode: String,
+        slot: DeliverySlot?
+    ) -> Endpoint {
+        Endpoint(
+            path: "cart/validate",
+            method: .post,
+            body: try? JSONEncoder().encode(CartValidateRequestDTO(
+                items: items,
+                pincode: pincode,
+                slot: slot.map { DeliverySlotDTO(date: $0.date, window: $0.window) }
+            ))
+        )
+    }
+
+    /// POST /payments/razorpay/create-order. The Idempotency-Key must be
+    /// FRESH per user attempt — the backend caches error responses per key,
+    /// so a retry with a reused key replays the cached failure.
+    static func paymentCreateOrder(
+        snapshotId: String,
+        deliveryAddressId: String,
+        idempotencyKey: String
+    ) -> Endpoint {
+        var endpoint = Endpoint(
+            path: "payments/razorpay/create-order",
+            method: .post,
+            body: try? JSONEncoder().encode(CreateOrderRequestDTO(
+                snapshotId: snapshotId,
+                deliveryAddressId: deliveryAddressId
+            ))
+        )
+        endpoint.headers["Idempotency-Key"] = idempotencyKey
+        return endpoint
+    }
+
+    /// POST /payments/razorpay/verify — HMAC check, then pending_payment →
+    /// confirmed (idempotent server-side; the key guards client replays).
+    static func paymentVerify(
+        orderId: String,
+        razorpayPaymentId: String,
+        signature: String,
+        idempotencyKey: String
+    ) -> Endpoint {
+        var endpoint = Endpoint(
+            path: "payments/razorpay/verify",
+            method: .post,
+            body: try? JSONEncoder().encode(VerifyPaymentRequestDTO(
+                orderId: orderId,
+                razorpayPaymentId: razorpayPaymentId,
+                signature: signature
+            ))
+        )
+        endpoint.headers["Idempotency-Key"] = idempotencyKey
+        return endpoint
+    }
 }
