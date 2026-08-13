@@ -54,6 +54,25 @@ final class ProductEntity {
         self.story = story
         self.updatedAt = updatedAt
     }
+
+    convenience init(dto: ProductDTO) {
+        self.init(
+            id: dto.id,
+            slug: dto.slug,
+            name: dto.name,
+            family: dto.family.rawValue,
+            displayPrice: dto.displayPrice,
+            freshnessStatus: dto.freshnessStatus,
+            dietaryTags: dto.dietaryTags,
+            allergens: dto.allergens,
+            ingredients: dto.ingredients,
+            shelfLife: dto.shelfLife,
+            storage: dto.storage,
+            images: dto.images,
+            story: dto.story,
+            updatedAt: dto.updatedAt
+        )
+    }
 }
 
 @Model

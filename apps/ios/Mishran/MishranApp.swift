@@ -40,7 +40,17 @@ struct MishranApp: App {
         _router = State(initialValue: router)
         // Same instance the stack binds to — deep links move the real path.
         deepLinkHandler = DeepLinkHandler(router: router)
-        _modelContainer = State(initialValue: try? ModelContainerFactory.makeContainer())
+        // Task 16.2: register the 6h catalog refresh before launch finishes;
+        // schedule the first run. Same container the environment gets.
+        if let container = try? ModelContainerFactory.makeContainer() {
+            _modelContainer = State(initialValue: container)
+            CatalogRefreshTask.register {
+                let cache = await CatalogCache(context: container.mainContext)
+                let repository = await CatalogRepository(client: MishranAPIClient(), cache: cache)
+                await repository.getCatalog()
+            }
+            CatalogRefreshTask.scheduleNext()
+        }
         let arguments = ProcessInfo.processInfo.arguments
         if arguments.contains("-authScreen") {
             // UI-test preview of the sign-in flow (15.2) until the app shell

@@ -11,6 +11,7 @@
 		0F8936B3B493D50EC8605D2E /* KeychainAndBiometricTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D12DD757BE134A9B7406611 /* KeychainAndBiometricTests.swift */; };
 		11E5D63EF7D33F646CFE7B67 /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E15EA367D070805A633A6C /* Authenticator.swift */; };
 		333556C8D78846566DF80474 /* ThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */; };
+		425D41BA0C51A30BEAB5B3DD /* CatalogRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA54984EE19823EDAE55EBC /* CatalogRepositoryTests.swift */; };
 		4CE6542461877B26241C34F3 /* BiometricGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9676FDF11354D50F0311FE96 /* BiometricGate.swift */; };
 		50179D7DB34E1CE9D50AB3E7 /* MishranTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED91007C15EEF6F6939E19F7 /* MishranTheme.swift */; };
 		5241D9593377B8F8C42420FC /* BiometricGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC83CE02DB09238F8FF3887C /* BiometricGateView.swift */; };
@@ -35,7 +36,10 @@
 		BD20E249EB84D2D509889488 /* MishranUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8AD84061607513B2822EFFA /* MishranUITests.swift */; };
 		BDCB0C231117C2D7A860D61E /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1A994EB9D1587A43329B4B /* Router.swift */; };
 		BDCE79859C11C7B37686B446 /* AppleSignInButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6568E092C76DE87C87CC8B6 /* AppleSignInButton.swift */; };
+		BFA7B4E72135CA7CB56F15B7 /* CatalogRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ECCEF7E4112394AACFA9906 /* CatalogRepository.swift */; };
 		C2EFA9133A34076358A8935B /* OTPView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B404AD75DE1DA281F709981F /* OTPView.swift */; };
+		D54483EDE2136689A3AA93A4 /* CatalogCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE2A19642D9E59D00AE0A0C /* CatalogCache.swift */; };
+		D90B8AB29B8ABD84F8318EB4 /* CatalogRefreshTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4FB88456F99489105CD541 /* CatalogRefreshTask.swift */; };
 		EE7F140846CF5EB22A6CFF6C /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74A4A9D1DB2500B7A437F297 /* KeychainHelper.swift */; };
 		F04D40EE38856295308A145D /* AppleSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008BA765E8DCAF04F9892DD /* AppleSignInCoordinator.swift */; };
 		F4576857819DFBE595478C4A /* PhoneEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58465808FD09EC9AEA493F2D /* PhoneEntryView.swift */; };
@@ -62,7 +66,9 @@
 		0D6EE45F8BABD45F7382D47E /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
 		17F6E1F7404D245F24FE9B87 /* SwiftDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModels.swift; sourceTree = "<group>"; };
+		1DA54984EE19823EDAE55EBC /* CatalogRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogRepositoryTests.swift; sourceTree = "<group>"; };
 		2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModelTests.swift; sourceTree = "<group>"; };
+		2ECCEF7E4112394AACFA9906 /* CatalogRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogRepository.swift; sourceTree = "<group>"; };
 		38C61D8573D8238A69276ACD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		42DE5E76A474C16C34FC4633 /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
 		4A1A994EB9D1587A43329B4B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
@@ -89,6 +95,7 @@
 		C68431822FCFD10052C69E84 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		CAED0D2ACB563E649EF0B480 /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		CBCD922D98E4F596E91C2BB3 /* AuthUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUITests.swift; sourceTree = "<group>"; };
+		CC4FB88456F99489105CD541 /* CatalogRefreshTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogRefreshTask.swift; sourceTree = "<group>"; };
 		CE06CF24565A57CA9FCAA9AD /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		D15083CDE49B78AEB7CE5C9D /* MishranTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranTokens.swift; sourceTree = "<group>"; };
 		D1C7CF35CFC86189210BDBCE /* Mishran.xctestplan */ = {isa = PBXFileReference; path = Mishran.xctestplan; sourceTree = "<group>"; };
@@ -96,10 +103,20 @@
 		D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranApp.swift; sourceTree = "<group>"; };
 		E8AD84061607513B2822EFFA /* MishranUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranUITests.swift; sourceTree = "<group>"; };
 		ED91007C15EEF6F6939E19F7 /* MishranTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranTheme.swift; sourceTree = "<group>"; };
+		EFE2A19642D9E59D00AE0A0C /* CatalogCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogCache.swift; sourceTree = "<group>"; };
 		FB4B0CA54764C50EF5E7288E /* AppleSignInTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		006873865E87C142649BE17A /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				EFE2A19642D9E59D00AE0A0C /* CatalogCache.swift */,
+				2ECCEF7E4112394AACFA9906 /* CatalogRepository.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
 		05FE607ACE0ADE854D217AE9 /* swift */ = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +124,14 @@
 			);
 			name = swift;
 			path = "../../packages/brand-tokens/generated/swift";
+			sourceTree = "<group>";
+		};
+		0B5EAD862BF0AACF74D87664 /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+				CC4FB88456F99489105CD541 /* CatalogRefreshTask.swift */,
+			);
+			path = Sync;
 			sourceTree = "<group>";
 		};
 		132604EA27D443488AA53EC1 /* Generated */ = {
@@ -191,6 +216,8 @@
 			children = (
 				C0D924D8E7A4AC5DACD9B320 /* Local */,
 				F6DB868975A4954DEFEBC782 /* Remote */,
+				006873865E87C142649BE17A /* Repository */,
+				0B5EAD862BF0AACF74D87664 /* Sync */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -241,6 +268,7 @@
 				42DE5E76A474C16C34FC4633 /* APIClientTests.swift */,
 				FB4B0CA54764C50EF5E7288E /* AppleSignInTests.swift */,
 				D4774C4B2CF65897F30615C9 /* AuthViewModelTests.swift */,
+				1DA54984EE19823EDAE55EBC /* CatalogRepositoryTests.swift */,
 				91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */,
 				5D12DD757BE134A9B7406611 /* KeychainAndBiometricTests.swift */,
 				2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */,
@@ -381,6 +409,9 @@
 				11E5D63EF7D33F646CFE7B67 /* Authenticator.swift in Sources */,
 				4CE6542461877B26241C34F3 /* BiometricGate.swift in Sources */,
 				5241D9593377B8F8C42420FC /* BiometricGateView.swift in Sources */,
+				D54483EDE2136689A3AA93A4 /* CatalogCache.swift in Sources */,
+				D90B8AB29B8ABD84F8318EB4 /* CatalogRefreshTask.swift in Sources */,
+				BFA7B4E72135CA7CB56F15B7 /* CatalogRepository.swift in Sources */,
 				5DCF00EBFACD0A6E0F37D9DF /* DTOs.swift in Sources */,
 				6B2A9A756E587C152AC0F7D2 /* DeepLinkHandler.swift in Sources */,
 				83973606D789D3E21B7B8528 /* Endpoint.swift in Sources */,
@@ -405,6 +436,7 @@
 				761CCC593D07CFC0546F0BA0 /* APIClientTests.swift in Sources */,
 				9E4748531BA06BC94A2C484F /* AppleSignInTests.swift in Sources */,
 				59B2B9B58C01BA97CC40881D /* AuthViewModelTests.swift in Sources */,
+				425D41BA0C51A30BEAB5B3DD /* CatalogRepositoryTests.swift in Sources */,
 				ADD7CCDC3C37DC330F12A408 /* DeepLinkTests.swift in Sources */,
 				0F8936B3B493D50EC8605D2E /* KeychainAndBiometricTests.swift in Sources */,
 				ABF0BF37C890C6A8E909992C /* SwiftDataModelTests.swift in Sources */,

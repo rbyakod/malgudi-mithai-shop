@@ -56,6 +56,9 @@ targets:
           - CFBundleURLName: com.mishran.app
             CFBundleURLSchemes:
               - mishran
+        # Task 16.2: periodic catalog refresh (every 6h, ETag conditional).
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.mishran.app.catalog-refresh
         ITSAppUsesNonExemptEncryption: false
     settings:
       base:

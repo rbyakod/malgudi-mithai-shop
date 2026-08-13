@@ -94,6 +94,15 @@ enum ProductFamily: String, Decodable, CaseIterable, Hashable {
     case regional, seasonal
 }
 
+extension ProductDTO {
+    /// Test/convenience initializer — optional fields default to nil.
+    init(id: String, slug: String, name: String, family: ProductFamily) {
+        self.init(id: id, slug: slug, name: name, family: family, displayPrice: nil,
+                  freshnessStatus: nil, dietaryTags: nil, allergens: nil, ingredients: nil,
+                  shelfLife: nil, storage: nil, images: nil, story: nil, updatedAt: nil)
+    }
+}
+
 /// Paginated envelope page (openapi Paginated schema).
 struct ProductPageDTO: Decodable, Equatable {
     let items: [ProductDTO]
