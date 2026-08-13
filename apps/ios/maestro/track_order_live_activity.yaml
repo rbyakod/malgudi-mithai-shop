@@ -1,0 +1,36 @@
+# apps/ios/maestro/track_order_live_activity.yaml — Task 20.1.
+# STAGING + OPS-GATED: needs a real order on staging (run
+# sign_in_with_otp.yaml + checkout_razorpay_test.yaml first; export the
+# resulting id as MISHRAN_ORDER_ID) and an ops status update pushed
+# through the backend so APNs fires the Live Activity content-state
+# update. Dynamic Island rendering is hardware-only (iPhone 14 Pro+);
+# the lock-screen Live Activity renders on simulator, but a physical
+# device is the honest surface for this flow. run-flows.sh skips this
+# flow unless MAESTRO_OTP + MISHRAN_OPS_TOKEN + MISHRAN_STAGING_API are
+# all set.
+appId: com.mishran.app
+name: Track order through a Live Activity
+env:
+  MISHRAN_OPS_TOKEN: ${MISHRAN_OPS_TOKEN}
+  MISHRAN_STAGING_API: ${MISHRAN_STAGING_API}
+  MISHRAN_ORDER_ID: ${MISHRAN_ORDER_ID}
+---
+- launchApp
+- tapOn: "Orders"
+# Pick the most recent order (first row).
+- tapOn:
+    point: "50%, 30%"
+- assertVisible: "Order"
+# Trigger the ops-side stage change: created → confirmed (stage 1 of the
+# happy path). The push drives the Live Activity content-state update.
+- runScript:
+    commands:
+      - curl -s -X POST ${MISHRAN_STAGING_API}/api/mobile/v1/ops/orders/status
+        -H "Authorization: Bearer ${MISHRAN_OPS_TOKEN}"
+        -H "Content-Type: application/json"
+        -d '{"orderId": "${MISHRAN_ORDER_ID}", "status": "confirmed"}'
+# Back in the app: the push (or pull-to-refresh) shows the new stage.
+- extendedWaitUntil:
+    visible: "confirmed"
+    timeout: 30000
+- assertVisible: "Totals"

@@ -1,0 +1,17 @@
+# apps/ios/maestro/browse_catalog.yaml — Task 20.1.
+# Maestro translation of packages/e2e-flows/browse_catalog.feature.
+# Self-contained: `-seedCatalog` seeds two ProductEntity rows so the flow
+# runs on a simulator with no backend (same seam the XCTest UI suite uses).
+# NOTE: maestro 2.8.0 quirks this file honors: `---` required between the
+# config keys and the command list, and only the FIRST flow in a file
+# executes (hence one flow per file), and launchApp `arguments` is a map
+# (a dash-prefixed key lands in ProcessInfo.arguments verbatim).
+appId: com.mishran.app
+name: Browse catalog
+---
+- launchApp:
+    arguments:
+      "-seedCatalog": true
+- assertVisible: "Sweets"
+- assertVisible: "Kaju Katli, ₹720/kg"
+- assertVisible: "Motichoor Laddoo, ₹480/kg"

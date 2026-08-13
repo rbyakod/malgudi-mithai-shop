@@ -29,7 +29,8 @@
     "regen:importmap": "node --import tsx scripts/regen-importmap.mjs",
     "ios:xcodegen": "xcodegen --spec apps/ios/project.yml",
     "ios:build": "xcodebuild -project apps/ios/Mishran.xcodeproj -scheme Mishran -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=17.2' build",
-    "ios:test": "xcodebuild test -project apps/ios/Mishran.xcodeproj -scheme Mishran -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=17.2'"
+    "ios:test": "xcodebuild test -project apps/ios/Mishran.xcodeproj -scheme Mishran -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=17.2'",
+    "ios:e2e": "bash apps/ios/maestro/run-flows.sh"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1107.0",
