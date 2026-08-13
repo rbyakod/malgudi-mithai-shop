@@ -12,7 +12,8 @@ options:
   bundleIdPrefix: com.mishran
   deploymentTarget:
     iOS: "17.0"
-  createIntermediateGroups: true
+  # NOTE: createIntermediateGroups mangles sources outside the project root
+  # (the monorepo brand-tokens dir) — keep explicit groups instead.
 
 settings:
   base:
@@ -26,6 +27,11 @@ targets:
     platform: iOS
     sources:
       - path: Mishran
+      # Monorepo brand tokens, compiled in place (zero duplication — same
+      # convention as the Android srcDir wiring). Regenerate with
+      # `pnpm codegen:swift` in packages/brand-tokens.
+      - path: ../../packages/brand-tokens/generated/swift
+        group: Generated
     info:
       path: Mishran/Info.plist
       properties:
@@ -60,6 +66,14 @@ targets:
       base:
         TEST_TARGET_NAME: Mishran
 
+  MishranTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: MishranTests
+    dependencies:
+      - target: Mishran
+
 schemes:
   Mishran:
     build:
@@ -70,4 +84,5 @@ schemes:
     test:
       config: Debug
       targets:
+        - MishranTests
         - MishranUITests

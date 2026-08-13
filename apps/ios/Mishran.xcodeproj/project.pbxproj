@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		333556C8D78846566DF80474 /* ThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */; };
+		50179D7DB34E1CE9D50AB3E7 /* MishranTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED91007C15EEF6F6939E19F7 /* MishranTheme.swift */; };
+		84F381E7BA4D6C9C295196A1 /* MishranTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15083CDE49B78AEB7CE5C9D /* MishranTokens.swift */; };
 		8E2667EF644522F496C20C20 /* MishranApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */; };
 		9FD03ADFDD9C9409D7C60BF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38C61D8573D8238A69276ACD /* Assets.xcassets */; };
 		BD20E249EB84D2D509889488 /* MishranUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8AD84061607513B2822EFFA /* MishranUITests.swift */; };
@@ -20,6 +23,13 @@
 			remoteGlobalIDString = D1B295700D76C68137328D08;
 			remoteInfo = Mishran;
 		};
+		D6FDDAC23AFC7BB1872B10D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 068F6588F6E5AA439AA8F934 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D1B295700D76C68137328D08;
+			remoteInfo = Mishran;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -27,15 +37,38 @@
 		7ACC75BEA637550855532CA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9D530C7E3563C4D49DEF96BB /* MishranUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MishranUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FE3F782C4272E71BD283282 /* Mishran.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Mishran.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTests.swift; sourceTree = "<group>"; };
+		BEDC8DC14F2500F2AA893CD2 /* MishranTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MishranTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D15083CDE49B78AEB7CE5C9D /* MishranTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranTokens.swift; sourceTree = "<group>"; };
 		D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranApp.swift; sourceTree = "<group>"; };
 		E8AD84061607513B2822EFFA /* MishranUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranUITests.swift; sourceTree = "<group>"; };
+		ED91007C15EEF6F6939E19F7 /* MishranTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranTheme.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		05FE607ACE0ADE854D217AE9 /* swift */ = {
+			isa = PBXGroup;
+			children = (
+				D15083CDE49B78AEB7CE5C9D /* MishranTokens.swift */,
+			);
+			name = swift;
+			path = "../../packages/brand-tokens/generated/swift";
+			sourceTree = "<group>";
+		};
+		132604EA27D443488AA53EC1 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				05FE607ACE0ADE854D217AE9 /* swift */,
+			);
+			name = Generated;
+			sourceTree = "<group>";
+		};
 		3B29749DEA5CABF32922E983 = {
 			isa = PBXGroup;
 			children = (
+				132604EA27D443488AA53EC1 /* Generated */,
 				B5B5DF2A3F7F9D39FBB3A74E /* Mishran */,
+				F74AB2076E8EB487B7552C9F /* MishranTests */,
 				6FCE1B0A562DFF922CA88B6C /* MishranUITests */,
 				CEAA4CCE4A3E1D6A2C15B94B /* Products */,
 			);
@@ -55,6 +88,7 @@
 				38C61D8573D8238A69276ACD /* Assets.xcassets */,
 				7ACC75BEA637550855532CA3 /* Info.plist */,
 				D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */,
+				D9E82DA9C05F8170E3E9720D /* Theme */,
 			);
 			path = Mishran;
 			sourceTree = "<group>";
@@ -63,9 +97,26 @@
 			isa = PBXGroup;
 			children = (
 				9FE3F782C4272E71BD283282 /* Mishran.app */,
+				BEDC8DC14F2500F2AA893CD2 /* MishranTests.xctest */,
 				9D530C7E3563C4D49DEF96BB /* MishranUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D9E82DA9C05F8170E3E9720D /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				ED91007C15EEF6F6939E19F7 /* MishranTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		F74AB2076E8EB487B7552C9F /* MishranTests */ = {
+			isa = PBXGroup;
+			children = (
+				A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */,
+			);
+			path = MishranTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -88,6 +139,24 @@
 			productName = MishranUITests;
 			productReference = 9D530C7E3563C4D49DEF96BB /* MishranUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		5AC9D4BAA9624C10E8CE992B /* MishranTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E03A21A786D3442E63F717CA /* Build configuration list for PBXNativeTarget "MishranTests" */;
+			buildPhases = (
+				BD1143CB804070E686AE66F8 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				39693A26B470F2C6FB649FA2 /* PBXTargetDependency */,
+			);
+			name = MishranTests;
+			packageProductDependencies = (
+			);
+			productName = MishranTests;
+			productReference = BEDC8DC14F2500F2AA893CD2 /* MishranTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		D1B295700D76C68137328D08 /* Mishran */ = {
 			isa = PBXNativeTarget;
@@ -120,6 +189,9 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = D1B295700D76C68137328D08;
 					};
+					5AC9D4BAA9624C10E8CE992B = {
+						ProvisioningStyle = Automatic;
+					};
 					D1B295700D76C68137328D08 = {
 						ProvisioningStyle = Automatic;
 					};
@@ -141,6 +213,7 @@
 			targets = (
 				D1B295700D76C68137328D08 /* Mishran */,
 				2C49B580602E129C08366052 /* MishranUITests */,
+				5AC9D4BAA9624C10E8CE992B /* MishranTests */,
 			);
 		};
 /* End PBXProject section */
@@ -170,12 +243,27 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E2667EF644522F496C20C20 /* MishranApp.swift in Sources */,
+				50179D7DB34E1CE9D50AB3E7 /* MishranTheme.swift in Sources */,
+				84F381E7BA4D6C9C295196A1 /* MishranTokens.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD1143CB804070E686AE66F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				333556C8D78846566DF80474 /* ThemeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		39693A26B470F2C6FB649FA2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D1B295700D76C68137328D08 /* Mishran */;
+			targetProxy = D6FDDAC23AFC7BB1872B10D1 /* PBXContainerItemProxy */;
+		};
 		85D45F8570359B26880A3BD7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D1B295700D76C68137328D08 /* Mishran */;
@@ -232,6 +320,22 @@
 			};
 			name = Debug;
 		};
+		4488D2A72AFEB68FA4478A0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mishran.MishranTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mishran.app/Mishran";
+			};
+			name = Debug;
+		};
 		473FD913BD826B80C0963060 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -245,6 +349,22 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mishran.app;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		54F9A646263656F71EE44FE8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mishran.MishranTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mishran.app/Mishran";
 			};
 			name = Release;
 		};
@@ -397,6 +517,15 @@
 			buildConfigurations = (
 				333743F83372DA091D861B9B /* Debug */,
 				193366255096BBE557B1F47B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E03A21A786D3442E63F717CA /* Build configuration list for PBXNativeTarget "MishranTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4488D2A72AFEB68FA4478A0D /* Debug */,
+				54F9A646263656F71EE44FE8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

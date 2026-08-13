@@ -10,10 +10,11 @@ struct MishranApp: App {
             VStack(spacing: 8) {
                 Image(systemName: "circle.hexagongrid.fill")
                     .font(.system(size: 40))
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.mishranBrandAccent)
                 Text("Mishran")
-                    .font(.title.bold())
+                    .font(.mishranDisplay.weight(.bold))
             }
+            .mishranTheme()
         }
     }
 }

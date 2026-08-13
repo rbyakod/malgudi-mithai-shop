@@ -44,6 +44,17 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5AC9D4BAA9624C10E8CE992B"
+               BuildableName = "MishranTests.xctest"
+               BlueprintName = "MishranTests"
+               ReferencedContainer = "container:Mishran.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "2C49B580602E129C08366052"
                BuildableName = "MishranUITests.xctest"
                BlueprintName = "MishranUITests"
