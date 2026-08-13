@@ -36,6 +36,7 @@
 import { getPayload } from "payload";
 import config from "../../payload.config";
 import { container } from "../container";
+import { tierForDeliveredCount, loyaltySerialNumber } from "../loyalty/eligibility";
 
 interface StageTemplate {
   titleKey: string;
@@ -161,6 +162,53 @@ export async function emitOrderEvent(orderId: string, stage: string): Promise<vo
       container.logger.error(
         { err, orderId, stage, eventId, channel: "sms" },
         "emitOrderEvent sms failed",
+      );
+    }
+  }
+
+  // --- Loyalty eligibility (Task 19.1) ---------------------------------
+  // On a delivered order, proactively mint the customer's Apple Wallet
+  // loyalty pass if they just crossed the Silver threshold (≥2 delivered)
+  // and no active pass row exists yet. The on-demand GET /account/loyalty-
+  // pass route is the primary path; this is a convenience so the pass exists
+  // before the user opens Wallet. Guarded by walletPassService presence (the
+  // emitter's test container omits it) + try/catch so a wallet outage never
+  // blocks an already-persisted transition. Gold upgrade is left to the route
+  // (re-generation is cheap + idempotent on serial).
+  if (stage === "delivered" && container.walletPassService) {
+    try {
+      const delivered = await payload.find({
+        collection: "orders",
+        where: {
+          and: [{ customerId: { equals: customerId } }, { status: { equals: "delivered" } }],
+        },
+        limit: 0,
+      });
+      const tier = tierForDeliveredCount(delivered.totalDocs ?? 0);
+      if (tier) {
+        const existingPass = await payload.find({
+          collection: "walletPasses",
+          where: { and: [{ customerId: { equals: customerId } }, { active: { equals: true } }] },
+          limit: 1,
+        });
+        if (!existingPass.docs[0]) {
+          const serialNumber = loyaltySerialNumber(customerId);
+          await container.walletPassService.createSignedPassUrl({
+            serialNumber,
+            tier,
+            holderName: (customer as { name?: string }).name ?? undefined,
+            balanceLabel: String(delivered.totalDocs ?? 0),
+          });
+          await payload.create({
+            collection: "walletPasses",
+            data: { customerId, serialNumber, tier, active: true },
+          });
+        }
+      }
+    } catch (err) {
+      container.logger.error(
+        { err, orderId, stage, eventId, channel: "loyalty" },
+        "emitOrderEvent proactive loyalty pass failed",
       );
     }
   }

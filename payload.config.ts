@@ -57,6 +57,8 @@ import { Devices } from "./collections/Devices";
 import { IdempotencyKeys } from "./collections/IdempotencyKeys";
 import { RevokedTokens } from "./collections/RevokedTokens";
 import { SecurityEvents } from "./collections/SecurityEvents";
+// Mobile app (Task 19.1): Apple Wallet loyalty passes.
+import { WalletPasses } from "./collections/WalletPasses";
 // Globals (Task 8).
 import { BrandSettings } from "./globals/BrandSettings";
 import { NavSettings } from "./globals/NavSettings";
@@ -142,6 +144,8 @@ export default buildConfig({
     IdempotencyKeys,
     RevokedTokens,
     SecurityEvents,
+    // Mobile app (Task 19.1): Apple Wallet loyalty passes.
+    WalletPasses,
   ],
   globals: [
     BrandSettings,
