@@ -417,10 +417,14 @@ EOF
   <p class="lede">The repo is a <b>pnpm workspace monorepo</b> (<code>apps/*</code>, <code>packages/*</code>). The web app lives at the repo root, but <code>pnpm build</code> runs a prebuild codegen across <code>packages/</code> — so deploy the <b>full checkout of <code>main</code></b>, never a partial copy. Two ways to get it there; A is cleaner long-term.</p>
 
   <h4>5.1 Create a locked-down system user that will own the app</h4>
-  <div class="code-block"><div class="code-title"><span>App user + directory</span><button class="copy">copy</button></div>
+  <div class="code-block"><div class="code-title"><span>App user + directory (run from your admin shell)</span><button class="copy">copy</button></div>
 <pre><code>sudo useradd --system --create-home --shell /bin/bash mithai || true
 sudo mkdir -p /opt/mithai-shop
 sudo chown -R mithai:mithai /opt/mithai-shop</code></pre></div>
+  <p class="callout warn"><b>Two shells — read this once, save confusion later.</b> From here on you juggle two shells, and every command block below is tagged for one of them:<br>
+  • <b>Admin shell</b> — the one you SSH'd into (<code>whoami</code> shows <code>root</code> or your sudo user). Anything starting with <code>sudo</code> (systemctl, nginx, certbot, useradd, chown) runs here.<br>
+  • <b>App shell</b> — entered with <code>sudo -iu mithai</code> (<code>whoami</code> shows <code>mithai</code>). Git, pnpm, nano-editing <code>.env</code>, seeds run here. This user has <b>no sudo rights by design</b> — it exists so the website process can't touch the rest of the server.<br>
+  <b>If you ever see <code>&lt;user&gt; is not in the sudoers file</code></b>, you're in the wrong shell: type <code>exit</code> to return to the admin shell and rerun the command there. Quick orientation any time: <code>whoami</code>.</p>
 
   <h4>5.2 Option A — git clone (recommended)</h4>
   <p class="lede">The GitHub repo <code>github.com/rbyakod/malgudi-mithai-shop</code> is private, so the VPS needs read access via a <b>fine-grained personal access token</b>. Generate it once on your Mac — it takes two minutes:</p>
@@ -499,7 +503,7 @@ NEXT_PUBLIC_GA4_ID=
 NEXT_PUBLIC_META_PIXEL_ID=</code></pre></div>
 
   <h4>6.3 Lock it down</h4>
-  <div class="code-block"><div class="code-title"><span>Owner-only readable</span><button class="copy">copy</button></div>
+  <div class="code-block"><div class="code-title"><span>Owner-only readable (admin shell)</span><button class="copy">copy</button></div>
 <pre><code>sudo chown mithai:mithai /opt/mithai-shop/.env
 sudo chmod 600 /opt/mithai-shop/.env      <span class="c"># rw for owner, nothing for anyone else</span></code></pre></div>
 
@@ -525,7 +529,7 @@ sudo chmod 600 /opt/mithai-shop/.env      <span class="c"># rw for owner, nothin
 
   <h4>7.1 Build</h4>
   <p class="lede"><code>pnpm build</code> automatically runs the prebuild steps first (import-map regen + TypeScript codegen across the workspace packages) — no extra commands needed. Expect several minutes and noticeable RAM use; that's normal.</p>
-  <div class="code-block"><div class="code-title"><span>Production build</span><button class="copy">copy</button></div>
+  <div class="code-block"><div class="code-title"><span>Production build (app shell)</span><button class="copy">copy</button></div>
 <pre><code>sudo -iu mithai
 cd /opt/mithai-shop
 pnpm build
@@ -555,7 +559,7 @@ PrivateTmp=true                         <span class="c"># hardening: private /tm
 WantedBy=multi-user.target              <span class="c"># "start on normal boot"</span></code></pre></div>
 
   <h4>7.3 Start it and watch the boot</h4>
-  <div class="code-block"><div class="code-title"><span>Enable + verify</span><button class="copy">copy</button></div>
+  <div class="code-block"><div class="code-title"><span>Enable + verify (admin shell)</span><button class="copy">copy</button></div>
 <pre><code>sudo systemctl daemon-reload            <span class="c"># systemd re-reads service files</span>
 sudo systemctl enable --now mithai-shop <span class="c"># start now + on every boot</span>
 sudo systemctl status mithai-shop       <span class="c"># expect: active (running)</span>
@@ -657,13 +661,16 @@ grep '^MONGODB_URI=' .env    <span class="c"># must show 127.0.0.1:27017/mishran
       <tr><td><code>pnpm seed:branding</code></td><td>Brand one-offs — brand-settings "Mishran" + sun logo + the demo Chole Bhature image.</td><td>&lt; 1 min</td></tr>
     </tbody>
   </table>
-  <div class="code-block"><div class="code-title"><span>Run them</span><button class="copy">copy</button></div>
-<pre><code>pnpm seed
+  <div class="code-block"><div class="code-title"><span>Run them (app shell: sudo -iu mithai)</span><button class="copy">copy</button></div>
+<pre><code><span class="c"># as mithai (whoami → mithai):</span>
+pnpm seed
 pnpm seed:catalog
 <span class="c"># expected final line, roughly:</span>
 <span class="c">#   Seed complete: 96 created, 46 updated. Media: 200 ok, 0 skipped.</span>
 pnpm seed:branding
 
+<span class="c"># then switch back to the admin shell for the restart:</span>
+exit
 sudo systemctl restart mithai-shop    <span class="c"># clears any cached pages from the empty era</span></code></pre></div>
 
   <h4>9.3 What seed:catalog is doing during those minutes</h4>
@@ -737,12 +744,16 @@ sudo systemctl restart mithai-shop    <span class="c"># clears any cached pages 
   <span class="label">13 · After launch</span>
   <h2>Daily operations</h2>
   <h4>Deploy an update (after pushing to main from the Mac)</h4>
-  <div class="code-block"><div class="code-title"><span>The 5-line update cycle</span><button class="copy">copy</button></div>
-<pre><code>sudo -iu mithai
+  <div class="code-block"><div class="code-title"><span>The update cycle (first block as mithai, second as admin)</span><button class="copy">copy</button></div>
+<pre><code><span class="c"># --- app shell (whoami → mithai): ---</span>
+sudo -iu mithai
 cd /opt/mithai-shop
 git pull origin main
 pnpm install --frozen-lockfile     <span class="c"># only needed if dependencies changed — harmless anyway</span>
 pnpm build
+
+<span class="c"># --- back to admin shell (whoami → root/your user): ---</span>
+exit
 sudo systemctl restart mithai-shop</code></pre></div>
   <div class="two">
     <div class="card"><h3>Logs</h3>
@@ -764,6 +775,9 @@ sudo tar czf /root/media-$(date +%F).tgz -C /opt/mithai-shop media</code></pre><
   <table>
     <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
     <tbody>
+      <tr><td><code>&lt;user&gt; is not in the sudoers file. This incident will be reported.</code></td>
+          <td>You're inside the <code>mithai</code> app shell (no sudo, by design) but ran a <code>sudo</code> command</td>
+          <td>Type <code>exit</code> to return to the admin shell and rerun it there. Orient yourself any time with <code>whoami</code> — see the "two shells" note in step 5.1</td></tr>
       <tr><td>App crash-loops; log shows <code>MongoServerSelectionError</code> or <code>replica set connection timed out</code></td>
           <td>Mongo not running, or <code>rs0</code> never initiated</td>
           <td><code>systemctl status mongod</code>; then <code>mongosh --eval 'rs.status()'</code> — if uninitialized, rerun the <code>rs.initiate()</code> from step 4.3</td></tr>
