@@ -9,5 +9,12 @@
 	     enrollment lands (plan Open Question #8). -->
 	<key>com.apple.developer.applesignin</key>
 	<string>Default</string>
+	<!-- Task 18.3: APNs — required for remote push + Live Activities.
+	     Declared `development` here; the App Store export pipeline rewrites
+	     it to `production` for distribution builds (same deferred-until-
+	     enrollment gap as applesignin above). Needs the Push Notifications
+	     capability on the App ID, which is now toggled under Team 2X7B7DMV95. -->
+	<key>aps-environment</key>
+	<string>development</string>
 </dict>
 </plist>
