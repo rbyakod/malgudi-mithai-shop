@@ -873,10 +873,27 @@ sudo systemctl restart mithai-shop    <span class="c"># clears any cached pages 
   <span class="label">13 · After launch</span>
   <h2>Daily operations</h2>
   <h4>Deploy an update (after pushing to main from the Mac)</h4>
-  <p class="lede"><b>One command from the Mac</b> (requires key-based SSH to the VPS):</p>
-  <div class="code-block"><div class="code-title"><span>scripts/deploy-vps.sh — pull + build + restart + health check</span><button class="copy">copy</button></div>
-<pre><code>bash scripts/deploy-vps.sh    <span class="c"># refuses if local main isn't pushed; never restarts on a failed build</span>
-<span class="c"># DEPLOY_SSH=ubuntu@2.24.221.70 bash scripts/deploy-vps.sh   ← different SSH target</span></code></pre></div>
+  <p class="lede"><b>One command from the Mac</b> — <code>scripts/deploy-vps.sh</code> (in the repo) automates the whole cycle. Prerequisite: key-based SSH from the Mac to the VPS (test with <code>ssh root@2.24.221.70 'echo ok'</code> — if that prints <code>ok</code> without a password prompt, you're set; otherwise add your Mac's <code>~/.ssh/id_ed25519.pub</code> to the server's <code>~/.ssh/authorized_keys</code>).</p>
+  <div class="code-block"><div class="code-title"><span>From the repo root on the Mac</span><button class="copy">copy</button></div>
+<pre><code>bash scripts/deploy-vps.sh    <span class="c"># refuses if local main isn't pushed; never restarts on a failed build</span></code></pre></div>
+  <p><b>What each of its 4 steps does:</b></p>
+  <table>
+    <thead><tr><th>Step</th><th>Where</th><th>What</th></tr></thead>
+    <tbody>
+      <tr><td>1 — preflight</td><td>Mac</td><td>Verifies local <code>main</code> matches <code>origin/main</code> on GitHub; refuses to deploy uncommitted/unpushed work</td></tr>
+      <tr><td>2 — build</td><td>VPS (as <code>mithai</code>)</td><td><code>git pull origin main</code> → <code>pnpm install --frozen-lockfile</code> → <code>pnpm build</code></td></tr>
+      <tr><td>3 — restart</td><td>VPS</td><td><code>systemctl restart mithai-shop</code>, then confirms the service reports <code>active</code></td></tr>
+      <tr><td>4 — health check</td><td>VPS</td><td>Expects HTTP 200 from <code>http://127.0.0.1:3000/en</code></td></tr>
+    </tbody>
+  </table>
+  <p class="callout ok"><b>Safety property:</b> the service is only restarted <em>after</em> a successful build — a failed build leaves the currently-running site untouched. On any failure the script prints the exact <code>journalctl</code> command to see why.</p>
+  <p><b>Options &amp; notes:</b></p>
+  <ul>
+    <li>Different SSH target: <code>DEPLOY_SSH=ubuntu@2.24.221.70 bash scripts/deploy-vps.sh</code> (default is <code>root@2.24.221.70</code>)</li>
+    <li>The script only deploys what's on GitHub <code>main</code> — push first (the repo's stop-hook auto-commit handles this if you work through Claude)</li>
+    <li>It assumes the service is already installed and was healthy once (steps 07–08). First-time setup is manual, by design</li>
+    <li>Claude Code on the Mac can run the deploy for you — it uses the same SSH path; just ask</li>
+  </ul>
   <p>…or do the same steps by hand:</p>
   <div class="code-block"><div class="code-title"><span>The update cycle (first block as mithai, second as admin)</span><button class="copy">copy</button></div>
 <pre><code><span class="c"># --- app shell (whoami → mithai): ---</span>
