@@ -59,17 +59,18 @@
   .hero::after{content:"";position:absolute;right:-70px;top:-70px;width:230px;height:230px;border-radius:50%;
     background:radial-gradient(circle at 35% 35%, rgba(169,126,47,.22), transparent 65%)}
   .kicker{color:var(--accent);font-size:11.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;margin-bottom:14px}
-  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:600;line-height:1.06;margin:0}
+  h1,h2,h3,h4{font-family:Georgia,"Times New Roman",serif;font-weight:600;line-height:1.06;margin:0}
   h1{font-size:clamp(34px,5.4vw,58px);max-width:820px}
   h2{font-size:clamp(25px,3.4vw,36px);margin-bottom:12px}
   h3{font-size:21px;margin:2px 0 8px}
+  h4{font-size:16px;margin:18px 0 6px;color:var(--accent-deep)}
   .hero p{max-width:720px;color:var(--muted);font-size:17px;margin-top:16px}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
   .chip{padding:6px 11px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.55);
     color:var(--muted);font-size:12px;font-weight:700}
   section{margin-top:52px}
   .label{display:inline-block;margin-bottom:8px;color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
-  .lede{color:var(--muted);max-width:780px;margin-top:0}
+  .lede{color:var(--muted);max-width:820px;margin-top:0}
   .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-top:16px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:16px}
   .card,.callout{border:1px solid var(--line);border-radius:var(--r);background:rgba(255,253,246,.9);
@@ -86,6 +87,13 @@
   .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:15px;top:14px;width:25px;height:25px;
     display:grid;place-items:center;border-radius:50%;background:var(--accent-deep);color:#fdf4e3;font-size:11.5px;font-weight:800}
 
+  .clicks{counter-reset:c;list-style:none;margin:14px 0 4px;padding:0;display:grid;gap:8px}
+  .clicks li{position:relative;padding:10px 13px 10px 46px;border:1px solid var(--line);border-radius:var(--r);
+    background:rgba(255,255,255,.55);color:var(--muted);font-size:14.5px}
+  .clicks li::before{counter-increment:c;content:counter(c);position:absolute;left:12px;top:10px;width:22px;height:22px;
+    display:grid;place-items:center;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);font-size:10.5px;font-weight:800}
+  .clicks li b{color:var(--ink)}
+
   .code-block{margin:14px 0 20px;border:1px solid var(--code-line);border-radius:var(--r);overflow:hidden;
     background:var(--code-bg);box-shadow:0 10px 34px rgba(26,15,11,.16)}
   .code-title{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 13px;
@@ -96,7 +104,7 @@
   pre{margin:0;padding:15px 16px;overflow:auto;color:#f7ecda;font-size:12.9px;line-height:1.6}
   pre .c{color:#9b7f6a}
   code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.95em}
-  p code,li code,td code,.callout code{padding:2px 5px;border:1px solid rgba(180,83,42,.25);border-radius:5px;
+  p code,li code,td code,.callout code,.clicks code{padding:2px 5px;border:1px solid rgba(180,83,42,.25);border-radius:5px;
     background:rgba(255,255,255,.6);color:var(--accent-deep);font-size:.88em}
 
   table{width:100%;border-collapse:collapse;margin-top:14px;border:1px solid var(--line);border-radius:var(--r);
@@ -129,14 +137,15 @@
     Host <strong>2.24.221.70</strong> (Ubuntu)<br>
     URL <strong>mishran.roohib.com</strong><br>
     App <strong>127.0.0.1:3000</strong> via systemd<br>
-    Doc v2 — Claude, 2026-08-14
+    DNS at <strong>GoDaddy</strong><br>
+    Doc v3 — Claude, 2026-08-14
   </div>
   <nav id="toc" aria-label="Sections">
     <div class="group">Plan</div>
     <a href="#overview"><i>00</i>Overview</a>
     <a href="#inputs"><i>01</i>Inputs needed</a>
     <div class="group">Server</div>
-    <a href="#dns"><i>02</i>DNS record</a>
+    <a href="#dns"><i>02</i>DNS — GoDaddy</a>
     <a href="#prep"><i>03</i>Ubuntu prep</a>
     <a href="#mongo"><i>04</i>MongoDB + replica set</a>
     <a href="#code"><i>05</i>Get code onto VPS</a>
@@ -153,129 +162,200 @@
     <a href="#trouble"><i>14</i>Troubleshooting</a>
     <a href="#rollback"><i>15</i>Rollback</a>
   </nav>
-  <div class="side-note">Pair with the in-repo docs: <code>README.md</code> (golden test data) and <code>docs/deployment.md</code>. Nothing here touches production commerce.</div>
+  <div class="side-note">Every terminal command has a copy button. Lines starting with <code>#</code> are explanations, not commands. Pair with the repo <code>README.md</code> (golden test data section).</div>
 </aside>
 
 <main>
 <header class="hero" id="overview">
-  <div class="kicker">Deployment plan · family testing</div>
+  <div class="kicker">Deployment plan · family testing · detailed edition</div>
   <h1>Publish Mishran to the Ubuntu VPS at mishran.roohib.com</h1>
-  <p>Self-hosted deployment of the Next.js 16 + Payload CMS 3.87 storefront: local MongoDB on the VPS, app under systemd, Nginx reverse proxy, Let's Encrypt HTTPS. Everything below was checked against the actual repo configuration — env var names, the Mongo replica-set requirement, the pnpm workspace build, and media storage location.</p>
+  <p>Self-hosted deployment of the Next.js 16 + Payload CMS 3.87 storefront: local MongoDB on the VPS, app under systemd, Nginx reverse proxy, Let's Encrypt HTTPS. Every step below is written to be followed top-to-bottom — including the clicks in GoDaddy and GitHub, and what each command actually does. Verified against the repo's real configuration (env var names, Mongo replica-set requirement, pnpm workspace build, media storage).</p>
   <div class="chips">
     <span class="chip">Ubuntu VPS</span><span class="chip">Node 22 + pnpm</span>
     <span class="chip">MongoDB rs0 (local)</span><span class="chip">systemd</span>
-    <span class="chip">Nginx + Certbot</span><span class="chip">Golden seed data</span>
+    <span class="chip">Nginx (existing) + Certbot</span><span class="chip">Golden seed data</span>
   </div>
   <div class="arch">Family browser
    │  https://mishran.roohib.com  (443, Let's Encrypt)
    ▼
- [ Nginx ]  ── proxy_pass ──►  127.0.0.1:3000
-                                 │
-                          systemd: mithai-shop
-                          (next start, user mithai)
-                                 │
-                          MongoDB 127.0.0.1:27017
-                          (replica set rs0, DB "mishran")
-                                 │
-                          media/  (uploaded images on disk)</div>
+ [ Nginx — already running, other subdomains ]
+        ── proxy_pass ──►  127.0.0.1:3000
+                              │
+                        systemd: mithai-shop
+                        (next start, user mithai)
+                              │
+                        MongoDB 127.0.0.1:27017
+                        (replica set rs0, DB "mishran")
+                              │
+                        /opt/mithai-shop/media/  (uploaded images on disk)</div>
 </header>
 
 <section id="inputs">
-  <span class="label">01 · Before touching the server</span>
+  <span class="label">01 · Before touching anything</span>
   <h2>Inputs needed</h2>
   <div class="grid">
     <div class="card"><h3>Access</h3><ul>
-      <li>SSH user for <code>2.24.221.70</code> (<code>root</code> or a sudo user).</li>
-      <li>DNS control for <code>roohib.com</code> (A-record creation).</li>
-      <li>GitHub access to <code>rbyakod/malgudi-mithai-shop</code> if cloning (repo is private — a PAT or SSH deploy key, see step 05).</li>
+      <li>GoDaddy account that manages <code>roohib.com</code> (for step 02).</li>
+      <li>SSH user for <code>2.24.221.70</code> (<code>root</code> or a sudo user) + its password or key.</li>
+      <li>GitHub account <code>rbyakod</code> (to mint a read token in step 05).</li>
     </ul></div>
     <div class="card"><h3>Server</h3><ul>
-      <li>≥ 2 GB RAM (or add swap — <code>next build</code> is memory-hungry; see troubleshooting).</li>
+      <li>≥ 2 GB RAM, or add the swap in step 03 — <code>next build</code> is memory-hungry.</li>
       <li>Ports 80/443 open; outbound HTTPS allowed (build + seed fetch images from CDNs).</li>
       <li>Nginx is <b>already installed and serving other subdomains</b> — this runbook only adds one more site to it.</li>
     </ul></div>
-    <div class="card"><h3>Secrets to generate</h3><ul>
-      <li><code>PAYLOAD_SECRET</code> — <code>openssl rand -hex 32</code></li>
-      <li><code>REVALIDATE_SECRET</code> — another <code>openssl rand -hex 32</code></li>
-      <li>Mongo app-user password (strong).</li>
+    <div class="card"><h3>Secrets to generate (step 06 shows how)</h3><ul>
+      <li><code>PAYLOAD_SECRET</code> — random 64-char hex.</li>
+      <li><code>REVALIDATE_SECRET</code> — another random 64-char hex.</li>
+      <li>Mongo app-user password — any strong unique password.</li>
     </ul></div>
   </div>
   <p class="callout warn"><b>Licensing caveat.</b> The golden seed data contains scraped product copy and storefront images for testing only. Fine for private family feedback — do not treat as production content.</p>
+  <p class="callout ok"><b>Time estimate:</b> roughly 60–90 minutes end-to-end, of which ~10 minutes is the build and ~5–10 the seed's image downloads. Only steps 02 and 05 need a non-terminal window.</p>
 </section>
 
 <section id="dns">
-  <span class="label">02 · Step one</span>
-  <h2>Create the DNS record</h2>
-  <p class="lede">Wherever <code>roohib.com</code> DNS is managed, add:</p>
-  <table><thead><tr><th>Type</th><th>Name</th><th>Value</th><th>TTL</th></tr></thead>
-  <tbody><tr><td><code>A</code></td><td><code>mishran</code></td><td><code>2.24.221.70</code></td><td>300 or default</td></tr></tbody></table>
-  <div class="code-block"><div class="code-title"><span>Check propagation (from your Mac)</span><button class="copy">copy</button></div>
+  <span class="label">02 · Step one — in the browser, not the terminal</span>
+  <h2>Create the subdomain at GoDaddy</h2>
+  <p class="lede">A subdomain is just a DNS record: it tells the world "ask <code>2.24.221.70</code> for anything named <code>mishran.roohib.com</code>". This is done once, in GoDaddy's DNS manager, and costs nothing.</p>
+
+  <h4>Click-by-click</h4>
+  <ol class="clicks">
+    <li>Go to <b>godaddy.com</b> and sign in (top-right).</li>
+    <li>Open <b>My Products</b> (account menu, top-right) and scroll to the <b>Domains</b> section.</li>
+    <li>Find <b>roohib.com</b> in the list. Do <i>not</i> click the domain name itself — instead click <b>DNS → Manage Zones</b> (or the <b>⋮ / Manage DNS</b> option next to it). You want the DNS Management page whose header reads <b>DNS Management | roohib.com</b>.</li>
+    <li>At the bottom of the records table click <b>Add New Record</b>. A blank row appears with dropdowns.</li>
+    <li>Set <b>Type</b> to <code>A</code> (maps a name to an IPv4 address).</li>
+    <li>Set <b>Name</b> to <code>mishran</code> — GoDaddy shows it as <code>mishran.roohib.com</code> once saved. <i>Leave it as just <code>mishran</code>; typing the full domain creates a wrong nested name.</i></li>
+    <li>Set <b>Value</b> to <code>2.24.221.70</code> (the VPS IP).</li>
+    <li>Leave <b>TTL</b> at <code>Default</code> (or set 600 seconds — shorter = faster changes later).</li>
+    <li>Click <b>Save</b>. The record appears in the table.</li>
+  </ol>
+
+  <h4>Pre-flight — confirm GoDaddy is actually answering for this domain</h4>
+  <p class="lede">These checks matter only if <code>roohib.com</code>'s nameservers were ever pointed elsewhere (e.g. Cloudflare). On the same DNS Management page, the <b>Nameservers</b> box should list GoDaddy servers like <code>ns1.domaincontrol.com</code> / <code>ns2.domaincontrol.com</code>.</p>
+  <div class="callout warn"><b>If nameservers are NOT GoDaddy's</b> — for example Cloudflare's <code>*.ns.cloudflare.com</code> — then GoDaddy's DNS page is being ignored, and you must instead add the same A record (<code>mishran</code> → <code>2.24.221.70</code>, "DNS only", proxy off) in that provider's dashboard. The rest of this runbook is identical either way.</div>
+
+  <h4>Verify propagation (from your Mac terminal)</h4>
+  <div class="code-block"><div class="code-title"><span>Check the record is live — repeat every minute or two until it answers</span><button class="copy">copy</button></div>
 <pre><code>dig +short mishran.roohib.com
-<span class="c"># expect: 2.24.221.70</span></code></pre></div>
-  <p class="callout">Do this first — Certbot (step 08) will fail until the record resolves.</p>
+<span class="c"># expect exactly: 2.24.221.70</span>
+
+<span class="c"># if empty at first, ask GoDaddy's nameservers directly (bypasses your Mac's cache):</span>
+dig +short mishran.roohib.com @ns1.domaincontrol.com</code></pre></div>
+  <p class="callout">Propagation is usually under 5 minutes for a brand-new record. Certbot in step 08 will fail until <code>dig</code> answers <code>2.24.221.70</code> — so do this step first, then keep going with the server steps while it settles.</p>
 </section>
 
 <section id="prep">
-  <span class="label">03 · Step two</span>
+  <span class="label">03 · Step two — on the VPS</span>
   <h2>Prepare Ubuntu</h2>
-  <div class="code-block"><div class="code-title"><span>SSH in</span><button class="copy">copy</button></div>
-<pre><code>ssh root@2.24.221.70   <span class="c"># or your sudo user</span></code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Base packages (incl. build tools for sharp/argon2 native modules)</span><button class="copy">copy</button></div>
-<pre><code>sudo apt update &amp;&amp; sudo apt upgrade -y
-<span class="c"># nginx is ALREADY installed and serving other subdomains on this VPS —
-# list it in the install line only if a fresh server ever needs it; here we
-# just verify it instead of reinstalling:</span>
-sudo apt install -y git curl ca-certificates build-essential ufw
-sudo nginx -v &amp;&amp; sudo systemctl status nginx --no-pager</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Node 22 + pnpm (match local dev: Node 22.x, pnpm 11.x)</span><button class="copy">copy</button></div>
-<pre><code>curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt install -y nodejs
-node -v   <span class="c"># v22.x</span>
 
-sudo corepack enable
+  <h4>Connect</h4>
+  <div class="code-block"><div class="code-title"><span>SSH in (Terminal on the Mac)</span><button class="copy">copy</button></div>
+<pre><code>ssh root@2.24.221.70
+<span class="c"># or: ssh &lt;your-sudo-user&gt;@2.24.221.70</span>
+<span class="c"># accept the fingerprint prompt the first time; type the password when asked</span></code></pre></div>
+
+  <h4>Update packages + install build tools</h4>
+  <p class="lede"><code>build-essential</code> provides the C/C++ compiler toolchain — <code>sharp</code> (image processing) and <code>argon2</code> (password hashing) compile native code during <code>pnpm install</code> and fail without it. <b>Nginx is already installed here — we verify it instead of installing.</b></p>
+  <div class="code-block"><div class="code-title"><span>Update + base packages</span><button class="copy">copy</button></div>
+<pre><code>sudo apt update &amp;&amp; sudo apt upgrade -y     <span class="c"># refresh package lists, apply security updates</span>
+sudo apt install -y git curl ca-certificates build-essential ufw
+
+<span class="c"># verify nginx (should already be active, serving your other subdomains):</span>
+sudo nginx -v
+sudo systemctl status nginx --no-pager    <span class="c"># look for: Active: active (running)</span></code></pre></div>
+
+  <h4>Install Node 22 and pnpm</h4>
+  <p class="lede">The app is developed on Node 22.x + pnpm 11.x; matching them avoids native-module surprises. NodeSource is the standard apt repository for current Node versions (Ubuntu's own <code>nodejs</code> package is too old). Corepack ships with Node and manages pnpm.</p>
+  <div class="code-block"><div class="code-title"><span>Node 22 via NodeSource, then pnpm via corepack</span><button class="copy">copy</button></div>
+<pre><code>curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -   <span class="c"># adds the NodeSource apt repo</span>
+sudo apt install -y nodejs
+node -v     <span class="c"># expect v22.x.y</span>
+
+sudo corepack enable                       <span class="c"># exposes the pnpm shim</span>
 corepack prepare pnpm@latest --activate
-pnpm -v   <span class="c"># 10+/11.x</span></code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Firewall</span><button class="copy">copy</button></div>
-<pre><code>sudo ufw allow OpenSSH
-sudo ufw allow 'Nginx Full'
+pnpm -v     <span class="c"># expect 10.x or 11.x</span></code></pre></div>
+
+  <h4>Firewall — only if UFW isn't already set up</h4>
+  <p class="lede">If you've been running public subdomains already, the firewall may be configured. <b>Check first</b> — enabling UFW carelessly can lock you out of SSH.</p>
+  <div class="code-block"><div class="code-title"><span>Check, then (only if inactive) configure</span><button class="copy">copy</button></div>
+<pre><code>sudo ufw status
+<span class="c"># "Status: active" with OpenSSH + Nginx Full listed → nothing to do.</span>
+<span class="c"># "Status: inactive" → run:</span>
+sudo ufw allow OpenSSH          <span class="c"># keep SSH allowed BEFORE enabling</span>
+sudo ufw allow 'Nginx Full'     <span class="c"># ports 80 + 443</span>
 sudo ufw --force enable
 sudo ufw status</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Optional but recommended: swap (skip if ≥ 4 GB RAM)</span><button class="copy">copy</button></div>
-<pre><code>sudo fallocate -l 2G /swapfile
-sudo chmod 600 /swapfile
+
+  <h4>Optional but recommended on small VPSes: swap</h4>
+  <p class="lede">Swap gives the server 2 GB of overflow memory on disk, which <code>next build</code> can spike into. Skip if the VPS has ≥ 4 GB RAM (check with <code>free -h</code>).</p>
+  <div class="code-block"><div class="code-title"><span>2 GB swap file (safe to skip on 4 GB+ machines)</span><button class="copy">copy</button></div>
+<pre><code>free -h                                        <span class="c"># see total memory + existing swap</span>
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile                       <span class="c"># only root can read it</span>
 sudo mkswap /swapfile &amp;&amp; sudo swapon /swapfile
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab</code></pre></div>
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab   <span class="c"># persist across reboots</span>
+free -h                                        <span class="c"># Swap: 2.0Gi now shows</span></code></pre></div>
 </section>
 
 <section id="mongo">
   <span class="label">04 · Step three — read this one fully</span>
   <h2>MongoDB with a replica set (required)</h2>
-  <p class="lede">This is the step most likely to bite. The app's connection string — same shape as local dev — is
-  <code>mongodb://user:pass@127.0.0.1:27017/mishran?replicaSet=rs0&amp;authSource=admin</code>.
-  A default standalone <code>mongod</code> will <b>refuse</b> that URI, and Payload's draft/publish system wants replica-set transactions anyway. So: install MongoDB 8.0, enable a single-node replica set named <code>rs0</code>, create the app user, and keep it bound to localhost.</p>
-  <div class="code-block"><div class="code-title"><span>Install MongoDB 8.0 (Ubuntu official repo — apt's default mongo package is old)</span><button class="copy">copy</button></div>
-<pre><code>curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
+  <p class="lede">This is the step most likely to bite. The app connects with
+  <code>mongodb://user:pass@127.0.0.1:27017/mishran?replicaSet=rs0&amp;authSource=admin</code> — same shape as local dev.
+  A default standalone <code>mongod</code> <b>refuses</b> that URI, and Payload's draft/publish workflow wants replica-set transactions anyway.
+  A "replica set" sounds like a cluster, but a <b>single-node</b> replica set is a one-line config change plus one command — that's all this is.</p>
+
+  <h4>4.1 Install MongoDB 8.0 from MongoDB's own apt repo</h4>
+  <p class="lede">Ubuntu's archive doesn't carry MongoDB at all (licensing), and old third-party <code>mongodb</code> packages are stale — always use MongoDB's official repo. The snippet below is for Ubuntu 24.04 (<code>noble</code>); check your release first.</p>
+  <div class="code-block"><div class="code-title"><span>Check Ubuntu release</span><button class="copy">copy</button></div>
+<pre><code>lsb_release -cs
+<span class="c"># "noble"  = Ubuntu 24.04  → use the repo line below as-is</span>
+<span class="c"># "jammy"  = Ubuntu 22.04  → replace every "noble" below with "jammy"</span>
+<span class="c"># "focal"  = Ubuntu 20.04  → replace with "focal"</span></code></pre></div>
+  <div class="code-block"><div class="code-title"><span>Install (noble example)</span><button class="copy">copy</button></div>
+<pre><code><span class="c"># 1. import MongoDB's signing key</span>
+curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
   sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
+
+<span class="c"># 2. add the repository (edit "noble" per your release check above)</span>
 echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] \
   https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | \
   sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+
+<span class="c"># 3. install + start</span>
 sudo apt update
-sudo apt install -y mongodb-org</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Enable replica set rs0 + bind to localhost only</span><button class="copy">copy</button></div>
+sudo apt install -y mongodb-org
+sudo systemctl enable --now mongod    <span class="c"># start now + on every boot</span>
+sudo systemctl status mongod --no-pager</code></pre></div>
+
+  <h4>4.2 Turn it into replica set <code>rs0</code>, bound to localhost</h4>
+  <div class="code-block"><div class="code-title"><span>Append the replication block, confirm private binding, restart</span><button class="copy">copy</button></div>
 <pre><code>sudo tee -a /etc/mongod.conf &lt;&lt;'EOF'
 replication:
   replSetName: rs0
 EOF
-<span class="c"># mongod.conf should already have bindIp: 127.0.0.1 — verify:</span>
-grep bindIp /etc/mongod.conf
 
-sudo systemctl enable --now mongod
-sudo systemctl status mongod</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Initiate the replica set (one-time)</span><button class="copy">copy</button></div>
+<span class="c"># mongod.conf normally ships with bindIp: 127.0.0.1 — verify it's still there:</span>
+grep bindIp /etc/mongod.conf            <span class="c"># expect: bindIp: 127.0.0.1</span>
+
+sudo systemctl restart mongod
+sudo systemctl status mongod --no-pager</code></pre></div>
+
+  <h4>4.3 Initiate the replica set (one-time)</h4>
+  <p class="lede">Config present isn't enough — the set must be kicked off once. This says "you are a one-member replica set named rs0".</p>
+  <div class="code-block"><div class="code-title"><span>rs.initiate() and confirm PRIMARY</span><button class="copy">copy</button></div>
 <pre><code>mongosh --quiet --eval 'rs.initiate({_id: "rs0", members: [{_id: 0, host: "127.0.0.1:27017"}]})'
-<span class="c"># wait ~10s, then confirm PRIMARY:</span>
-mongosh --quiet --eval 'rs.status().members[0].stateStr'</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Create the app user</span><button class="copy">copy</button></div>
+<span class="c"># expect: { ok: 1 }   (an "already initialized" message is also fine)</span>
+
+sleep 10    <span class="c"># elections take a few seconds</span>
+mongosh --quiet --eval 'rs.status().members[0].stateStr'
+<span class="c"># expect: PRIMARY</span></code></pre></div>
+
+  <h4>4.4 Create the app's database user</h4>
+  <p class="lede">The app never runs as the Mongo admin. This user can only touch the <code>mishran</code> database. <b>Pick a strong password now</b> — you'll paste it into <code>.env</code> in step 06. <code>authSource=admin</code> in the URI means "look this user up in the admin database", which is where we create it.</p>
+  <div class="code-block"><div class="code-title"><span>Create user "mishran" (replace the password)</span><button class="copy">copy</button></div>
 <pre><code>mongosh &lt;&lt;'EOF'
 use admin
 db.createUser({
@@ -286,31 +366,48 @@ db.createUser({
     { role: "dbAdmin",   db: "mishran" }
   ]
 })
-EOF</code></pre></div>
-  <p class="callout ok"><b>Self-hosted by design.</b> Local Mongo keeps with the project's infra rule: self-host first, stay cloud-swappable — if this grows up, an Atlas URI is a one-line <code>MONGODB_URI</code> swap later.</p>
-  <p class="callout bad"><b>Never</b> set <code>bindIp: 0.0.0.0</code> or open port 27017 in ufw. Mongo stays private to the VPS.</p>
+EOF
+<span class="c"># expect: { ok: 1 }</span></code></pre></div>
+  <div class="code-block"><div class="code-title"><span>Smoke-test the exact URI the app will use</span><button class="copy">copy</button></div>
+<pre><code>mongosh 'mongodb://mishran:REPLACE_WITH_STRONG_DB_PASSWORD@127.0.0.1:27017/mishran?replicaSet=rs0&amp;authSource=admin' --quiet --eval 'db.getName()'
+<span class="c"># expect: mishran   ← if this prints, steps 06+ will connect first try</span></code></pre></div>
+  <p class="callout ok"><b>Self-hosted by design.</b> Local Mongo follows the project's infra rule: self-host first, stay cloud-swappable — moving to Atlas later is a one-line <code>MONGODB_URI</code> change.</p>
+  <p class="callout bad"><b>Never</b> set <code>bindIp: 0.0.0.0</code> or open port 27017 in any firewall. Mongo stays private to the VPS.</p>
 </section>
 
 <section id="code">
   <span class="label">05 · Step four</span>
   <h2>Get the code onto the VPS</h2>
-  <p class="lede">The repo is a <b>pnpm workspace monorepo</b> (<code>apps/*</code>, <code>packages/*</code>). The web app lives at the repo root, but <code>pnpm build</code> runs a prebuild codegen that touches <code>packages/</code> — so deploy the <b>full checkout</b>, never just the root files. The branch to deploy is <code>main</code>.</p>
-  <div class="two">
-    <div class="card"><h3>Option A — git clone (recommended)</h3>
-      <p>The GitHub remote is <code>https://github.com/rbyakod/malgudi-mithai-shop.git</code> and appears private, so the VPS needs read access: simplest is a fine-grained PAT (repo → Read-only) used once in the clone URL, or an SSH deploy key.</p></div>
-    <div class="card"><h3>Option B — rsync from the Mac</h3>
-      <p>No Git auth needed. But beware: <b>exclude <code>media/</code></b> — Payload stores uploaded images there and <code>--delete</code> would wipe them on every re-sync.</p></div>
-  </div>
-  <div class="code-block"><div class="code-title"><span>Create a locked-down app user + directory</span><button class="copy">copy</button></div>
+  <p class="lede">The repo is a <b>pnpm workspace monorepo</b> (<code>apps/*</code>, <code>packages/*</code>). The web app lives at the repo root, but <code>pnpm build</code> runs a prebuild codegen across <code>packages/</code> — so deploy the <b>full checkout of <code>main</code></b>, never a partial copy. Two ways to get it there; A is cleaner long-term.</p>
+
+  <h4>5.1 Create a locked-down system user that will own the app</h4>
+  <div class="code-block"><div class="code-title"><span>App user + directory</span><button class="copy">copy</button></div>
 <pre><code>sudo useradd --system --create-home --shell /bin/bash mithai || true
 sudo mkdir -p /opt/mithai-shop
 sudo chown -R mithai:mithai /opt/mithai-shop</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Option A: clone (run as the app user)</span><button class="copy">copy</button></div>
-<pre><code>sudo -iu mithai
-git clone https://&lt;PAT&gt;@github.com/rbyakod/malgudi-mithai-shop.git /opt/mithai-shop
-<span class="c"># if already cloned later: cd /opt/mithai-shop &amp;&amp; git pull origin main</span>
-<span class="c"># .claude/worktrees/... may show as an empty dir after clone — harmless, ignore it.</span></code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Option B: rsync from the Mac (run on the Mac, not the VPS)</span><button class="copy">copy</button></div>
+
+  <h4>5.2 Option A — git clone (recommended)</h4>
+  <p class="lede">The GitHub repo <code>github.com/rbyakod/malgudi-mithai-shop</code> is private, so the VPS needs read access via a <b>fine-grained personal access token</b>. Generate it once on your Mac — it takes two minutes:</p>
+  <ol class="clicks">
+    <li>On GitHub, click your avatar (top-right) → <b>Settings</b>.</li>
+    <li>Left sidebar, bottom: <b>Developer settings</b>.</li>
+    <li><b>Personal access tokens → Fine-grained tokens</b> → <b>Generate new token</b>.</li>
+    <li><b>Token name:</b> <code>mishran-vps-read</code>. <b>Expiration:</b> 90 days (you can regenerate).</li>
+    <li><b>Resource owner:</b> <code>rbyakod</code>. <b>Repository access:</b> "Only select repositories" → pick <b>malgudi-mithai-shop</b>.</li>
+    <li><b>Permissions → Repository permissions → Contents:</b> set to <b>Read-only</b>. Nothing else needs granting.</li>
+    <li>Click <b>Generate token</b> and copy the value (starts with <code>github_pat_</code>). It's shown only once.</li>
+  </ol>
+  <div class="code-block"><div class="code-title"><span>Clone as the app user (on the VPS)</span><button class="copy">copy</button></div>
+<pre><code>sudo -iu mithai     <span class="c"># "become" the app user for this shell</span>
+git clone https://github_pat_XXXX@github.com/rbyakod/malgudi-mithai-shop.git /opt/mithai-shop
+
+<span class="c"># note: .claude/worktrees/... may appear as an empty dir after clone — a git</span>
+<span class="c"># internal detail of this repo. Harmless; leave it.</span></code></pre></div>
+  <p class="callout">Later updates are then just <code>cd /opt/mithai-shop &amp;&amp; git pull origin main</code> — see step 13.</p>
+
+  <h4>5.3 Option B — rsync from the Mac (no Git token needed)</h4>
+  <p class="lede">Copies the working tree over SSH. The two critical excludes: <code>media/</code> (Payload's uploaded images live there — <code>--delete</code> would erase them on re-syncs) and <code>.env</code> (never overwrite the server's secrets with your Mac's dev values).</p>
+  <div class="code-block"><div class="code-title"><span>Run on the Mac (not the VPS)</span><button class="copy">copy</button></div>
 <pre><code>cd /Users/ravibyakod/WORK/mithai-shop/mithai-shop
 rsync -az --delete \
   --exclude node_modules --exclude .next --exclude .git \
@@ -318,94 +415,136 @@ rsync -az --delete \
   ./ root@2.24.221.70:/opt/mithai-shop/
 <span class="c"># then on the VPS:</span>
 sudo chown -R mithai:mithai /opt/mithai-shop</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Install dependencies</span><button class="copy">copy</button></div>
+
+  <h4>5.4 Install dependencies</h4>
+  <div class="code-block"><div class="code-title"><span>pnpm install (as app user, in the repo)</span><button class="copy">copy</button></div>
 <pre><code>sudo -iu mithai
 cd /opt/mithai-shop
-pnpm install --frozen-lockfile</code></pre></div>
+pnpm install --frozen-lockfile     <span class="c"># exact versions from pnpm-lock.yaml; several minutes</span></code></pre></div>
 </section>
 
 <section id="env">
   <span class="label">06 · Step five</span>
   <h2>Create the environment file</h2>
-  <p class="lede">Names below match the repo's <code>.env.example</code> exactly. Two secrets to generate with <code>openssl rand -hex 32</code>; the seed scripts read this file via <code>node --env-file=.env</code>, so it must be named <code>.env</code> (not <code>.env.local</code>).</p>
-  <div class="code-block"><div class="code-title"><span>/opt/mithai-shop/.env</span><button class="copy">copy</button></div>
+  <p class="lede">Variable names below match the repo's <code>.env.example</code> exactly. The file must be named <code>.env</code> (the seed scripts read it via <code>node --env-file=.env</code>). Generate the two secrets first, then paste everything in one go.</p>
+
+  <h4>6.1 Generate secrets</h4>
+  <div class="code-block"><div class="code-title"><span>Two random hex strings (paste each into the file below)</span><button class="copy">copy</button></div>
+<pre><code>openssl rand -hex 32     <span class="c"># → PAYLOAD_SECRET      (signs admin login sessions)</span>
+openssl rand -hex 32     <span class="c"># → REVALIDATE_SECRET  (protects the cache-refresh endpoint)</span></code></pre></div>
+
+  <h4>6.2 Write the file</h4>
+  <p class="lede">Do this as the app user so ownership is right from the start: <code>sudo -iu mithai</code>, then <code>nano /opt/mithai-shop/.env</code>, paste, edit the three REPLACE values, save (<code>Ctrl-O</code>, Enter, <code>Ctrl-X</code>). Or use the heredoc below.</p>
+  <div class="code-block"><div class="code-title"><span>/opt/mithai-shop/.env — full contents</span><button class="copy">copy</button></div>
 <pre><code>NODE_ENV=production
 PORT=3000
 
-<span class="c"># Mongo — single-node replica set rs0 (step 04), auth against admin DB</span>
+<span class="c"># Mongo — single-node replica set rs0 (step 04), user auth against the admin DB</span>
 MONGODB_URI=mongodb://mishran:REPLACE_DB_PASSWORD@127.0.0.1:27017/mishran?replicaSet=rs0&amp;authSource=admin
 
-<span class="c"># openssl rand -hex 32 × 2</span>
+<span class="c"># the two openssl outputs</span>
 PAYLOAD_SECRET=REPLACE_WITH_SECRET_1
 REVALIDATE_SECRET=REPLACE_WITH_SECRET_2
 
-<span class="c"># Public URLs — set these BEFORE `pnpm build` (they're inlined into the client bundle)</span>
+<span class="c"># public URLs — these are INLINED INTO THE BUNDLE AT BUILD TIME, so they must</span>
+<span class="c"># be correct BEFORE `pnpm build` (step 07)</span>
 NEXT_PUBLIC_SITE_URL=https://mishran.roohib.com
 NEXT_PUBLIC_API_BASE_URL=https://mishran.roohib.com/api/mobile/v1
 NEXT_PUBLIC_APP_NAME=Mishran
-NEXT_PUBLIC_WHATSAPP_NUMBER=+91XXXXXXXXXX
+NEXT_PUBLIC_WHATSAPP_NUMBER=+91XXXXXXXXXX      <span class="c"># your WhatsApp business number, or leave as-is</span>
 
-<span class="c"># Lead-notification emails (leave empty for family test — leads are also visible in /admin)</span>
+<span class="c"># lead-notification emails — leave EMPTY for the family test; leads are also</span>
+<span class="c"># always visible inside /admin, so nothing is lost by leaving these blank</span>
 LEADS_INBOX=
 RESEND_API_KEY=
 
-<span class="c"># Optional analytics — leave empty for private testing</span>
+<span class="c"># analytics — leave empty for private testing</span>
 NEXT_PUBLIC_GA4_ID=
 NEXT_PUBLIC_META_PIXEL_ID=</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Lock it down</span><button class="copy">copy</button></div>
+
+  <h4>6.3 Lock it down</h4>
+  <div class="code-block"><div class="code-title"><span>Owner-only readable</span><button class="copy">copy</button></div>
 <pre><code>sudo chown mithai:mithai /opt/mithai-shop/.env
-sudo chmod 600 /opt/mithai-shop/.env</code></pre></div>
-  <p class="callout warn"><b>Order matters:</b> set <code>NEXT_PUBLIC_*</code> values before the first build. If you change them later, you must <code>pnpm build</code> again — they are baked into the bundle at build time, not read at runtime.</p>
+sudo chmod 600 /opt/mithai-shop/.env      <span class="c"># rw for owner, nothing for anyone else</span></code></pre></div>
+
+  <h4>What each variable does</h4>
+  <table>
+    <thead><tr><th>Variable</th><th>Why it exists</th></tr></thead>
+    <tbody>
+      <tr><td><code>MONGODB_URI</code></td><td>Database location + credentials. The <code>replicaSet=rs0</code> and <code>authSource=admin</code> parameters are required by the setup in step 04.</td></tr>
+      <tr><td><code>PAYLOAD_SECRET</code></td><td>Signs the Payload admin's login cookies. If it changes, everyone is logged out — nothing else breaks.</td></tr>
+      <tr><td><code>REVALIDATE_SECRET</code></td><td>When you edit a product in /admin, Payload pings the site to refresh cached pages; this secret stops strangers doing the same.</td></tr>
+      <tr><td><code>NEXT_PUBLIC_SITE_URL</code></td><td>Canonical URL used by sitemap, robots, and structured data. Must be the final https URL.</td></tr>
+      <tr><td><code>NEXT_PUBLIC_API_BASE_URL</code></td><td>Where the mobile apps' API advertises itself. Same host, <code>/api/mobile/v1</code> path.</td></tr>
+      <tr><td><code>NEXT_PUBLIC_WHATSAPP_NUMBER</code></td><td>Pre-fills the contact/WhatsApp deep-links shown in the UI.</td></tr>
+      <tr><td><code>LEADS_INBOX</code> / <code>RESEND_API_KEY</code></td><td>Where enquiry-form submissions get emailed. Empty = no email, but every submission is still saved and viewable in /admin.</td></tr>
+    </tbody>
+  </table>
+  <p class="callout warn"><b>Order matters:</b> set the <code>NEXT_PUBLIC_*</code> values before the first build. Changing them later requires <code>pnpm build</code> again — they're compiled into the client bundle, not read at runtime.</p>
 </section>
 
 <section id="build">
   <span class="label">07 · Step six</span>
   <h2>Build and run under systemd</h2>
-  <p class="lede"><code>pnpm build</code> automatically runs the prebuild steps (import-map regen + TypeScript codegen for the workspace packages). First build takes several minutes and ~1–2 GB RAM — that's what the swap in step 03 is for.</p>
-  <div class="code-block"><div class="code-title"><span>Build</span><button class="copy">copy</button></div>
+
+  <h4>7.1 Build</h4>
+  <p class="lede"><code>pnpm build</code> automatically runs the prebuild steps first (import-map regen + TypeScript codegen across the workspace packages) — no extra commands needed. Expect several minutes and noticeable RAM use; that's normal.</p>
+  <div class="code-block"><div class="code-title"><span>Production build</span><button class="copy">copy</button></div>
 <pre><code>sudo -iu mithai
 cd /opt/mithai-shop
-pnpm build</code></pre></div>
+pnpm build
+<span class="c"># last lines should show the route table and "✓ Compiled successfully"</span></code></pre></div>
+
+  <h4>7.2 Create the systemd service</h4>
+  <p class="lede">systemd is Ubuntu's process supervisor — it starts the app on boot and restarts it if it crashes. Run <code>sudo nano /etc/systemd/system/mithai-shop.service</code>, paste, save. Key lines explained below.</p>
   <div class="code-block"><div class="code-title"><span>/etc/systemd/system/mithai-shop.service</span><button class="copy">copy</button></div>
 <pre><code>[Unit]
 Description=Mishran Next.js + Payload app
-After=network.target mongod.service
-Requires=mongod.service
+After=network.target mongod.service     <span class="c"># don't start before net + mongo</span>
+Requires=mongod.service                 <span class="c"># mongo down → app stops too (fails loudly)</span>
 
 [Service]
 Type=simple
-User=mithai
+User=mithai                             <span class="c"># run as the locked-down app user</span>
 Group=mithai
-WorkingDirectory=/opt/mithai-shop
-EnvironmentFile=/opt/mithai-shop/.env
-ExecStart=/usr/bin/pnpm start
-Restart=always
-RestartSec=5
-NoNewPrivileges=true
-PrivateTmp=true
+WorkingDirectory=/opt/mithai-shop       <span class="c"># relative paths (media/, .next/) resolve here</span>
+EnvironmentFile=/opt/mithai-shop/.env   <span class="c"># the file from step 06</span>
+ExecStart=/usr/bin/pnpm start           <span class="c"># runs `next start` on PORT=3000</span>
+Restart=always                          <span class="c"># crash → auto-restart…</span>
+RestartSec=5                            <span class="c"># …after a 5s breather</span>
+NoNewPrivileges=true                    <span class="c"># hardening: no suid escalation</span>
+PrivateTmp=true                         <span class="c"># hardening: private /tmp</span>
 
 [Install]
-WantedBy=multi-user.target</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Enable + first check</span><button class="copy">copy</button></div>
-<pre><code>sudo systemctl daemon-reload
-sudo systemctl enable --now mithai-shop
-sudo systemctl status mithai-shop
-journalctl -u mithai-shop -f      <span class="c"># watch boot; Ctrl-C to exit</span>
+WantedBy=multi-user.target              <span class="c"># "start on normal boot"</span></code></pre></div>
 
-<span class="c"># from the VPS:</span>
-curl -I http://127.0.0.1:3000/en   <span class="c"># expect 200</span></code></pre></div>
-  <p class="callout">Bare <code>/</code> redirects to <code>/en</code> automatically — that's the locale router (Next.js 16 <code>proxy.ts</code>), not a misconfiguration.</p>
+  <h4>7.3 Start it and watch the boot</h4>
+  <div class="code-block"><div class="code-title"><span>Enable + verify</span><button class="copy">copy</button></div>
+<pre><code>sudo systemctl daemon-reload            <span class="c"># systemd re-reads service files</span>
+sudo systemctl enable --now mithai-shop <span class="c"># start now + on every boot</span>
+sudo systemctl status mithai-shop       <span class="c"># expect: active (running)</span>
+
+journalctl -u mithai-shop -f            <span class="c"># live log; wait for "Ready", then Ctrl-C</span>
+
+curl -I http://127.0.0.1:3000/en        <span class="c"># expect: HTTP/1.1 200 OK</span></code></pre></div>
+  <p class="callout">Visiting bare <code>/</code> redirects to <code>/en</code> — that's the locale router working (Next.js 16 <code>proxy.ts</code>), not a bug.</p>
 </section>
 
 <section id="nginx">
   <span class="label">08 · Step seven</span>
-  <h2>Nginx reverse proxy + HTTPS</h2>
-  <p class="lede">Nginx is already running on this VPS with other subdomains — <b>this step only adds one more site file; it touches nothing existing.</b> The new config goes in its own file under <code>sites-available</code>, exactly like your other subdomains, so the other sites keep serving throughout. <code>client_max_body_size 25m</code> matters — Payload admin image uploads go through this limit (seed images are already on disk, but your own /admin uploads need headroom). It's scoped to this site only, so it won't relax limits on your other subdomains.</p>
-  <div class="code-block"><div class="code-title"><span>Pre-flight: confirm the name is free and see how existing sites are laid out</span><button class="copy">copy</button></div>
-<pre><code>grep -r server_name /etc/nginx/sites-enabled/   <span class="c"># mishran.roohib.com must NOT already appear</span>
-ls /etc/nginx/sites-enabled/                     <span class="c"># see the existing pattern (sites-enabled vs conf.d)</span>
-sudo systemctl status nginx --no-pager           <span class="c"># active (running)</span></code></pre></div>
-  <p class="callout warn">If your existing sites live in <code>/etc/nginx/conf.d/*.conf</code> instead of <code>sites-available/</code>, put the Mishran file there with the same content and skip the <code>ln -s</code> step — pick whichever layout the server already uses so everything stays consistent.</p>
+  <h2>Add the site to your existing Nginx, then HTTPS</h2>
+  <p class="lede">Nginx is already running with other subdomains — <b>this step only adds one more site file and touches nothing existing.</b> The new config lives in its own file, exactly like your other subdomains, and every check gates a reload, so a mistake can never disturb the running sites.</p>
+
+  <h4>8.1 Pre-flight</h4>
+  <div class="code-block"><div class="code-title"><span>Confirm the name is free + see your layout convention</span><button class="copy">copy</button></div>
+<pre><code>grep -r server_name /etc/nginx/sites-enabled/   <span class="c"># mishran.roohib.com must NOT appear anywhere</span>
+ls /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ <span class="c"># see where existing sites live</span>
+sudo systemctl status nginx --no-pager           <span class="c"># active (running)</span>
+dig +short mishran.roohib.com                   <span class="c"># 2.24.221.70 — step 02 must be live</span></code></pre></div>
+  <p class="callout warn">If your existing sites live in <code>/etc/nginx/conf.d/*.conf</code> rather than <code>sites-available/</code>, create the Mishran file there instead and skip the symlink in 8.3 — follow whichever layout the server already uses.</p>
+
+  <h4>8.2 The site file</h4>
+  <p class="lede"><code>sudo nano /etc/nginx/sites-available/mishran.roohib.com</code> and paste. What each directive does: <code>server_name</code> matches only this hostname (your other sites are unaffected); <code>client_max_body_size 25m</code> allows Payload admin image uploads (default 1m would reject them) — scoped to this site only; the <code>proxy_set_header</code> lines pass the visitor's real host/IP/scheme through; the <code>Upgrade</code>/<code>Connection</code> pair enables websockets if Next ever needs them.</p>
   <div class="code-block"><div class="code-title"><span>/etc/nginx/sites-available/mishran.roohib.com</span><button class="copy">copy</button></div>
 <pre><code>server {
     listen 80;
@@ -415,74 +554,104 @@ sudo systemctl status nginx --no-pager           <span class="c"># active (runni
     client_max_body_size 25m;
 
     location / {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://127.0.0.1:3000;      <span class="c"># → the systemd app</span>
         proxy_http_version 1.1;
 
-        proxy_set_header Host $host;
+        proxy_set_header Host $host;           <span class="c"># e.g. mishran.roohib.com</span>
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Proto $scheme;   <span class="c"># http now, https after certbot</span>
 
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
 
-        proxy_read_timeout 120s;
+        proxy_read_timeout 120s;               <span class="c"># long admin operations</span>
         proxy_send_timeout 120s;
     }
 }</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Enable + verify HTTP (reload, never restart — other sites keep serving)</span><button class="copy">copy</button></div>
+
+  <h4>8.3 Enable + verify over HTTP</h4>
+  <div class="code-block"><div class="code-title"><span>Test, then reload — reload (not restart) keeps other sites serving</span><button class="copy">copy</button></div>
 <pre><code>sudo ln -s /etc/nginx/sites-available/mishran.roohib.com /etc/nginx/sites-enabled/
-sudo nginx -t &amp;&amp; sudo systemctl reload nginx
 
-curl -I http://mishran.roohib.com/en   <span class="c"># expect 200 — THEN do Certbot</span></code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Certbot (only after DNS + HTTP both work)</span><button class="copy">copy</button></div>
-<pre><code>sudo apt install -y certbot python3-certbot-nginx   <span class="c"># no-op if already installed</span>
-sudo certbot --nginx -d mishran.roohib.com
-sudo certbot renew --dry-run        <span class="c"># renews ALL certs incl. existing subdomains — should pass</span>
+sudo nginx -t                <span class="c"># syntax check. If this FAILS: fix the file; nothing has been applied yet.</span>
+sudo systemctl reload nginx  <span class="c"># only runs if -t passed (we chain with &amp;&amp; in practice)</span>
 
-curl -I https://mishran.roohib.com/en   <span class="c"># expect 200</span></code></pre></div>
-  <p class="callout ok">Certbot edits <b>only the mishran site file</b> (adding 443 + redirect) — your other subdomains' configs are untouched. If some of them already use certificates from a different issuer, that's fine; a name can only have one cert at a time and this one is new. Since <code>NEXT_PUBLIC_SITE_URL</code> was already <code>https://…</code> before the build, no rebuild is needed.</p>
+curl -I http://mishran.roohib.com/en    <span class="c"># expect 200 — THEN continue to Certbot</span></code></pre></div>
+
+  <h4>8.4 HTTPS via Certbot</h4>
+  <p class="lede">Certbot proves to Let's Encrypt that you control the domain (via the now-working HTTP site), fetches a free certificate, rewrites <b>only the Mishran site file</b> to listen on 443, and adds an auto-renewal timer. It will ask a few questions — answers below.</p>
+  <div class="code-block"><div class="code-title"><span>Install + run</span><button class="copy">copy</button></div>
+<pre><code>sudo apt install -y certbot python3-certbot-nginx    <span class="c"># no-op if already present</span>
+sudo certbot --nginx -d mishran.roohib.com</code></pre></div>
+  <ol class="clicks">
+    <li><b>Email address</b> — enter your email (used only for expiry notices; auto-renew makes expiries unlikely).</li>
+    <li><b>Terms of Service</b> — type <code>A</code> and Enter to agree.</li>
+    <li><b>Share email with EFF?</b> — <code>N</code> is fine.</li>
+    <li>If it offers <b>redirect choices</b> ("No redirect" vs "Redirect"), choose <b>Redirect</b> — all traffic becomes HTTPS automatically.</li>
+    <li>Expect <code>Certificate deployed successfully</code> (or "Deploying a certificate… Successfully deployed").</li>
+  </ol>
+  <div class="code-block"><div class="code-title"><span>Confirm renewal + final check</span><button class="copy">copy</button></div>
+<pre><code>sudo certbot renew --dry-run             <span class="c"># renews ALL certs incl. other subdomains — should all pass</span>
+curl -I https://mishran.roohib.com/en    <span class="c"># expect 200; http:// should 301-redirect to https://</span></code></pre></div>
+  <p class="callout ok">Certbot edited only the mishran site file. Other subdomains' configs are untouched; if they use certificates from a different issuer that's fine — a hostname can only have one cert and this name is new. Because <code>NEXT_PUBLIC_SITE_URL</code> was already <code>https://…</code> before the build, no rebuild is needed.</p>
 </section>
 
 <section id="seed">
   <span class="label">09 · Step eight</span>
   <h2>Seed the golden test data</h2>
-  <p class="lede">The committed catalogs in <code>scripts/seed-data/</code> reproduce the full 144-product test catalog. Seeds are idempotent — safe to re-run, they never duplicate.</p>
-  <div class="code-block"><div class="code-title"><span>Run the seeds (order matters)</span><button class="copy">copy</button></div>
+  <p class="lede">The committed catalogs in <code>scripts/seed-data/</code> reproduce the full 144-product test catalog — real product data (Bikanervala / Haldiram's / Anand + Wikimedia dish photos) as Git-tracked golden test data. All three seeds are idempotent: re-running updates in place, never duplicates.</p>
+
+  <h4>9.1 Sanity-check the target database first</h4>
+  <div class="code-block"><div class="code-title"><span>One-line DB check before writing anything</span><button class="copy">copy</button></div>
 <pre><code>sudo -iu mithai
 cd /opt/mithai-shop
+grep '^MONGODB_URI=' .env    <span class="c"># must show 127.0.0.1:27017/mishran — the VPS DB from step 04</span></code></pre></div>
 
-grep '^MONGODB_URI=' .env   <span class="c"># sanity-check: must be the VPS staging DB</span>
+  <h4>9.2 Run the three seeds in order</h4>
+  <table>
+    <thead><tr><th>Command</th><th>What it creates</th><th>Runtime</th></tr></thead>
+    <tbody>
+      <tr><td><code>pnpm seed</code></td><td>Base sample content — admin user scaffolding, stories, occasions, packaging, store settings.</td><td>~1 min</td></tr>
+      <tr><td><code>pnpm seed:catalog</code></td><td>The golden catalog — 76 mithai, 24 snacks, 20 QSR items, 22 gift boxes, with ~200 images.</td><td>~5–10 min</td></tr>
+      <tr><td><code>pnpm seed:branding</code></td><td>Brand one-offs — brand-settings "Mishran" + sun logo + the demo Chole Bhature image.</td><td>&lt; 1 min</td></tr>
+    </tbody>
+  </table>
+  <div class="code-block"><div class="code-title"><span>Run them</span><button class="copy">copy</button></div>
+<pre><code>pnpm seed
+pnpm seed:catalog
+<span class="c"># expected final line, roughly:</span>
+<span class="c">#   Seed complete: 96 created, 46 updated. Media: 200 ok, 0 skipped.</span>
+pnpm seed:branding
 
-pnpm seed            <span class="c"># base sample content (users, stories, packaging, …)</span>
-pnpm seed:catalog    <span class="c"># golden catalog — 76 mithai · 24 snacks · 20 qsr · 22 gifts</span>
-pnpm seed:branding   <span class="c"># brand-settings "Mishran" + sun logo + demo QSR image</span>
+sudo systemctl restart mithai-shop    <span class="c"># clears any cached pages from the empty era</span></code></pre></div>
 
-sudo systemctl restart mithai-shop</code></pre></div>
+  <h4>9.3 What seed:catalog is doing during those minutes</h4>
   <div class="two">
-    <div class="card"><h3>What to expect from seed:catalog</h3><ul>
-      <li>Downloads ~200 product images from storefront CDNs + Wikimedia at runtime (nothing binary in Git) — takes several minutes.</li>
-      <li>Stores them as Payload media under <code>/opt/mithai-shop/media/</code>.</li>
-      <li>Expected result line: <code>Seed complete: … Media: 200 ok, 0 skipped.</code></li>
+    <div class="card"><h3>Downloads images at runtime</h3><ul>
+      <li>Image bytes aren't in Git — the seed fetches each product's image from the original CDN / Wikimedia URLs and uploads them as Payload media into <code>/opt/mithai-shop/media/</code>.</li>
+      <li>That's why the VPS needs outbound HTTPS and why it takes minutes.</li>
     </ul></div>
-    <div class="card"><h3>If media shows “skipped”</h3><ul>
-      <li>Usually HTTP 429 from Wikimedia rate-limiting. Just re-run <code>pnpm seed:catalog</code> — idempotency means only the gaps fill in.</li>
-      <li>Verify zero gaps: <code>/api/qsr-menu-items</code> — every doc's <code>image</code> should be set.</li>
+    <div class="card"><h3>If the log shows “Media: N skipped”</h3><ul>
+      <li>Almost always HTTP 429 — Wikimedia rate-limiting a burst.</li>
+      <li>Fix: just re-run <code>pnpm seed:catalog</code>. Idempotency means only the gaps fill in.</li>
+      <li>Goal state: <code>0 skipped</code>.</li>
     </ul></div>
   </div>
 </section>
 
 <section id="admin">
-  <span class="label">10 · Step nine</span>
+  <span class="label">10 · Step nine — back in the browser</span>
   <h2>Create the first admin user</h2>
-  <p class="lede">Payload's admin is at <code>/admin</code>. On first visit with an empty users collection it offers to create the first user — that account becomes the admin.</p>
-  <ol class="steps">
-    <li>Open <code>https://mishran.roohib.com/admin</code>.</li>
-    <li>Create your user (use a real password — this is internet-facing).</li>
-    <li>Look around: collections <em>Mithai Products</em>, <em>Snack Products</em>, <em>QSR Menu Items</em>, <em>Gift Boxes</em> should show the seeded counts.</li>
-    <li>Globals → <em>Brand Settings</em>: confirm brandName <b>Mishran</b> and the sun logo.</li>
+  <p class="lede">Payload's admin panel is at <code>/admin</code>. With an empty users collection it shows a "create first user" screen — that account is the admin. One-time.</p>
+  <ol class="clicks">
+    <li>Open <b>https://mishran.roohib.com/admin</b>.</li>
+    <li>You'll see a <b>Create first user</b> form — enter your email, a <b>strong</b> password (this page is internet-facing), and your name.</li>
+    <li>You land on the Payload dashboard. In the sidebar, open <b>Mithai Products</b> → expect ~76 rows. <b>Snack Products</b> 24, <b>QSR Menu Items</b> 20+, <b>Gift Boxes</b> 22.</li>
+    <li>Open <b>Globals → Brand Settings</b> (or Brand) → brandName should read <b>Mishran</b> with the sun logo attached.</li>
+    <li>Optional test of uploads: <b>Media → Add New</b>, upload any image, publish, reload — it should still render (proves the 25 MB Nginx limit + media dir permissions).</li>
   </ol>
-  <p class="callout warn">Don't hand out admin accounts to family testers — they only need the storefront URL. The admin login page is public by nature; the strong password is the gate.</p>
+  <p class="callout warn">Family testers only need the storefront URL — don't create admin accounts for them. The strong password is the only gate on /admin.</p>
 </section>
 
 <section id="verify">
@@ -490,14 +659,15 @@ sudo systemctl restart mithai-shop</code></pre></div>
   <h2>Verification checklist</h2>
   <ul class="checklist">
     <li><code>dig +short mishran.roohib.com</code> → <code>2.24.221.70</code></li>
-    <li><code>https://mishran.roohib.com</code> redirects to <code>/en</code> and the home page shows <b>Mishran</b> branding + sun logo.</li>
-    <li><code>/en/mithai</code>, <code>/en/snacks</code>, <code>/en/qsr</code>, <code>/en/build-a-gift</code> all render populated grids with images.</li>
+    <li><code>https://mishran.roohib.com</code> redirects to <code>/en</code>; home page shows <b>Mishran</b> + sun logo (header + hero).</li>
+    <li><code>/en/mithai</code>, <code>/en/snacks</code>, <code>/en/qsr</code>, <code>/en/build-a-gift</code> render populated grids with images.</li>
+    <li>Click any mithai card → detail page loads with gallery.</li>
     <li><code>/api/mithai-products?limit=1</code> → JSON with <code>totalDocs: 76</code> (snacks 24, qsr 20+, gifts 22+).</li>
-    <li>Product detail page works: click any card on <code>/en/mithai</code>.</li>
-    <li><code>/admin</code> login works; an uploaded test image in Media renders after refresh.</li>
-    <li><code>systemctl status mithai-shop</code> active; <code>journalctl -u mithai-shop -n 100</code> shows no crash loop.</li>
-    <li>Theme switcher + language switcher (EN/हिन्दी/ಕನ್ನಡ) in the header work.</li>
-    <li>Add-to-cart → cart page → quantities update (client-side only; no payment wired for this build).</li>
+    <li>Header switches: theme palette (4 themes) and language (EN / हिन्दी / ಕನ್ನಡ) both work and persist on reload.</li>
+    <li>Add to cart → <code>/cart</code> shows the item; quantity +/- and remove work (cart is per-browser; no payment wired).</li>
+    <li><code>systemctl status mithai-shop</code> active; <code>journalctl -u mithai-shop -n 100</code> clean.</li>
+    <li><code>http://…</code> 301-redirects to <code>https://…</code>; padlock valid.</li>
+    <li>Your <b>other subdomains still load</b> — the whole point of the shared-Nginx precautions.</li>
   </ul>
 </section>
 
@@ -506,19 +676,19 @@ sudo systemctl restart mithai-shop</code></pre></div>
   <h2>Share with family</h2>
   <div class="grid">
     <div class="card"><h3>What to send them</h3><ul>
-      <li>The one URL: <code>https://mishran.roohib.com</code> — works on phone and desktop, no app install.</li>
-      <li>"Tap the 🌐/भाषा icon to switch English / हिन्दी / ಕನ್ನಡ."</li>
-      <li>"Tap the palette icon to try the themes (Diwali saffron, wedding heritage, everyday sage)."</li>
+      <li>Just the one URL: <code>https://mishran.roohib.com</code> — works on phone and desktop, nothing to install.</li>
+      <li>"Tap the language icon to switch English / हिन्दी / ಕನ್ನಡ."</li>
+      <li>"Tap the palette icon to try the themes (Diwali saffron, wedding heritage, everyday sage…)."</li>
     </ul></div>
     <div class="card"><h3>What to ask them</h3><ul>
       <li>Do the four sections make sense (mithai / gifts / QSR / snacks)?</li>
-      <li>Is any image broken or any product name odd?</li>
+      <li>Any broken image, odd product name, or confusing label?</li>
       <li>Would you order from this on your phone?</li>
     </ul></div>
-    <div class="card"><h3>Known limits to set expectations</h3><ul>
-      <li>Checkout/payment is not wired — cart is local to their browser.</li>
+    <div class="card"><h3>Known limits — set expectations</h3><ul>
+      <li>Checkout/payment isn't wired — the cart lives in their browser only.</li>
       <li>Product copy/photos are test data, not final content.</li>
-      <li>Form submission emails may not send (Resend unset) — leads are still captured in /admin.</li>
+      <li>Enquiry-form emails don't send yet — but submissions appear in /admin.</li>
     </ul></div>
   </div>
 </section>
@@ -526,24 +696,26 @@ sudo systemctl restart mithai-shop</code></pre></div>
 <section id="ops">
   <span class="label">13 · After launch</span>
   <h2>Daily operations</h2>
-  <div class="code-block"><div class="code-title"><span>Deploy an update (after pushing to main)</span><button class="copy">copy</button></div>
+  <h4>Deploy an update (after pushing to main from the Mac)</h4>
+  <div class="code-block"><div class="code-title"><span>The 5-line update cycle</span><button class="copy">copy</button></div>
 <pre><code>sudo -iu mithai
 cd /opt/mithai-shop
 git pull origin main
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile     <span class="c"># only needed if dependencies changed — harmless anyway</span>
 pnpm build
 sudo systemctl restart mithai-shop</code></pre></div>
   <div class="two">
     <div class="card"><h3>Logs</h3>
-      <div class="code-block" style="margin:10px 0 0"><div class="code-title"><span>tail</span><button class="copy">copy</button></div>
-<pre><code>journalctl -u mithai-shop -f      <span class="c"># app</span>
+      <div class="code-block" style="margin:10px 0 0"><div class="code-title"><span>tail app / nginx</span><button class="copy">copy</button></div>
+<pre><code>journalctl -u mithai-shop -f          <span class="c"># live app log</span>
+journalctl -u mithai-shop -n 200      <span class="c"># last 200 lines</span>
 sudo tail -f /var/log/nginx/error.log</code></pre></div></div>
-    <div class="card"><h3>Backups (do this weekly)</h3>
-      <div class="code-block" style="margin:10px 0 0"><div class="code-title"><span>mongodump + media</span><button class="copy">copy</button></div>
+    <div class="card"><h3>Backups (weekly habit)</h3>
+      <div class="code-block" style="margin:10px 0 0"><div class="code-title"><span>DB dump + media archive</span><button class="copy">copy</button></div>
 <pre><code>sudo mongodump --db mishran --out /root/backup-$(date +%F)
-sudo tar czf /root/media-$(date +%F).tgz /opt/mithai-shop/media</code></pre></div></div>
+sudo tar czf /root/media-$(date +%F).tgz -C /opt/mithai-shop media</code></pre></div></div>
   </div>
-  <p class="callout">Full restore from scratch is three commands — <code>pnpm seed &amp;&amp; pnpm seed:catalog &amp;&amp; pnpm seed:branding</code> — documented in the repo README under “Golden test data”.</p>
+  <p class="callout">Full restore from an empty database is three commands — <code>pnpm seed &amp;&amp; pnpm seed:catalog &amp;&amp; pnpm seed:branding</code> — documented in the repo README under "Golden test data".</p>
 </section>
 
 <section id="trouble">
@@ -554,34 +726,34 @@ sudo tar czf /root/media-$(date +%F).tgz /opt/mithai-shop/media</code></pre></di
     <tbody>
       <tr><td>App crash-loops; log shows <code>MongoServerSelectionError</code> or <code>replica set connection timed out</code></td>
           <td>Mongo not running, or <code>rs0</code> never initiated</td>
-          <td><code>systemctl status mongod</code>; then <code>mongosh --eval 'rs.status()'</code> — if uninitialized, run the <code>rs.initiate()</code> from step 04</td></tr>
-      <tr><td><code>Authentication failed</code> (code 13) in app logs</td>
-          <td>Wrong password in <code>MONGODB_URI</code>, or user created before <code>rs.initiate()</code> on a different auth setup</td>
-          <td>Re-check <code>.env</code>; recreate user in the <code>admin</code> DB exactly as step 04; restart app</td></tr>
-      <tr><td><code>next build</code> killed (exit 137 / "Killed")</td>
+          <td><code>systemctl status mongod</code>; then <code>mongosh --eval 'rs.status()'</code> — if uninitialized, rerun the <code>rs.initiate()</code> from step 4.3</td></tr>
+      <tr><td><code>Authentication failed</code> (Mongo code 13) in app logs</td>
+          <td>Wrong password in <code>MONGODB_URI</code>, or user created in the wrong DB</td>
+          <td>Redo step 4.4 exactly (user goes in the <code>admin</code> DB); rerun the step 4.4 smoke test; restart app</td></tr>
+      <tr><td><code>next build</code> dies with "Killed" or exit 137</td>
           <td>Out of RAM</td>
-          <td>Add the swap from step 03, then rebuild</td></tr>
-      <tr><td>502 Bad Gateway</td>
+          <td>Add the swap from step 03; rebuild</td></tr>
+      <tr><td>502 Bad Gateway on the new URL</td>
           <td>App not listening on 3000</td>
           <td><code>systemctl status mithai-shop</code> + <code>journalctl -u mithai-shop -n 100</code></td></tr>
       <tr><td>Certbot fails / challenge error</td>
-          <td>DNS not propagated or port 80 blocked</td>
-          <td><code>dig +short mishran.roohib.com</code>; <code>sudo ufw status</code>; retry after DNS resolves</td></tr>
+          <td>DNS not propagated, or HTTP step skipped</td>
+          <td><code>dig +short mishran.roohib.com</code> must return the IP and <code>curl -I http://…</code> must 200 <em>before</em> certbot</td></tr>
       <tr><td><code>mishran.roohib.com</code> serves one of your other sites</td>
-          <td>Another server block is set as <code>default_server</code>, or <code>server_name</code> typo'd</td>
-          <td><code>grep -r server_name /etc/nginx/sites-enabled/</code> — confirm the mishran block exists and matches exactly; if some other block is <code>default_server</code>, that only catches unknown Hosts, so a matching name wins once spelled right</td></tr>
+          <td>A <code>default_server</code> block catches unknown Hosts, or a <code>server_name</code> typo</td>
+          <td><code>grep -r server_name /etc/nginx/sites-enabled/</code> — a correctly spelled matching name always beats default_server</td></tr>
       <tr><td>Other subdomains broke after this deploy</td>
-          <td><code>nginx -t</code> failed silently and an old config was left half-applied</td>
-          <td><code>sudo nginx -t</code> must pass <em>before</em> reload — the runbook chains them; if it ever fails, reload never happened, fix the syntax in the mishran file only</td></tr>
-      <tr><td>Product images missing on cards</td>
-          <td>Seed 429-skips (Wikimedia) or pages still ISR-cached</td>
-          <td>Re-run <code>pnpm seed:catalog</code>; then <code>sudo systemctl restart mithai-shop</code></td></tr>
-      <tr><td>Images 404 after a re-deploy via rsync</td>
-          <td><code>media/</code> was wiped by <code>--delete</code></td>
-          <td>Restore media backup, or re-run <code>seed:catalog</code> (re-uploads); keep <code>--exclude media</code> in future syncs</td></tr>
-      <tr><td>Admin loads but media uploads fail (413)</td>
+          <td>Shouldn't be possible: <code>nginx -t</code> gates every reload</td>
+          <td>Run <code>sudo nginx -t</code>; if it fails, the bad edit was never applied — fix the mishran file only</td></tr>
+      <tr><td>Product cards missing images</td>
+          <td>Seed 429-skips, or stale cached pages</td>
+          <td>Re-run <code>pnpm seed:catalog</code> until <code>0 skipped</code>; then <code>sudo systemctl restart mithai-shop</code></td></tr>
+      <tr><td>Images 404 after an rsync re-deploy</td>
+          <td><code>media/</code> wiped by <code>--delete</code> (missing exclude)</td>
+          <td>Restore media backup, or re-run <code>seed:catalog</code>; keep <code>--exclude media</code> forever after</td></tr>
+      <tr><td>Admin media uploads fail with 413</td>
           <td>Nginx body limit</td>
-          <td>Confirm <code>client_max_body_size 25m;</code> in the site file; <code>sudo nginx -t &amp;&amp; sudo systemctl reload nginx</code></td></tr>
+          <td>Confirm <code>client_max_body_size 25m;</code> in the mishran site file; <code>sudo nginx -t &amp;&amp; sudo systemctl reload nginx</code></td></tr>
     </tbody>
   </table>
 </section>
@@ -590,17 +762,18 @@ sudo tar czf /root/media-$(date +%F).tgz /opt/mithai-shop/media</code></pre></di
   <span class="label">15 · Safety net</span>
   <h2>Rollback</h2>
   <ol class="steps">
-    <li>Read the logs before changing anything: <code>journalctl -u mithai-shop -n 200 --no-pager</code>.</li>
+    <li>Read before changing: <code>journalctl -u mithai-shop -n 200 --no-pager</code>.</li>
     <li>Bad code deploy → <code>cd /opt/mithai-shop &amp;&amp; git log --oneline -5</code>, then <code>git checkout &lt;last-good-sha&gt;</code>.</li>
     <li>Rebuild + restart: <code>pnpm install --frozen-lockfile &amp;&amp; pnpm build &amp;&amp; sudo systemctl restart mithai-shop</code>.</li>
     <li>Bad content only → fix in <code>/admin</code>, or re-seed: <code>pnpm seed:catalog &amp;&amp; pnpm seed:branding</code>.</li>
-    <li>Disaster → stop the site: <code>sudo systemctl stop mithai-shop</code> (Nginx will 502; DNS TTL 300 means the name frees up fast if you ever repoint it).</li>
+    <li>Take the site offline: <code>sudo systemctl stop mithai-shop</code> (URL will 502; DNS TTL 300 frees the name quickly if ever repointed).</li>
+    <li>Remove the site from Nginx entirely: delete the symlink + file, <code>sudo nginx -t &amp;&amp; sudo systemctl reload nginx</code> — other subdomains unaffected.</li>
   </ol>
-  <p class="callout ok">Git history on <code>main</code> has a tagged restore point — the merge commit <code>d3809e3 "before codex ux/ui changes"</code> — if the Codex UX/UI pass ever needs a full revert.</p>
+  <p class="callout ok">Git history on <code>main</code> holds a tagged restore point — merge commit <code>d3809e3 "before codex ux/ui changes"</code> — if the Codex UX/UI pass ever needs a full revert.</p>
 </section>
 
 <div class="footer">
-  Mishran VPS runbook · generated by Claude, 2026-08-14 · verified against the repo at merge <code>ca541eb</code>.
+  Mishran VPS runbook · generated by Claude, 2026-08-14 · detailed edition v3, verified against the repo at merge <code>ca541eb</code>.
   Companion docs: <code>README.md</code> (golden data), <code>docs/deployment.md</code>, <code>docs/vercel-deployment.html</code> (if you ever move to Vercel).
   Keep passwords and generated secrets out of chat, docs, and Git.
 </div>
