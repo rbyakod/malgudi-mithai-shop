@@ -53,6 +53,9 @@ importers:
       jose:
         specifier: ^6.2.8
         version: 6.2.8
+      lexical:
+        specifier: 0.41.0
+        version: 0.41.0
       mongodb:
         specifier: ^7.5.0
         version: 7.5.0(socks@2.8.9)

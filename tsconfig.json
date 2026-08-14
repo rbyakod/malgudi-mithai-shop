@@ -31,5 +31,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "my-video"]
+  "exclude": ["node_modules", "my-video", "tests/load"]
 }
