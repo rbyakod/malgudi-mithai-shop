@@ -37,7 +37,53 @@ npm run dev                  # http://localhost:3000
 | `npm run test:unit` | Vitest unit tests |
 | `npm run test:e2e` | Playwright E2E + axe a11y |
 | `npm run seed` | Seed sample content into MongoDB |
+| `npm run seed:catalog` | Repopulate the golden catalog test data (see below) |
 | `npm run lhci` | Lighthouse CI (local) |
+
+## Golden test data (catalog seed)
+
+The committed catalog JSONs in `scripts/seed-data/` are the **golden test
+data** — real product data scraped from public storefronts (Bikanervala,
+Haldiram's, Anand Sweets) plus freely-licensed Wikimedia Commons dish
+photos. They are checked into Git, so a fresh checkout can always
+repopulate an identical catalog.
+
+| File | Collection | Count |
+| --- | --- | --- |
+| `mithai-catalog.json` | `mithai-products` | 76 (classic 20 · original 20 · regional 13 · seasonal 11 · sugar-free 12) |
+| `snacks-catalog.json` | `snack-products` | 24 (namkeen 14 · cookie 6 · dry-fruit 4) |
+| `qsr-catalog.json` | `qsr-menu-items` | 20 (thaali 18 · chole-bhature 2) |
+| `gift-catalog.json` | `gift-boxes` | 22 |
+
+### Repopulate
+
+```bash
+pnpm seed:catalog        # or: npm run seed:catalog
+```
+
+- Requires a running MongoDB and `.env` (the script reads
+  `DATABASE_URI` etc. via `node --env-file=.env`).
+- **Idempotent**: mithai upserts by `slug`, the other collections by
+  `name`, media by `alt` — re-running never duplicates; it updates
+  fields in place and reuses uploaded images.
+- Image bytes are fetched at seed time from the original CDN/Wikimedia
+  URLs (nothing binary is committed) and stored in Payload `media`.
+
+### Verify
+
+- API: `GET /api/mithai-products?limit=1` → `totalDocs: 76` (likewise
+  `snack-products` 24, `qsr-menu-items`, `gift-boxes`).
+- Web: `/en/mithai`, `/en/snacks`, `/en/qsr`, `/en/build-a-gift`.
+
+### Refresh / provenance
+
+- `build-catalog.py` and `build-sections.py` in the same directory built
+  these JSONs from scraped source data (not committed — the JSONs are
+  the source of truth). Regenerating requires re-scraping.
+- **Licensing caveat**: scraped copy and storefront product images are
+  for local dev/testing only — not licensed for production use.
+  Wikimedia-sourced QSR dish photos are freely licensed; provenance is
+  recorded per item in the `source`/`sourceUrl` fields.
 
 ## Project structure (top-level)
 
