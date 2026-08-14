@@ -84,6 +84,15 @@ targets:
         # Task 18.2: delivery Live Activities (+ Dynamic Island).
         NSSupportsLiveActivities: true
         ITSAppUsesNonExemptEncryption: false
+        # ATS exemption (DEBUG convenience): the dev build talks to the
+        # local backend at http://localhost:3000; without
+        # NSAllowsLocalNetworking iOS blocks that cleartext loopback (the
+        # 5404e00 fix was hand-edited into Info.plist and got clobbered by
+        # the next xcodegen regen — it must live here, the source of truth,
+        # so regenerated Info.plists keep it). The release build uses the
+        # production https API, so this is loopback-only and benign.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.mishran.app
