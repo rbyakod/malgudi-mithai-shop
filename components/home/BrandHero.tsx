@@ -63,9 +63,16 @@ export async function BrandHero() {
           <div className="mb-6 flex items-center gap-3">
             <span
               aria-hidden="true"
-              className="inline-flex h-7 items-center rounded-full bg-primary px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-text-light"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full"
             >
-              {brandName.slice(0, 2)}
+              <Image
+                src="/images/mishran-logo.png"
+                alt=""
+                width={36}
+                height={36}
+                className="h-9 w-9 object-contain"
+                priority
+              />
             </span>
             <span className="h-px flex-1 max-w-[6rem] bg-gradient-to-r from-primary/60 to-transparent" />
             <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-text-muted">

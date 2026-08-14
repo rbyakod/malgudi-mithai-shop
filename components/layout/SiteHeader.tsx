@@ -8,6 +8,7 @@
 // overlay with body-scroll lock.
 
 import {useState, useEffect, useCallback, useRef} from "react";
+import Image from "next/image";
 import {useTranslations, useLocale} from "next-intl";
 import {Link, usePathname, useRouter} from "@/i18n/navigation";
 import {useCart} from "@/context/CartContext";
@@ -227,10 +228,19 @@ export function SiteHeader() {
         {/* Top bar — always visible */}
         <div className="nav-top-bar">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="nav-logo-mark">MS</div>
+            <div className="nav-logo-mark nav-logo-mark--image">
+              <Image
+                src="/images/mishran-logo.png"
+                alt="Mishran sun mark"
+                width={36}
+                height={36}
+                className="h-full w-full object-contain"
+                priority
+              />
+            </div>
             <div>
               <p className="nav-brand-title text-sm font-semibold tracking-wide text-primary">
-                MALGUDI SWEETS
+                MISHRAN
               </p>
               <p className="nav-tagline text-xs text-text-muted">
                 {t("tagline")}
