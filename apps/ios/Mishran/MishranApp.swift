@@ -105,8 +105,13 @@ struct MishranApp: App {
                     case .signIn:
                         // `-authScreen` launch argument previews the sign-in
                         // flow for UI tests (15.2) until the app shell routes
-                        // there on its own.
-                        PhoneEntryView(viewModel: AuthViewModel(client: MishranAPIClient()))
+                        // there on its own. AuthFlowView shares one view model
+                        // across the phone + code half-screens: switching on
+                        // `stage` is what moves phone entry → OTP entry, and a
+                        // verified sign-in (OTP or SIWA) hands control back to
+                        // the app — launch lands on home with the session in
+                        // the keychain.
+                        AuthFlowView { launchScreen = .home }
                     case .home:
                         HomeView(router: router, container: modelContainer) {
                             // First home appearance (Task 18.3): ask for
@@ -129,6 +134,25 @@ struct MishranApp: App {
                 deepLinkHandler.handle(url)
             }
             .modifier(ModelContainerInjector(container: modelContainer))
+        }
+    }
+}
+
+/// Phone → OTP sign-in container (Task 15.1 wiring): both half-screens
+/// share one AuthViewModel; `stage` drives the transition, so a successful
+/// send (stage → .otp) reveals the code entry without a bespoke callback.
+private struct AuthFlowView: View {
+    @State private var viewModel = AuthViewModel(client: MishranAPIClient())
+    let onSignedIn: () -> Void
+
+    var body: some View {
+        switch viewModel.stage {
+        case .phone:
+            PhoneEntryView(viewModel: viewModel, onSignedIn: onSignedIn)
+        case .otp:
+            OTPView(viewModel: viewModel) {
+                onSignedIn()
+            }
         }
     }
 }

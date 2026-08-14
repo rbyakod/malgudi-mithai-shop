@@ -39,6 +39,15 @@
 	<false/>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<!-- Dev: the DEBUG base URL is http://localhost:3000 (simulator → host
+	     loopback). ATS blocks the cleartext requests without this exemption
+	     (sim Safari works, URLSession gets an instant transport failure).
+	     Production talks https://api.mishran.app and is unaffected. -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
