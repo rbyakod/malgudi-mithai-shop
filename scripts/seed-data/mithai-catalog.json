@@ -334,6 +334,145 @@
       ]
     },
     {
+      "name": "Khoya Kesar Peda",
+      "family": "classic",
+      "description": "Enjoy the authentic flavor of Bikanervala’s Khoya Kesar Peda, a delicious Indian sweet made using premium khoya, fragrant saffron, and rich traditional ingredients. Its smooth texture and rich taste make it a perfect choice for festivals, celebrations, gifting, and family gatherings. Carefully prepared with quality ingredients, this classic peda offers a truly delightful mithai experience in every bite.",
+      "displayPrice": "₹1,100 / 1 kg",
+      "weight": "1 kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Peda.jpg?v=1771591873",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/1_3_1.png?v=1779254706"
+      ],
+      "allergens": [
+        "milk"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/khoya-kesar-peda",
+      "freshnessStatus": "made-to-order",
+      "shelfLife": "7-10 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "khoya-kesar-peda",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Khoya Lal Peda",
+      "family": "classic",
+      "description": "Enjoy the authentic richness of Bikanervala Khoya Lal Peda, a traditional Indian mithai crafted with premium khoya, pure desi ghee, and aromatic cardamom. Known for its signature reddish hue, soft texture, and caramelized flavor, this delicious peda offers a melt-in-the-mouth experience. Perfect for festivals, gifting, pujas, celebrations, and family gatherings, it brings the timeless taste of Indian sweets to every occasion.",
+      "displayPrice": "₹866 / 1 kg",
+      "weight": "1 kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Khoya_Lal_Peda_1.jpg?v=1779257020",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Packaging_Might_be_Different_e98fbfde-903c-46a3-a35b-2f3c4920709c.png?v=1749195086"
+      ],
+      "allergens": [
+        "milk"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/khoya-lal-peda",
+      "freshnessStatus": "made-to-order",
+      "shelfLife": "7-10 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "khoya-lal-peda",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Motichoor Laddu",
+      "family": "classic",
+      "description": "Experience the festive delight of Motichoor Laddu , a classic Indian sweet loved for its soft, melt-in-the-mouth texture and rich flavor. Made from tiny golden boondi, pure ghee, sugar, and aromatic spices, each laddu offers a perfect balance of sweetness and fragrance.",
+      "displayPrice": "₹775 / 1 kg",
+      "weight": "1 kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Motichoor_Laddu.jpg?v=1764936893",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Yourparagraphtext_10_1.png?v=1779253334"
+      ],
+      "allergens": [
+        "milk"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/motichoor-laddu",
+      "freshnessStatus": "made-to-order",
+      "shelfLife": "7-10 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "motichoor-laddu",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Besan Laddu",
+      "family": "classic",
+      "description": "Experience the soulful taste of Besan Laddu , a heritage sweet crafted with perfectly roasted gram flour and premium ghee for a rich, authentic flavour. Each piece is soft, aromatic, and delicately sweet, offering warmth and nostalgia in every bite.",
+      "displayPrice": "₹840 / 1 kg",
+      "weight": "1 kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Laddu_Besan_Special_400_x_400pxl.jpg?v=1748947806",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Besan-Laddu-Airport-Box.jpg?v=1748947806"
+      ],
+      "allergens": [
+        "milk",
+        "gluten"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/besan-laddu",
+      "freshnessStatus": "made-to-order",
+      "shelfLife": "7-10 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "besan-laddu",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Bikaneri Laddu",
+      "family": "classic",
+      "description": "Experience the rich heritage of Indian sweets with Bikanervala’s Bikaneri Laddu , a traditional mithai crafted using roasted gram flour (besan), pure desi ghee, and authentic recipes inspired by the flavors of Bikaner. Known for its rich aroma, soft texture, and perfectly balanced sweetness, this classic laddu delivers a delightful taste of tradition in every bite. Made with premium ingredients and handcrafted with care, Bikaneri Laddu is a timeless favorite for festivals, religious occasions, family gatherings, and gifting.",
+      "displayPrice": "₹814 / 1 kg",
+      "weight": "1 kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/LadduBikaneri_400x400pxl.jpg?v=1748861383",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Sweets_Box.png?v=1776067213"
+      ],
+      "allergens": [
+        "milk"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/bikaneri-laddu",
+      "freshnessStatus": "made-to-order",
+      "shelfLife": "7-10 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "bikaneri-laddu",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Rose laddu",
+      "family": "classic",
+      "description": "Experience the delicate charm of Bikanervala’s Rose Laddu , a luxurious Indian sweet crafted with fragrant gulkand (rose petal preserve), premium dry fruits, and the essence of real rose petals. This elegant mithai offers a unique blend of rich traditional sweetness and refreshing floral notes, creating a delightful taste that stands out from classic laddus. Every bite delivers a smooth texture, aromatic flavor, and the richness of carefully selected ingredients.",
+      "displayPrice": "₹2,218 / 1 kg",
+      "weight": "1 kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Rose_Laddu.png?v=1748937608",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Sweets_Box.png?v=1776067213"
+      ],
+      "allergens": [
+        "milk"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/rose-laddu",
+      "freshnessStatus": "made-to-order",
+      "shelfLife": "7-10 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "rose-laddu",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
       "name": "Khoya Chocolate Burfi",
       "family": "original",
       "description": "Experience the perfect fusion of traditional Indian mithai and rich chocolate flavor with Khoya Chocolate Burfi from Bikanervala . Crafted with creamy khoya (milk solids), premium chocolate, pure desi ghee, and crunchy nuts, this indulgent sweet offers a soft, melt-in-the-mouth texture with a delicious chocolaty twist.",
@@ -649,6 +788,145 @@
       "shelfLife": "7-10 days",
       "storage": "Room temperature, airtight container.",
       "slug": "white-chocolate-laddu",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Kaju Kalash",
+      "family": "original",
+      "description": "Celebrate special moments with Bikanervala’s Kaju Kalash , a luxurious Indian mithai made from premium-quality cashews and crafted in an elegant kalash-inspired shape. Symbolizing prosperity, happiness, and tradition, this exquisite sweet combines rich cashew flavor with beautiful presentation, making it a perfect choice for festive gifting, weddings, celebrations, and special occasions. Crafted with fine ingredients and traditional expertise, Kaju Kalash offers a smooth texture and rich melt-in-the-mouth experience in every bite.",
+      "displayPrice": "₹2,369 / 1 kg",
+      "weight": "1 kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/KajuKalash_400x400pxl.jpg?v=1748945325",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Sweets_Box.png?v=1776067213"
+      ],
+      "allergens": [
+        "tree-nuts"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/kaju-kalash",
+      "freshnessStatus": "made-daily",
+      "shelfLife": "5-7 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "kaju-kalash",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Bikanervala Shahi Laddu",
+      "family": "original",
+      "description": "Bikanervala Shahi Laddu is a celebration of rich flavors and timeless tradition. Made using premium ingredients and carefully crafted to deliver an authentic taste, this royal sweet is known for its soft texture and delightful richness. made with Besan Laddu, Gaund Laddu, Atta Laddu, Shahi Jodhpuri Dry Fruit Laddu premium ingredients, Every bite is filled with the goodness of traditional Indian mithai, making it a favorite for festivals, weddings, family gatherings, and special occasions.",
+      "displayPrice": "₹1,245 / 500g",
+      "weight": "500g",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Bikanervala_Shahi_Laddu.jpg?v=1764844511",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/ShahiLadduBox4pcs.400x400.jpg?v=1760771272"
+      ],
+      "allergens": [
+        "milk"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/bikanervala-shahi-laddu",
+      "freshnessStatus": "made-to-order",
+      "shelfLife": "7-10 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "bikanervala-shahi-laddu",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Kaju Samosa",
+      "family": "original",
+      "description": "Experience the delightful taste of Bikanervala’s Kaju Samosa , a luxurious Indian mithai crafted with premium-quality cashews and filled with a rich blend of dry fruits. Shaped like the traditional samosa, this elegant sweet combines the smooth texture of cashew paste with the crunch and richness of dry fruit filling, creating a unique and indulgent festive treat.",
+      "displayPrice": "₹2,369 / 1 kg",
+      "weight": "1 kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Kaju_Samosa.png?v=1750244972",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Sweets_Box.png?v=1776067213"
+      ],
+      "allergens": [
+        "tree-nuts",
+        "gluten"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/kaju-samosa",
+      "freshnessStatus": "made-daily",
+      "shelfLife": "5-7 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "kaju-samosa",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Kaju Honey Dew",
+      "family": "original",
+      "description": "Experience the luxurious taste of Bikanervala’s Honey Dew , a premium Indian mithai crafted with rich cashew paste, honey, and selected dry fruits. Known for its smooth texture, delicate sweetness, and rich flavor profile, this elegant sweet offers a unique combination of traditional Indian craftsmanship and indulgent ingredients. Every bite delivers a melt-in-the-mouth experience that perfectly balances the richness of cashews with the natural sweetness of honey.",
+      "displayPrice": "₹2,369 / 1 kg",
+      "weight": "1 kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Kaju_Honey_Dew_1.png?v=1750245004",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/HoneyDew.png?v=1750245004"
+      ],
+      "allergens": [
+        "tree-nuts"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/honey-dew",
+      "freshnessStatus": "made-daily",
+      "shelfLife": "5-7 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "kaju-honey-dew",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Kaju Pyramid Baklava",
+      "family": "original",
+      "description": "Experience the luxury of Bikanervala Kaju Pyramid, a premium cashew mithai crafted from finely ground, high-quality cashews and shaped into an elegant pyramid design. With its rich flavor, smooth melt-in-the-mouth texture, this exquisite sweet is perfect for celebrations and gifting. Combining traditional Indian sweetness with a sophisticated touch, Kaju Pyramid is a delightful choice for those who appreciate authentic mithai with a premium appeal. Bikanervala Kaju Pyramid – Premium Cashew Mithai | Pyramid-Shaped Delight | Ideal for Gifting & Festive Occasions",
+      "displayPrice": "₹1,800 / 1kg",
+      "weight": "1kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Kaju_Pyramid_Baklava.png?v=1764848409",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Sweets_Box.png?v=1776067213"
+      ],
+      "allergens": [
+        "tree-nuts"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/kaju-pyramid",
+      "freshnessStatus": "batch-frozen",
+      "shelfLife": "15-20 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "kaju-pyramid-baklava",
+      "dietaryTags": [
+        "vegetarian"
+      ]
+    },
+    {
+      "name": "Kaju Anjeer Cake",
+      "family": "original",
+      "description": "Experience the wholesome richness of Bikanervala’s Kaju Anjeer Cake , a luxurious Indian mithai crafted with premium cashews (kaju) and nutrient-rich figs (anjeer). This delightful dry fruit sweet combines the creamy texture of cashews with the natural sweetness of figs, creating a perfect balance of flavor, nutrition, and indulgence. Known for its rich taste and elegant presentation, Kaju Anjeer Cake is an ideal choice for festive celebrations, gifting, weddings, and special occasions.",
+      "displayPrice": "₹2,691 / 1 kg",
+      "weight": "1 kg",
+      "images": [
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Anjeer-Cake-400x400.jpg?v=1748953869",
+        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Sweets_Box.png?v=1776067213"
+      ],
+      "allergens": [
+        "tree-nuts"
+      ],
+      "source": "bikanervala",
+      "sourceUrl": "https://bikanervala.com/products/kaju-anjeer-cake",
+      "freshnessStatus": "made-daily",
+      "shelfLife": "5-7 days",
+      "storage": "Room temperature, airtight container.",
+      "slug": "kaju-anjeer-cake",
       "dietaryTags": [
         "vegetarian"
       ]

@@ -19,6 +19,9 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CATALOG_PATH = resolve(__dirname, "seed-data/mithai-catalog.json");
+const SNACKS_PATH = resolve(__dirname, "seed-data/snacks-catalog.json");
+const QSR_PATH = resolve(__dirname, "seed-data/qsr-catalog.json");
+const GIFT_PATH = resolve(__dirname, "seed-data/gift-catalog.json");
 
 type CatalogProduct = {
   name: string;
@@ -143,27 +146,155 @@ async function ensureMedia(payload: Awaited<ReturnType<typeof getPayload>>, url:
   }
 }
 
+// ---- section catalogs (snacks / qsr / gifts) ----
+// These collections have no `slug` field — idempotency is by `name`
+// (useAsTitle). Media alt keys are prefixed per section to stay unique.
+type SnackProduct = {
+  name: string;
+  category: "namkeen" | "cookie" | "dry-fruit";
+  weight?: string;
+  description: string;
+  msrp?: string;
+  images: string[];
+  source: string;
+  sourceUrl: string;
+};
+type QsrItem = {
+  name: string;
+  category: "chaat" | "chole-bhature" | "kulcha" | "thaali" | "chinese" | "south-indian";
+  description: string;
+  veg: boolean;
+  spiceLevel?: "mild" | "medium" | "hot";
+  images: string[];
+  source: string;
+  sourceUrl: string;
+};
+type GiftBox = {
+  name: string;
+  size: "4-piece" | "8-piece" | "16-piece" | "custom";
+  compartmentLayout: string;
+  images: string[];
+  source: string;
+  sourceUrl: string;
+};
+
+type Stats = { created: number; updated: number; mediaOk: number; mediaSkip: number };
+
+// Resolve image URLs to media ids, updating a stats counter.
+async function resolveImages(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  urls: string[],
+  altPrefix: string,
+  stats: Stats,
+): Promise<string[]> {
+  const ids: string[] = [];
+  for (let i = 0; i < urls.length; i++) {
+    const id = await ensureMedia(payload, urls[i]!, `${altPrefix}${urls.length > 1 ? `-${i + 1}` : ""}`);
+    if (id) {
+      ids.push(id);
+      stats.mediaOk++;
+    } else {
+      stats.mediaSkip++;
+    }
+  }
+  return ids;
+}
+
+// Upsert a doc into `collection` keyed by name; logs each row.
+async function upsertByName(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  collection: string,
+  name: string,
+  data: Record<string, unknown>,
+  stats: Stats,
+) {
+  const existing = await payload.find({ collection, where: { name: { equals: name } }, limit: 1 });
+  if (existing.docs.length > 0) {
+    await payload.update({ collection, id: existing.docs[0]!.id, data });
+    stats.updated++;
+  } else {
+    await payload.create({ collection, data });
+    stats.created++;
+  }
+}
+
+async function seedSnacks(payload: Awaited<ReturnType<typeof getPayload>>, stats: Stats) {
+  const { products } = JSON.parse(await readFile(SNACKS_PATH, "utf8")) as { products: SnackProduct[] };
+  console.log(`\nSeeding ${products.length} snack-products...`);
+  for (const p of products) {
+    const imageIds = await resolveImages(payload, p.images, `snack-${p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, stats);
+    await upsertByName(
+      payload,
+      "snack-products",
+      p.name,
+      {
+        name: p.name,
+        category: p.category,
+        weight: p.weight ?? null,
+        description: p.description || null,
+        msrp: p.msrp ?? null,
+        images: imageIds.map((id) => ({ image: id })),
+        externalRetailers: p.sourceUrl ? [{ label: p.source, url: p.sourceUrl }] : [],
+      },
+      stats,
+    );
+    console.log(`  [${p.category}] ${p.name}`);
+  }
+}
+
+async function seedQsr(payload: Awaited<ReturnType<typeof getPayload>>, stats: Stats) {
+  const { products } = JSON.parse(await readFile(QSR_PATH, "utf8")) as { products: QsrItem[] };
+  console.log(`\nSeeding ${products.length} qsr-menu-items...`);
+  for (const p of products) {
+    const imageIds = await resolveImages(payload, p.images.slice(0, 1), `qsr-${p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, stats);
+    await upsertByName(
+      payload,
+      "qsr-menu-items",
+      p.name,
+      {
+        name: p.name,
+        category: p.category,
+        description: p.description || null,
+        image: imageIds[0] ?? null,
+        veg: p.veg,
+        spiceLevel: p.spiceLevel ?? "mild",
+      },
+      stats,
+    );
+    console.log(`  [${p.category}] ${p.name}`);
+  }
+}
+
+async function seedGifts(payload: Awaited<ReturnType<typeof getPayload>>, stats: Stats) {
+  const { products } = JSON.parse(await readFile(GIFT_PATH, "utf8")) as { products: GiftBox[] };
+  console.log(`\nSeeding ${products.length} gift-boxes...`);
+  for (const p of products) {
+    const imageIds = await resolveImages(payload, p.images, `gift-${p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, stats);
+    await upsertByName(
+      payload,
+      "gift-boxes",
+      p.name,
+      {
+        name: p.name,
+        size: p.size,
+        compartmentLayout: p.compartmentLayout || null,
+        images: imageIds.map((id) => ({ image: id })),
+      },
+      stats,
+    );
+    console.log(`  [${p.size}] ${p.name}`);
+  }
+}
+
 async function main() {
   const catalog = JSON.parse(await readFile(CATALOG_PATH, "utf8")) as { products: CatalogProduct[] };
   const payload = await getPayload();
   console.log(`Seeding ${catalog.products.length} mithai-products from ${CATALOG_PATH}...`);
 
-  let created = 0,
-    updated = 0,
-    mediaOk = 0,
-    mediaSkip = 0;
+  const stats: Stats = { created: 0, updated: 0, mediaOk: 0, mediaSkip: 0 };
 
   for (const p of catalog.products) {
-    const imageIds: string[] = [];
-    for (let i = 0; i < p.images.length; i++) {
-      const id = await ensureMedia(payload, p.images[i]!, `${p.slug}${p.images.length > 1 ? `-${i + 1}` : ""}`);
-      if (id) {
-        imageIds.push(id);
-        mediaOk++;
-      } else {
-        mediaSkip++;
-      }
-    }
+    const imageIds = await resolveImages(payload, p.images, p.slug, stats);
 
     const data = {
       name: p.name,
@@ -188,16 +319,20 @@ async function main() {
     });
     if (existing.docs.length > 0) {
       await payload.update({ collection: "mithai-products", id: existing.docs[0]!.id, data });
-      updated++;
+      stats.updated++;
     } else {
       await payload.create({ collection: "mithai-products", data });
-      created++;
+      stats.created++;
     }
     console.log(`  [${p.family}] ${p.slug} (${imageIds.length} img)`);
   }
 
+  await seedSnacks(payload, stats);
+  await seedQsr(payload, stats);
+  await seedGifts(payload, stats);
+
   console.log(
-    `\nSeed complete: ${created} created, ${updated} updated. Media: ${mediaOk} ok, ${mediaSkip} skipped.`,
+    `\nSeed complete: ${stats.created} created, ${stats.updated} updated. Media: ${stats.mediaOk} ok, ${stats.mediaSkip} skipped.`,
   );
   process.exit(0);
 }

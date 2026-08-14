@@ -14,7 +14,7 @@ const validThemes = THEMES.map((theme) => theme.id);
 const initialThemeScript = `(function(){try{var valid=${JSON.stringify(validThemes)};var aliases=${JSON.stringify({festive:"diwali-saffron",heritage:"wedding-heritage","heritage-2":"wedding-heritage",sage:"everyday-sage",navy:"mishran-default",mblue2:"mishran-default",mindbox:"mishran-default",coinbase:"mishran-default",ibm:"mishran-default",yoshida:"mishran-default",myblue:"mishran-default"})};var stored=localStorage.getItem("mithai-theme");var normalized=(stored&&aliases[stored])||stored||${JSON.stringify(DEFAULT_THEME)};if(valid.indexOf(normalized)!==-1){document.documentElement.setAttribute("data-theme",normalized);}else{document.documentElement.setAttribute("data-theme",${JSON.stringify(DEFAULT_THEME)});}}catch(e){}})()`;
 
 export const metadata: Metadata = {
-  title: "Malgudi Sweets",
+  title: "Mishran",
   description: "Modern Indian mithai, delivered fresh."
 };
 
