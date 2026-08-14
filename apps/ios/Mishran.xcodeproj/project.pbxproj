@@ -69,6 +69,7 @@
 		9DBF95F3B4960A255A17CF7A /* AddToCartButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3AFCB15CC82712F4325C44 /* AddToCartButton.swift */; };
 		9E4748531BA06BC94A2C484F /* AppleSignInTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4B0CA54764C50EF5E7288E /* AppleSignInTests.swift */; };
 		9F0470D37E60CB3A0B5F97A1 /* AuthUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBCD922D98E4F596E91C2BB3 /* AuthUITests.swift */; };
+		9F6E4F9297504C2A33DBD2D8 /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4C872A2150AEB654FFA2B9D7 /* ExportOptions.plist */; };
 		9FD03ADFDD9C9409D7C60BF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38C61D8573D8238A69276ACD /* Assets.xcassets */; };
 		A3985EE883EE06FF0E9483AD /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE06CF24565A57CA9FCAA9AD /* APIError.swift */; };
 		A6C20327D55E098DAC947F89 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A448A2AF066997D9ECAE9610 /* Localizable.strings */; };
@@ -168,6 +169,7 @@
 		47991E844FC2618D4D5A5DBA /* CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogView.swift; sourceTree = "<group>"; };
 		4A1A994EB9D1587A43329B4B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		4AD2938F9587022374A9DE29 /* LoyaltyPassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoyaltyPassTests.swift; sourceTree = "<group>"; };
+		4C872A2150AEB654FFA2B9D7 /* ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = ExportOptions.plist; sourceTree = "<group>"; };
 		534922BEDBEEC1B39EC41D2D /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5384924CE7B94056D974BAAC /* CheckoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutView.swift; sourceTree = "<group>"; };
 		557BDC90C27B02C28EE85F24 /* RazorpayCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RazorpayCoordinator.swift; sourceTree = "<group>"; };
@@ -445,6 +447,7 @@
 			isa = PBXGroup;
 			children = (
 				38C61D8573D8238A69276ACD /* Assets.xcassets */,
+				4C872A2150AEB654FFA2B9D7 /* ExportOptions.plist */,
 				7ACC75BEA637550855532CA3 /* Info.plist */,
 				BDE71F58C13E6FF43A4F0680 /* Mishran.entitlements */,
 				D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */,
@@ -676,16 +679,20 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					2C49B580602E129C08366052 = {
+						DevelopmentTeam = "${APPLE_TEAM_ID}";
 						ProvisioningStyle = Automatic;
 						TestTargetID = D1B295700D76C68137328D08;
 					};
 					5AC9D4BAA9624C10E8CE992B = {
+						DevelopmentTeam = "${APPLE_TEAM_ID}";
 						ProvisioningStyle = Automatic;
 					};
 					D1B295700D76C68137328D08 = {
+						DevelopmentTeam = "${APPLE_TEAM_ID}";
 						ProvisioningStyle = Automatic;
 					};
 					FD40144A4FCD7156C6005614 = {
+						DevelopmentTeam = "${APPLE_TEAM_ID}";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -729,6 +736,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9FD03ADFDD9C9409D7C60BF2 /* Assets.xcassets in Resources */,
+				9F6E4F9297504C2A33DBD2D8 /* ExportOptions.plist in Resources */,
 				A6C20327D55E098DAC947F89 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1060,6 +1068,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "${APPLE_TEAM_ID}";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1118,6 +1127,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "${APPLE_TEAM_ID}";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

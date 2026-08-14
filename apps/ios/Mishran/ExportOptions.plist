@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ExportOptions.plist — Task 21.1 (Mishran Mobile Apps v1).
+     Consumed by `xcodebuild -exportArchive -exportOptionsPlist` in
+     ci_scripts/ci_archive.sh to turn the archive into an App Store IPA.
+
+     GATED on Apple Developer Program enrollment (plan Open Question #8):
+     the teamID placeholder below MUST be replaced with the real
+     10-character Apple Developer Team ID once enrollment lands
+     (App Store Connect → Membership → Team ID). Automatic signing then
+     resolves the distribution certificate + provisioning profile
+     (the App ID needs Sign in with Apple, Push Notifications, Live
+     Activity, Wallet — see ci_archive.sh header).
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>method</key>
+	<string>app-store-connect</string>
+	<key>teamID</key>
+	<string>TEAMIDPLACEHOLDER</string>
+	<key>signingStyle</key>
+	<string>automatic</string>
+	<key>signingCertificate</key>
+	<string>Apple Distribution</string>
+	<key>uploadSymbols</key>
+	<true/>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>manageAppVersionAndBuildNumber</key>
+	<true/>
+	<key>destination</key>
+	<string>export</string>
+</dict>
+</plist>

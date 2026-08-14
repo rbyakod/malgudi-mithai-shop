@@ -23,6 +23,11 @@ settings:
     # builds are signed locally so the keychain + entitlements work in
     # hosted unit tests (Task 15.4). Xcode Cloud overrides with real signing.
     CODE_SIGN_IDENTITY: "-"
+    # Task 21.1: distribution signing. APPLE_TEAM_ID (10-char Team ID,
+    # env-injected by Xcode Cloud / ci_archive.sh) expands at xcodebuild
+    # time; unset/empty locally → simulator builds stay ad-hoc as above.
+    # Gated on Apple Developer Program enrollment (Open Question #8).
+    DEVELOPMENT_TEAM: ${APPLE_TEAM_ID}
 
 # Task 17.3: Razorpay Checkout SDK via SPM. The repo publishes the
 # RazorpayCheckout product (source wrapper `RazorpaySwift` + binary
