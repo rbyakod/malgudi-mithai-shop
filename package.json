@@ -26,6 +26,7 @@
     "build:packages": "pnpm -r --filter './packages/*' run build",
     "seed": "node --env-file=.env --import tsx scripts/seed.ts",
     "seed:catalog": "node --env-file=.env --import tsx scripts/seed-catalog.ts",
+    "seed:branding": "node --env-file=.env --import tsx scripts/seed-branding.ts",
     "seed:staging": "node --env-file=.env --import tsx scripts/seed-staging.ts",
     "regen:importmap": "node --import tsx scripts/regen-importmap.mjs",
     "ios:xcodegen": "xcodegen --spec apps/ios/project.yml",
