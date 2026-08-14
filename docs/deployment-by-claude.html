@@ -256,29 +256,56 @@ dig +short mishran.roohib.com @ns1.domaincontrol.com</code></pre></div>
 <span class="c"># or: ssh &lt;your-sudo-user&gt;@2.24.221.70</span>
 <span class="c"># accept the fingerprint prompt the first time; type the password when asked</span></code></pre></div>
 
-  <h4>Update packages + install build tools</h4>
-  <p class="lede"><code>build-essential</code> provides the C/C++ compiler toolchain — <code>sharp</code> (image processing) and <code>argon2</code> (password hashing) compile native code during <code>pnpm install</code> and fail without it. <b>Nginx is already installed here — we verify it instead of installing.</b></p>
-  <div class="code-block"><div class="code-title"><span>Update + base packages</span><button class="copy">copy</button></div>
-<pre><code>sudo apt update &amp;&amp; sudo apt upgrade -y     <span class="c"># refresh package lists, apply security updates</span>
-sudo apt install -y git curl ca-certificates build-essential ufw
+  <h4>Update packages</h4>
+  <div class="code-block"><div class="code-title"><span>Refresh package lists + security updates (always safe to run)</span><button class="copy">copy</button></div>
+<pre><code>sudo apt update &amp;&amp; sudo apt upgrade -y</code></pre></div>
 
-<span class="c"># verify nginx (should already be active, serving your other subdomains):</span>
+  <h4>Check what's already installed — install only what's missing</h4>
+  <p class="lede">This VPS already runs other sites, so several tools are probably present. Run the check block first; each line either prints a version (✅ skip that install) or says "command not found" (❌ install it). The install block after it is safe to re-run regardless — apt skips what's already there — but knowing what you had matters when something misbehaves.</p>
+  <div class="code-block"><div class="code-title"><span>① Check everything</span><button class="copy">copy</button></div>
+<pre><code><span class="c"># --- check block: every line either prints a version (present) or errors (missing) ---</span>
+git --version                 <span class="c"># expect: git version 2.x  → else install git</span>
+curl --version | head -1      <span class="c"># expect: curl 7.x         → else install curl</span>
+gcc --version | head -1       <span class="c"># build toolchain present? → else install build-essential</span>
+make --version | head -1      <span class="c"># same toolchain, second opinion</span>
+command -v ufw || echo "ufw MISSING"
+node -v 2>/dev/null || echo "node MISSING"        <span class="c"># need v22.x specifically</span>
+npm -v  2>/dev/null || echo "npm MISSING"
+pnpm -v 2>/dev/null || echo "pnpm MISSING"
+command -v mongod || echo "mongod MISSING"
+mongosh --version 2>/dev/null || echo "mongosh MISSING"
+certbot --version 2>/dev/null || echo "certbot MISSING"
+
+<span class="c"># nginx — already serving your other subdomains; confirm active:</span>
 sudo nginx -v
 sudo systemctl status nginx --no-pager    <span class="c"># look for: Active: active (running)</span></code></pre></div>
+  <div class="code-block"><div class="code-title"><span>② Install only what the checks reported missing</span><button class="copy">copy</button></div>
+<pre><code><span class="c"># git / curl / toolchain — edit the list to just your missing ones:</span>
+sudo apt install -y git curl ca-certificates build-essential ufw
+<span class="c"># (apt is idempotent: packages already installed are skipped, not reinstalled)</span></code></pre></div>
+  <p class="callout ok"><b>Why build-essential matters:</b> <code>sharp</code> (image processing) and <code>argon2</code> (password hashing) compile native code during <code>pnpm install</code>. If <code>gcc --version</code> printed a version, you're covered; if <code>pnpm install</code> later fails with <code>gyp ERR</code>, this is what was missing.</p>
 
-  <h4>Install Node 22 and pnpm</h4>
-  <p class="lede">The app is developed on Node 22.x + pnpm 11.x; matching them avoids native-module surprises. NodeSource is the standard apt repository for current Node versions (Ubuntu's own <code>nodejs</code> package is too old). Corepack ships with Node and manages pnpm.</p>
-  <div class="code-block"><div class="code-title"><span>Node 22 via NodeSource, then pnpm via corepack</span><button class="copy">copy</button></div>
-<pre><code>curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -   <span class="c"># adds the NodeSource apt repo</span>
+  <h4>Node 22 and pnpm — check version, not just presence</h4>
+  <p class="lede">The app is developed on Node 22.x + pnpm 11.x. A <em>present but older</em> Node (18/20 — common on servers that run other apps) is the tricky case: it must be upgraded, not skipped. NodeSource is the standard repo for current Node versions; corepack (bundled with Node) manages pnpm.</p>
+  <div class="code-block"><div class="code-title"><span>Node: check → upgrade-or-install</span><button class="copy">copy</button></div>
+<pre><code>node -v
+<span class="c"># "v22.x.y" → ✅ skip this whole block.</span>
+<span class="c"># "v18…" / "v20…" → upgrade (NodeSource installs over the old apt version):</span>
+<span class="c"># "command not found" → install the same way:</span>
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -   <span class="c"># adds/updates NodeSource repo</span>
 sudo apt install -y nodejs
-node -v     <span class="c"># expect v22.x.y</span>
-
-sudo corepack enable                       <span class="c"># exposes the pnpm shim</span>
+node -v     <span class="c"># now expect v22.x.y</span></code></pre></div>
+  <div class="callout warn"><b>If other apps on this VPS depend on the old Node version:</b> don't upgrade system-wide. Install Node 22 alongside via <a href="https://github.com/nvm-sh/nvm">nvm</a> instead (<code>nvm install 22</code>), and point the systemd unit's <code>ExecStart</code> at that Node's <code>pnpm</code> path. The rest of this runbook is unchanged.</div>
+  <div class="code-block"><div class="code-title"><span>pnpm: check → enable via corepack</span><button class="copy">copy</button></div>
+<pre><code>pnpm -v
+<span class="c"># "10.x"/"11.x" → ✅ done.</span>
+<span class="c"># missing or ancient → activate via corepack (ships inside Node):</span>
+sudo corepack enable
 corepack prepare pnpm@latest --activate
 pnpm -v     <span class="c"># expect 10.x or 11.x</span></code></pre></div>
 
   <h4>Firewall — only if UFW isn't already set up</h4>
-  <p class="lede">If you've been running public subdomains already, the firewall may be configured. <b>Check first</b> — enabling UFW carelessly can lock you out of SSH.</p>
+  <p class="lede">If you've been running public subdomains already, the firewall may be configured. <b>Check first</b> — enabling UFW carelessly can lock you out of SSH. (If your server uses a cloud-provider firewall instead and UFW shows inactive, that's a valid setup too — just confirm ports 22/80/443 are open in the provider's console.)</p>
   <div class="code-block"><div class="code-title"><span>Check, then (only if inactive) configure</span><button class="copy">copy</button></div>
 <pre><code>sudo ufw status
 <span class="c"># "Status: active" with OpenSSH + Nginx Full listed → nothing to do.</span>
@@ -307,15 +334,24 @@ free -h                                        <span class="c"># Swap: 2.0Gi now
   A default standalone <code>mongod</code> <b>refuses</b> that URI, and Payload's draft/publish workflow wants replica-set transactions anyway.
   A "replica set" sounds like a cluster, but a <b>single-node</b> replica set is a one-line config change plus one command — that's all this is.</p>
 
-  <h4>4.1 Install MongoDB 8.0 from MongoDB's own apt repo</h4>
-  <p class="lede">Ubuntu's archive doesn't carry MongoDB at all (licensing), and old third-party <code>mongodb</code> packages are stale — always use MongoDB's official repo. The snippet below is for Ubuntu 24.04 (<code>noble</code>); check your release first.</p>
-  <div class="code-block"><div class="code-title"><span>Check Ubuntu release</span><button class="copy">copy</button></div>
+  <h4>4.1 Check for an existing MongoDB first</h4>
+  <p class="lede">If anything on this VPS already uses MongoDB, <b>do not install over it</b> — instead create the <code>mishran</code> database and app user inside the existing instance and jump to 4.4. The check below tells you which situation you're in.</p>
+  <div class="code-block"><div class="code-title"><span>Check</span><button class="copy">copy</button></div>
+<pre><code>command -v mongod || echo "mongod MISSING"
+mongod --version 2>/dev/null | head -1      <span class="c"># prints "db version v7.x/v8.x" if present</span>
+systemctl is-active mongod 2>/dev/null      <span class="c"># "active" if it's running</span>
+ss -ltnp 2>/dev/null | grep 27017           <span class="c"># is something already on the Mongo port?</span>
+
+<span class="c"># mongod present + active → ✅ SKIP 4.2/4.3, but note:</span>
+<span class="c">#   • its replSetName must be "rs0" for the app URI to work:</span>
+<span class="c">#       mongosh --quiet --eval 'rs.isMaster().setName'</span>
+<span class="c">#   • a different set name → change rs0 in MONGODB_URI (step 06) to match, or ask before touching it.</span>
+<span class="c"># mongod MISSING → continue with the install below.</span></code></pre></div>
+  <div class="code-block"><div class="code-title"><span>Install MongoDB 8.0 from MongoDB's own repo (only if missing)</span><button class="copy">copy</button></div>
 <pre><code>lsb_release -cs
-<span class="c"># "noble"  = Ubuntu 24.04  → use the repo line below as-is</span>
-<span class="c"># "jammy"  = Ubuntu 22.04  → replace every "noble" below with "jammy"</span>
-<span class="c"># "focal"  = Ubuntu 20.04  → replace with "focal"</span></code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Install (noble example)</span><button class="copy">copy</button></div>
-<pre><code><span class="c"># 1. import MongoDB's signing key</span>
+<span class="c"># "noble" = Ubuntu 24.04 → repo line below as-is; "jammy" = 22.04, "focal" = 20.04 → edit accordingly</span>
+
+<span class="c"># 1. import MongoDB's signing key</span>
 curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
   sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
 
@@ -580,9 +616,13 @@ sudo systemctl reload nginx  <span class="c"># only runs if -t passed (we chain 
 curl -I http://mishran.roohib.com/en    <span class="c"># expect 200 — THEN continue to Certbot</span></code></pre></div>
 
   <h4>8.4 HTTPS via Certbot</h4>
-  <p class="lede">Certbot proves to Let's Encrypt that you control the domain (via the now-working HTTP site), fetches a free certificate, rewrites <b>only the Mishran site file</b> to listen on 443, and adds an auto-renewal timer. It will ask a few questions — answers below.</p>
-  <div class="code-block"><div class="code-title"><span>Install + run</span><button class="copy">copy</button></div>
-<pre><code>sudo apt install -y certbot python3-certbot-nginx    <span class="c"># no-op if already present</span>
+  <p class="lede">Certbot proves to Let's Encrypt that you control the domain (via the now-working HTTP site), fetches a free certificate, rewrites <b>only the Mishran site file</b> to listen on 443, and adds an auto-renewal timer. Check for it first — if your other subdomains already have Let's Encrypt certs, Certbot is installed and this is just a new cert for a new name. It will ask a few questions — answers below.</p>
+  <div class="code-block"><div class="code-title"><span>Check, install if missing, then run</span><button class="copy">copy</button></div>
+<pre><code>certbot --version
+<span class="c"># "certbot 2.x/3.x" → ✅ already installed, skip the install line.</span>
+<span class="c"># "command not found" → install:</span>
+sudo apt install -y certbot python3-certbot-nginx
+
 sudo certbot --nginx -d mishran.roohib.com</code></pre></div>
   <ol class="clicks">
     <li><b>Email address</b> — enter your email (used only for expiry notices; auto-renew makes expiries unlikely).</li>
