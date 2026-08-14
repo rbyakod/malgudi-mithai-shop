@@ -98,11 +98,12 @@ fun CatalogScreen(
                 label = { Text("Filters") },
                 leadingIcon = { Icon(Icons.Filled.FilterList, contentDescription = null) },
             )
-            if (filters.family != null) {
+            val family = filters.family
+            if (family != null) {
                 FilterChip(
                     selected = true,
                     onClick = { viewModel.onFiltersChange(filters.copy(family = null)) },
-                    label = { Text(filters.family.value) },
+                    label = { Text(family.value) },
                 )
             }
             filters.dietaryTags.forEach { tag ->

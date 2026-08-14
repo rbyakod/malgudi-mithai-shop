@@ -51,15 +51,16 @@ class MishranFcmService : FirebaseMessagingService() {
         val event = parsePushData(message.data)
         if (!event.isRenderable) return
 
+        // onMessageReceived runs on a background thread, so blocking is fine.
         // Dedup: FCM redelivers; the ledger keeps one row per event_id.
-        if (notificationSeenDao.exists(event.eventId!!)) return
-        notificationSeenDao.insert(
-            NotificationSeenEntity(eventId = event.eventId, seenAt = System.currentTimeMillis()),
-        )
-        notificationSeenDao.purgeOlderThan(System.currentTimeMillis() - SEEN_TTL_MS)
-
-        // Fresh cache for this order, then repaint the widget from it.
+        if (runBlocking { notificationSeenDao.exists(event.eventId!!) }) return
         runBlocking {
+            notificationSeenDao.insert(
+                NotificationSeenEntity(eventId = event.eventId!!, seenAt = System.currentTimeMillis()),
+            )
+            notificationSeenDao.purgeOlderThan(System.currentTimeMillis() - SEEN_TTL_MS)
+
+            // Fresh cache for this order, then repaint the widget from it.
             orderRepository.getOrder(event.orderId!!)
             runCatching { OrderStatusWidget().updateAll(applicationContext) }
         }

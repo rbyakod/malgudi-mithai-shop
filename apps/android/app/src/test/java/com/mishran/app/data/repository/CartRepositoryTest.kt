@@ -9,11 +9,9 @@ package com.mishran.app.data.repository
 import com.mishran.api.models.Product
 import com.mishran.app.data.local.dao.CartDao
 import com.mishran.app.data.local.entity.CartItemEntity
-import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.flow.flowOf
@@ -52,7 +50,7 @@ class CartRepositoryTest {
             table[upsertSlot.captured.productId] = upsertSlot.captured
         }
         coEvery { cartDao.delete(any()) } coAnswers { table.remove(firstArg<String>()); Unit }
-        coEvery { cartDao.clear() } just Runs
+        coEvery { cartDao.clear() } coAnswers { table.clear() }
         coEvery { cartDao.count() } answers { table.size }
     }
 

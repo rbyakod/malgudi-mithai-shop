@@ -148,7 +148,7 @@ class CheckoutViewModelTest {
     fun `stale serviceability response does not clobber a newer selection`() = runTest(dispatcher) {
         coEvery { repository.listAddresses() } returns listOf(freshAddress, shelfAddress)
         val slowFresh = kotlinx.coroutines.CompletableDeferred<ServiceableResponse?>()
-        coEvery { repository.checkServiceability("110001") } returns slowFresh
+        coEvery { repository.checkServiceability("110001") } coAnswers { slowFresh.await() }
         coEvery { repository.checkServiceability("560001") } returns serviceable("shelf")
 
         val vm = CheckoutViewModel(repository, cartRepository, placeOrder)
@@ -193,11 +193,18 @@ class CheckoutViewModelTest {
     }
 
     /** Collect one-shot events into a list for the duration of a test body. */
-    private fun kotlinx.coroutines.CoroutineScope.recordEvents(
+    private fun kotlinx.coroutines.test.TestScope.recordEvents(
         vm: CheckoutViewModel,
     ): MutableList<CheckoutEvent> {
         val events = mutableListOf<CheckoutEvent>()
-        launch { vm.events.collect { events.add(it) } }
+        // Unconfined on the shared scheduler: subscribe + deliver synchronously
+        // so emissions land in `events` before the assertions read it.
+        backgroundScope.launch(
+            kotlinx.coroutines.test.UnconfinedTestDispatcher(testScheduler),
+            start = kotlinx.coroutines.CoroutineStart.UNDISPATCHED,
+        ) {
+            vm.events.collect { events.add(it) }
+        }
         return events
     }
 

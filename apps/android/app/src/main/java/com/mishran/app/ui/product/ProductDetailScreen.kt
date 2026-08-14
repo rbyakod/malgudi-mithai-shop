@@ -6,6 +6,7 @@
 // wires it to the cart repository once that exists.
 package com.mishran.app.ui.product
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -67,6 +68,7 @@ fun ProductDetailScreen(
     }
 
     when (val s = state) {
+        is UiState.Idle -> Box(modifier = Modifier.fillMaxSize())
         is UiState.Loading -> Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
@@ -180,6 +182,7 @@ private fun ProductDetailContent(
 }
 
 /** Pager over the image list; a placeholder tile when the product has none. */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Gallery(product: Product) {
     val images = product.images.orEmpty()

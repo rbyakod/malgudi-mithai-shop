@@ -7,7 +7,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.shapes.Shape
 
 object MishranColors {
   val BrandCanvas = Color(0xFFF7EFE0)
@@ -35,10 +34,10 @@ object MishranRadii {
   val lg = 12.dp
   val xl = 20.dp
 
-  fun shapeSm(): Shape = RoundedCornerShape(sm)
-  fun shapeMd(): Shape = RoundedCornerShape(md)
-  fun shapeLg(): Shape = RoundedCornerShape(lg)
-  fun shapeXl(): Shape = RoundedCornerShape(xl)
+  fun shapeSm(): RoundedCornerShape = RoundedCornerShape(sm)
+  fun shapeMd(): RoundedCornerShape = RoundedCornerShape(md)
+  fun shapeLg(): RoundedCornerShape = RoundedCornerShape(lg)
+  fun shapeXl(): RoundedCornerShape = RoundedCornerShape(xl)
 }
 
 object MishranSpacing {

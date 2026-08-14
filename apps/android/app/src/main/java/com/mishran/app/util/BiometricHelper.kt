@@ -17,7 +17,7 @@ object BiometricHelper {
         return when (BiometricManager.from(context).canAuthenticate(authenticators)) {
             BiometricManager.BIOMETRIC_SUCCESS -> BiometricStatus.Available
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> BiometricStatus.NoHardware
-            BiometricManager.BIOMETRIC_ERROR_NOT_ENROLLED -> BiometricStatus.NotEnrolled
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> BiometricStatus.NotEnrolled
             else -> BiometricStatus.Unavailable
         }
     }

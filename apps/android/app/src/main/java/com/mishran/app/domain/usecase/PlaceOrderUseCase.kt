@@ -152,21 +152,32 @@ class PlaceOrderUseCase @Inject constructor(
     }
 }
 
+/**
+ * Parsed error envelopes, cached per exception: an OkHttp response body is
+ * single-shot, and a single failure path reads both the code and the message
+ * off the same response.
+ */
+private val errorEnvelopes = java.util.Collections.synchronizedMap(
+    java.util.WeakHashMap<HttpException, Map<String, Any?>>(),
+)
+
+private fun errorEnvelope(e: HttpException): Map<String, Any?> =
+    errorEnvelopes.getOrPut(e) {
+        val body = runCatching { e.response()?.errorBody()?.string() }.getOrNull()
+        runCatching { ERROR_JSON_ADAPTER.fromJson(body ?: "") }.getOrNull() ?: emptyMap()
+    }
+
 /** Extract `error.code` from a backend error body; null when unparseable. */
 internal fun parseErrorCode(e: HttpException): String? {
-    val body = runCatching { e.response()?.errorBody()?.string() }.getOrNull() ?: return null
-    val parsed = runCatching { ERROR_JSON_ADAPTER.fromJson(body) }.getOrNull() ?: return null
     @Suppress("UNCHECKED_CAST")
-    val error = parsed["error"] as? Map<String, Any?> ?: return null
+    val error = errorEnvelope(e)["error"] as? Map<String, Any?> ?: return null
     return error["code"] as? String
 }
 
 /** Extract `error.message` for friendlier failure copy. */
 internal fun parseErrorMessage(e: HttpException): String? {
-    val body = runCatching { e.response()?.errorBody()?.string() }.getOrNull() ?: return null
-    val parsed = runCatching { ERROR_JSON_ADAPTER.fromJson(body) }.getOrNull() ?: return null
     @Suppress("UNCHECKED_CAST")
-    val error = parsed["error"] as? Map<String, Any?> ?: return null
+    val error = errorEnvelope(e)["error"] as? Map<String, Any?> ?: return null
     return error["message"] as? String
 }
 
@@ -174,7 +185,7 @@ private val ERROR_JSON_ADAPTER: com.squareup.moshi.JsonAdapter<Map<String, Any?>
     Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
-        .adapter(
+        .adapter<Map<String, Any?>>(
             com.squareup.moshi.Types.newParameterizedType(
                 Map::class.java,
                 String::class.java,

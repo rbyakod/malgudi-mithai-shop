@@ -7,6 +7,7 @@ package com.mishran.app.ui.product
 
 import androidx.lifecycle.SavedStateHandle
 import com.mishran.api.models.Product
+import com.mishran.app.data.repository.CartRepository
 import com.mishran.app.data.repository.CatalogRepository
 import com.mishran.app.ui.common.UiState
 import io.mockk.coEvery
@@ -28,6 +29,7 @@ class ProductDetailViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private lateinit var repository: CatalogRepository
+    private lateinit var cartRepository: CartRepository
 
     private val product = Product(
         id = "p1",
@@ -40,13 +42,14 @@ class ProductDetailViewModelTest {
     fun setUp() {
         Dispatchers.setMain(dispatcher)
         repository = mockk()
+        cartRepository = mockk()
     }
 
     @After
     fun tearDown() = Dispatchers.resetMain()
 
     private fun viewModel(slug: String = "kaju-katli") =
-        ProductDetailViewModel(repository, SavedStateHandle(mapOf("slug" to slug)))
+        ProductDetailViewModel(repository, cartRepository, SavedStateHandle(mapOf("slug" to slug)))
 
     @Test
     fun `slug is read from the saved state handle`() {

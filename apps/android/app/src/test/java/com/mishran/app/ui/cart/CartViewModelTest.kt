@@ -62,6 +62,7 @@ class CartViewModelTest {
 
         val vm = CartViewModel(repository)
         vm.state.backgroundCollect(this)
+        advanceUntilIdle()
 
         assertEquals(3, vm.state.value.itemCount)
         assertEquals(144000L, vm.state.value.estimatedTotalPaise)
@@ -158,8 +159,8 @@ class CartViewModelTest {
 
     /** Keep a live collector so stateIn(WhileSubscribed) actually runs. */
     private fun <T> kotlinx.coroutines.flow.StateFlow<T>.backgroundCollect(
-        scope: kotlinx.coroutines.CoroutineScope,
+        scope: kotlinx.coroutines.test.TestScope,
     ) {
-        scope.launch { this@backgroundCollect.collect() }
+        scope.backgroundScope.launch { this@backgroundCollect.collect { } }
     }
 }

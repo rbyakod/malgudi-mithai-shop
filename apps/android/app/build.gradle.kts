@@ -209,7 +209,9 @@ dependencies {
     implementation("androidx.glance:glance-appwidget:1.0.0")
 
     // --- Biometric (in-app auth gate, Task 8.2) ---
-    implementation("androidx.biometric:biometric:1.2.0")
+    // 1.2.0 was never released (only 1.2.0-alpha05); 1.1.0 is the stable
+    // line and covers the BiometricPrompt API this app uses.
+    implementation("androidx.biometric:biometric:1.1.0")
     // BiometricPrompt requires a FragmentActivity host; MainActivity extends it.
     implementation("androidx.fragment:fragment-ktx:1.8.2")
     // Keystore-backed encrypted prefs for the biometric-gated refresh token.

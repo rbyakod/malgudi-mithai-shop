@@ -9,6 +9,7 @@
 package com.mishran.app.data.repository
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.mutablePreferencesOf
@@ -79,11 +80,19 @@ class CatalogRepositoryTest {
         every { dataStore.data } returns flowOf(
             preferencesOf(DataStoreKeys.CATALOG_ETAG to STORED_ETAG),
         )
-        coEvery { dataStore.edit(any()) } coAnswers {
-            firstArg<suspend (MutablePreferences) -> Unit>().invoke(writtenPrefs)
-            writtenPrefs
+        // Stub the member (edit{} delegates to updateData) — mocking the
+        // extension itself confuses MockK's signature matching. edit applies
+        // its transform to a copy, so fold the result back into writtenPrefs.
+        coEvery { dataStore.updateData(any()) } coAnswers {
+            val updated = firstArg<suspend (Preferences) -> Preferences>().invoke(writtenPrefs)
+            writtenPrefs.clear()
+            @Suppress("UNCHECKED_CAST")
+            updated.asMap().forEach { (key, value) ->
+                writtenPrefs[key as Preferences.Key<Any>] = value
+            }
+            updated
         }
-        every { productDao.getAll() } answers { table.toList() }
+        coEvery { productDao.getAll() } answers { table.toList() }
         coEvery { productDao.upsertAll(any()) } coAnswers {
             table.clear()
             table.addAll(firstArg<List<ProductEntity>>())
@@ -106,14 +115,23 @@ class CatalogRepositoryTest {
         Response.success(wireResponse, okhttp3.Headers.headersOf("ETag", etag))
     }
 
-    private fun notModified304(): Response<CatalogProductsGet200Response> =
-        Response.error(304, "".toResponseBody("application/json".toMediaType()))
+    private fun notModified304(): Response<CatalogProductsGet200Response> {
+        // Response.error(code, body) rejects codes < 400, so build the raw
+        // OkHttp 304 and wrap it (304 is not "successful", which is allowed).
+        val raw = okhttp3.Response.Builder()
+            .request(okhttp3.Request.Builder().url("http://localhost/").build())
+            .code(304)
+            .message("Not Modified")
+            .protocol(okhttp3.Protocol.HTTP_1_1)
+            .build()
+        return Response.error("".toResponseBody("application/json".toMediaType()), raw)
+    }
 
     @Test
     fun `200 upserts the fetched rows and stores the new ETag`() = runTest {
         stubApi(ok200())
         repository.refreshNow()
-        verify(exactly = 1) { productDao.upsertAll(any()) }
+        coVerify(exactly = 1) { productDao.upsertAll(any()) }
         assertEquals(listOf(wireProduct), table.map { it.toDomain() })
         assertEquals(NEW_ETAG, writtenPrefs[DataStoreKeys.CATALOG_ETAG])
     }
@@ -133,8 +151,8 @@ class CatalogRepositoryTest {
     fun `304 extends freshness instead of re-downloading the body`() = runTest {
         stubApi(notModified304())
         repository.refreshNow()
-        verify(exactly = 0) { productDao.upsertAll(any()) }
-        verify(exactly = 1) { productDao.extendFreshness(any()) }
+        coVerify(exactly = 0) { productDao.upsertAll(any()) }
+        coVerify(exactly = 1) { productDao.extendFreshness(any()) }
     }
 
     @Test
@@ -146,7 +164,7 @@ class CatalogRepositoryTest {
             )
         } throws java.io.IOException("offline")
         repository.refreshNow() // must not throw
-        verify(exactly = 0) { productDao.upsertAll(any()) }
+        coVerify(exactly = 0) { productDao.upsertAll(any()) }
     }
 
     @Test
@@ -220,7 +238,7 @@ class CatalogRepositoryTest {
         coEvery { api.getProduct(any()) } throws java.io.IOException("offline")
 
         assertNull(repository.getProduct("missing-sweet"))
-        verify(exactly = 0) { productDao.upsertAll(any()) }
+        coVerify(exactly = 0) { productDao.upsertAll(any()) }
     }
 
     private companion object {

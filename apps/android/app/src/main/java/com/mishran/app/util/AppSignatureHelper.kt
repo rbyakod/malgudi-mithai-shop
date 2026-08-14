@@ -45,7 +45,7 @@ object AppSignatureHelper {
         val signatures = context.packageManager
             .getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
             .signatures
-        val cert = signatures.firstOrNull() ?: return null
+        val cert = signatures?.firstOrNull() ?: return null
         MessageDigest.getInstance("SHA-1").digest(cert.toByteArray())
             .joinToString("") { "%02x".format(it) }
     } catch (e: Exception) {

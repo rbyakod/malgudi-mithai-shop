@@ -248,14 +248,16 @@ fun MishranAppRoot() {
             ) { entry ->
                 // Task 11.1: serves the Orders tab, Track-order CTA, and the
                 // mishran://order/{id} push deep link. Support CTA dials the
-                // support line (placeholder number until launch).
+                // support line (placeholder number until launch). NavBackStackEntry's
+                // context is private, so grab the composition's instead.
+                val context = LocalContext.current
                 OrderDetailScreen(
                     onCallSupport = {
                         val dial = android.content.Intent(
                             android.content.Intent.ACTION_DIAL,
                             android.net.Uri.parse("tel:${com.mishran.app.ui.orders.SUPPORT_PHONE}"),
                         )
-                        entry.context?.startActivity(dial)
+                        context.startActivity(dial)
                     },
                 )
             }

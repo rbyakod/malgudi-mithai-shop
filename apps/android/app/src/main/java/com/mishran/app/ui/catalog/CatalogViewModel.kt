@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapIndexed
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -76,11 +75,16 @@ class CatalogViewModel @Inject constructor(
 
     val uiState: StateFlow<CatalogUiState> = refreshTrigger
         .flatMapLatest { pass ->
+            // Flow has no mapIndexed; count emissions inline instead (the
+            // counter restarts with each pass because the flow is cold).
+            var index = 0
             getCatalog(force = pass > 0)
-                .mapIndexed { index, products ->
+                .map { products ->
                     // Emit #0 is the Room cache; anything after is post-refresh.
-                    if (index == 0) CatalogUiState.Cached(products)
+                    val state = if (index == 0) CatalogUiState.Cached(products)
                     else CatalogUiState.Fresh(products)
+                    index++
+                    state
                 }
                 .catch { e ->
                     emit(CatalogUiState.Error(e.message ?: "Could not load catalog"))

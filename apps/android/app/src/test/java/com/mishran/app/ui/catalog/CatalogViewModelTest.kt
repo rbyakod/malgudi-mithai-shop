@@ -212,7 +212,7 @@ class CatalogViewModelTest {
 
 /** Collect the flow in the background so stateIn's WhileSubscribed starts. */
 private fun <T> kotlinx.coroutines.flow.StateFlow<T>.collectInTest(
-    scope: kotlinx.coroutines.CoroutineScope,
+    scope: kotlinx.coroutines.test.TestScope,
 ) {
-    scope.launch { this@collectInTest.collect() }
+    scope.backgroundScope.launch { this@collectInTest.collect { } }
 }

@@ -7,6 +7,7 @@ package com.mishran.app.ui.checkout.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,7 +15,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Row
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,7 +59,9 @@ fun AddressPicker(
                     // second clickable (Task 12.4).
                     .semantics(mergeDescendants = true) {
                         role = Role.RadioButton
-                        selected = isSelected
+                        // Qualify: the bare name would resolve to the
+                        // `selected: Address?` parameter above.
+                        this.selected = isSelected
                     },
             ) {
                 Row(

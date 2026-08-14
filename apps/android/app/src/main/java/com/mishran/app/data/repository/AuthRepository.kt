@@ -124,7 +124,7 @@ class AuthRepository @Inject constructor(
             api.refresh("Bearer $refresh").data
         } catch (e: Exception) {
             return false
-        }
+        } ?: return false
         dataStore.edit {
             it[DataStoreKeys.ACCESS_TOKEN] = refreshed.accessToken
             it[DataStoreKeys.REFRESH_TOKEN] = refreshed.refreshToken

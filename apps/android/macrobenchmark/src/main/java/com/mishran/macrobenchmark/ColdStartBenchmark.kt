@@ -14,7 +14,7 @@ import androidx.benchmark.macro.FrameTimingMetric
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.StartupTimingMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
-import androidx.benchmark.macro.tracesection.trace
+import androidx.tracing.Trace
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -40,7 +40,8 @@ class ColdStartBenchmark {
         // Wait for the post-splash content — Home's headline — so the
         // measured window covers the real interaction-ready point.
         device.waitForIdle()
-        trace("cold-start-complete") {}
+        Trace.beginSection("cold-start-complete")
+        Trace.endSection()
     }
 
     private companion object {

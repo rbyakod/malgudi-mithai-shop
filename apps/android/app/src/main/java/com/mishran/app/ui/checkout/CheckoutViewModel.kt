@@ -64,7 +64,7 @@ data class CheckoutUiState(
     val paymentMethod: PaymentMethod = PaymentMethod.UPI,
 ) {
     val isFreshTier: Boolean
-        get() = (serviceability as? ServiceabilityState.Serviceable)?.tier == TIER_FRESH
+        get() = (serviceability as? ServiceabilityState.Serviceable)?.tier == CheckoutViewModel.TIER_FRESH
 
     /** Address chosen, serviceable, and (fresh tier) a slot picked. */
     val canPlaceOrder: Boolean
@@ -120,7 +120,10 @@ class CheckoutViewModel @Inject constructor(
                     ?.let { selected -> addresses.firstOrNull { it.id == selected.id } }
                 state.copy(
                     addresses = addresses,
-                    selectedAddress = stillThere ?: addresses.firstOrNull(),
+                    // Prefer the flagged default; else the first listed.
+                    selectedAddress = stillThere
+                        ?: addresses.firstOrNull { it.isDefault == true }
+                        ?: addresses.firstOrNull(),
                 )
             }
             _state.value.selectedAddress?.let { checkServiceability(it) }

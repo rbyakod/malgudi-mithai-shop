@@ -57,7 +57,15 @@ class PlaceOrderUseCaseTest {
     private val snapshot = CartSnapshot(
         snapshotId = java.util.UUID.fromString("00000000-0000-0000-0000-000000000001"),
         customerId = "c1",
-        items = listOf(CartSnapshotItem(productId = "p1", slug = "kaju-katli", name = "Kaju Katli", quantity = 2)),
+        items = listOf(
+            CartSnapshotItem(
+                productId = "p1",
+                slug = "kaju-katli",
+                name = "Kaju Katli",
+                quantity = 2,
+                freshnessStatus = CartSnapshotItem.FreshnessStatus.madeMinusDaily,
+            ),
+        ),
         totals = OrderTotals(144000, 0, 0, 0, 144000),
         pincodeTier = "fresh",
         expiresAt = "2026-08-13T20:00:00Z",
@@ -227,7 +235,7 @@ class PlaceOrderUseCaseTest {
         val keys = mutableListOf<String>()
         coVerify(atLeast = 2) { api.createOrder(any(), any(), capture(keys)) }
         assertNotEquals(keys[0], keys[1])
-        assertTrue((second as CreateOrderResult.NeedsPayment).request.idempotacencyKey.isNotEmpty())
+        assertTrue((second as CreateOrderResult.NeedsPayment).request.idempotencyKey.isNotEmpty())
     }
 
     private fun paymentRequest() = PaymentRequest(
@@ -243,10 +251,10 @@ class PlaceOrderUseCaseTest {
         customerId = "c1",
         items = emptyList(),
         totals = OrderTotals(144000, 0, 0, 0, 144000),
-        status = Order.Status.pendingPayment,
+        status = Order.Status.pending_payment,
         paymentStatus = Order.PaymentStatus.paid,
         deliveryAddressId = "addr-1",
-        source = Order.Source.mobileApp,
+        source = Order.Source.mobileMinusAndroid,
         createdAt = "2026-08-13T10:00:00Z",
         updatedAt = "2026-08-13T10:05:00Z",
     )

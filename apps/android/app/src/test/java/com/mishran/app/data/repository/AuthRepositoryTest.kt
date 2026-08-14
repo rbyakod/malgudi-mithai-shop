@@ -11,6 +11,7 @@ package com.mishran.app.data.repository
 
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.mutablePreferencesOf
 import androidx.datastore.core.DataStore
 import com.mishran.app.data.local.DataStoreKeys
@@ -52,9 +53,17 @@ class AuthRepositoryTest {
         repository = AuthRepository(api, dataStore, secureTokenStore, database)
 
         every { dataStore.data } returns flowOf(writtenPrefs)
-        coEvery { dataStore.edit(any()) } coAnswers {
-            firstArg<suspend (MutablePreferences) -> Unit>().invoke(writtenPrefs)
-            writtenPrefs
+        // Stub the member (edit{} delegates to updateData) — mocking the
+        // extension itself confuses MockK's signature matching. edit applies
+        // its transform to a copy, so fold the result back into writtenPrefs.
+        coEvery { dataStore.updateData(any()) } coAnswers {
+            val updated = firstArg<suspend (Preferences) -> Preferences>().invoke(writtenPrefs)
+            writtenPrefs.clear()
+            @Suppress("UNCHECKED_CAST")
+            updated.asMap().forEach { (key, value) ->
+                writtenPrefs[key as Preferences.Key<Any>] = value
+            }
+            updated
         }
         coEvery { secureTokenStore.clear() } just Runs
         coEvery { database.clearAllTables() } just Runs
@@ -64,9 +73,9 @@ class AuthRepositoryTest {
     fun `clearSession drops the persisted session keys`() = runTest {
         repository.clearSession()
 
-        assertFalse(writtenPrefs.containsKey(DataStoreKeys.ACCESS_TOKEN))
-        assertFalse(writtenPrefs.containsKey(DataStoreKeys.REFRESH_TOKEN))
-        assertFalse(writtenPrefs.containsKey(DataStoreKeys.CUSTOMER_ID))
+        assertFalse(writtenPrefs.contains(DataStoreKeys.ACCESS_TOKEN))
+        assertFalse(writtenPrefs.contains(DataStoreKeys.REFRESH_TOKEN))
+        assertFalse(writtenPrefs.contains(DataStoreKeys.CUSTOMER_ID))
     }
 
     @Test
