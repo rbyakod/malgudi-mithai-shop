@@ -979,6 +979,12 @@ sleep 3 &amp;&amp; systemctl status mithai-shop --no-pager</code></pre></div>
       <tr><td><code>next build</code> compiles fine, then <code>Failed to collect page data</code> mentioning a route (often <code>/[locale]/…/[slug]</code> or an <code>/api/cron/…</code> route) with a Mongo error or an empty message</td>
           <td>The build itself connects to MongoDB — detail pages run <code>generateStaticParams</code> (catalog queries) while collecting page data</td>
           <td><code>systemctl status mongod</code>, then the <code>mongosh "$(grep '^MONGODB_URI=' .env …)"</code> smoke test in step 7.1 must return <code>{ ok: 1 }</code>. Common causes: <code>rs0</code> never initiated (step 4.3), wrong password in the URI, DB user created outside the <code>admin</code> DB (step 4.4), or special characters in the password not percent-encoded (<code>@</code> → <code>%40</code>, <code>:</code> → <code>%3A</code>)</td></tr>
+      <tr><td><code>cannot connect to MongoDB. Details: URI option "aut" cannot be specified with no value</code> (or a similar cut-off option name)</td>
+          <td>The <code>MONGODB_URI</code> line in <code>.env</code> got truncated mid-paste — it ends at <code>&amp;aut…</code> instead of <code>&amp;authSource=admin</code>. Common when pasting into nano with line-wrap, or echoing the URI unquoted where <code>&amp;</code> splits the shell command</td>
+          <td>Check with <code>grep '^MONGODB_URI=' .env</code>, then rewrite the line with the <code>sed -i … + printf … &gt;&gt; .env</code> pattern (quotes the URI, immune to paste damage), and re-run the ping smoke test</td></tr>
+      <tr><td><code>WARN: No email adapter provided. Email will be written to console.</code></td>
+          <td>Expected — no email transport is configured while <code>RESEND_API_KEY</code> is a placeholder</td>
+          <td>Nothing; it's informational. Goes away when you add a real Resend key and wire the adapter</td></tr>
       <tr><td><code>next build</code> dies with "Killed" or exit 137</td>
           <td>Out of RAM</td>
           <td>Add the swap from step 03; rebuild</td></tr>
