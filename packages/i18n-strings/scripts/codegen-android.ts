@@ -6,7 +6,14 @@ const cwd = process.cwd();
 const files = readdirSync(cwd).filter((f) => f.endsWith('.json') && f !== 'package.json');
 
 function escapeXml(s: string): string {
-  return s.replace(/[<>&'"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c] as string));
+  // XML entities are NOT enough for Android: the resource merger decodes
+  // them back to raw characters before aapt2 runs, and aapt2 then rejects
+  // unescaped ' (and bare " toggles quoting). Emit Android escapes for
+  // those two; XML entities for < > &.
+  return s
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '\\"')
+    .replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c] as string));
 }
 
 function toAndroidResourceName(key: string): string {

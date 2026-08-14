@@ -8,10 +8,10 @@
   <string name="nav_account">Account</string>
   <string name="nav_cart">Cart</string>
   <string name="auth_phone_title">Enter your phone number</string>
-  <string name="auth_phone_subtitle">We&apos;ll send you a 6-digit code</string>
+  <string name="auth_phone_subtitle">We\'ll send you a 6-digit code</string>
   <string name="auth_phone_placeholder">+91 90000 00000</string>
   <string name="auth_phone_cta">Send OTP</string>
-  <string name="auth_otp_title">Verify it&apos;s you</string>
+  <string name="auth_otp_title">Verify it\'s you</string>
   <string name="auth_otp_subtitle">Enter the code we sent to {phone}</string>
   <string name="auth_otp_placeholder">6-digit code</string>
   <string name="auth_otp_cta">Verify</string>
@@ -62,7 +62,7 @@
   <string name="checkout_payment_netbanking">Netbanking</string>
   <string name="checkout_payment_wallet">Wallet</string>
   <string name="checkout_pay">Pay {amount}</string>
-  <string name="checkout_error_pincode_not_serviceable">We can&apos;t deliver to {pincode} yet.</string>
+  <string name="checkout_error_pincode_not_serviceable">We can\'t deliver to {pincode} yet.</string>
   <string name="checkout_error_cart_changed">Some items changed. Review and try again.</string>
   <string name="checkout_error_stock_insufficient">{name} only has {qty} left.</string>
   <string name="checkout_error_payment_failed">Payment failed. If money was deducted, it will be refunded in 5-7 days.</string>
@@ -101,9 +101,9 @@
   <string name="common_confirm">Confirm</string>
   <string name="common_loading">Loading…</string>
   <string name="common_error_generic">Something went wrong. Trace: {traceId}</string>
-  <string name="common_offline_banner">You&apos;re offline. Showing cached data.</string>
+  <string name="common_offline_banner">You\'re offline. Showing cached data.</string>
   <string name="push_order_confirmed_title">Order confirmed</string>
-  <string name="push_order_confirmed_body">We&apos;ve received your order #{id}.</string>
+  <string name="push_order_confirmed_body">We\'ve received your order #{id}.</string>
   <string name="push_order_packed_title">Packed with care</string>
   <string name="push_order_packed_body">Your order #{id} is being prepped.</string>
   <string name="push_order_dispatched_title">On the way</string>
