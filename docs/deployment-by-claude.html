@@ -296,6 +296,36 @@ curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -   <span class=
 sudo apt install -y nodejs
 node -v     <span class="c"># now expect v22.x.y</span></code></pre></div>
   <div class="callout warn"><b>If other apps on this VPS depend on the old Node version:</b> don't upgrade system-wide. Install Node 22 alongside via <a href="https://github.com/nvm-sh/nvm">nvm</a> instead (<code>nvm install 22</code>), and point the systemd unit's <code>ExecStart</code> at that Node's <code>pnpm</code> path. The rest of this runbook is unchanged.</div>
+
+  <h4>Node "was 22, now reports 20.x" — how to diagnose and fix</h4>
+  <p class="lede">This means something replaced or shadowed the Node 22 install — almost always the distro's own <code>nodejs</code> package getting (re)installed from Ubuntu's repo, or nvm taking precedence in PATH. Two commands tell you which; run them in the admin shell.</p>
+  <div class="code-block"><div class="code-title"><span>① Diagnose: which node, where from</span><button class="copy">copy</button></div>
+<pre><code>which -a node            <span class="c"># every node on PATH, in order — the FIRST line wins</span>
+ls -l $(which node)      <span class="c"># symlink target reveals the real install</span>
+apt policy nodejs        <span class="c"># "Installed:" + which repo the candidate comes from</span>
+
+<span class="c"># Reading the results:</span>
+<span class="c"># • which -a shows /home/USER/.nvm/... first  → nvm is shadowing. Fix: nvm alias default 22 (or uninstall nvm's node 20: nvm uninstall 20)</span>
+<span class="c"># • apt policy "Candidate: 20.x ... ubuntu"   → distro nodejs replaced NodeSource. Fix: ② below</span>
+<span class="c"># • apt policy "Candidate: 22.x ... deb.nodesource.com" → just a stale binary in PATH order; check ls -l output</span></code></pre></div>
+  <div class="code-block"><div class="code-title"><span>② Fix: reinstall Node 22 from NodeSource over the distro copy</span><button class="copy">copy</button></div>
+<pre><code>sudo apt remove -y nodejs                                   <span class="c"># remove the distro's node 20 (keeps nothing of it)</span>
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -   <span class="c"># re-add the NodeSource repo</span>
+sudo apt install -y nodejs
+node -v       <span class="c"># expect v22.x.y — if it still says 20: hash -r, or open a fresh SSH session</span>
+apt policy nodejs | head -4   <span class="c"># Candidate should now be 22.x from deb.nodesource.com</span></code></pre></div>
+  <div class="code-block"><div class="code-title"><span>③ After any Node swap: redo pnpm + reinstall native modules</span><button class="copy">copy</button></div>
+<pre><code><span class="c"># corepack/pnpm live inside Node's directory — a Node reinstall wipes them:</span>
+sudo corepack enable 2>/dev/null || sudo npm install -g pnpm
+corepack prepare pnpm@latest --activate
+hash -r &amp;&amp; pnpm -v
+sudo -iu mithai pnpm -v      <span class="c"># must also work for the app user</span>
+
+<span class="c"># sharp/argon2 compile against the Node they were installed under — rebuild:</span>
+sudo -iu mithai
+cd /opt/mithai-shop
+rm -rf node_modules &amp;&amp; pnpm install --frozen-lockfile</code></pre></div>
+  <p class="callout bad"><b>What likely caused it:</b> an <code>apt install …</code> or <code>apt upgrade</code> that pulled Ubuntu's <code>nodejs</code> as a dependency, or the NodeSource repo list being removed during a cleanup. After fixing, keep an eye out: if it happens again, check <code>ls /etc/apt/sources.list.d/</code> for the nodesource list and <code>sudo apt-mark hold nodejs</code> prevents surprise swaps.</p>
   <div class="code-block"><div class="code-title"><span>pnpm: check → pick a path by what exists</span><button class="copy">copy</button></div>
 <pre><code>pnpm -v
 <span class="c"># "10.x"/"11.x" → ✅ done, skip this block.</span>
@@ -799,6 +829,9 @@ sudo tar czf /root/media-$(date +%F).tgz -C /opt/mithai-shop media</code></pre><
       <tr><td><code>Command 'pnpm' not found</code></td>
           <td>pnpm never installed, or installed per-user only, or shell cache stale</td>
           <td>Follow the Path A / Path B block in step 03 (<code>corepack</code> if present, else <code>sudo npm install -g pnpm</code>), then <code>hash -r</code>. Must work as <code>mithai</code> too — test with <code>sudo -iu mithai pnpm -v</code></td></tr>
+      <tr><td><code>node -v</code> shows 20.x though 22 was installed before</td>
+          <td>Distro <code>nodejs</code> package reinstalled over NodeSource, or nvm shadowing PATH</td>
+          <td>Follow the "Node was 22, now reports 20.x" block in step 03: <code>which -a node</code> + <code>apt policy nodejs</code> to identify, then the remove/reinstall sequence; redo pnpm + <code>pnpm install</code> after</td></tr>
       <tr><td>App crash-loops; log shows <code>MongoServerSelectionError</code> or <code>replica set connection timed out</code></td>
           <td>Mongo not running, or <code>rs0</code> never initiated</td>
           <td><code>systemctl status mongod</code>; then <code>mongosh --eval 'rs.status()'</code> — if uninitialized, rerun the <code>rs.initiate()</code> from step 4.3</td></tr>
