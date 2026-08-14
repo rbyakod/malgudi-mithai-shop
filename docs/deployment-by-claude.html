@@ -135,7 +135,7 @@
   </div>
   <div class="side-meta">
     Host <strong>2.24.221.70</strong> (Ubuntu)<br>
-    URL <strong>mishran.roohib.com</strong><br>
+    URL <strong>mishran.pranavb.com</strong><br>
     App <strong>127.0.0.1:3000</strong> via systemd<br>
     DNS at <strong>GoDaddy</strong><br>
     Doc v3 — Claude, 2026-08-14
@@ -168,7 +168,7 @@
 <main>
 <header class="hero" id="overview">
   <div class="kicker">Deployment plan · family testing · detailed edition</div>
-  <h1>Publish Mishran to the Ubuntu VPS at mishran.roohib.com</h1>
+  <h1>Publish Mishran to the Ubuntu VPS at mishran.pranavb.com</h1>
   <p>Self-hosted deployment of the Next.js 16 + Payload CMS 3.87 storefront: local MongoDB on the VPS, app under systemd, Nginx reverse proxy, Let's Encrypt HTTPS. Every step below is written to be followed top-to-bottom — including the clicks in GoDaddy and GitHub, and what each command actually does. Verified against the repo's real configuration (env var names, Mongo replica-set requirement, pnpm workspace build, media storage).</p>
   <div class="chips">
     <span class="chip">Ubuntu VPS</span><span class="chip">Node 22 + pnpm</span>
@@ -176,7 +176,7 @@
     <span class="chip">Nginx (existing) + Certbot</span><span class="chip">Golden seed data</span>
   </div>
   <div class="arch">Family browser
-   │  https://mishran.roohib.com  (443, Let's Encrypt)
+   │  https://mishran.pranavb.com  (443, Let's Encrypt)
    ▼
  [ Nginx — already running, other subdomains ]
         ── proxy_pass ──►  127.0.0.1:3000
@@ -195,7 +195,7 @@
   <h2>Inputs needed</h2>
   <div class="grid">
     <div class="card"><h3>Access</h3><ul>
-      <li>GoDaddy account that manages <code>roohib.com</code> (for step 02).</li>
+      <li>GoDaddy account that manages <code>pranavb.com</code> (for step 02).</li>
       <li>SSH user for <code>2.24.221.70</code> (<code>root</code> or a sudo user) + its password or key.</li>
       <li>GitHub account <code>rbyakod</code> (to mint a read token in step 05).</li>
     </ul></div>
@@ -217,32 +217,34 @@
 <section id="dns">
   <span class="label">02 · Step one — in the browser, not the terminal</span>
   <h2>Create the subdomain at GoDaddy</h2>
-  <p class="lede">A subdomain is just a DNS record: it tells the world "ask <code>2.24.221.70</code> for anything named <code>mishran.roohib.com</code>". This is done once, in GoDaddy's DNS manager, and costs nothing.</p>
+  <p class="lede">A subdomain is just a DNS record: it tells the world "ask <code>2.24.221.70</code> for anything named <code>mishran.pranavb.com</code>". This is done once, in GoDaddy's DNS manager, and costs nothing.</p>
+
+  <p class="callout ok"><b>Already done:</b> <code>mishran.pranavb.com</code> resolves to <code>2.24.221.70</code> and the site is live (2026-08-14). This section stays as reference — for another subdomain or a future re-check.</p>
 
   <h4>Click-by-click</h4>
   <ol class="clicks">
     <li>Go to <b>godaddy.com</b> and sign in (top-right).</li>
     <li>Open <b>My Products</b> (account menu, top-right) and scroll to the <b>Domains</b> section.</li>
-    <li>Find <b>roohib.com</b> in the list. Do <i>not</i> click the domain name itself — instead click <b>DNS → Manage Zones</b> (or the <b>⋮ / Manage DNS</b> option next to it). You want the DNS Management page whose header reads <b>DNS Management | roohib.com</b>.</li>
+    <li>Find <b>pranavb.com</b> in the list. Do <i>not</i> click the domain name itself — instead click <b>DNS → Manage Zones</b> (or the <b>⋮ / Manage DNS</b> option next to it). You want the DNS Management page whose header reads <b>DNS Management | pranavb.com</b>.</li>
     <li>At the bottom of the records table click <b>Add New Record</b>. A blank row appears with dropdowns.</li>
     <li>Set <b>Type</b> to <code>A</code> (maps a name to an IPv4 address).</li>
-    <li>Set <b>Name</b> to <code>mishran</code> — GoDaddy shows it as <code>mishran.roohib.com</code> once saved. <i>Leave it as just <code>mishran</code>; typing the full domain creates a wrong nested name.</i></li>
+    <li>Set <b>Name</b> to <code>mishran</code> — GoDaddy shows it as <code>mishran.pranavb.com</code> once saved. <i>Leave it as just <code>mishran</code>; typing the full domain creates a wrong nested name.</i></li>
     <li>Set <b>Value</b> to <code>2.24.221.70</code> (the VPS IP).</li>
     <li>Leave <b>TTL</b> at <code>Default</code> (or set 600 seconds — shorter = faster changes later).</li>
     <li>Click <b>Save</b>. The record appears in the table.</li>
   </ol>
 
   <h4>Pre-flight — confirm GoDaddy is actually answering for this domain</h4>
-  <p class="lede">These checks matter only if <code>roohib.com</code>'s nameservers were ever pointed elsewhere (e.g. Cloudflare). On the same DNS Management page, the <b>Nameservers</b> box should list GoDaddy servers like <code>ns1.domaincontrol.com</code> / <code>ns2.domaincontrol.com</code>.</p>
+  <p class="lede">These checks matter only if <code>pranavb.com</code>'s nameservers were ever pointed elsewhere (e.g. Cloudflare). On the same DNS Management page, the <b>Nameservers</b> box should list GoDaddy servers like <code>ns1.domaincontrol.com</code> / <code>ns2.domaincontrol.com</code>.</p>
   <div class="callout warn"><b>If nameservers are NOT GoDaddy's</b> — for example Cloudflare's <code>*.ns.cloudflare.com</code> — then GoDaddy's DNS page is being ignored, and you must instead add the same A record (<code>mishran</code> → <code>2.24.221.70</code>, "DNS only", proxy off) in that provider's dashboard. The rest of this runbook is identical either way.</div>
 
   <h4>Verify propagation (from your Mac terminal)</h4>
   <div class="code-block"><div class="code-title"><span>Check the record is live — repeat every minute or two until it answers</span><button class="copy">copy</button></div>
-<pre><code>dig +short mishran.roohib.com
+<pre><code>dig +short mishran.pranavb.com
 <span class="c"># expect exactly: 2.24.221.70</span>
 
 <span class="c"># if empty at first, ask GoDaddy's nameservers directly (bypasses your Mac's cache):</span>
-dig +short mishran.roohib.com @ns1.domaincontrol.com</code></pre></div>
+dig +short mishran.pranavb.com @ns1.domaincontrol.com</code></pre></div>
   <p class="callout">Propagation is usually under 5 minutes for a brand-new record. Certbot in step 08 will fail until <code>dig</code> answers <code>2.24.221.70</code> — so do this step first, then keep going with the server steps while it settles.</p>
 </section>
 
@@ -573,8 +575,8 @@ CRON_SECRET=REPLACE_WITH_SECRET_3
 
 <span class="c"># public URLs — these are INLINED INTO THE BUNDLE AT BUILD TIME, so they must</span>
 <span class="c"># be correct BEFORE `pnpm build` (step 07)</span>
-NEXT_PUBLIC_SITE_URL=https://mishran.roohib.com
-NEXT_PUBLIC_API_BASE_URL=https://mishran.roohib.com/api/mobile/v1
+NEXT_PUBLIC_SITE_URL=https://mishran.pranavb.com
+NEXT_PUBLIC_API_BASE_URL=https://mishran.pranavb.com/api/mobile/v1
 NEXT_PUBLIC_APP_NAME=Mishran
 NEXT_PUBLIC_WHATSAPP_NUMBER=+91XXXXXXXXXX      <span class="c"># your WhatsApp business number, or leave as-is</span>
 
@@ -706,19 +708,19 @@ curl -I http://127.0.0.1:3000/en        <span class="c"># expect: HTTP/1.1 200 O
 
   <h4>8.1 Pre-flight</h4>
   <div class="code-block"><div class="code-title"><span>Confirm the name is free + see your layout convention</span><button class="copy">copy</button></div>
-<pre><code>grep -r server_name /etc/nginx/sites-enabled/   <span class="c"># mishran.roohib.com must NOT appear anywhere</span>
+<pre><code>grep -r server_name /etc/nginx/sites-enabled/   <span class="c"># mishran.pranavb.com must NOT appear anywhere</span>
 ls /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ <span class="c"># see where existing sites live</span>
 sudo systemctl status nginx --no-pager           <span class="c"># active (running)</span>
-dig +short mishran.roohib.com                   <span class="c"># 2.24.221.70 — step 02 must be live</span></code></pre></div>
+dig +short mishran.pranavb.com                   <span class="c"># 2.24.221.70 — step 02 must be live</span></code></pre></div>
   <p class="callout warn">If your existing sites live in <code>/etc/nginx/conf.d/*.conf</code> rather than <code>sites-available/</code>, create the Mishran file there instead and skip the symlink in 8.3 — follow whichever layout the server already uses.</p>
 
   <h4>8.2 The site file</h4>
-  <p class="lede"><code>sudo nano /etc/nginx/sites-available/mishran.roohib.com</code> and paste. What each directive does: <code>server_name</code> matches only this hostname (your other sites are unaffected); <code>client_max_body_size 25m</code> allows Payload admin image uploads (default 1m would reject them) — scoped to this site only; the <code>proxy_set_header</code> lines pass the visitor's real host/IP/scheme through; the <code>Upgrade</code>/<code>Connection</code> pair enables websockets if Next ever needs them.</p>
-  <div class="code-block"><div class="code-title"><span>/etc/nginx/sites-available/mishran.roohib.com</span><button class="copy">copy</button></div>
+  <p class="lede"><code>sudo nano /etc/nginx/sites-available/mishran.pranavb.com</code> and paste. What each directive does: <code>server_name</code> matches only this hostname (your other sites are unaffected); <code>client_max_body_size 25m</code> allows Payload admin image uploads (default 1m would reject them) — scoped to this site only; the <code>proxy_set_header</code> lines pass the visitor's real host/IP/scheme through; the <code>Upgrade</code>/<code>Connection</code> pair enables websockets if Next ever needs them.</p>
+  <div class="code-block"><div class="code-title"><span>/etc/nginx/sites-available/mishran.pranavb.com</span><button class="copy">copy</button></div>
 <pre><code>server {
     listen 80;
     listen [::]:80;
-    server_name mishran.roohib.com;
+    server_name mishran.pranavb.com;
 
     client_max_body_size 25m;
 
@@ -726,7 +728,7 @@ dig +short mishran.roohib.com                   <span class="c"># 2.24.221.70 �
         proxy_pass http://127.0.0.1:3000;      <span class="c"># → the systemd app</span>
         proxy_http_version 1.1;
 
-        proxy_set_header Host $host;           <span class="c"># e.g. mishran.roohib.com</span>
+        proxy_set_header Host $host;           <span class="c"># e.g. mishran.pranavb.com</span>
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;   <span class="c"># http now, https after certbot</span>
@@ -741,12 +743,12 @@ dig +short mishran.roohib.com                   <span class="c"># 2.24.221.70 �
 
   <h4>8.3 Enable + verify over HTTP</h4>
   <div class="code-block"><div class="code-title"><span>Test, then reload — reload (not restart) keeps other sites serving</span><button class="copy">copy</button></div>
-<pre><code>sudo ln -s /etc/nginx/sites-available/mishran.roohib.com /etc/nginx/sites-enabled/
+<pre><code>sudo ln -s /etc/nginx/sites-available/mishran.pranavb.com /etc/nginx/sites-enabled/
 
 sudo nginx -t                <span class="c"># syntax check. If this FAILS: fix the file; nothing has been applied yet.</span>
 sudo systemctl reload nginx  <span class="c"># only runs if -t passed (we chain with &amp;&amp; in practice)</span>
 
-curl -I http://mishran.roohib.com/en    <span class="c"># expect 200 — THEN continue to Certbot</span></code></pre></div>
+curl -I http://mishran.pranavb.com/en    <span class="c"># expect 200 — THEN continue to Certbot</span></code></pre></div>
 
   <h4>8.4 HTTPS via Certbot</h4>
   <p class="lede">Certbot proves to Let's Encrypt that you control the domain (via the now-working HTTP site), fetches a free certificate, rewrites <b>only the Mishran site file</b> to listen on 443, and adds an auto-renewal timer. Check for it first — if your other subdomains already have Let's Encrypt certs, Certbot is installed and this is just a new cert for a new name. It will ask a few questions — answers below.</p>
@@ -756,7 +758,7 @@ curl -I http://mishran.roohib.com/en    <span class="c"># expect 200 — THEN co
 <span class="c"># "command not found" → install:</span>
 sudo apt install -y certbot python3-certbot-nginx
 
-sudo certbot --nginx -d mishran.roohib.com</code></pre></div>
+sudo certbot --nginx -d mishran.pranavb.com</code></pre></div>
   <ol class="clicks">
     <li><b>Email address</b> — enter your email (used only for expiry notices; auto-renew makes expiries unlikely).</li>
     <li><b>Terms of Service</b> — type <code>A</code> and Enter to agree.</li>
@@ -766,7 +768,7 @@ sudo certbot --nginx -d mishran.roohib.com</code></pre></div>
   </ol>
   <div class="code-block"><div class="code-title"><span>Confirm renewal + final check</span><button class="copy">copy</button></div>
 <pre><code>sudo certbot renew --dry-run             <span class="c"># renews ALL certs incl. other subdomains — should all pass</span>
-curl -I https://mishran.roohib.com/en    <span class="c"># expect 200; http:// should 301-redirect to https://</span></code></pre></div>
+curl -I https://mishran.pranavb.com/en    <span class="c"># expect 200; http:// should 301-redirect to https://</span></code></pre></div>
   <p class="callout ok">Certbot edited only the mishran site file. Other subdomains' configs are untouched; if they use certificates from a different issuer that's fine — a hostname can only have one cert and this name is new. Because <code>NEXT_PUBLIC_SITE_URL</code> was already <code>https://…</code> before the build, no rebuild is needed.</p>
 </section>
 
@@ -821,7 +823,7 @@ sudo systemctl restart mithai-shop    <span class="c"># clears any cached pages 
   <h2>Create the first admin user</h2>
   <p class="lede">Payload's admin panel is at <code>/admin</code>. With an empty users collection it shows a "create first user" screen — that account is the admin. One-time.</p>
   <ol class="clicks">
-    <li>Open <b>https://mishran.roohib.com/admin</b>.</li>
+    <li>Open <b>https://mishran.pranavb.com/admin</b>.</li>
     <li>You'll see a <b>Create first user</b> form — enter your email, a <b>strong</b> password (this page is internet-facing), and your name.</li>
     <li>You land on the Payload dashboard. In the sidebar, open <b>Mithai Products</b> → expect ~76 rows. <b>Snack Products</b> 24, <b>QSR Menu Items</b> 20+, <b>Gift Boxes</b> 22.</li>
     <li>Open <b>Globals → Brand Settings</b> (or Brand) → brandName should read <b>Mishran</b> with the sun logo attached.</li>
@@ -834,8 +836,8 @@ sudo systemctl restart mithai-shop    <span class="c"># clears any cached pages 
   <span class="label">11 · Step ten</span>
   <h2>Verification checklist</h2>
   <ul class="checklist">
-    <li><code>dig +short mishran.roohib.com</code> → <code>2.24.221.70</code></li>
-    <li><code>https://mishran.roohib.com</code> redirects to <code>/en</code>; home page shows <b>Mishran</b> + sun logo (header + hero).</li>
+    <li><code>dig +short mishran.pranavb.com</code> → <code>2.24.221.70</code></li>
+    <li><code>https://mishran.pranavb.com</code> redirects to <code>/en</code>; home page shows <b>Mishran</b> + sun logo (header + hero).</li>
     <li><code>/en/mithai</code>, <code>/en/snacks</code>, <code>/en/qsr</code>, <code>/en/build-a-gift</code> render populated grids with images.</li>
     <li>Click any mithai card → detail page loads with gallery.</li>
     <li><code>/api/mithai-products?limit=1</code> → JSON with <code>totalDocs: 76</code> (snacks 24, qsr 20+, gifts 22+).</li>
@@ -852,7 +854,7 @@ sudo systemctl restart mithai-shop    <span class="c"># clears any cached pages 
   <h2>Share with family</h2>
   <div class="grid">
     <div class="card"><h3>What to send them</h3><ul>
-      <li>Just the one URL: <code>https://mishran.roohib.com</code> — works on phone and desktop, nothing to install.</li>
+      <li>Just the one URL: <code>https://mishran.pranavb.com</code> — works on phone and desktop, nothing to install.</li>
       <li>"Tap the language icon to switch English / हिन्दी / ಕನ್ನಡ."</li>
       <li>"Tap the palette icon to try the themes (Diwali saffron, wedding heritage, everyday sage…)."</li>
     </ul></div>
@@ -1030,8 +1032,8 @@ sleep 3 &amp;&amp; systemctl status mithai-shop --no-pager</code></pre></div>
           <td><code>systemctl status mithai-shop</code> + <code>journalctl -u mithai-shop -n 100</code></td></tr>
       <tr><td>Certbot fails / challenge error</td>
           <td>DNS not propagated, or HTTP step skipped</td>
-          <td><code>dig +short mishran.roohib.com</code> must return the IP and <code>curl -I http://…</code> must 200 <em>before</em> certbot</td></tr>
-      <tr><td><code>mishran.roohib.com</code> serves one of your other sites</td>
+          <td><code>dig +short mishran.pranavb.com</code> must return the IP and <code>curl -I http://…</code> must 200 <em>before</em> certbot</td></tr>
+      <tr><td><code>mishran.pranavb.com</code> serves one of your other sites</td>
           <td>A <code>default_server</code> block catches unknown Hosts, or a <code>server_name</code> typo</td>
           <td><code>grep -r server_name /etc/nginx/sites-enabled/</code> — a correctly spelled matching name always beats default_server</td></tr>
       <tr><td>Other subdomains broke after this deploy</td>
