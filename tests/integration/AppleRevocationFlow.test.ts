@@ -51,7 +51,7 @@ vi.mock("payload", () => ({
     create: vi.fn(
       async ({ collection, data }: { collection: string; data: Record<string, unknown> }) => {
         const col = (stores as Record<string, Map<string, Record<string, unknown>>>)[collection];
-        const id = data.jti ?? `row-${col.size + 1}`;
+        const id = String(data.jti ?? `row-${col.size + 1}`);
         col.set(id, { id, ...data });
         return { id, ...data };
       },

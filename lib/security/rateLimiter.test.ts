@@ -9,7 +9,7 @@ describe('RateLimiter', () => {
   let replSet: MongoMemoryReplSet;
 
   beforeEach(async () => {
-    replSet = await MongoMemoryReplSet.create({ replSetCount: 1 });
+    replSet = await MongoMemoryReplSet.create();
     client = new MongoClient(replSet.getUri());
     await client.connect();
     await client.db().dropDatabase();
