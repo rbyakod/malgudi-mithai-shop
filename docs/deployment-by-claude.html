@@ -522,6 +522,40 @@ pnpm install --frozen-lockfile     <span class="c"># exact versions from pnpm-lo
 <pre><code>openssl rand -hex 32     <span class="c"># → PAYLOAD_SECRET      (signs admin login sessions)</span>
 openssl rand -hex 32     <span class="c"># → REVALIDATE_SECRET  (protects the cache-refresh endpoint)</span></code></pre></div>
 
+  <h4>6.1.1 Required API keys (strict env validation)</h4>
+  <p class="lede">The app validates its environment at startup and during <code>pnpm build</code> (see <code>lib/config.ts</code>). Besides the values above it requires an RS256 JWT keypair plus a set of vendor keys. You don't need real vendor accounts for family testing — paste the placeholders below and browsing, cart, and /admin all work; only online payments, OTP SMS, and outgoing email stay disabled until you replace them with real keys.</p>
+  <div class="code-block"><div class="code-title"><span>Generate the JWT keypair and append the required block to .env (app shell)</span><button class="copy">copy</button></div>
+<pre><code>sudo -iu mithai
+cd /opt/mithai-shop
+
+<span class="c"># comment out any earlier empty RESEND_API_KEY line so the new one wins</span>
+sed -i 's/^RESEND_API_KEY=$/# RESEND_API_KEY= (was empty)/' .env
+
+<span class="c"># RS256 signing keypair — generated on this server, never leaves it</span>
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /tmp/jwt.key
+openssl pkey -in /tmp/jwt.key -pubout -out /tmp/jwt.key.pub
+
+{
+  echo ''
+  echo '# --- JWT (RS256) — generated above ---'
+  printf 'JWT_PRIVATE_KEY="%s"\n' "$(cat /tmp/jwt.key)"
+  printf 'JWT_PUBLIC_KEY="%s"\n'  "$(cat /tmp/jwt.key.pub)"
+  echo ''
+  echo '# --- vendor keys: placeholders for family testing ---'
+  echo '# real keys enable: Razorpay = online payment, MSG91 = OTP/order SMS,'
+  echo '# Resend = lead-notification email. Everything else works without them.'
+  echo 'RAZORPAY_KEY_ID=rzp_test_placeholder'
+  echo 'RAZORPAY_KEY_SECRET=placeholder'
+  echo 'RAZORPAY_WEBHOOK_SECRET=placeholder'
+  echo 'MSG91_AUTH_KEY=placeholder'
+  echo 'MSG91_SENDER_ID=MISHRN'
+  echo 'MSG91_TEMPLATE_OTP=placeholder'
+  echo 'RESEND_API_KEY=placeholder'
+} >> .env
+
+rm /tmp/jwt.key /tmp/jwt.key.pub</code></pre></div>
+  <p class="callout note"><b>Why the quotes matter:</b> the PEM must be wrapped in double quotes across multiple lines exactly as the script writes it — both <code>next build</code> and the seed scripts (<code>node --env-file</code>) parse quoted multiline values; a single-line <code>\n</code>-escaped key will be rejected by the crypto layer.</p>
+
   <h4>6.2 Write the file</h4>
   <p class="lede">Do this as the app user so ownership is right from the start: <code>sudo -iu mithai</code>, then <code>nano /opt/mithai-shop/.env</code>, paste, edit the three REPLACE values, save (<code>Ctrl-O</code>, Enter, <code>Ctrl-X</code>). Or use the heredoc below.</p>
   <div class="code-block"><div class="code-title"><span>/opt/mithai-shop/.env — full contents</span><button class="copy">copy</button></div>
@@ -542,14 +576,16 @@ NEXT_PUBLIC_API_BASE_URL=https://mishran.roohib.com/api/mobile/v1
 NEXT_PUBLIC_APP_NAME=Mishran
 NEXT_PUBLIC_WHATSAPP_NUMBER=+91XXXXXXXXXX      <span class="c"># your WhatsApp business number, or leave as-is</span>
 
-<span class="c"># lead-notification emails — leave EMPTY for the family test; leads are also</span>
-<span class="c"># always visible inside /admin, so nothing is lost by leaving these blank</span>
+<span class="c"># lead-notification emails — RESEND_API_KEY placeholder set by step 6.1.1;</span>
+<span class="c"># leads are always saved and visible inside /admin regardless</span>
 LEADS_INBOX=
-RESEND_API_KEY=
+RESEND_API_KEY=placeholder
 
 <span class="c"># analytics — leave empty for private testing</span>
 NEXT_PUBLIC_GA4_ID=
 NEXT_PUBLIC_META_PIXEL_ID=</code></pre></div>
+
+  <p class="callout note"><b>The step 6.1.1 block is not optional.</b> Without it, <code>pnpm build</code> fails with a <code>[ZodError]</code> listing <code>payloadSecret</code>, <code>jwtPrivateKey</code>, <code>razorpayKeyId</code>, etc. — the build compiles first and only fails at "Collecting page data".</p>
 
   <h4>6.3 Lock it down</h4>
   <div class="code-block"><div class="code-title"><span>Owner-only readable (admin shell)</span><button class="copy">copy</button></div>
@@ -566,7 +602,10 @@ sudo chmod 600 /opt/mithai-shop/.env      <span class="c"># rw for owner, nothin
       <tr><td><code>NEXT_PUBLIC_SITE_URL</code></td><td>Canonical URL used by sitemap, robots, and structured data. Must be the final https URL.</td></tr>
       <tr><td><code>NEXT_PUBLIC_API_BASE_URL</code></td><td>Where the mobile apps' API advertises itself. Same host, <code>/api/mobile/v1</code> path.</td></tr>
       <tr><td><code>NEXT_PUBLIC_WHATSAPP_NUMBER</code></td><td>Pre-fills the contact/WhatsApp deep-links shown in the UI.</td></tr>
-      <tr><td><code>LEADS_INBOX</code> / <code>RESEND_API_KEY</code></td><td>Where enquiry-form submissions get emailed. Empty = no email, but every submission is still saved and viewable in /admin.</td></tr>
+      <tr><td><code>LEADS_INBOX</code> / <code>RESEND_API_KEY</code></td><td>Where enquiry-form submissions get emailed. Placeholder = no email, but every submission is still saved and viewable in /admin.</td></tr>
+      <tr><td><code>JWT_PRIVATE_KEY</code> / <code>JWT_PUBLIC_KEY</code></td><td>RS256 keypair that signs customer login tokens (the mobile API). Generated on the server by step 6.1.1; rotating it logs everyone out.</td></tr>
+      <tr><td><code>RAZORPAY_*</code></td><td>Online payment credentials. Placeholders disable checkout payment — catalog, cart, and admin are unaffected.</td></tr>
+      <tr><td><code>MSG91_*</code></td><td>SMS credentials for OTP login and order-status texts. Placeholders disable OTP SMS.</td></tr>
     </tbody>
   </table>
   <p class="callout warn"><b>Order matters:</b> set the <code>NEXT_PUBLIC_*</code> values before the first build. Changing them later requires <code>pnpm build</code> again — they're compiled into the client bundle, not read at runtime.</p>
@@ -842,6 +881,9 @@ sudo tar czf /root/media-$(date +%F).tgz -C /opt/mithai-shop media</code></pre><
       <tr><td><code>Authentication failed</code> (Mongo code 13) in app logs</td>
           <td>Wrong password in <code>MONGODB_URI</code>, or user created in the wrong DB</td>
           <td>Redo step 4.4 exactly (user goes in the <code>admin</code> DB); rerun the step 4.4 smoke test; restart app</td></tr>
+      <tr><td><code>next build</code> compiles fine, then <code>Failed to collect page data</code> with a <code>[ZodError]</code> listing <code>payloadSecret</code>, <code>jwtPrivateKey</code>, <code>razorpayKeyId</code>, <code>msg91AuthKey</code>, <code>resendApiKey</code>…</td>
+          <td><code>.env</code> is missing the required-keys block — the app strictly validates its environment during build (by design, so a broken config never ships silently)</td>
+          <td>Run the step 6.1.1 block (generates the JWT keypair + appends the vendor-key placeholders), then rebuild</td></tr>
       <tr><td><code>next build</code> dies with "Killed" or exit 137</td>
           <td>Out of RAM</td>
           <td>Add the swap from step 03; rebuild</td></tr>
