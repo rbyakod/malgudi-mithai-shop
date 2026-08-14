@@ -192,7 +192,7 @@
     <div class="card"><h3>Server</h3><ul>
       <li>≥ 2 GB RAM (or add swap — <code>next build</code> is memory-hungry; see troubleshooting).</li>
       <li>Ports 80/443 open; outbound HTTPS allowed (build + seed fetch images from CDNs).</li>
-      <li>Nginx may already be installed — rerunning installs is harmless.</li>
+      <li>Nginx is <b>already installed and serving other subdomains</b> — this runbook only adds one more site to it.</li>
     </ul></div>
     <div class="card"><h3>Secrets to generate</h3><ul>
       <li><code>PAYLOAD_SECRET</code> — <code>openssl rand -hex 32</code></li>
@@ -222,7 +222,11 @@
 <pre><code>ssh root@2.24.221.70   <span class="c"># or your sudo user</span></code></pre></div>
   <div class="code-block"><div class="code-title"><span>Base packages (incl. build tools for sharp/argon2 native modules)</span><button class="copy">copy</button></div>
 <pre><code>sudo apt update &amp;&amp; sudo apt upgrade -y
-sudo apt install -y git curl ca-certificates build-essential nginx ufw</code></pre></div>
+<span class="c"># nginx is ALREADY installed and serving other subdomains on this VPS —
+# list it in the install line only if a fresh server ever needs it; here we
+# just verify it instead of reinstalling:</span>
+sudo apt install -y git curl ca-certificates build-essential ufw
+sudo nginx -v &amp;&amp; sudo systemctl status nginx --no-pager</code></pre></div>
   <div class="code-block"><div class="code-title"><span>Node 22 + pnpm (match local dev: Node 22.x, pnpm 11.x)</span><button class="copy">copy</button></div>
 <pre><code>curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt install -y nodejs
@@ -396,7 +400,12 @@ curl -I http://127.0.0.1:3000/en   <span class="c"># expect 200</span></code></p
 <section id="nginx">
   <span class="label">08 · Step seven</span>
   <h2>Nginx reverse proxy + HTTPS</h2>
-  <p class="lede"><code>client_max_body_size 25m</code> matters — Payload admin image uploads go through this limit (the seed images live on disk already, but your own uploads via /admin need headroom).</p>
+  <p class="lede">Nginx is already running on this VPS with other subdomains — <b>this step only adds one more site file; it touches nothing existing.</b> The new config goes in its own file under <code>sites-available</code>, exactly like your other subdomains, so the other sites keep serving throughout. <code>client_max_body_size 25m</code> matters — Payload admin image uploads go through this limit (seed images are already on disk, but your own /admin uploads need headroom). It's scoped to this site only, so it won't relax limits on your other subdomains.</p>
+  <div class="code-block"><div class="code-title"><span>Pre-flight: confirm the name is free and see how existing sites are laid out</span><button class="copy">copy</button></div>
+<pre><code>grep -r server_name /etc/nginx/sites-enabled/   <span class="c"># mishran.roohib.com must NOT already appear</span>
+ls /etc/nginx/sites-enabled/                     <span class="c"># see the existing pattern (sites-enabled vs conf.d)</span>
+sudo systemctl status nginx --no-pager           <span class="c"># active (running)</span></code></pre></div>
+  <p class="callout warn">If your existing sites live in <code>/etc/nginx/conf.d/*.conf</code> instead of <code>sites-available/</code>, put the Mishran file there with the same content and skip the <code>ln -s</code> step — pick whichever layout the server already uses so everything stays consistent.</p>
   <div class="code-block"><div class="code-title"><span>/etc/nginx/sites-available/mishran.roohib.com</span><button class="copy">copy</button></div>
 <pre><code>server {
     listen 80;
@@ -421,18 +430,18 @@ curl -I http://127.0.0.1:3000/en   <span class="c"># expect 200</span></code></p
         proxy_send_timeout 120s;
     }
 }</code></pre></div>
-  <div class="code-block"><div class="code-title"><span>Enable + verify HTTP</span><button class="copy">copy</button></div>
+  <div class="code-block"><div class="code-title"><span>Enable + verify HTTP (reload, never restart — other sites keep serving)</span><button class="copy">copy</button></div>
 <pre><code>sudo ln -s /etc/nginx/sites-available/mishran.roohib.com /etc/nginx/sites-enabled/
 sudo nginx -t &amp;&amp; sudo systemctl reload nginx
 
 curl -I http://mishran.roohib.com/en   <span class="c"># expect 200 — THEN do Certbot</span></code></pre></div>
   <div class="code-block"><div class="code-title"><span>Certbot (only after DNS + HTTP both work)</span><button class="copy">copy</button></div>
-<pre><code>sudo apt install -y certbot python3-certbot-nginx
+<pre><code>sudo apt install -y certbot python3-certbot-nginx   <span class="c"># no-op if already installed</span>
 sudo certbot --nginx -d mishran.roohib.com
-sudo certbot renew --dry-run        <span class="c"># auto-renew is a systemd timer — just confirm</span>
+sudo certbot renew --dry-run        <span class="c"># renews ALL certs incl. existing subdomains — should pass</span>
 
 curl -I https://mishran.roohib.com/en   <span class="c"># expect 200</span></code></pre></div>
-  <p class="callout ok">Certbot rewrites the site to 443 + redirect automatically. Since <code>NEXT_PUBLIC_SITE_URL</code> was already <code>https://…</code> before the build, no rebuild is needed.</p>
+  <p class="callout ok">Certbot edits <b>only the mishran site file</b> (adding 443 + redirect) — your other subdomains' configs are untouched. If some of them already use certificates from a different issuer, that's fine; a name can only have one cert at a time and this one is new. Since <code>NEXT_PUBLIC_SITE_URL</code> was already <code>https://…</code> before the build, no rebuild is needed.</p>
 </section>
 
 <section id="seed">
@@ -558,6 +567,12 @@ sudo tar czf /root/media-$(date +%F).tgz /opt/mithai-shop/media</code></pre></di
       <tr><td>Certbot fails / challenge error</td>
           <td>DNS not propagated or port 80 blocked</td>
           <td><code>dig +short mishran.roohib.com</code>; <code>sudo ufw status</code>; retry after DNS resolves</td></tr>
+      <tr><td><code>mishran.roohib.com</code> serves one of your other sites</td>
+          <td>Another server block is set as <code>default_server</code>, or <code>server_name</code> typo'd</td>
+          <td><code>grep -r server_name /etc/nginx/sites-enabled/</code> — confirm the mishran block exists and matches exactly; if some other block is <code>default_server</code>, that only catches unknown Hosts, so a matching name wins once spelled right</td></tr>
+      <tr><td>Other subdomains broke after this deploy</td>
+          <td><code>nginx -t</code> failed silently and an old config was left half-applied</td>
+          <td><code>sudo nginx -t</code> must pass <em>before</em> reload — the runbook chains them; if it ever fails, reload never happened, fix the syntax in the mishran file only</td></tr>
       <tr><td>Product images missing on cards</td>
           <td>Seed 429-skips (Wikimedia) or pages still ISR-cached</td>
           <td>Re-run <code>pnpm seed:catalog</code>; then <code>sudo systemctl restart mithai-shop</code></td></tr>
