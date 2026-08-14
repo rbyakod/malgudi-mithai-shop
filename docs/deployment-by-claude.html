@@ -970,9 +970,9 @@ sleep 3 &amp;&amp; systemctl status mithai-shop --no-pager</code></pre></div>
       <tr><td>App crash-loops; log shows <code>MongoServerSelectionError</code> or <code>replica set connection timed out</code></td>
           <td>Mongo not running, or <code>rs0</code> never initiated</td>
           <td><code>systemctl status mongod</code>; then <code>mongosh --eval 'rs.status()'</code> — if uninitialized, rerun the <code>rs.initiate()</code> from step 4.3</td></tr>
-      <tr><td><code>Authentication failed</code> (Mongo code 13) in app logs</td>
-          <td>Wrong password in <code>MONGODB_URI</code>, or user created in the wrong DB</td>
-          <td>Redo step 4.4 exactly (user goes in the <code>admin</code> DB); rerun the step 4.4 smoke test; restart app</td></tr>
+      <tr><td><code>Authentication failed</code> (Mongo code 13 / MongoServerError) on the ping smoke test or in app logs</td>
+          <td>Password in <code>MONGODB_URI</code> doesn't match the stored <code>mishran</code> user, the user was never created (step 4.4 skipped), or it was created in the wrong DB</td>
+          <td>Force the stored password to match: with auth off (the default here) run <code>db.updateUser("mishran", { pwd: "…" })</code> against the <code>admin</code> DB — or <code>db.createUser</code> per step 4.4 if it reports UserNotFound. With auth on, temporarily set <code>authorization: disabled</code>, restart mongod, fix, re-enable. Then re-run the ping smoke test</td></tr>
       <tr><td><code>next build</code> compiles fine, then <code>Failed to collect page data</code> with a <code>[ZodError]</code> listing <code>payloadSecret</code>, <code>jwtPrivateKey</code>, <code>razorpayKeyId</code>, <code>msg91AuthKey</code>, <code>resendApiKey</code>…</td>
           <td><code>.env</code> is missing the required-keys block — the app strictly validates its environment during build (by design, so a broken config never ships silently)</td>
           <td>Run the step 6.1.1 block (generates the JWT keypair + appends the vendor-key placeholders), then rebuild</td></tr>
