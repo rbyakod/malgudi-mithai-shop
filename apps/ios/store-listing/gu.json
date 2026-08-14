@@ -1,0 +1,33 @@
+{
+  "_comment": "Task 21.2 (Mishran Mobile Apps v1). App Store Connect limits: name ≤30, subtitle ≤30, keywords ≤100 (commas count), promotionalText ≤170, description ≤4000. Machine-verified by scripts/ios-listing-check.sh (`pnpm ios:listing:check`). Screenshots (Task 21.2 Step 2) are fastlane-snapshot captures pending the release build; sizes: 6.7\" (1320×2868), 6.5\" (1284×2778), 5.5\" (1242×2208).",
+  "locale": "gu",
+  "name": "મિશ્રણ: તાજી મીઠાઈ ઘરે",
+  "subtitle": "તાજી ભારતીય મીઠાઈ",
+  "keywords": "mithai,મીઠાઈ,કાજુ કતલી,લાડુ,રસગુલ્લા,ગિફ્ટ બોક્સ,સુગર ફ્રી,દિવાળી",
+  "promotionalText": "પહોંચવાના દિવસે સવારે બનાવેલી તાજી મીઠાઈ. દિલ્હી NCR માં એ જ દિવસે, 8 મહાનગરોમાં ગિફ્ટ બોક્સ. ફક્ત ફોન નંબર પૂરતો.",
+  "description": "મિશ્રણ તમારા ફોન પર લાવે છે એ મીઠાઈની દુકાન — બાળપણથીના સ્વાદ, તાજા બનાવેલા, પ્રેમથી પેક થયેલા.\n\nતાજા, હંમેશા\n• દિલ્હી NCR માં એ જ દિવસે ડિલિવરી — કાજુ કતલી, મોતીચૂર લાડુ, રસગુલ્લા અને ઘણું બધું, પહોંચવાના દિવસે સવારે જ બનાવેલા.\n• દેશના 8 મોટા શહેરોમાં શિપ થતા ગિફ્ટ બોક્સ, દરેક બોક્સ પર તાજગીની ખાતરી સાથેનો સમયગાળો.\n\nસેકન્ડોમાં ઓર્ડર\n• ફક્ત ફોન નંબરથી સાઇન-ઇન — અથવા Sign in with Apple. પાસવર્ડ નહીં.\n• પસંદ પ્રમાણે શોધો — ક્લાસિકથી સુગર-ફ્રી સુધી.\n• તમારી રીતે ચુકવણી: UPI, કાર્ડ, નેટ બેંકિંગ કે વોલેટ — સુરક્ષિત Razorpay મારફત.\n\nદરેક ઓર્ડરની ટ્રેકિંગ\n• રસોડાથી દરવાજા સુધી લાઇવ સ્ટેટસ, તમે પસંદ કરેલી ડિલિવરી સ્લોટ સાથે.\n• લોક સ્ક્રીન અને Dynamic Island પર Live Activity — એક નજરમાં ઓર્ડરની પ્રગતિ.\n• સંપૂર્ણ ઓર્ડર ઇતિહાસ, આઇટમ-વાર બિલ સાથે — અને પ્રિયજનો માટે વન-ટેપ ફરી ઓર્ડર.\n\nતમારા માટે જ\n• 9 ભાષાઓમાં: ગુજરાતી, English, हिन्दी, ಕನ್ನಡ, தமிழ், తెలుగు, मराठी, বাংলা, ਪੰਜਾਬੀ.\n• ઑફલાઇન પણ ચાલે: નબળા નેટવર્ક પર પણ તમારી કેટલોગ, કાર્ટ અને ઓર્ડર તૈયાર.\n• Wallet લોયલ્ટી પાસ, બાયોમેટ્રિક ક્વિક-ઍક્સેસ, ડાર્ક મોડ અને શરૂઆતથી જ ઍક્સેસિબિલિટી.\n\nપ્રશ્ન છે કે બલ્ક/કોર્પોરેટ ઓર્ડર? support@mishran.app પર સંપર્ક કરો.",
+  "privacyPolicyUrl": "https://mishran.app/privacy",
+  "supportUrl": "https://mishran.app/support",
+  "screenshotPlan": [
+    {
+      "screen": "Catalog grid",
+      "caption": "આજ સવારે બનાવેલી મીઠાઈ"
+    },
+    {
+      "screen": "Product detail",
+      "caption": "અંદર શું છે, પૂરી માહિતી"
+    },
+    {
+      "screen": "Checkout — slot picker",
+      "caption": "તમારી ડિલિવરી સ્લોટ પસંદ કરો"
+    },
+    {
+      "screen": "Live Activity / Dynamic Island",
+      "caption": "રસોડાથી દરવાજા સુધી"
+    },
+    {
+      "screen": "Wallet loyalty pass",
+      "caption": "તમારું ટિયર, Apple Wallet માં"
+    }
+  ]
+}

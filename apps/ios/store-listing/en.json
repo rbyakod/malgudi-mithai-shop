@@ -1,0 +1,18 @@
+{
+  "_comment": "Task 21.2 (Mishran Mobile Apps v1). App Store Connect limits: name ≤30, subtitle ≤30, keywords ≤100 (commas count), promotionalText ≤170, description ≤4000. Machine-verified by scripts/ios-listing-check.sh (`pnpm ios:listing:check`). Screenshots (Task 21.2 Step 2) are fastlane-snapshot captures pending the release build; sizes: 6.7\" (1320×2868), 6.5\" (1284×2778), 5.5\" (1242×2208).",
+  "locale": "en",
+  "name": "Mishran: Mithai, Delivered",
+  "subtitle": "Fresh Indian sweets",
+  "keywords": "mithai,sweets,indian sweets,kaju katli,laddoo,rasgulla,gift box,sugarfree,diwali",
+  "promotionalText": "Fresh mithai made the morning it arrives. Same-day across Delhi NCR, gift boxes to 8 metros. Sign in with just your phone number.",
+  "description": "Mishran brings the mithai shop to your phone — the sweets you grew up with, made fresh and delivered with care.\n\nFRESH, NEVER FORGOTTEN\n• Same-day delivery across Delhi NCR — kaju katli, motichoor laddoo, rasgulla and more, made the morning they arrive.\n• Shelf-stable gift boxes shipped to the top 8 metros, with a promised freshness window on every box.\n\nORDER IN SECONDS\n• Sign in with just your phone number — or Sign in with Apple. No passwords.\n• Browse by family or dietary preference, from classic to sugar-free.\n• Pay your way: UPI, cards, netbanking, or wallets via secure Razorpay checkout.\n\nTRACK EVERY ORDER\n• Live order status from kitchen to doorstep, with delivery slots you pick.\n• Live Activity on your Lock Screen and Dynamic Island — your order's progress at a glance.\n• Full order history with itemized bills — and one-tap reorder for the favorites.\n\nMADE FOR YOU\n• Available in 9 languages: English, हिन्दी, ಕನ್ನಡ, தமிழ், తెలుగు, मराठी, ગુજરાતી, বাংলা, ਪੰਜਾਬੀ.\n• Works offline: your catalog, cart, and orders are ready even on a weak connection.\n• Wallet loyalty pass, biometric quick-access, dark mode, and accessibility built in.\n\nHave a question or a bulk/corporate order? Reach us at support@mishran.app.",
+  "privacyPolicyUrl": "https://mishran.app/privacy",
+  "supportUrl": "https://mishran.app/support",
+  "screenshotPlan": [
+    { "screen": "Catalog grid", "caption": "Sweets made this morning" },
+    { "screen": "Product detail", "caption": "Know exactly what's inside" },
+    { "screen": "Checkout — slot picker", "caption": "Pick your delivery window" },
+    { "screen": "Live Activity / Dynamic Island", "caption": "From kitchen to doorstep" },
+    { "screen": "Wallet loyalty pass", "caption": "Your tier, in Apple Wallet" }
+  ]
+}
