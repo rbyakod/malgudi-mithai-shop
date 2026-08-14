@@ -73,11 +73,14 @@ const jwtService = new JwtService({
   publicKey: config.jwtPublicKey,
   accessTtlSeconds: config.jwt.accessTtlSeconds,
   refreshTtlSeconds: config.jwt.refreshTtlSeconds,
-  isRevoked: async (jti: string): Promise<boolean> => {
+  isRevoked: async (jti: string, customerId: string): Promise<boolean> => {
     const payload = await getPayloadSingleton();
+    // A direct jti row (logout/rotation) OR the `all:<customerId>` sentinel
+    // written by the Apple revocation webhook (Task 20.5) kills every live
+    // token of the customer at once.
     const found = await payload.find({
       collection: 'revokedTokens',
-      where: { jti: { equals: jti } },
+      where: { or: [{ jti: { equals: jti } }, { jti: { equals: `all:${customerId}` } }] },
       limit: 1,
     });
     return found.docs.length > 0;

@@ -19,10 +19,26 @@ export interface AppleIdentity {
   emailVerified?: boolean;
 }
 
+/** Apple server-to-server event (the `events` array Apple POSTs to /auth/events). */
+export interface AppleServerEvent {
+  /** "consent-revoked" | "email-disabled" | "email-relay-change". */
+  type: string;
+  /** Apple user id — matches a customer's appleSub. */
+  sub?: string;
+}
+
 export interface AppleAuthService {
   /**
    * Verify a Sign-in-with-Apple identityToken. Throws on malformed signature,
    * wrong issuer/audience, or expired token — the route maps these to 401.
    */
   verifyIdentityToken(identityToken: string): Promise<AppleIdentity>;
+
+  /**
+   * Verify Apple's server-to-server revocation JWT (POST /auth/events).
+   * Same JWKS + issuer/audience rules as identity tokens; returns the
+   * decoded `events` array. Throws on anything malformed — the webhook
+   * maps that to 401 so Apple retries.
+   */
+  verifyServerEventToken(token: string): Promise<AppleServerEvent[]>;
 }

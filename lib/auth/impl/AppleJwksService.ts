@@ -13,7 +13,7 @@
 // APPLE_AUTH_PROVIDER=apple, so tests that import the container never pay the
 // jose/JWKS cost.
 import { createRemoteJWKSet, jwtVerify, errors as joseErrors } from "jose";
-import type { AppleAuthService, AppleIdentity } from "../AppleAuthService";
+import type { AppleAuthService, AppleIdentity, AppleServerEvent } from "../AppleAuthService";
 
 const APPLE_JWKS_URI = "https://appleid.apple.com/auth/keys";
 const APPLE_ISSUER = "https://appleid.apple.com";
@@ -45,5 +45,19 @@ export class AppleJwksService implements AppleAuthService {
       email: typeof payload.email === "string" ? payload.email : null,
       emailVerified: emailVerifiedRaw === true || emailVerifiedRaw === "true",
     };
+  }
+
+  /** Task 20.5: server-to-server revocation events (POST /auth/events). */
+  async verifyServerEventToken(token: string): Promise<AppleServerEvent[]> {
+    const { payload } = await jwtVerify(token, this.jwks, {
+      algorithms: ["RS256"],
+      issuer: APPLE_ISSUER,
+      audience: this.clientId,
+    });
+    const events = (payload as { events?: unknown }).events;
+    if (!Array.isArray(events) || events.length === 0) {
+      throw new joseErrors.JWTInvalid("server event token missing events claim");
+    }
+    return events as AppleServerEvent[];
   }
 }

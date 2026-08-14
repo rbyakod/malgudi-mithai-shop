@@ -9,7 +9,7 @@ import XCTest
 final class AccessibilityTests: XCTestCase {
     private func launchSeeded(sizeCategory: String? = nil) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-seedCatalog"]
+        app.launchArguments = ["-seedCatalog", "-signedInOnce", "false"]
         if let sizeCategory {
             // Classic launch-argument override of the content size category.
             app.launchArguments += ["-UIPreferredContentSizeCategoryName", sizeCategory]

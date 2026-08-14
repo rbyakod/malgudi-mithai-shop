@@ -7,23 +7,11 @@
 // here). This fake decodes a fixture JWT's middle segment as base64 JSON so a
 // test can craft tokens with arbitrary claims (sub/email/email_verified) and
 // assert on the route's handling. Malformed input throws to drive the 401 path.
-import type { AppleAuthService, AppleIdentity } from "../AppleAuthService";
+import type { AppleAuthService, AppleIdentity, AppleServerEvent } from "../AppleAuthService";
 
 export class FakeAppleAuthService implements AppleAuthService {
   async verifyIdentityToken(identityToken: string): Promise<AppleIdentity> {
-    const parts = identityToken.split(".");
-    if (parts.length !== 3) {
-      throw new Error("malformed identity token");
-    }
-    let claims: Record<string, unknown>;
-    try {
-      // base64url → JSON (the standard JWT payload segment).
-      const b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-      const json = Buffer.from(b64, "base64").toString("utf8");
-      claims = JSON.parse(json) as Record<string, unknown>;
-    } catch {
-      throw new Error("malformed identity token");
-    }
+    const claims = decodeFixtureClaims(identityToken, "identity token");
     const sub = claims.sub;
     if (typeof sub !== "string" || sub.length === 0) {
       throw new Error("identity token missing sub");
@@ -34,6 +22,33 @@ export class FakeAppleAuthService implements AppleAuthService {
       email: typeof claims.email === "string" ? claims.email : null,
       emailVerified: ev === true || ev === "true",
     };
+  }
+
+  /** Task 20.5: fixture server-event JWT → events array (no crypto). */
+  async verifyServerEventToken(token: string): Promise<AppleServerEvent[]> {
+    const claims = decodeFixtureClaims(token, "event token");
+    const events = claims.events;
+    if (!Array.isArray(events) || events.length === 0) {
+      throw new Error("event token missing events");
+    }
+    return events as AppleServerEvent[];
+  }
+}
+
+/** Shared fixture decoding: base64url payload segment → JSON claims. */
+function decodeFixtureClaims(
+  token: string,
+  what: string,
+): Record<string, unknown> {
+  const parts = token.split(".");
+  if (parts.length !== 3) {
+    throw new Error(`malformed ${what}`);
+  }
+  try {
+    const b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    return JSON.parse(Buffer.from(b64, "base64").toString("utf8")) as Record<string, unknown>;
+  } catch {
+    throw new Error(`malformed ${what}`);
   }
 }
 

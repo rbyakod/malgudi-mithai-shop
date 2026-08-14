@@ -79,6 +79,14 @@ struct MishranApp: App {
             _launchScreen = State(initialValue: .signIn)
         } else if BiometricSettings.isEnabled, KeychainTokenStore().refreshToken != nil {
             _launchScreen = State(initialValue: .biometricGate)
+        } else if UserDefaults.standard.bool(forKey: AuthViewModel.signedInOnceKey),
+                  KeychainTokenStore().refreshToken == nil {
+            // Signed in before but no session survives (server-side
+            // revocation or logout) — land on sign-in, never silently
+            // continue as the dead session (Task 20.5). UI tests exercise
+            // this branch via the ephemeral `-signedInOnce true` launch
+            // argument (argument-domain UserDefaults, nothing persisted).
+            _launchScreen = State(initialValue: .signIn)
         } else {
             _launchScreen = State(initialValue: .home)
         }

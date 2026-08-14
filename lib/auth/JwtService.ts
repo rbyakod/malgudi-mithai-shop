@@ -15,7 +15,7 @@ export class JwtService {
       publicKey: string;
       accessTtlSeconds: number;
       refreshTtlSeconds: number;
-      isRevoked?: (jti: string) => Promise<boolean>;
+      isRevoked?: (jti: string, customerId: string) => Promise<boolean>;
     },
   ) {}
 
@@ -56,9 +56,11 @@ export class JwtService {
     if (expectedKind && claims.kind !== expectedKind) {
       throw new Error(`Expected ${expectedKind} token, got ${claims.kind}`);
     }
-    // Check revocation list (injectable; skipped if no callback provided)
+    // Check revocation list (injectable; skipped if no callback provided).
+    // customerId rides along so the container can honor per-customer
+    // force-logout sentinels (Task 20.5 Apple revocation).
     if (this.deps.isRevoked && claims.jti) {
-      if (await this.deps.isRevoked(claims.jti)) {
+      if (await this.deps.isRevoked(claims.jti, claims.customerId)) {
         throw new Error('Token revoked');
       }
     }

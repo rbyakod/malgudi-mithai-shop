@@ -82,7 +82,7 @@ final class AuthViewModel {
             let response = try await client.authOtpVerify(requestId: requestId, code: code)
             signedInCustomer = response.customer
             self.requestId = nil
-            isSignedIn = true
+            markSignedIn()
         } catch let error as APIError {
             apply(error)
             // An expired request id is dead — start a fresh send.
@@ -111,7 +111,7 @@ final class AuthViewModel {
         do {
             let response = try await client.authApple(identityToken: identityToken, name: credential.fullName)
             signedInCustomer = response.customer
-            isSignedIn = true
+            markSignedIn()
         } catch let error as APIError {
             apply(error)
         } catch {
@@ -127,6 +127,18 @@ final class AuthViewModel {
         errorMessage = nil
         errorCode = nil
     }
+
+    /// Successful sign-in: session state + the persisted "signed in once"
+    /// flag the launch gate reads (Task 20.5). When a refresh token later
+    /// dies (server-side revocation or logout), flag-set + no-token is what
+    /// routes the next launch to sign-in instead of silently continuing.
+    private func markSignedIn() {
+        isSignedIn = true
+        UserDefaults.standard.set(true, forKey: AuthViewModel.signedInOnceKey)
+    }
+
+    /// UserDefaults key: true once any sign-in has succeeded on this install.
+    static let signedInOnceKey = "signedInOnce"
 
     private func apply(_ error: APIError) {
         if case let .api(code, message, _, _) = error {

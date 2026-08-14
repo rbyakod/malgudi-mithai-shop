@@ -19,6 +19,10 @@ final class AppleSignInTests: XCTestCase {
 
     override func tearDown() {
         MockURLProtocol.reset()
+        // Successful sign-ins persist the "signed in once" flag into the
+        // host app's real defaults (Task 20.5) — clear it so later UI-test
+        // launches don't boot to the sign-in gate.
+        UserDefaults.standard.removeObject(forKey: AuthViewModel.signedInOnceKey)
         super.tearDown()
     }
 

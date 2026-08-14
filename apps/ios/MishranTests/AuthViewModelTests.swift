@@ -17,6 +17,10 @@ final class AuthViewModelTests: XCTestCase {
 
     override func tearDown() {
         MockURLProtocol.reset()
+        // A successful verify() persists the "signed in once" flag into the
+        // HOST APP's real defaults (Task 20.5) — without this cleanup the
+        // later UI-test launches would boot to the sign-in gate.
+        UserDefaults.standard.removeObject(forKey: AuthViewModel.signedInOnceKey)
         super.tearDown()
     }
 

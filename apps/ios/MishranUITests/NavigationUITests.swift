@@ -7,7 +7,7 @@ final class NavigationUITests: XCTestCase {
         let app = XCUIApplication()
         // Seed the SwiftData catalog so the grid renders without a backend
         // (argument string mirrors SeedData.seedCatalogArgument).
-        app.launchArguments = ["-seedCatalog"]
+        app.launchArguments = ["-seedCatalog", "-signedInOnce", "false"]
         app.launch()
         // ProductCard surfaces "name, price" as the button's accessibility
         // label (not a static text), so query buttons.
@@ -22,6 +22,8 @@ final class NavigationUITests: XCTestCase {
 
     func testOrderDeepLinkOpensOrderDetail() throws {
         let app = XCUIApplication()
+        // Same argument-domain override as the other home-expecting tests.
+        app.launchArguments = ["-signedInOnce", "false"]
         app.launch()
         let url = try XCTUnwrap(URL(string: "mishran://order/ord_ui_1"))
         app.open(url)
