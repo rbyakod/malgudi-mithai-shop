@@ -873,6 +873,11 @@ sudo systemctl restart mithai-shop    <span class="c"># clears any cached pages 
   <span class="label">13 · After launch</span>
   <h2>Daily operations</h2>
   <h4>Deploy an update (after pushing to main from the Mac)</h4>
+  <p class="lede"><b>One command from the Mac</b> (requires key-based SSH to the VPS):</p>
+  <div class="code-block"><div class="code-title"><span>scripts/deploy-vps.sh — pull + build + restart + health check</span><button class="copy">copy</button></div>
+<pre><code>bash scripts/deploy-vps.sh    <span class="c"># refuses if local main isn't pushed; never restarts on a failed build</span>
+<span class="c"># DEPLOY_SSH=ubuntu@2.24.221.70 bash scripts/deploy-vps.sh   ← different SSH target</span></code></pre></div>
+  <p>…or do the same steps by hand:</p>
   <div class="code-block"><div class="code-title"><span>The update cycle (first block as mithai, second as admin)</span><button class="copy">copy</button></div>
 <pre><code><span class="c"># --- app shell (whoami → mithai): ---</span>
 sudo -iu mithai

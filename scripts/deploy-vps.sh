@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# scripts/deploy-vps.sh — one-command deploy to the self-hosted VPS.
+#
+# Run from anywhere in the repo on the Mac:
+#   bash scripts/deploy-vps.sh
+#
+# What it does:
+#   1. Local: verify origin/main on GitHub is up to date with local main.
+#   2. VPS (as mithai): git pull → pnpm install → pnpm build.
+#   3. VPS (as root): systemctl restart mithai-shop.
+#   4. VPS: health check on http://127.0.0.1:3000/en.
+#
+# Safety: the service is only restarted after a successful build, so a failed
+# build leaves the currently-running version serving untouched.
+#
+# Override the target with DEPLOY_SSH (default root@2.24.221.70):
+#   DEPLOY_SSH=ubuntu@2.24.221.70 bash scripts/deploy-vps.sh
+set -euo pipefail
+
+DEPLOY_SSH="${DEPLOY_SSH:-root@2.24.221.70}"
+APP_DIR="/opt/mithai-shop"
+SERVICE="mithai-shop"
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
+
+step() { printf '\n\033[1;34m==> %s\033[0m\n' "$*"; }
+die()  { printf '\n\033[1;31mDEPLOY FAILED: %s\033[0m\n' "$*" >&2; exit 1; }
+
+step "1/4 Checking local main is pushed to origin"
+git fetch origin main --quiet
+LOCAL="$(git rev-parse main)"
+REMOTE="$(git rev-parse origin/main)"
+if [ "$LOCAL" != "$REMOTE" ]; then
+  die "local main ($LOCAL) != origin/main ($REMOTE). Push first (or commit your changes)."
+fi
+echo "main @ ${REMOTE:0:7} — GitHub is current."
+
+step "2/4 VPS: git pull + pnpm install + pnpm build (as mithai)"
+ssh "$DEPLOY_SSH" "sudo -iu mithai bash -c '
+  set -euo pipefail
+  cd $APP_DIR
+  git pull origin main
+  pnpm install --frozen-lockfile
+  pnpm build
+'" || die "pull/install/build failed on the VPS — the running service was NOT touched."
+
+step "3/4 VPS: restart $SERVICE"
+ssh "$DEPLOY_SSH" "systemctl restart $SERVICE"
+sleep 3
+ssh "$DEPLOY_SSH" "systemctl is-active $SERVICE" || die "service not active after restart — check: ssh $DEPLOY_SSH 'journalctl -u $SERVICE -n 50 --no-pager'"
+
+step "4/4 VPS: health check"
+CODE="$(ssh "$DEPLOY_SSH" "curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000/en")"
+if [ "$CODE" != "200" ]; then
+  die "health check returned HTTP $CODE (expected 200). Check: ssh $DEPLOY_SSH 'journalctl -u $SERVICE -n 50 --no-pager'"
+fi
+echo "HTTP 200 from http://127.0.0.1:3000/en — deploy complete."
