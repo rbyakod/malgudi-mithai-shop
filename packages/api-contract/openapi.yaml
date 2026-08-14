@@ -1,0 +1,1049 @@
+openapi: 3.1.0
+info:
+  title: Mishran Mobile API
+  version: 0.1.0
+  description: |
+    REST API consumed by the Mishran Android (v1) and iOS (v2) apps.
+    All routes under /api/mobile/v1/* unless noted.
+  contact:
+    name: Mishran Engineering
+    url: https://mishran.app
+servers:
+  - url: http://localhost:3000/api/mobile/v1
+    description: Local dev
+  - url: https://staging-api.mishran.app/api/mobile/v1
+    description: Staging
+  - url: https://api.mishran.app/api/mobile/v1
+    description: Production
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum:
+                - RATE_LIMITED
+                - OTP_INVALID
+                - OTP_EXPIRED
+                - PINCODE_NOT_SERVICEABLE
+                - CART_CHANGED
+                - STOCK_INSUFFICIENT
+                - PAYMENT_FAILED
+                - PAYMENT_ABANDONED
+                - ORDER_NOT_FOUND
+                - SNAPSHOT_NOT_FOUND
+                - INVALID_STATE_TRANSITION
+                - TOKEN_EXPIRED
+                - TOKEN_REVOKED
+                - CONFLICT
+                - VALIDATION
+                - INTERNAL
+                - OTP_PROVIDER_DOWN
+            message:
+              type: string
+            fieldErrors:
+              type: object
+              additionalProperties:
+                type: string
+            traceId:
+              type: string
+    Customer:
+      type: object
+      required: [id, phone]
+      properties:
+        id: { type: string }
+        phone: { type: string }
+        name: { type: [string, "null"] }
+        email: { type: [string, "null"] }
+        locale:
+          type: string
+          enum: [en, hi, kn, ta, te, mr, gu, bn, pa]
+        createdAt: { type: string, format: date-time }
+    Paginated:
+      type: object
+      required: [items, total, page, pageSize]
+      properties:
+        items: { type: array, items: {} }
+        total: { type: integer }
+        page: { type: integer }
+        pageSize: { type: integer }
+    OtpSendRequest:
+      type: object
+      required: [phone]
+      properties:
+        phone: { type: string, pattern: '^\+[1-9]\d{6,14}$' }
+    OtpSendResponse:
+      type: object
+      required: [requestId, expiresAt]
+      properties:
+        requestId: { type: string }
+        expiresAt: { type: string, format: date-time }
+    OtpVerifyRequest:
+      type: object
+      required: [requestId, code]
+      properties:
+        requestId: { type: string }
+        code: { type: string, pattern: '^[0-9]{6}$' }
+    OtpVerifyResponse:
+      type: object
+      required: [accessToken, refreshToken, customer]
+      properties:
+        accessToken: { type: string }
+        refreshToken: { type: string }
+        customer: { $ref: '#/components/schemas/Customer' }
+    RefreshRequest:
+      type: object
+      description: Empty body — refresh token passed via Authorization header.
+    RefreshResponse:
+      type: object
+      required: [accessToken, refreshToken]
+      properties:
+        accessToken: { type: string }
+        refreshToken: { type: string }
+    LogoutResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
+    ServiceableResponse:
+      type: object
+      required: [serviceable]
+      properties:
+        serviceable:
+          type: boolean
+        tier:
+          type: string
+          description: Service tier (e.g. shelf, fresh). Present only when serviceable.
+        city:
+          type: string
+          description: City name. Present only when serviceable.
+        slaDays:
+          type: integer
+          description: Estimated delivery SLA in days. Present only when serviceable.
+        reason:
+          type: string
+          description: Reason code when not serviceable (e.g. invalid_pincode).
+    Product:
+      type: object
+      required: [id, slug, name, family]
+      description: |
+        Catalog product. Mirrors collections/MithaiProducts.ts.
+        `images` are resolved URLs (Payload upload refs flattened to strings).
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        family:
+          type: string
+          enum: [classic, original, sugar-free, regional, seasonal]
+        displayPrice:
+          type: [string, 'null']
+          description: Display-only. Commerce deferred to Phase 8.
+        freshnessStatus:
+          type: [string, 'null']
+          enum: [made-daily, made-to-order, batch-frozen, null]
+        dietaryTags:
+          type: array
+          items: { type: string }
+        allergens:
+          type: array
+          items: { type: string }
+        ingredients:
+          type: [string, 'null']
+        shelfLife:
+          type: [string, 'null']
+        storage:
+          type: [string, 'null']
+        images:
+          type: array
+          items: { type: string }
+        story:
+          type: [string, 'null']
+        karigar:
+          type: [string, 'null']
+          description: Karigar (artisan) relationship id, if any.
+        updatedAt:
+          type: [string, 'null']
+          format: date-time
+    CartItem:
+      type: object
+      required: [productId, quantity]
+      properties:
+        productId: { type: string, minLength: 1 }
+        quantity:
+          type: integer
+          minimum: 1
+    CartValidateRequest:
+      type: object
+      required: [items, pincode]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/CartItem' }
+        pincode:
+          type: string
+          pattern: '^[0-9]{6}$'
+        slot:
+          type: object
+          required: [date, window]
+          properties:
+            date: { type: string }
+            window: { type: string }
+    OrderTotals:
+      type: object
+      required:
+        [itemsTotalInPaise, deliveryFeeInPaise, taxesInPaise, discountInPaise, totalInPaise]
+      description: |
+        Order totals in paise (INR). All zero today; real pricing lands in
+        Phase 8 alongside the commerce schema on MithaiProducts.
+      properties:
+        itemsTotalInPaise: { type: integer, minimum: 0 }
+        deliveryFeeInPaise: { type: integer, minimum: 0 }
+        taxesInPaise: { type: integer, minimum: 0 }
+        discountInPaise: { type: integer, minimum: 0 }
+        totalInPaise: { type: integer, minimum: 0 }
+    CartSnapshotItem:
+      type: object
+      required: [productId, slug, name, quantity, freshnessStatus]
+      properties:
+        productId: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        quantity: { type: integer, minimum: 1 }
+        freshnessStatus:
+          type: [string, 'null']
+          enum: [made-daily, made-to-order, batch-frozen, null]
+    CartSnapshot:
+      type: object
+      required: [snapshotId, customerId, items, totals, pincodeTier, expiresAt]
+      properties:
+        snapshotId: { type: string, format: uuid }
+        customerId: { type: string }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/CartSnapshotItem' }
+        totals: { $ref: '#/components/schemas/OrderTotals' }
+        pincodeTier:
+          type: [string, 'null']
+          description: Service tier of the resolved pincode (e.g. shelf, fresh).
+        expiresAt: { type: string, format: date-time }
+    RazorpayCreateOrderRequest:
+      type: object
+      required: [snapshotId, deliveryAddressId]
+      properties:
+        snapshotId:
+          type: string
+          description: |
+            Cart snapshot id returned by POST /cart/validate. The snapshot
+            must belong to the calling customer and must not be expired.
+        deliveryAddressId:
+          type: string
+          description: Customer address id to ship the order to.
+    RazorpayCreateOrderResponse:
+      type: object
+      required: [orderId, razorpayOrderId, amountInPaise, keyId]
+      properties:
+        orderId:
+          type: string
+          description: Internal Mishran order id (also used as Razorpay receipt).
+        razorpayOrderId:
+          type: string
+          description: Provider-side order id; pass to the Razorpay checkout widget.
+        amountInPaise:
+          type: integer
+          description: Order total in paise (1 INR = 100 paise).
+        keyId:
+          type: string
+          description: Public Razorpay key id for the checkout widget (NEXT_PUBLIC_RAZORPAY_KEY_ID).
+    RazorpayVerifyRequest:
+      type: object
+      required: [orderId, razorpayPaymentId, signature]
+      properties:
+        orderId:
+          type: string
+          description: Internal Mishran order id returned by create-order.
+        razorpayPaymentId:
+          type: string
+          description: Razorpay payment id from the checkout callback.
+        signature:
+          type: string
+          description: HMAC signature returned by Razorpay at checkout completion.
+    Order:
+      type: object
+      required:
+        - id
+        - customerId
+        - items
+        - totals
+        - status
+        - paymentStatus
+        - deliveryAddressId
+        - source
+        - createdAt
+        - updatedAt
+      properties:
+        id: { type: string }
+        customerId: { type: string }
+        items:
+          type: array
+          items:
+            type: object
+            required: [productId, slug, name, quantity, unit, priceInPaise]
+            properties:
+              productId: { type: string }
+              slug: { type: string }
+              name: { type: string }
+              quantity: { type: integer, minimum: 1 }
+              unit: { type: string }
+              priceInPaise: { type: integer, minimum: 0 }
+              image:
+                type: [string, 'null']
+        totals: { $ref: '#/components/schemas/OrderTotals' }
+        status:
+          type: string
+          enum:
+            [created, pending_payment, confirmed, packed, dispatched,
+             out_for_delivery, delivered, payment_failed, cancelled,
+             returned, failed_delivery, abandoned]
+        paymentStatus:
+          type: string
+          enum: [pending, paid, failed, refunded, partially_refunded]
+        deliveryAddressId: { type: string }
+        slot:
+          type: [object, 'null']
+          properties:
+            date: { type: string }
+            window: { type: string }
+        source:
+          type: string
+          enum: [mobile-android, mobile-ios, web]
+        razorpayOrderId:
+          type: [string, 'null']
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    RazorpayVerifyResponse:
+      type: object
+      required: [order]
+      properties:
+        order: { $ref: '#/components/schemas/Order' }
+
+    # ---- Task 5.3 ----
+    Address:
+      type: object
+      properties:
+        id: { type: string }
+        customerId: { type: string }
+        line1: { type: string }
+        line2: { type: string }
+        city: { type: string }
+        state: { type: string }
+        pincode: { type: string }
+        lat: { type: number }
+        lng: { type: number }
+        tag: { type: string, enum: [home, work, other] }
+        isDefault: { type: boolean }
+    AddressInput:
+      type: object
+      required: [line1, city, state, pincode]
+      properties:
+        line1: { type: string, minLength: 1 }
+        line2: { type: string }
+        city: { type: string, minLength: 1 }
+        state: { type: string, minLength: 1 }
+        pincode: { type: string, minLength: 1, maxLength: 10 }
+        lat: { type: number }
+        lng: { type: number }
+        tag: { type: string, enum: [home, work, other] }
+        isDefault: { type: boolean }
+    PassDeviceInput:
+      type: object
+      required: [serialNumber, pushToken]
+      properties:
+        serialNumber: { type: string, minLength: 1, description: Pass serial (also the pass.json serial). }
+        pushToken: { type: string, minLength: 1, description: APNs .pass update token issued by Wallet. }
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/otp/send:
+    post:
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OtpSendRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/OtpSendResponse' }
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '503':
+          description: SMS provider down
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /auth/otp/verify:
+    post:
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OtpVerifyRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/OtpVerifyResponse' }
+        '400':
+          description: Invalid OTP
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '410':
+          description: OTP expired
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /auth/refresh:
+    post:
+      tags: [auth]
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/RefreshResponse' }
+        '401':
+          description: Token invalid or revoked
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /auth/logout:
+    post:
+      tags: [auth]
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/LogoutResponse' }
+  /catalog/products:
+    get:
+      tags: [catalog]
+      security: []
+      parameters:
+        - in: header
+          name: If-None-Match
+          schema: { type: string }
+        - in: query
+          name: family
+          schema:
+            type: string
+            enum: [classic, original, sugar-free, regional, seasonal]
+        - in: query
+          name: freshnessStatus
+          schema:
+            type: string
+            enum: [made-daily, made-to-order, batch-frozen]
+        - in: query
+          name: dietaryTags
+          schema:
+            type: array
+            items: { type: string }
+          style: form
+          explode: true
+        - in: query
+          name: q
+          schema: { type: string }
+          description: Case-insensitive name substring (Payload `contains`).
+        - in: query
+          name: page
+          schema: { type: integer, default: 1, minimum: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, default: 50, minimum: 1, maximum: 100 }
+      responses:
+        '200':
+          description: OK
+          headers:
+            ETag:
+              schema:
+                type: string
+                description: |
+                  SHA-1 of `id:updatedAt` joined list, wrapped in double
+                  quotes, truncated to 16 hex chars. Send back via
+                  `If-None-Match` to get a 304 when unchanged.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Paginated'
+                      - type: object
+                        properties:
+                          items:
+                            type: array
+                            items: { $ref: '#/components/schemas/Product' }
+        '304':
+          description: Not Modified — client's If-None-Match matched current ETag.
+          headers:
+            ETag:
+              schema: { type: string }
+  /catalog/products/{slug}:
+    get:
+      tags: [catalog]
+      security: []
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+          description: Unique product slug (collections/MithaiProducts.slug).
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Product' }
+        '404':
+          description: Not Found — no product matches the given slug.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error: { $ref: '#/components/schemas/Error' }
+  /catalog/serviceable:
+    get:
+      tags: [catalog]
+      security: []
+      description: Check if a pincode is serviceable for delivery.
+      parameters:
+        - in: query
+          name: pincode
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]{6}$'
+          description: 6-digit Indian postal code.
+      responses:
+        '200':
+          description: OK — pincode validated (serviceable or not).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/ServiceableResponse' }
+        '422':
+          description: Unprocessable Entity — pincode format invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/ServiceableResponse' }
+  /cart/validate:
+    post:
+      tags: [cart]
+      description: |
+        Validate the customer's cart: authenticate, re-check pincode
+        serviceability, re-fetch each product to confirm it still exists,
+        persist a tamper-evident cart snapshot, and return the snapshot
+        id + shape valid for 10 minutes.
+
+        NOTE: totals are all zero today — commerce / variant pricing on
+        MithaiProducts is deferred to Phase 8. This endpoint gives mobile
+        clients a stable contract for cart shape + availability now.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CartValidateRequest' }
+      responses:
+        '200':
+          description: OK — cart snapshot.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/CartSnapshot' }
+        '404':
+          description: Not Found — one or more products no longer exist.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: Unprocessable Entity — invalid body or unserviceable pincode.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /orders:
+    get:
+      tags: [orders]
+      description: |
+        List the authenticated customer's own orders, newest first. Pagination
+        via `page` and `pageSize` query params; pageSize is capped at 50.
+        Non-integer or NaN values fall back to the defaults (page=1, pageSize=20).
+        The customer id is taken from the verified access token; a forged
+        `customerId` in a query string is never honored.
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, default: 1, minimum: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, default: 20, minimum: 1, maximum: 50 }
+      responses:
+        '200':
+          description: OK — paginated list of the caller's orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [items, total, page, pageSize]
+                    properties:
+                      items:
+                        type: array
+                        items: { $ref: '#/components/schemas/Order' }
+                      total: { type: integer, minimum: 0 }
+                      page: { type: integer, minimum: 1 }
+                      pageSize: { type: integer, minimum: 1, maximum: 50 }
+        '401':
+          description: Unauthorized — missing or invalid bearer token.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /orders/{id}:
+    get:
+      tags: [orders]
+      description: |
+        Fetch a single order by id. Returns 404 ORDER_NOT_FOUND both when
+        the id does not exist and when the order belongs to a different
+        customer (no existence leak).
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK — the requested order.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Order' }
+        '401':
+          description: Unauthorized — missing or invalid bearer token.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Not Found — order id unknown or belongs to another customer.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /payments/razorpay/create-order:
+    post:
+      tags: [payments]
+      description: |
+        Create an internal order + a Razorpay order from a persisted cart
+        snapshot. Idempotent: a replay with the same Idempotency-Key and
+        body returns the cached response without re-running side effects.
+        The X-Client-Source header selects the order `source` field
+        (mobile-android | mobile-ios | web); defaults to mobile-android.
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: false
+          schema: { type: string }
+          description: Optional. When set, the response is cached for 24h.
+        - in: header
+          name: X-Client-Source
+          required: false
+          schema:
+            type: string
+            enum: [mobile-android, mobile-ios, web]
+            default: mobile-android
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RazorpayCreateOrderRequest' }
+      responses:
+        '200':
+          description: OK — order + Razorpay order created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/RazorpayCreateOrderResponse' }
+        '401':
+          description: Unauthorized — missing or invalid bearer token.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Not Found — snapshot does not exist or belongs to another customer.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '409':
+          description: Conflict — Idempotency-Key reused with a different body.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: |
+            Unprocessable Entity — invalid body, unsupported X-Client-Source,
+            or the cart snapshot has expired.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '500':
+          description: |
+            Internal Server Error — Razorpay order creation failed. The
+            internal order row is left in pending_payment. Retry with a
+            new Idempotency-Key.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /payments/razorpay/verify:
+    post:
+      tags: [payments]
+      description: |
+        Verify the Razorpay checkout signature, capture the payment, and
+        transition the order from pending_payment to confirmed. Safe to
+        retry: signature is always re-verified, and an already-captured
+        payment row short-circuits the transition path. Idempotent at the
+        HTTP layer when an Idempotency-Key is supplied.
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: false
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RazorpayVerifyRequest' }
+      responses:
+        '200':
+          description: OK — payment verified, order confirmed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/RazorpayVerifyResponse' }
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '402':
+          description: Payment Failed — signature invalid or no Razorpay order bound.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Not Found — order id unknown or belongs to another customer.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: Unprocessable Entity — invalid body.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  # ---- Task 5.3: device registration + addresses CRUD ----
+  /notifications/register-device:
+    post:
+      tags: [Notifications]
+      summary: Register / refresh a push token (idempotent upsert)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [platform, pushToken]
+              properties:
+                platform: { type: string, enum: [android, ios] }
+                pushToken: { type: string, minLength: 1 }
+                liveActivityToken: { type: string, minLength: 1, description: ActivityKit push token while a delivery Live Activity is in flight (iOS). }
+                appVersion: { type: string }
+                deviceModel: { type: string }
+                osVersion: { type: string }
+                locale: { type: string }
+      responses:
+        '200':
+          description: OK — device created or rebound.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [ok], properties: { ok: { type: boolean } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /addresses:
+    get:
+      tags: [Addresses]
+      summary: List the caller's saved addresses
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [items]
+                    properties:
+                      items: { type: array, items: { $ref: '#/components/schemas/Address' } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    post:
+      tags: [Addresses]
+      summary: Create a new address
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AddressInput' }
+      responses:
+        '201':
+          description: Created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [address], properties: { address: { $ref: '#/components/schemas/Address' } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /addresses/{id}:
+    get:
+      tags: [Addresses]
+      summary: Get one address (owner-scoped; 404 if owned by another)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [address], properties: { address: { $ref: '#/components/schemas/Address' } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — unknown id or owned by another customer., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    patch:
+      tags: [Addresses]
+      summary: Update an address (owner-scoped)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AddressInput' }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [address], properties: { address: { $ref: '#/components/schemas/Address' } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — unknown id or owned by another customer., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    delete:
+      tags: [Addresses]
+      summary: Delete an address (owner-scoped)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [ok], properties: { ok: { type: boolean } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — unknown id or owned by another customer., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /account/loyalty-pass:
+    get:
+      tags: [Loyalty]
+      summary: Generate / refresh the customer's Apple Wallet loyalty pass (signed URL)
+      description: >
+        Silver tier at >=2 delivered orders, Gold at >=5. Below the threshold the
+        route 404s. Returns a short-lived signed .pkpass URL the iOS client adds
+        via PKAddPassesViewController.
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK — pass generated/refreshed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [url, serialNumber, tier]
+                    properties:
+                      url: { type: string, format: uri }
+                      serialNumber: { type: string }
+                      tier: { type: string, enum: [silver, gold] }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — not eligible (fewer than 2 delivered orders)., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /wallet/register-pass-device:
+    post:
+      tags: [Wallet]
+      summary: Register a device token for Apple Wallet .pass updates (idempotent)
+      description: >
+        Called by the iOS app after the user adds the loyalty pass to Wallet.
+        Stores the pass-update token on the WalletPasses row so the backend can
+        push .pass update pings when the loyalty balance / tier changes.
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PassDeviceInput' }
+      responses:
+        '200':
+          description: OK — token registered or already present.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [ok], properties: { ok: { type: boolean } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — no active owned pass for this serial., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /wallet/unregister-pass-device:
+    delete:
+      tags: [Wallet]
+      summary: Remove a device token from Apple Wallet .pass updates (idempotent)
+      description: >
+        Called by the iOS app when the user removes the loyalty pass from Wallet.
+        Idempotent — 200 even if the token or pass is already gone.
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PassDeviceInput' }
+      responses:
+        '200':
+          description: OK — token removed or already absent.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, required: [ok], properties: { ok: { type: boolean } } }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+

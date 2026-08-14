@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mishran Privacy Policy</title>
+  <style>
+    body { font-family: Georgia, serif; max-width: 42rem; margin: 0 auto; padding: 1.5rem; line-height: 1.6; color: #2c1810; background: #f7efe0; }
+    h1, h2 { color: #9b4d2a; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #d8c9a8; padding: 0.5rem; text-align: left; font-size: 0.95rem; }
+    th { background: #f3ead6; }
+  </style>
+</head>
+<body>
+  <h1>Mishran Privacy Policy</h1>
+  <p>Last updated: 13 August 2026</p>
+  <p>
+    Mishran (&ldquo;we&rdquo;, &ldquo;our&rdquo;) operates the Mishran mobile app for ordering
+    traditional Indian sweets. This policy explains what data the app collects, why,
+    and the choices you have. Using the app means you accept this policy.
+  </p>
+
+  <h2>Data we collect</h2>
+  <table>
+    <tr><th>Data</th><th>Why</th><th>Kept</th></tr>
+    <tr>
+      <td>Phone number</td>
+      <td>Sign-in via one-time password; order updates by SMS if you miss a push notification</td>
+      <td>For the life of your account</td>
+    </tr>
+    <tr>
+      <td>Delivery addresses</td>
+      <td>To deliver your orders; you add and remove them</td>
+      <td>Until you delete them or your account</td>
+    </tr>
+    <tr>
+      <td>Order history (items, amounts, delivery slots)</td>
+      <td>To show your orders, track deliveries, and support refunds</td>
+      <td>As required by tax and accounting law</td>
+    </tr>
+    <tr>
+      <td>Device data (model, OS version, locale, push token)</td>
+      <td>To deliver order-update notifications and keep the service working</td>
+      <td>Until you sign out on that device or uninstall</td>
+    </tr>
+    <tr>
+      <td>App crash reports</td>
+      <td>To find and fix defects (see Crashlytics below)</td>
+      <td>~90 days</td>
+    </tr>
+  </table>
+  <p>
+    We do <strong>not</strong> collect your payment card or UPI credentials, your
+    contacts, your photos, or your location. There are no third-party advertising
+    or analytics trackers in the app. The camera is not used in this version.
+  </p>
+
+  <h2>Sign-in and SMS</h2>
+  <p>
+    Sign-in uses a six-digit one-time password sent by SMS. Our SMS gateway
+    (MSG91) receives your phone number solely to deliver that message; it
+    processes the number under its own privacy policy as a processor. The app
+    reads the code from the message only with the SMS Retriever API &mdash; it
+    never asks for permission to read your messages.
+  </p>
+
+  <h2>Payments (Razorpay)</h2>
+  <p>
+    Checkout is processed by Razorpay, our payment gateway. When you pay:
+  </p>
+  <ul>
+    <li>The app sends Razorpay your order amount and a Razorpay order id we create.</li>
+    <li>You enter payment details inside Razorpay's own checkout screen; those
+        details go to Razorpay and never touch our servers.</li>
+    <li>Razorpay tells us only whether the payment succeeded, its reference ids,
+        and the payment method used. We store those references with your order.</li>
+  </ul>
+  <p>
+    Razorpay processes data under its privacy policy as an independent payment
+    processor. If money leaves your account but the order fails, we refund it
+    through Razorpay within 5&ndash;7 business days.
+  </p>
+
+  <h2>Push notifications</h2>
+  <p>
+    Order updates are delivered through Firebase Cloud Messaging using a push
+    token tied to your device. You can decline or revoke the notification
+    permission at any time in system settings; ordering works without it, and we
+    fall back to SMS for critical updates.
+  </p>
+
+  <h2>Crash reporting (Firebase Crashlytics)</h2>
+  <p>
+    When the app crashes, a report (device model, OS version, stack trace) is
+    sent to Firebase Crashlytics so we can fix the defect. Reports contain no
+    message content and are not used for advertising.
+  </p>
+
+  <h2>Permissions the app requests</h2>
+  <ul>
+    <li><strong>Notifications</strong> &mdash; order updates. Optional; you can decline.</li>
+    <li><strong>Biometrics</strong> &mdash; optional &ldquo;quick access&rdquo; sign-in. Your
+        fingerprint or face is verified by your device; we never receive it. The
+        sign-in key stored on the device is encrypted by your device keystore.</li>
+  </ul>
+
+  <h2>Data on your device</h2>
+  <p>
+    The app caches your catalog, cart, and orders on the device so it works
+    offline. Signing out deletes this cache and your sign-in tokens from the
+    device.
+  </p>
+
+  <h2>Your rights</h2>
+  <p>
+    You may request a copy of your data, correction, or deletion of your account
+    (subject to records we must keep for tax law) by contacting support below.
+    Deletion requests are honored within 30 days.
+  </p>
+
+  <h2>Children</h2>
+  <p>The app is not directed at children under 13, and we do not knowingly collect their data.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>
+    We will update this page when our practices change and revise the date
+    above. Material changes are announced in the app before they take effect.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Mishran Support &mdash; support@mishran.app<br />
+    Mishran, Delhi NCR, India
+  </p>
+</body>
+</html>

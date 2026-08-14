@@ -1,0 +1,33 @@
+{
+  "_comment": "Task 21.2 (Mishran Mobile Apps v1). App Store Connect limits: name ≤30, subtitle ≤30, keywords ≤100 (commas count), promotionalText ≤170, description ≤4000. Machine-verified by scripts/ios-listing-check.sh (`pnpm ios:listing:check`). Screenshots (Task 21.2 Step 2) are fastlane-snapshot captures pending the release build; sizes: 6.7\" (1320×2868), 6.5\" (1284×2778), 5.5\" (1242×2208).",
+  "locale": "bn",
+  "name": "মিশ্রণ: বাড়িতে তাজা মিষ্টি",
+  "subtitle": "তাজা ভারতীয় মিষ্টি",
+  "keywords": "mithai,মিষ্টি,কাজু বরফি,লাড্ডু,রসগোল্লা,গিফট বক্স,সুগার ফ্রি,দীপাবলি",
+  "promotionalText": "পৌঁছনোর দিন সকালে তৈরি তাজা মিষ্টি। দিল্লি NCR-এ একই দিনে, ৮ মেট্রো শহরে গিফট বক্স। শুধু ফোন নম্বর দিয়েই সাইন-ইন।",
+  "description": "মিশ্রণ আপনার ফোনে নিয়ে আসে সেই মিষ্টির দোকান — ছোটবেলার চেনা স্বাদ, তাজা তৈরি, ভালোবাসা দিয়ে প্যাক করা।\n\nতাজা, সবসময়\n• দিল্লি NCR জুড়ে একই দিনে ডেলিভারি — কাজু কতলি, মোতিচূর লাড্ডু, রসগোল্লা আরও অনেক কিছু, যেদিন পৌঁছায় সেদিন সকালে তৈরি।\n• দেশের ৮টি বড় শহরে পাঠানো গিফট বক্স, প্রতিটি বক্সে তাজার সময়সীমার নিশ্চয়তা।\n\nসেকেন্ডে অর্ডার\n• শুধু ফোন নম্বর দিয়ে সাইন-ইন — বা Sign in with Apple। পাসওয়ার্ড লাগবে না।\n• পছন্দ অনুযায়ী খুঁজুন — ক্লাসিক থেকে সুগার-ফ্রি পর্যন্ত।\n• আপনার মতো পেমেন্ট: UPI, কার্ড, নেট ব্যাঙ্কিং বা ওয়ালেট — নিরাপদ Razorpay-এর মাধ্যমে।\n\nপ্রতিটি অর্ডারের ট্র্যাক\n• রান্নাঘর থেকে দরজা পর্যন্ত লাইভ স্টেটাস, আপনার বেছে নেওয়া ডেলিভারি স্লট সহ।\n• লক স্ক্রিন ও Dynamic Island-এ Live Activity — এক নজরে অর্ডারের অগ্রগতি।\n• সম্পূর্ণ অর্ডার ইতিহাস, আইটেম-ধরে বিল সহ — আর প্রিয়গুলোর জন্য ওয়ান-ট্যাপ আবার অর্ডার।\n\nআপনার জন্যই\n• ৯টি ভাষায়: বাংলা, English, हिन्दी, ಕನ್ನಡ, தமிழ், తెలుగు, मराठी, ગુજરાતી, ਪੰਜਾਬੀ.\n• অফলাইনেও চলে: দুর্বল নেটওয়ার্কেও আপনার ক্যাটালগ, কার্ট আর অর্ডার প্রস্তুত।\n• Wallet লয়ালটি পাস, বায়োমেট্রিক দ্রুত অ্যাক্সেস, ডার্ক মোড, আর শুরু থেকেই অ্যাক্সেসিবিলিটি।\n\nপ্রশ্ন বা বাল্ক/কর্পোরেট অর্ডার? support@mishran.app-এ যোগাযোগ করুন।",
+  "privacyPolicyUrl": "https://mishran.app/privacy",
+  "supportUrl": "https://mishran.app/support",
+  "screenshotPlan": [
+    {
+      "screen": "Catalog grid",
+      "caption": "আজ সকালে তৈরি মিষ্টি"
+    },
+    {
+      "screen": "Product detail",
+      "caption": "ভেতরে কী আছে, পুরো তথ্য"
+    },
+    {
+      "screen": "Checkout — slot picker",
+      "caption": "আপনার ডেলিভারি স্লট বাছুন"
+    },
+    {
+      "screen": "Live Activity / Dynamic Island",
+      "caption": "রান্নাঘর থেকে দরজা পর্যন্ত"
+    },
+    {
+      "screen": "Wallet loyalty pass",
+      "caption": "আপনার টিয়ার, Apple Wallet-এ"
+    }
+  ]
+}

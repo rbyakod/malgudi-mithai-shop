@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  apps/android/app/src/main/res/xml/order_status_widget_info.xml — Task 11.2.
+  2x1 home-screen widget: the latest in-flight order's stage + ETA. The
+  30-minute system period is a floor, not the freshness mechanism — pushes
+  (11.3) and the hourly order refresh both call Glance's updateAll the
+  moment state moves; the system tick only recovers after force-stops.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="110dp"
+    android:minHeight="40dp"
+    android:targetCellWidth="2"
+    android:targetCellHeight="1"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen" />

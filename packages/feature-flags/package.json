@@ -1,0 +1,11 @@
+{
+  "name": "@mishran/feature-flags",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "lint": "tsx scripts/lint.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4"
+  }
+}

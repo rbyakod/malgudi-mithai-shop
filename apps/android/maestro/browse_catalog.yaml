@@ -1,0 +1,41 @@
+# apps/android/maestro/browse_catalog.yaml — Task 12.1.
+# Maestro translation of packages/e2e-flows/browse_catalog.feature.
+# Requires the catalog to have synced at least once (cold cache renders
+# empty until the first 200 lands).
+appId: com.mishran.app
+name: Browse catalog with search and filters
+
+- launchApp
+- tapOn: "Catalog"
+- assertVisible: "Kaju Katli"
+
+---
+name: Search narrows the grid
+- tapOn:
+    id: "search_field"
+- inputText: "kaju"
+- assertVisible: "Kaju Katli"
+# A non-matching term empties the grid.
+- inputText: "zzzz"
+- assertVisible: "No sweets match"
+
+---
+name: Dietary filter and clear
+- tapOn:
+    id: "search_field"
+- eraseText
+- tapOn: "Filters"
+- tapOn: "Sugar-free"
+- tapOn:
+    id: "filter_sheet_done"
+- assertVisible: "Kaju Katli"
+- tapOn: "Clear all"
+- assertVisible: "Kaju Katli"
+
+---
+name: Product detail and add to cart
+- tapOn: "Kaju Katli"
+- assertVisible: "Ingredients"
+- tapOn: "Add to cart"
+- assertVisible:
+    id: "cart_badge"

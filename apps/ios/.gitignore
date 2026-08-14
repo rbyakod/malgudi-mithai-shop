@@ -1,0 +1,6 @@
+# Xcode user state (per-developer) — the project itself is generated from
+# project.yml via XcodeGen and IS committed.
+xcuserdata/
+*.xcuserstate
+DerivedData/
+.build/

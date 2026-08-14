@@ -1,0 +1,24 @@
+# apps/ios/maestro/checkout_razorpay_test.yaml — Task 20.1.
+# Maestro translation of packages/e2e-flows/login_checkout.feature
+# (checkout half). STAGING-GATED: run after sign_in_with_otp.yaml against
+# a staging backend with Razorpay in TEST mode. Requires the signed-in
+# session from that flow plus a catalog with Kaju Katli.
+appId: com.mishran.app
+name: Checkout pays through Razorpay test mode
+---
+- launchApp
+- tapOn: "Kaju Katli"
+- tapOn: "Add to cart"
+- tapOn: "Cart"
+- tapOn: "Checkout"
+- tapOn: "Delivery pincode"
+- inputText: "110001"
+- tapOn: "Check delivery availability"
+- assertVisible: "Place order"
+- tapOn: "Place order"
+# Razorpay test sheet: success card. Test mode only.
+- assertVisible: "UPI"
+- tapOn: "SUCCESS"
+- assertVisible: "Order confirmed"
+- tapOn: "Track order"
+- assertVisible: "Totals"

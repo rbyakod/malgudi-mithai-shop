@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "debug-config",
+      "name" : "Debug",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testExecutionOrdering" : "parallel"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Mishran.xcodeproj",
+        "identifier" : "MishranTests",
+        "name" : "MishranTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Mishran.xcodeproj",
+        "identifier" : "MishranUITests",
+        "name" : "MishranUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

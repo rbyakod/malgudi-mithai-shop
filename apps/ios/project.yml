@@ -1,0 +1,168 @@
+# apps/ios/project.yml — Task 14.1 (Mishran Mobile Apps v1).
+# XcodeGen spec: the .xcodeproj is GENERATED from this file, never hand-edited
+# (regenerate with `pnpm ios:xcodegen` / `xcodegen --spec apps/ios/project.yml`).
+#
+# iOS 17+ deployment floor per plan. Bundle id com.mishran.app (matches the
+# Android applicationId and the backend's X-Client-Source contract).
+# DEVELOPMENT_TEAM / code-signing stay unset until Apple Developer Program
+# enrollment lands (plan Open Question #8) — simulator builds don't sign.
+name: Mishran
+
+options:
+  bundleIdPrefix: com.mishran
+  deploymentTarget:
+    iOS: "17.0"
+  # NOTE: createIntermediateGroups mangles sources outside the project root
+  # (the monorepo brand-tokens dir) — keep explicit groups instead.
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    CODE_SIGN_STYLE: Automatic
+    # Ad-hoc signing ("Sign to Run Locally", no team needed) — simulator
+    # builds are signed locally so the keychain + entitlements work in
+    # hosted unit tests (Task 15.4). Xcode Cloud overrides with real signing.
+    CODE_SIGN_IDENTITY: "-"
+    # Task 21.1: distribution signing. APPLE_TEAM_ID (10-char Team ID,
+    # env-injected by Xcode Cloud / ci_archive.sh) expands at xcodebuild
+    # time; unset/empty locally → simulator builds stay ad-hoc as above.
+    # Gated on Apple Developer Program enrollment (Open Question #8).
+    DEVELOPMENT_TEAM: ${APPLE_TEAM_ID}
+
+# Task 17.3: Razorpay Checkout SDK via SPM. The repo publishes the
+# RazorpayCheckout product (source wrapper `RazorpaySwift` + binary
+# Razorpay/RazorpayCore/RazorpayStandard frameworks).
+packages:
+  Razorpay:
+    url: https://github.com/razorpay/razorpay-pod
+    from: 1.5.6
+
+targets:
+  Mishran:
+    type: application
+    platform: iOS
+    sources:
+      - path: Mishran
+        excludes:
+          # Widget-rendering code compiles into the MishranWidgets extension
+          # only (Task 18.2) — an ActivityConfiguration is inert in the app.
+          - "LiveActivity/DeliveryActivity.swift"
+      # Monorepo brand tokens, compiled in place (zero duplication — same
+      # convention as the Android srcDir wiring). Regenerate with
+      # `pnpm codegen:swift` in packages/brand-tokens.
+      - path: ../../packages/brand-tokens/generated/swift
+        group: Generated
+      # Test plan (Task 14.5): project-level file, no target membership —
+      # selectable from Xcode Cloud and usable via `xcodebuild -testPlan`.
+      - path: Mishran.xctestplan
+        buildPhase: none
+    dependencies:
+      # The repo publishes one product: RazorpayCheckout (name != repo name).
+      - package: Razorpay
+        product: RazorpayCheckout
+      - target: MishranWidgets
+    info:
+      path: Mishran/Info.plist
+      properties:
+        CFBundleDisplayName: Mishran
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        # Plain-text wordmark until brand fonts land (Task 14.2 codegen).
+        UILaunchScreen:
+          UIColorName: AccentColor
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        # mishran://order/{id} deep links (parity with Android's intent
+        # filter; routes arrive in 18.x notification handling).
+        CFBundleURLTypes:
+          - CFBundleURLName: com.mishran.app
+            CFBundleURLSchemes:
+              - mishran
+        # Task 16.2: periodic catalog refresh (every 6h, ETag conditional).
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.mishran.app.catalog-refresh
+        # Task 18.2: delivery Live Activities (+ Dynamic Island).
+        NSSupportsLiveActivities: true
+        ITSAppUsesNonExemptEncryption: false
+        # ATS exemption (DEBUG convenience): the dev build talks to the
+        # local backend at http://localhost:3000; without
+        # NSAllowsLocalNetworking iOS blocks that cleartext loopback (the
+        # 5404e00 fix was hand-edited into Info.plist and got clobbered by
+        # the next xcodegen regen — it must live here, the source of truth,
+        # so regenerated Info.plists keep it). The release build uses the
+        # production https API, so this is loopback-only and benign.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mishran.app
+        TARGETED_DEVICE_FAMILY: "1" # iPhone-only in v1 (iPad = deferred)
+        # Task 15.2: Sign in with Apple. Not embedded in simulator builds
+        # (CODE_SIGNING_ALLOWED=NO above); applies to signed device/Cloud builds.
+        CODE_SIGN_ENTITLEMENTS: Mishran/Mishran.entitlements
+
+  MishranWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      # Shared attributes/state (also compiled into the app target).
+      - path: Mishran/LiveActivity/DeliveryAttributes.swift
+      # Widget rendering — extension-only (inert in the app bundle).
+      - path: Mishran/LiveActivity/DeliveryActivity.swift
+      # Brand tokens for the activity UI (same srcDir convention as the app).
+      - path: ../../packages/brand-tokens/generated/swift
+        group: Generated
+    info:
+      path: MishranWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: MishranWidgets
+        # Sim install requires bundleVersion on the extension placeholder.
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mishran.app.widgets
+        TARGETED_DEVICE_FAMILY: "1"
+
+  MishranUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: MishranUITests
+    dependencies:
+      - target: Mishran
+    settings:
+      base:
+        TEST_TARGET_NAME: Mishran
+        GENERATE_INFOPLIST_FILE: "YES"
+
+  MishranTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: MishranTests
+    dependencies:
+      - target: Mishran
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: "YES"
+
+schemes:
+  Mishran:
+    build:
+      targets:
+        Mishran: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      # Runs BOTH bundles (unit + UI). The committed Mishran.xctestplan
+      # mirrors this set for Xcode Cloud / -testPlan use; XcodeGen 2.46
+      # can't emit a scheme TestPlanReference, so the plan is registered as
+      # a project file (buildPhase: none) and selected in the Xcode Cloud
+      # workflow config instead.
+      targets:
+        - MishranTests
+        - MishranUITests

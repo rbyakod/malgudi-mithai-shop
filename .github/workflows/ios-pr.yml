@@ -1,0 +1,70 @@
+# Task 14.5 (Mishran Mobile Apps v1): iOS PR CI on a GitHub-hosted macOS
+# runner — same tests as Xcode Cloud, no Apple account required.
+#
+# The simulator destination is resolved at run time (first available iPhone)
+# because runner images differ in installed runtimes; pinning a specific
+# OS version would break when the image rotates Xcode.
+name: ios-pr
+
+on:
+  pull_request:
+    paths:
+      - "apps/ios/**"
+      - "packages/brand-tokens/**"
+      - ".github/workflows/ios-pr.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install workspace deps (frozen)
+        run: pnpm install --frozen-lockfile
+
+      - name: Regenerate brand-token Swift + project
+        run: |
+          pnpm --filter @mishran/brand-tokens run codegen:swift
+          xcodegen --spec apps/ios/project.yml
+
+      - name: Resolve simulator destination
+        id: sim
+        run: |
+          line="$(xcrun simctl list devices available | grep -E 'iPhone' | head -n1)"
+          name="$(sed -E 's/^[[:space:]]*([^()]+[^(]*)\([0-9A-F-]{36}\).*/\1/' <<<"$line" | sed 's/[[:space:]]*$//')"
+          udid="$(sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/' <<<"$line")"
+          echo "destination=platform=iOS Simulator,id=$udid" >> "$GITHUB_OUTPUT"
+          echo "Running on: $name ($udid)"
+
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData/Mishran-*
+          key: xcode-deriveddata-${{ runner.os }}-${{ hashFiles('apps/ios/project.yml', 'apps/ios/Mishran/**/*.swift') }}
+          restore-keys: xcode-deriveddata-${{ runner.os }}-
+
+      - name: xcodebuild test
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project apps/ios/Mishran.xcodeproj \
+            -scheme Mishran \
+            -destination "${{ steps.sim.outputs.destination }}" \
+            | tee xcodebuild-test.log
+
+      - name: Archive test log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-test-log
+          path: xcodebuild-test.log

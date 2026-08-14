@@ -1,0 +1,60 @@
+version: 1
+events:
+  - name: app_launch
+    params:
+      cold_start: { type: boolean, required: true }
+      locale: { type: string, required: true }
+      app_version: { type: string, required: true }
+  - name: screen_view
+    params:
+      screen: { type: string, required: true }
+      referrer_screen: { type: string, required: false }
+  - name: search_performed
+    params:
+      query: { type: string, required: true }
+      result_count: { type: integer, required: true }
+  - name: product_viewed
+    params:
+      product_id: { type: string, required: true }
+      slug: { type: string, required: true }
+  - name: add_to_cart
+    params:
+      product_id: { type: string, required: true }
+      quantity: { type: integer, required: true }
+      price_paise: { type: integer, required: true }
+  - name: checkout_started
+    params:
+      cart_value_paise: { type: integer, required: true }
+      item_count: { type: integer, required: true }
+  - name: pincode_checked
+    params:
+      pincode: { type: string, required: true }
+      serviceable: { type: boolean, required: true }
+      tier: { type: string, required: false }
+  - name: payment_initiated
+    params:
+      order_id: { type: string, required: true }
+      amount_paise: { type: integer, required: true }
+      method: { type: string, required: true }
+  - name: payment_succeeded
+    params:
+      order_id: { type: string, required: true }
+      amount_paise: { type: integer, required: true }
+      method: { type: string, required: true }
+  - name: payment_failed
+    params:
+      order_id: { type: string, required: true }
+      reason_code: { type: string, required: true }
+  - name: order_status_changed
+    params:
+      order_id: { type: string, required: true }
+      from_status: { type: string, required: true }
+      to_status: { type: string, required: true }
+  - name: push_received
+    params:
+      event_id: { type: string, required: true }
+      event_type: { type: string, required: true }
+  - name: push_tapped
+    params:
+      event_id: { type: string, required: true }
+      event_type: { type: string, required: true }

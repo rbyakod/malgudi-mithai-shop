@@ -39,6 +39,26 @@ import { MerchProducts } from "./collections/MerchProducts";
 // Ops collections (Task 9).
 import { Leads } from "./collections/Leads";
 import { Drafts } from "./collections/Drafts";
+// Mobile app (Task 1.3): customer accounts.
+import { Customers } from "./collections/Customers";
+// Mobile app (Task 1.4): customer delivery addresses.
+import { Addresses } from "./collections/Addresses";
+// Mobile app (Task 1.5): orders.
+import { Orders } from "./collections/Orders";
+// Mobile app (Task 1.6): payments, shipments, serviceable pincodes.
+import { Payments } from "./collections/Payments";
+import { Shipments } from "./collections/Shipments";
+import { ServiceablePincodes } from "./collections/ServiceablePincodes";
+// Mobile app (Task 4.4): persisted cart snapshots (server-trust for create-order).
+import { Snapshots } from "./collections/Snapshots";
+// Mobile app (Task 1.7): auth + ops collections.
+import { OtpRequests } from "./collections/OtpRequests";
+import { Devices } from "./collections/Devices";
+import { IdempotencyKeys } from "./collections/IdempotencyKeys";
+import { RevokedTokens } from "./collections/RevokedTokens";
+import { SecurityEvents } from "./collections/SecurityEvents";
+// Mobile app (Task 19.1): Apple Wallet loyalty passes.
+import { WalletPasses } from "./collections/WalletPasses";
 // Globals (Task 8).
 import { BrandSettings } from "./globals/BrandSettings";
 import { NavSettings } from "./globals/NavSettings";
@@ -106,6 +126,26 @@ export default buildConfig({
     // Ops collections (Task 9).
     Leads,
     Drafts,
+    // Mobile app (Task 1.3): customer accounts.
+    Customers,
+    // Mobile app (Task 1.4): customer delivery addresses.
+    Addresses,
+    // Mobile app (Task 1.5): orders.
+    Orders,
+    // Mobile app (Task 1.6): payments, shipments, serviceable pincodes.
+    Payments,
+    Shipments,
+    ServiceablePincodes,
+    // Mobile app (Task 4.4): cart snapshots.
+    Snapshots,
+    // Mobile app (Task 1.7): auth + ops collections.
+    OtpRequests,
+    Devices,
+    IdempotencyKeys,
+    RevokedTokens,
+    SecurityEvents,
+    // Mobile app (Task 19.1): Apple Wallet loyalty passes.
+    WalletPasses,
   ],
   globals: [
     BrandSettings,

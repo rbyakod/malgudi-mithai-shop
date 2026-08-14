@@ -1,0 +1,17 @@
+version: 1
+flags:
+  - key: enable_otp_login
+    default: true
+    description: "Show OTP login flow"
+  - key: enable_razorpay_checkout
+    default: true
+    description: "Enable live Razorpay payments (false = test mode)"
+  - key: enable_order_widget
+    default: true
+    description: "Show Android order-status widget configuration"
+  - key: enable_locale_pa
+    default: true
+    description: "Show Punjabi in language picker"
+  - key: maintenance_mode
+    default: false
+    description: "Block all checkouts; show maintenance screen"

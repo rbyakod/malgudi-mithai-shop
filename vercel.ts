@@ -16,8 +16,12 @@
 //   - functions: bump maxDuration on the routes that do real work (Payload
 //     queries, Resend send, on-demand revalidate). 30s matches the Hobby
 //     plan's serverless-function ceiling and is well under the Pro ceiling.
-//   - crons: none yet. The brief specifies [] here; if we add scheduled jobs
-//     (e.g. a nightly Payload jobs:run cron), wire them in migrate-style here.
+//   - crons: scheduled jobs. Currently one entry — payment reconciliation
+//     (Task 4.7), which catches orphan payments every 15 min. Vercel cron
+//     invokes the route with `Authorization: Bearer ${CRON_SECRET}`; the
+//     route refuses anything else with 401. Self-hosted deploys can hit
+//     the same path with any external scheduler (systemd timer, k8s
+//     CronJob) using the same secret.
 //
 // Routes listed below are matched against the on-disk App Router route files.
 // Keep this list in sync if you add a new long-running API route. Verified
@@ -33,6 +37,15 @@ export const config: VercelConfig = {
     "app/api/drafts/route.ts": { maxDuration: 30 },
     "app/api/search/route.ts": { maxDuration: 30 },
     "app/api/revalidate/route.ts": { maxDuration: 30 },
+    // Reconciliation cron: bounded page size (100), single fetch per
+    // payment, no upload. 30s is plenty for the orphan volume we expect
+    // at v1; revisit if the backlog grows.
+    "app/api/cron/reconcile-payments/route.ts": { maxDuration: 30 },
   },
-  crons: [],
+  crons: [
+    {
+      path: "/api/cron/reconcile-payments",
+      schedule: "*/15 * * * *",
+    },
+  ],
 };

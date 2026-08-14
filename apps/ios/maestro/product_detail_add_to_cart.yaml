@@ -1,0 +1,19 @@
+# apps/ios/maestro/product_detail_add_to_cart.yaml — Task 20.1.
+# Detail → add to cart → cart shows the line (offline via -seedCatalog;
+# ProductDetailViewModel falls back to the SwiftData cache).
+appId: com.mishran.app
+name: Product detail and add to cart
+---
+- launchApp:
+    arguments:
+      "-seedCatalog": true
+- tapOn: "Kaju Katli, ₹720/kg"
+- assertVisible: "Add to cart"
+- tapOn: "Add to cart"
+- assertVisible: "Added to cart"
+# The Cart toolbar item belongs to the catalog root (pushed detail replaces
+# the toolbar), so hop back before opening the cart.
+- tapOn: "Sweets"
+- tapOn: "Cart"
+- assertVisible: "Kaju Katli"
+- assertVisible: "Checkout"

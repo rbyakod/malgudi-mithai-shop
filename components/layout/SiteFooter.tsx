@@ -48,7 +48,7 @@ const FOOTER_COLUMNS: {heading: string; links: {label: string; href: string}[]}[
   {
     heading: "Company",
     links: [
-      {label: "About Malgudi", href: "/about"},
+      {label: "About Mishran", href: "/about"},
       {label: "Careers", href: "/careers"},
       {label: "Press", href: "/press"},
       {label: "Wholesale", href: "/wholesale"},
@@ -134,7 +134,7 @@ export async function SiteFooter() {
       <div className="border-t border-text-heading/40">
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-2 px-4 py-4 text-[11px] text-text-light-muted sm:flex-row sm:items-center sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span>© {year} Malgudi Sweets. All rights reserved.</span>
+            <span>© {year} Mishran. All rights reserved.</span>
             {/* FSSAI placeholder — replace once the licence number is final. */}
             <span
               className="inline-flex items-center gap-1 rounded-full border border-text-light-muted/40 px-2 py-0.5 text-[10px]"

@@ -1,0 +1,56 @@
+version: '3.9'
+services:
+  mongo:
+    build: ./mongo
+    container_name: mishran-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mishran
+      MONGO_INITDB_ROOT_PASSWORD: mishrandev
+      MONGO_INITDB_DATABASE: mishran
+    volumes:
+      - mongo-data:/data/db
+    # keyFile is required: auth (root creds) + replica set cannot coexist
+    # without it (generated in the image, see mongo/Dockerfile). The
+    # replica-set member host must be localhost:27017 (see mongo-init) so
+    # host-side clients (Next.js dev server) can resolve the topology
+    # advertised by rs.hello().
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017", "--keyFile", "/etc/mongo-keyfile"]
+    healthcheck:
+      # Authenticated ping (not rs.status(): that throws until mongo-init
+      # has run rs.initiate(), which itself waits on this healthcheck —
+      # a deadlock if health depends on replication being up).
+      test: |
+        mongosh --quiet -u mishran -p mishrandev --authenticationDatabase admin --eval 'db.adminCommand({ ping: 1 }).ok'
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo-init:
+    image: mongo:7
+    depends_on:
+      mongo:
+        condition: service_healthy
+    entrypoint: |
+      mongosh --host mongo:27017 -u mishran -p mishrandev --eval '
+        try { rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "localhost:27017" }] }) } catch (e) { print(e.codeName) }
+      '
+    restart: "no"
+
+  minio:
+    image: minio/minio:latest
+    container_name: mishran-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: mishran
+      MINIO_ROOT_PASSWORD: mishrandev
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+
+volumes:
+  mongo-data:
+  minio-data:

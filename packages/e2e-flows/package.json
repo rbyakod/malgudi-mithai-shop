@@ -1,0 +1,6 @@
+{
+  "name": "@mishran/e2e-flows",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gherkin source-of-truth E2E flows shared by Maestro (Android) and XCUITest (iOS). The .feature files describe the user journey; platform suites translate them 1:1."
+}

@@ -419,7 +419,7 @@ MSG91_TEMPLATE_ORDER_STATUS=xxx
 
 # FCM (Android push)
 FCM_PROJECT_ID=mishran-prod
-FCP_SERVICE_ACCOUNT_JSON='{"type":"service_account",...}'
+FCM_SERVICE_ACCOUNT_JSON='{"type":"service_account",...}'
 
 # APNs (iOS v2 — leave blank for v1)
 APNS_TEAM_ID=
@@ -503,8 +503,7 @@ git commit -m "chore: convert repo to pnpm monorepo with workspace config"
   "devDependencies": {
     "openapi-typescript": "^7",
     "@openapitools/openapi-generator-cli": "^2",
-    "redocly": "^1",
-    "oasdiff": "^2",
+    "@redocly/cli": "^2.46.1",
     "tsx": "^4"
   }
 }
@@ -579,8 +578,8 @@ components:
       properties:
         id: { type: string }
         phone: { type: string }
-        name: { type: string, nullable: true }
-        email: { type: string, nullable: true }
+        name: { type: [string, "null"] }
+        email: { type: [string, "null"] }
         locale:
           type: string
           enum: [en, hi, kn, ta, te, mr, gu, bn, pa]
@@ -681,7 +680,7 @@ git commit -m "feat(api-contract): scaffold OpenAPI 3.1 contract package with re
 ```json
 {
   "color": {
-    "brand": { "wine": "#8b1e3f", "saffron": "#e76f51", "cream": "#fafaf7" },
+    "brand": { "canvas": "#f7efe0", "surface": "#fbf6ec", "accent": "#9b4d2a", "pop": "#d79a35", "ink": "#2c1810" },
     "neutral": { "100": "#f3f0e8", "500": "#5a5a5a", "900": "#1a1a1a" }
   },
   "radius": { "sm": "4px", "md": "8px", "lg": "12px", "xl": "20px", "full": "9999px" },
@@ -699,19 +698,21 @@ git commit -m "feat(api-contract): scaffold OpenAPI 3.1 contract package with re
 import { writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
-// Web's Tailwind v4 config exposes CSS variables. We import them directly.
-// This script reads the resolved CSS variable values and writes tokens.json.
-// For v1: hard-coded source-of-truth in this file. Web Tailwind config will
-// import these tokens via @theme in globals.css.
+// Source-of-truth for v1. Web Tailwind v4 @theme reverse-flow is a tracked
+// follow-up (not yet implemented). See lib/themes.ts for theme list.
+//
+// Canonical brand palette mirrors `mishran-default` (DEFAULT_THEME in
+// lib/themes.ts): kakvi brown accent + festive saffron gold pop on warm
+// milk-cream canvas.
 
 const tokens = {
   color: {
     brand: {
-      wine: '#8b1e3f',
-      wineDark: '#6b1730',
-      saffron: '#e76f51',
-      gold: '#c9a55c',
-      cream: '#fafaf7',
+      canvas: '#f7efe0',  // warm milk-cream background (mishran-default)
+      surface: '#fbf6ec', // lighter surface
+      accent: '#9b4d2a',  // kakvi brown — primary brand
+      pop: '#d79a35',     // festive saffron gold — secondary
+      ink: '#2c1810',     // deep kakvi brown — text
     },
     neutral: {
       50: '#fafaf7',
@@ -770,11 +771,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.shapes.Shape
 
 object MishranColors {
-  val BrandWine = Color(0xFF8B1E3F)
-  val BrandWineDark = Color(0xFF6B1730)
-  val BrandSaffron = Color(0xFFE76F51)
-  val BrandGold = Color(0xFFC9A55C)
-  val BrandCream = Color(0xFFFAFAF7)
+  val BrandCanvas = Color(0xFFF7EFE0)
+  val BrandSurface = Color(0xFFFBF6EC)
+  val BrandAccent = Color(0xFF9B4D2A)
+  val BrandPop = Color(0xFFD79A35)
+  val BrandInk = Color(0xFF2C1810)
 
   val Neutral50 = Color(0xFFFAFAF7)
   val Neutral100 = Color(0xFFF3F0E8)
@@ -4563,16 +4564,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val MishranColorScheme = lightColorScheme(
-  primary = MishranColors.BrandWine,
+  primary = MishranColors.BrandAccent,
   onPrimary = Color.White,
-  primaryContainer = MishranColors.BrandWineDark,
+  primaryContainer = MishranColors.BrandInk,
   onPrimaryContainer = Color.White,
-  secondary = MishranColors.BrandSaffron,
+  secondary = MishranColors.BrandPop,
   onSecondary = Color.White,
-  tertiary = MishranColors.BrandGold,
-  background = MishranColors.BrandCream,
+  tertiary = MishranColors.BrandPop,
+  background = MishranColors.BrandCanvas,
   onBackground = MishranColors.Neutral900,
-  surface = Color.White,
+  surface = MishranColors.BrandSurface,
   onSurface = MishranColors.Neutral900,
   error = MishranColors.StateError,
   onError = Color.White,

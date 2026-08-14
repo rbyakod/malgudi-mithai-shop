@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -23,6 +23,11 @@
 # misc
 .DS_Store
 *.pem
+
+# Apple passbook credentials (Task 18.5). Never commit secrets.
+certs/*.p12
+certs/*.key
+certs/*.pem
 
 # debug
 npm-debug.log*
@@ -55,3 +60,4 @@ next-env.d.ts
 playwright-report/
 test-results/
 
+.env

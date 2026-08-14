@@ -1,0 +1,24 @@
+# apps/android/.gitignore — Task 7.1.
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+local.properties
+
+# Kotlin
+.cxx/
+
+# IDE
+*.iml
+.idea/
+.DS_Store
+captures/
+
+# Firebase / signing secrets — never commit (Task 7.1 Step 3, 13.3)
+app/google-services.json
+*.keystore
+*.jks
+keystore.properties
+
+# Generated Crashlytics symbols
+app/build/outputs/mapping/

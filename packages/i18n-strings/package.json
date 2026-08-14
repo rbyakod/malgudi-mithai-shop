@@ -1,0 +1,14 @@
+{
+  "name": "@mishran/i18n-strings",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "check": "tsx scripts/check-missing-keys.ts",
+    "codegen:android": "tsx scripts/codegen-android.ts",
+    "codegen:ios": "tsx scripts/codegen-ios.ts",
+    "build": "pnpm check && pnpm codegen:android && pnpm codegen:ios"
+  },
+  "devDependencies": {
+    "tsx": "^4"
+  }
+}

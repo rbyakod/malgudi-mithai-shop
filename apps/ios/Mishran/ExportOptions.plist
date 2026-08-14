@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ExportOptions.plist — Task 21.1 (Mishran Mobile Apps v1).
+     Consumed by `xcodebuild -exportArchive -exportOptionsPlist` in
+     ci_scripts/ci_archive.sh to turn the archive into an App Store IPA.
+
+     Enrollment landed (Team 2X7B7DMV95). Automatic signing resolves the
+     distribution certificate + provisioning profile once the App ID
+     com.mishran.app exists with Sign in with Apple, Push Notifications,
+     Live Activity, Wallet capabilities (see ci_archive.sh header for the
+     portal checklist).
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>method</key>
+	<string>app-store-connect</string>
+	<key>teamID</key>
+	<string>2X7B7DMV95</string>
+	<key>signingStyle</key>
+	<string>automatic</string>
+	<key>signingCertificate</key>
+	<string>Apple Distribution</string>
+	<key>uploadSymbols</key>
+	<true/>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>manageAppVersionAndBuildNumber</key>
+	<true/>
+	<key>destination</key>
+	<string>export</string>
+</dict>
+</plist>

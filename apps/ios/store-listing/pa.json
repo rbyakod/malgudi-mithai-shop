@@ -1,0 +1,33 @@
+{
+  "_comment": "Task 21.2 (Mishran Mobile Apps v1). App Store Connect limits: name ≤30, subtitle ≤30, keywords ≤100 (commas count), promotionalText ≤170, description ≤4000. Machine-verified by scripts/ios-listing-check.sh (`pnpm ios:listing:check`). Screenshots (Task 21.2 Step 2) are fastlane-snapshot captures pending the release build; sizes: 6.7\" (1320×2868), 6.5\" (1284×2778), 5.5\" (1242×2208).",
+  "locale": "pa",
+  "name": "ਮਿਸ਼ਰਣ: ਤਾਜ਼ੀ ਮਠਿਆਈ ਘਰੇ",
+  "subtitle": "ਤਾਜ਼ੀ ਭਾਰਤੀ ਮਠਿਆਈ",
+  "keywords": "mithai,ਮਠਿਆਈ,ਕਾਜੂ ਕਤਲੀ,ਲੱਡੂ,ਰਸਗੁੱਲਾ,ਗਿਫਟ ਬਾਕਸ,ਸ਼ੂਗਰ ਫ੍ਰੀ,ਦਿਵਾਲੀ",
+  "promotionalText": "ਪੁੱਜਣ ਵਾਲੇ ਦਿਨ ਸਵੇਰੇ ਬਣੀ ਤਾਜ਼ੀ ਮਠਿਆਈ। ਦਿੱਲੀ NCR ਵਿੱਚ ਉਸੇ ਦਿਨ, 8 ਮਹਾਨਗਰਾਂ ਵਿੱਚ ਗਿਫਟ ਬਾਕਸ। ਸਿਰਫ਼ ਫ਼ੋਨ ਨੰਬਰ ਨਾਲ ਸਾਈਨ-ਇਨ।",
+  "description": "ਮਿਸ਼ਰਣ ਤੁਹਾਡੇ ਫ਼ੋਨ ਤੇ ਲਿਆਉਂਦਾ ਹੈ ਉਹ ਮਠਿਆਈ ਦੀ ਦੁਕਾਨ — ਬਚਪਨ ਦੇ ਜਾਣੇ-ਪਛਾਣੇ ਸੁਆਦ, ਤਾਜ਼ੇ ਬਣੇ, ਪਿਆਰ ਨਾਲ ਪੈਕ ਕੀਤੇ।\n\nਤਾਜ਼ੇ, ਹਮੇਸ਼ਾ\n• ਦਿੱਲੀ NCR ਵਿੱਚ ਉਸੇ ਦਿਨ ਡਿਲੀਵਰੀ — ਕਾਜੂ ਕਤਲੀ, ਮੋਤੀਚੂਰ ਲੱਡੂ, ਰਸਗੁੱਲਾ ਹੋਰ ਵੀ ਬਹੁਤ ਕੁਝ, ਜਿਸ ਦਿਨ ਪੁੱਜਦੇ ਹਨ ਉਸੇ ਸਵੇਰੇ ਬਣੇ।\n• ਦੇਸ਼ ਦੇ 8 ਵੱਡੇ ਸ਼ਹਿਰਾਂ ਨੂੰ ਭੇਜੇ ਜਾਂਦੇ ਗਿਫਟ ਬਾਕਸ, ਹਰ ਬਾਕਸ ਤੇ ਤਾਜ਼ਗੀ ਦੀ ਗਾਰੰਟੀਦਾਰ ਮਿਆਦ।\n\nਸਕਿੰਟਾਂ ਵਿੱਚ ਆਰਡਰ\n• ਸਿਰਫ਼ ਫ਼ੋਨ ਨੰਬਰ ਨਾਲ ਸਾਈਨ-ਇਨ — ਜਾਂ Sign in with Apple। ਕੋਈ ਪਾਸਵਰਡ ਨਹੀਂ।\n• ਪਸੰਦ ਮੁਤਾਬਕ ਲੱਭੋ — ਕਲਾਸਿਕ ਤੋਂ ਸ਼ੂਗਰ-ਫ੍ਰੀ ਤੱਕ।\n• ਆਪਣੀ ਦਿਲ ਦੀ ਪ੍ਰਕਾਰ ਭੁਗਤਾਨ: UPI, ਕਾਰਡ, ਨੈੱਟ ਬੈਂਕਿੰਗ ਜਾਂ ਵਾਲਟ — ਸੁਰੱਖਿਅਤ Razorpay ਰਾਹੀਂ।\n\nਹਰ ਆਰਡਰ ਦੀ ਟਰੈਕਿੰਗ\n• ਰਸੋਈ ਤੋਂ ਦਰਵਾਜ਼ੇ ਤੱਕ ਲਾਈਵ ਸਥਿਤੀ, ਤੁਹਾਡੀ ਚੁਣੀ ਡਿਲੀਵਰੀ ਸਲਾਟ ਨਾਲ।\n• ਲਾਕ ਸਕਰੀਨ ਅਤੇ Dynamic Island ਤੇ Live Activity — ਇੱਕ ਝਲਕ ਵਿੱਚ ਆਰਡਰ ਦੀ ਤਰੱਕੀ।\n• ਪੂਰਾ ਆਰਡਰ ਇਤਿਹਾਸ, ਆਈਟਮ-ਵਾਰ ਬਿੱਲ ਨਾਲ — ਅਤੇ ਪਸੰਦੀਦਾ ਲਈ ਇੱਕ-ਟੈਪ ਮੁੜ ਆਰਡਰ।\n\nਤੁਹਾਡੇ ਲਈ ਹੀ\n• 9 ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ: ਪੰਜਾਬੀ, English, हिन्दी, ಕನ್ನಡ, தமிழ், తెలుగు, मराठी, ગુજરાતી, বাংলা.\n• ਆਫ਼ਲਾਈਨ ਵੀ ਚੱਲਦਾ ਹੈ: ਕਮਜ਼ੋਰ ਨੈੱਟਵਰਕ ਤੇ ਵੀ ਤੁਹਾਡੀ ਕੈਟਾਲਾਗ, ਕਾਰਟ ਅਤੇ ਆਰਡਰ ਤਿਆਰ।\n• Wallet ਲੌਇਲਟੀ ਪਾਸ, ਬਾਇਓਮੈਟ੍ਰਿਕ ਤੇਜ਼ ਐਕਸੈੱਸ, ਡਾਰਕ ਮੋਡ, ਅਤੇ ਸ਼ੁਰੂ ਤੋਂ ਹੀ ਐਕਸੈਸਿਬਿਲਟੀ।\n\nਸਵਾਲ ਜਾਂ ਬਲਕ/ਕਾਰਪੋਰੇਟ ਆਰਡਰ? support@mishran.app ਤੇ ਸੰਪਰਕ ਕਰੋ।",
+  "privacyPolicyUrl": "https://mishran.app/privacy",
+  "supportUrl": "https://mishran.app/support",
+  "screenshotPlan": [
+    {
+      "screen": "Catalog grid",
+      "caption": "ਅੱਜ ਸਵੇਰੇ ਬਣੀ ਮਠਿਆਈ"
+    },
+    {
+      "screen": "Product detail",
+      "caption": "ਅੰਦਰ ਕੀ ਹੈ, ਪੂਰੀ ਜਾਣਕਾਰੀ"
+    },
+    {
+      "screen": "Checkout — slot picker",
+      "caption": "ਆਪਣੀ ਡਿਲੀਵਰੀ ਸਲਾਟ ਚੁਣੋ"
+    },
+    {
+      "screen": "Live Activity / Dynamic Island",
+      "caption": "ਰਸੋਈ ਤੋਂ ਦਰਵਾਜ਼ੇ ਤੱਕ"
+    },
+    {
+      "screen": "Wallet loyalty pass",
+      "caption": "ਤੁਹਾਡਾ ਟੀਅਰ, Apple Wallet ਵਿੱਚ"
+    }
+  ]
+}

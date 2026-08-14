@@ -1,0 +1,10 @@
+# Apple passbook credentials live here (gitignored):
+#   passbook.p12   — Pass Type ID certificate + private key (exported from
+#                    Apple Developer > Certificates, IDs & Profiles).
+#   wwdr.pem       — Apple Worldwide Developer Relations Relation cert
+#                    (https://www.apple.com/certificateauthority/).
+# Configure paths via PASSBOOK_CERT_PATH / PASSBOOK_WWDR_PATH env.
+#
+# Until these are present (Apple Developer Program enrollment — plan Open
+# Question #8), the container resolves the wallet service to FakeWalletService
+# so no unsigned .pkpass is ever served.

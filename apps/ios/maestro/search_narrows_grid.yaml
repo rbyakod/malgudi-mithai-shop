@@ -1,0 +1,13 @@
+# apps/ios/maestro/search_narrows_grid.yaml — Task 20.1.
+# Search box narrows the grid; a non-matching term empties it.
+appId: com.mishran.app
+name: Search narrows the grid
+---
+- launchApp:
+    arguments:
+      "-seedCatalog": true
+- tapOn: "Search sweets"
+- inputText: "kaju"
+- assertVisible: "Kaju Katli, ₹720/kg"
+- inputText: "zzzz"
+- assertVisible: "No sweets found"

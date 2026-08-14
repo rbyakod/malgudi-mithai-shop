@@ -1,0 +1,23 @@
+# apps/ios/maestro/sign_in_with_otp.yaml — Task 20.1.
+# Maestro translation of packages/e2e-flows/login_checkout.feature
+# (sign-in half). STAGING-GATED: run against a staging backend; CI fetches
+# the OTP from the staging OTP log endpoint into MAESTRO_OTP, the phone
+# number comes from MAESTRO_PHONE. run-flows.sh skips this flow when
+# either is unset.
+appId: com.mishran.app
+name: Sign in with phone + OTP
+env:
+  MAESTRO_PHONE: ${MAESTRO_PHONE}
+  MAESTRO_OTP: ${MAESTRO_OTP}
+---
+- launchApp:
+    arguments:
+      "-authScreen": true
+- assertVisible: "Sign in to order fresh mithai."
+- tapOn: "Phone number with country code"
+- inputText: ${MAESTRO_PHONE}
+- tapOn: "Send code"
+- assertVisible: "6-digit code"
+- inputText: ${MAESTRO_OTP}
+- tapOn: "Verify"
+- assertVisible: "Sweets"
