@@ -654,23 +654,38 @@ pnpm build
   <div class="code-block"><div class="code-title"><span>/etc/systemd/system/mithai-shop.service</span><button class="copy">copy</button></div>
 <pre><code>[Unit]
 Description=Mishran Next.js + Payload app
-After=network.target mongod.service     <span class="c"># don't start before net + mongo</span>
-Requires=mongod.service                 <span class="c"># mongo down → app stops too (fails loudly)</span>
+After=network.target mongod.service
+Requires=mongod.service
 
 [Service]
 Type=simple
-User=mithai                             <span class="c"># run as the locked-down app user</span>
+User=mithai
 Group=mithai
-WorkingDirectory=/opt/mithai-shop       <span class="c"># relative paths (media/, .next/) resolve here</span>
-EnvironmentFile=/opt/mithai-shop/.env   <span class="c"># the file from step 06</span>
-ExecStart=/usr/bin/pnpm start           <span class="c"># runs `next start` on PORT=3000</span>
-Restart=always                          <span class="c"># crash → auto-restart…</span>
-RestartSec=5                            <span class="c"># …after a 5s breather</span>
-NoNewPrivileges=true                    <span class="c"># hardening: no suid escalation</span>
-PrivateTmp=true                         <span class="c"># hardening: private /tmp</span>
+WorkingDirectory=/opt/mithai-shop
+EnvironmentFile=/opt/mithai-shop/.env
+ExecStart=/usr/bin/pnpm start
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
 
 [Install]
-WantedBy=multi-user.target              <span class="c"># "start on normal boot"</span></code></pre></div>
+WantedBy=multi-user.target</code></pre></div>
+  <p class="callout bad"><b>No inline comments in systemd unit files.</b> A <code>#</code> is only a comment at the very <i>start</i> of a line — anything after a value becomes part of it, and a trailing comment on <code>WantedBy=</code> makes <code>systemctl enable</code> fail with <code>"#" is not a valid unit name</code>. Paste the block exactly as shown; the annotations live in the table below, not in the file.</p>
+  <table>
+    <thead><tr><th>Line</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>After=network.target mongod.service</code></td><td>Don't start before the network and Mongo are up</td></tr>
+      <tr><td><code>Requires=mongod.service</code></td><td>Mongo down → app stops too (fails loudly instead of serving errors)</td></tr>
+      <tr><td><code>User=</code> / <code>Group=</code></td><td>Run as the locked-down app user</td></tr>
+      <tr><td><code>WorkingDirectory=</code></td><td>Relative paths (<code>media/</code>, <code>.next/</code>) resolve here</td></tr>
+      <tr><td><code>EnvironmentFile=</code></td><td>The <code>.env</code> from step 06</td></tr>
+      <tr><td><code>ExecStart=/usr/bin/pnpm start</code></td><td>Runs <code>next start</code> on <code>PORT=3000</code> (verify the path with <code>which pnpm</code>)</td></tr>
+      <tr><td><code>Restart=always</code> + <code>RestartSec=5</code></td><td>Crash → auto-restart after a 5-second breather</td></tr>
+      <tr><td><code>NoNewPrivileges</code> / <code>PrivateTmp</code></td><td>Hardening: no suid escalation, private <code>/tmp</code></td></tr>
+      <tr><td><code>WantedBy=multi-user.target</code></td><td>Start on normal boot</td></tr>
+    </tbody>
+  </table>
 
   <h4>7.3 Start it and watch the boot</h4>
   <div class="code-block"><div class="code-title"><span>Enable + verify (admin shell)</span><button class="copy">copy</button></div>
