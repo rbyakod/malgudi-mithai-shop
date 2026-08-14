@@ -518,9 +518,10 @@ pnpm install --frozen-lockfile     <span class="c"># exact versions from pnpm-lo
   <p class="lede">Variable names below match the repo's <code>.env.example</code> exactly. The file must be named <code>.env</code> (the seed scripts read it via <code>node --env-file=.env</code>). Generate the two secrets first, then paste everything in one go.</p>
 
   <h4>6.1 Generate secrets</h4>
-  <div class="code-block"><div class="code-title"><span>Two random hex strings (paste each into the file below)</span><button class="copy">copy</button></div>
+  <div class="code-block"><div class="code-title"><span>Three random hex strings (paste each into the file below)</span><button class="copy">copy</button></div>
 <pre><code>openssl rand -hex 32     <span class="c"># → PAYLOAD_SECRET      (signs admin login sessions)</span>
-openssl rand -hex 32     <span class="c"># → REVALIDATE_SECRET  (protects the cache-refresh endpoint)</span></code></pre></div>
+openssl rand -hex 32     <span class="c"># → REVALIDATE_SECRET  (protects the cache-refresh endpoint)</span>
+openssl rand -hex 32     <span class="c"># → CRON_SECRET        (authenticates the /api/cron/… endpoints)</span></code></pre></div>
 
   <h4>6.1.1 Required API keys (strict env validation)</h4>
   <p class="lede">The app validates its environment at startup and during <code>pnpm build</code> (see <code>lib/config.ts</code>). Besides the values above it requires an RS256 JWT keypair plus a set of vendor keys. You don't need real vendor accounts for family testing — paste the placeholders below and browsing, cart, and /admin all work; only online payments, OTP SMS, and outgoing email stay disabled until you replace them with real keys.</p>
@@ -565,9 +566,10 @@ PORT=3000
 <span class="c"># Mongo — single-node replica set rs0 (step 04), user auth against the admin DB</span>
 MONGODB_URI=mongodb://mishran:REPLACE_DB_PASSWORD@127.0.0.1:27017/mishran?replicaSet=rs0&amp;authSource=admin
 
-<span class="c"># the two openssl outputs</span>
+<span class="c"># the three openssl outputs</span>
 PAYLOAD_SECRET=REPLACE_WITH_SECRET_1
 REVALIDATE_SECRET=REPLACE_WITH_SECRET_2
+CRON_SECRET=REPLACE_WITH_SECRET_3
 
 <span class="c"># public URLs — these are INLINED INTO THE BUNDLE AT BUILD TIME, so they must</span>
 <span class="c"># be correct BEFORE `pnpm build` (step 07)</span>
@@ -587,7 +589,25 @@ NEXT_PUBLIC_META_PIXEL_ID=</code></pre></div>
 
   <p class="callout note"><b>The step 6.1.1 block is not optional.</b> Without it, <code>pnpm build</code> fails with a <code>[ZodError]</code> listing <code>payloadSecret</code>, <code>jwtPrivateKey</code>, <code>razorpayKeyId</code>, etc. — the build compiles first and only fails at "Collecting page data".</p>
 
-  <h4>6.3 Lock it down</h4>
+  <h4>6.3 Environment mode: production vs development</h4>
+  <p class="lede">This deployment runs a <strong>production build</strong> — that part isn't optional: <code>next build</code> always produces optimized production bundles, and <code>next start</code> (what the systemd service runs) always sets <code>NODE_ENV=production</code> for the app process. A <code>NODE_ENV=development</code> line in <code>.env</code> would be silently ignored by the running site (it <em>is</em> read by the seed scripts, though — keep it <code>production</code> so seeds behave like the live site).</p>
+  <table>
+    <thead><tr><th>Mode</th><th>When to use</th><th>How</th></tr></thead>
+    <tbody>
+      <tr><td><b>Production</b> (recommended)</td><td>The family test and everything after. Full env validation, optimized build, real provider defaults — calls to a vendor with placeholder keys simply fail if invoked, and the web storefront your family will use never invokes them.</td><td><code>NODE_ENV=production</code> + the exact <code>.env</code> from 6.2. Nothing extra to do.</td></tr>
+      <tr><td><b>Development</b></td><td>Only if you want a scratch instance to experiment on the same box — dev server, hot reload, no build step.</td><td>Run <code>pnpm dev</code> on another port (e.g. <code>PORT=3001 pnpm dev</code>) as the app user in a <code>tmux</code>/<code>screen</code> session. Don't point it at the production DB — use a separate <code>MONGODB_URI</code> database name.</td></tr>
+    </tbody>
+  </table>
+  <p><b>Per-service overrides (the useful middle ground).</b> You don't need to change <code>NODE_ENV</code> to make individual external services inert. Each provider has its own switch — set it to <code>fake</code> and that service short-circuits locally instead of calling the vendor with placeholder keys:</p>
+  <div class="code-block"><div class="code-title"><span>Optional — append any of these to .env (all commented out by default)</span><button class="copy">copy</button></div>
+<pre><code><span class="c"># OTP_PROVIDER=fake        # OTP send becomes a no-op stub (no MSG91 call)</span>
+<span class="c"># PAYMENT_PROVIDER=fake     # mobile-API payments succeed instantly (no Razorpay) — test flows only!</span>
+<span class="c"># SMS_PROVIDER=fake         # order-status SMS skipped</span>
+<span class="c"># PUSH_PROVIDER=fake        # push notifications skipped (already automatic without FCM keys)</span>
+<span class="c"># APPLE_AUTH_PROVIDER=fake  # Sign-in-with-Apple stub (already automatic without APPLE_CLIENT_ID)</span></code></pre></div>
+  <p class="callout"><b>Recommendation for the family test:</b> keep everything on the production defaults (no overrides). The web storefront your family will exercise doesn't touch the vendor services — a placeholder-keyed service only ever errors if something actually calls it. Flip an override to <code>fake</code> later, one service at a time, if you start testing the mobile app's flows.</p>
+
+  <h4>6.4 Lock it down</h4>
   <div class="code-block"><div class="code-title"><span>Owner-only readable (admin shell)</span><button class="copy">copy</button></div>
 <pre><code>sudo chown mithai:mithai /opt/mithai-shop/.env
 sudo chmod 600 /opt/mithai-shop/.env      <span class="c"># rw for owner, nothing for anyone else</span></code></pre></div>
