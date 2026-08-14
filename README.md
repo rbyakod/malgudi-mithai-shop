@@ -38,6 +38,7 @@ npm run dev                  # http://localhost:3000
 | `npm run test:e2e` | Playwright E2E + axe a11y |
 | `npm run seed` | Seed sample content into MongoDB |
 | `npm run seed:catalog` | Repopulate the golden catalog test data (see below) |
+| `npm run seed:branding` | Apply branding one-offs (brand-settings global + demo QSR image) |
 | `npm run lhci` | Lighthouse CI (local) |
 
 ## Golden test data (catalog seed)
@@ -58,8 +59,14 @@ repopulate an identical catalog.
 ### Repopulate
 
 ```bash
-pnpm seed:catalog        # or: npm run seed:catalog
+pnpm seed                # base sample content (users, stories, …)
+pnpm seed:catalog        # golden catalog data (all four collections)
+pnpm seed:branding       # branding one-offs (brand-settings global,
+                         #   sun-logo media, demo Chole Bhature image)
 ```
+
+Run all three, in that order, for a full dev-DB restore from a fresh
+database.
 
 - Requires a running MongoDB and `.env` (the script reads
   `DATABASE_URI` etc. via `node --env-file=.env`).
