@@ -80,14 +80,27 @@ for f in QSR_SOURCES:
             price=f"₹{n['price']:,}" if n["price"] else "Price on request",
             images=n["images"][:1], source="bikanervala", sourceUrl=n["sourceUrl"],
         ))
-# Haldiram's ready meals (og-scraped earlier) — add variety
+# Haldiram's ready meals (og-scraped earlier) — add variety. Most product
+# pages expose no og:image to curl, so fall back to freely-licensed dish
+# photos from Wikimedia Commons (source marked for provenance).
+WIKIMEDIA_DISH_IMAGES = {
+    "choley-chawal": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Chole_Chawal_%28Indian_delicacy%29.jpg/960px-Chole_Chawal_%28Indian_delicacy%29.jpg",
+    "dal-palak": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Dal_palak_casserole.jpg/960px-Dal_palak_casserole.jpg",
+    "dal-tadka": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Dal_Tadka-Delhi.jpg/960px-Dal_Tadka-Delhi.jpg",
+    "dal-tadka-with-jeera-rice": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Dal_Tadka-Delhi.jpg/960px-Dal_Tadka-Delhi.jpg",
+    "dum-biryani": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Veg_biryani.jpg/960px-Veg_biryani.jpg",
+    "mutter-paneer": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Matar-Paneer.JPG/960px-Matar-Paneer.JPG",
+    "palak-paneer": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Palakpaneer_Rayagada_Odisha_0009.jpg/960px-Palakpaneer_Rayagada_Odisha_0009.jpg",
+}
 for h in json.load(open("/tmp/scrape/haldirams-meals.json")):
+    img = h.get("image") or WIKIMEDIA_DISH_IMAGES.get(h["handle"])
     qsr.append(dict(
         name=h["name"], category="chole-bhature" if "choley" in h["handle"] else "thaali",
         description=h.get("description",""), veg=True,
         spiceLevel="medium" if re.search(r"masala|tikka|paneer|biryani", h["name"], re.I) else "mild",
-        price="₹ on request / pack", images=[h["image"]] if h.get("image") else [],
-        source="haldirams", sourceUrl=f"https://haldirams.com/product/sweets/{h['handle']}",
+        price="₹ on request / pack", images=[img] if img else [],
+        source="haldirams" if h.get("image") else "wikimedia-commons",
+        sourceUrl=f"https://haldirams.com/product/sweets/{h['handle']}",
     ))
 
 # ---------- GIFT ----------

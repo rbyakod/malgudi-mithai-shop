@@ -164,8 +164,10 @@
       "veg": true,
       "spiceLevel": "mild",
       "price": "₹ on request / pack",
-      "images": [],
-      "source": "haldirams",
+      "images": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Chole_Chawal_%28Indian_delicacy%29.jpg/960px-Chole_Chawal_%28Indian_delicacy%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      ],
+      "source": "wikimedia-commons",
       "sourceUrl": "https://haldirams.com/product/sweets/choley-chawal"
     },
     {
@@ -188,8 +190,10 @@
       "veg": true,
       "spiceLevel": "mild",
       "price": "₹ on request / pack",
-      "images": [],
-      "source": "haldirams",
+      "images": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Dal_palak_casserole.jpg/960px-Dal_palak_casserole.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      ],
+      "source": "wikimedia-commons",
       "sourceUrl": "https://haldirams.com/product/sweets/dal-palak"
     },
     {
@@ -199,8 +203,10 @@
       "veg": true,
       "spiceLevel": "mild",
       "price": "₹ on request / pack",
-      "images": [],
-      "source": "haldirams",
+      "images": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Dal_Tadka-Delhi.jpg/960px-Dal_Tadka-Delhi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      ],
+      "source": "wikimedia-commons",
       "sourceUrl": "https://haldirams.com/product/sweets/dal-tadka"
     },
     {
@@ -210,8 +216,10 @@
       "veg": true,
       "spiceLevel": "mild",
       "price": "₹ on request / pack",
-      "images": [],
-      "source": "haldirams",
+      "images": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Dal_Tadka-Delhi.jpg/960px-Dal_Tadka-Delhi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      ],
+      "source": "wikimedia-commons",
       "sourceUrl": "https://haldirams.com/product/sweets/dal-tadka-with-jeera-rice"
     },
     {
@@ -221,8 +229,10 @@
       "veg": true,
       "spiceLevel": "medium",
       "price": "₹ on request / pack",
-      "images": [],
-      "source": "haldirams",
+      "images": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Veg_biryani.jpg/960px-Veg_biryani.jpg"
+      ],
+      "source": "wikimedia-commons",
       "sourceUrl": "https://haldirams.com/product/sweets/dum-biryani"
     },
     {
@@ -232,8 +242,10 @@
       "veg": true,
       "spiceLevel": "medium",
       "price": "₹ on request / pack",
-      "images": [],
-      "source": "haldirams",
+      "images": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Matar-Paneer.JPG/960px-Matar-Paneer.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      ],
+      "source": "wikimedia-commons",
       "sourceUrl": "https://haldirams.com/product/sweets/mutter-paneer"
     },
     {
@@ -243,8 +255,10 @@
       "veg": true,
       "spiceLevel": "medium",
       "price": "₹ on request / pack",
-      "images": [],
-      "source": "haldirams",
+      "images": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Palakpaneer_Rayagada_Odisha_0009.jpg/960px-Palakpaneer_Rayagada_Odisha_0009.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      ],
+      "source": "wikimedia-commons",
       "sourceUrl": "https://haldirams.com/product/sweets/palak-paneer"
     }
   ]

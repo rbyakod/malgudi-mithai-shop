@@ -110,6 +110,13 @@ export async function VerticalHub({collection, vertical}: Props) {
   const itemCount = docs.length;
   const itemCountLabel = tShared("itemCount", {count: itemCount});
 
+  // Image-bearing entries first — keeps the grid anchored by photography
+  // while some seeded docs still lack artwork. Stable, so within each group
+  // the collection's natural order (newest-first) is preserved.
+  docs = [...docs].sort(
+    (a, b) => Number(Boolean(firstImage(b, collection))) - Number(Boolean(firstImage(a, collection))),
+  );
+
   return (
     <section aria-labelledby="vertical-hub-heading" className="pb-20 pt-10">
       <div className="mx-auto max-w-6xl px-1 sm:px-2 lg:px-3">
