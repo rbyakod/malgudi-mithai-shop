@@ -881,6 +881,72 @@ sudo tail -f /var/log/nginx/error.log</code></pre></div></div>
 sudo tar czf /root/media-$(date +%F).tgz -C /opt/mithai-shop media</code></pre></div></div>
   </div>
   <p class="callout">Full restore from an empty database is three commands — <code>pnpm seed &amp;&amp; pnpm seed:catalog &amp;&amp; pnpm seed:branding</code> — documented in the repo README under "Golden test data".</p>
+
+  <h3 id="rotate">Change values later: passwords, secrets, keys</h3>
+  <p class="lede">The universal flow is <b>edit <code>.env</code> → restart → verify</b>. The only exception: anything starting with <code>NEXT_PUBLIC_</code> is compiled into the browser bundle, so those need a rebuild too.</p>
+  <div class="code-block"><div class="code-title"><span>The universal flow</span><button class="copy">copy</button></div>
+<pre><code>sudo -iu mithai
+cd /opt/mithai-shop
+nano .env                      <span class="c"># make the change (Ctrl-O, Enter, Ctrl-X)</span>
+exit                           <span class="c"># back to admin shell</span>
+sudo systemctl restart mithai-shop
+sleep 3 &amp;&amp; systemctl status mithai-shop --no-pager   <span class="c"># should be active (running)</span></code></pre></div>
+
+  <h4>What each change does (and costs)</h4>
+  <table>
+    <thead><tr><th>Value</th><th>How to change</th><th>After</th></tr></thead>
+    <tbody>
+      <tr><td><code>MONGODB_URI</code> (password)</td><td>See the Mongo section below</td><td>restart</td></tr>
+      <tr><td><code>PAYLOAD_SECRET</code></td><td>Generate: <code>openssl rand -hex 32</code></td><td>restart — everyone is logged out of /admin (sessions are signed with it); nothing else breaks</td></tr>
+      <tr><td><code>REVALIDATE_SECRET</code></td><td>Generate: <code>openssl rand -hex 32</code></td><td>restart — nothing uses it until you wire external cache-purge callers</td></tr>
+      <tr><td><code>CRON_SECRET</code></td><td>Generate: <code>openssl rand -hex 32</code></td><td>restart — if anything schedules the /api/cron endpoints, update its <code>Authorization: Bearer …</code> header to match</td></tr>
+      <tr><td><code>JWT_PRIVATE_KEY</code> / <code>JWT_PUBLIC_KEY</code></td><td>Regenerate the keypair (same commands as step 6.1.1) and replace the two quoted blocks</td><td>restart — all previously issued mobile-app tokens become invalid; users just log in again</td></tr>
+      <tr><td>Razorpay / MSG91 / Resend real keys</td><td>Paste the real values over the placeholders</td><td>restart only — <b>no rebuild needed</b> (none are <code>NEXT_PUBLIC_</code>)</td></tr>
+      <tr><td><code>NEXT_PUBLIC_*</code> (site URL, app name, WhatsApp, GA4…)</td><td>Edit the value</td><td><code>pnpm build</code> (app shell) + restart — baked into the bundle at build time</td></tr>
+      <tr><td><code>LEADS_INBOX</code></td><td>Set an email address (needs real <code>RESEND_API_KEY</code>)</td><td>restart</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Change the MongoDB password</h4>
+  <p class="lede">First find out whether Mongo is actually <b>enforcing</b> logins on your box — the step 04 install leaves <code>authorization</code> off unless you turned it on, and a password change only means something when it is on. Run this as admin:</p>
+  <div class="code-block"><div class="code-title"><span>Is auth enforced? (admin shell)</span><button class="copy">copy</button></div>
+<pre><code>mongosh --quiet --eval 'db.getName()'
+<span class="c"># prints "test"        → auth NOT enforced (Case A below)</span>
+<span class="c"># "requires authentication" → auth enforced (Case B below)</span></code></pre></div>
+
+  <p><b>Case A — auth is off.</b> Turning it on is a 3-step sequence; order matters (create the admin <em>before</em> enforcing, or you lock yourself out of user management):</p>
+  <div class="code-block"><div class="code-title"><span>1. Create a Mongo admin user (pick a strong password, store it in a password manager)</span><button class="copy">copy</button></div>
+<pre><code>mongosh &lt;&lt;'EOF'
+use admin
+db.createUser({ user: "admin", pwd: "STRONG_ADMIN_PASSWORD", roles: ["root"] })
+EOF</code></pre></div>
+  <div class="code-block"><div class="code-title"><span>2. Enable enforcement + restart Mongo (admin shell)</span><button class="copy">copy</button></div>
+<pre><code>sudo nano /etc/mongod.conf      <span class="c"># add these two lines at the top level (2-space indent matters in YAML):</span>
+<span class="c">#   security:</span>
+<span class="c">#     authorization: enabled</span>
+sudo systemctl restart mongod</code></pre></div>
+  <div class="code-block"><div class="code-title"><span>3. Verify enforcement works (admin shell)</span><button class="copy">copy</button></div>
+<pre><code>mongosh --quiet --eval 'db.getName()' 2&gt;&amp;1 | head -1
+<span class="c"># must now say "requires authentication"</span>
+mongosh "$(sudo -iu mithai grep '^MONGODB_URI=' /opt/mithai-shop/.env | cut -d= -f2-)" --quiet --eval 'db.runCommand({ping: 1})'
+<span class="c"># must still print { ok: 1 } — the app's user keeps working</span></code></pre></div>
+
+  <p><b>Case B — auth is on (or once Case A is done).</b> Any time you want a new app password:</p>
+  <div class="code-block"><div class="code-title"><span>Rotate the app user's password (admin shell)</span><button class="copy">copy</button></div>
+<pre><code>openssl rand -hex 12                       <span class="c"># generate the new password</span>
+mongosh -u admin -p --authenticationDatabase admin &lt;&lt;'EOF'
+use admin
+db.changeUserPassword("mishran", "PASTE_NEW_PASSWORD")
+EOF
+
+<span class="c"># now update the app: edit MONGODB_URI in .env (app shell), then restart</span>
+sudo -iu mithai
+cd /opt/mithai-shop
+nano .env                                 <span class="c"># replace the password inside MONGODB_URI</span>
+exit
+sudo systemctl restart mithai-shop
+sleep 3 &amp;&amp; systemctl status mithai-shop --no-pager</code></pre></div>
+  <p class="callout warn"><b>Special characters:</b> if the new password contains <code>@</code>, <code>:</code>, <code>/</code> or <code>%</code>, percent-encode them inside the URI (<code>@</code>→<code>%40</code>, <code>:</code>→<code>%3A</code>, <code>/</code>→<code>%2F</code>, <code>%</code>→<code>%25</code>) — or just keep using hex passwords from <code>openssl rand -hex</code>, which never need encoding.</p>
 </section>
 
 <section id="trouble">
