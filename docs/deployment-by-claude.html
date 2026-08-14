@@ -617,6 +617,12 @@ sudo chmod 600 /opt/mithai-shop/.env      <span class="c"># rw for owner, nothin
 
   <h4>7.1 Build</h4>
   <p class="lede"><code>pnpm build</code> automatically runs the prebuild steps first (import-map regen + TypeScript codegen across the workspace packages) — no extra commands needed. Expect several minutes and noticeable RAM use; that's normal.</p>
+  <p class="callout warn"><b>The build connects to MongoDB.</b> The product-detail pages run <code>generateStaticParams</code> during the build, which queries the catalog through Payload — so <code>mongod</code> must be running, <code>rs0</code> initiated, and the <code>MONGODB_URI</code> in <code>.env</code> must authenticate <em>before</em> you run <code>pnpm build</code>. If it can't connect or authenticate, the build compiles fine and then dies with <code>Failed to collect page data</code>. Smoke-test first:</p>
+  <div class="code-block"><div class="code-title"><span>Does the app's exact URI work? (app shell)</span><button class="copy">copy</button></div>
+<pre><code>cd /opt/mithai-shop
+mongosh "$(grep '^MONGODB_URI=' .env | cut -d= -f2-)" --quiet --eval 'db.runCommand({ping: 1})'
+<span class="c"># expected: { ok: 1 } — anything about "requires authentication" or a timeout</span>
+<span class="c"># means the build will fail the same way: fix step 04 first (rs0 / user / password)</span></code></pre></div>
   <div class="code-block"><div class="code-title"><span>Production build (app shell)</span><button class="copy">copy</button></div>
 <pre><code>sudo -iu mithai
 cd /opt/mithai-shop
@@ -884,6 +890,9 @@ sudo tar czf /root/media-$(date +%F).tgz -C /opt/mithai-shop media</code></pre><
       <tr><td><code>next build</code> compiles fine, then <code>Failed to collect page data</code> with a <code>[ZodError]</code> listing <code>payloadSecret</code>, <code>jwtPrivateKey</code>, <code>razorpayKeyId</code>, <code>msg91AuthKey</code>, <code>resendApiKey</code>…</td>
           <td><code>.env</code> is missing the required-keys block — the app strictly validates its environment during build (by design, so a broken config never ships silently)</td>
           <td>Run the step 6.1.1 block (generates the JWT keypair + appends the vendor-key placeholders), then rebuild</td></tr>
+      <tr><td><code>next build</code> compiles fine, then <code>Failed to collect page data</code> mentioning a route (often <code>/[locale]/…/[slug]</code> or an <code>/api/cron/…</code> route) with a Mongo error or an empty message</td>
+          <td>The build itself connects to MongoDB — detail pages run <code>generateStaticParams</code> (catalog queries) while collecting page data</td>
+          <td><code>systemctl status mongod</code>, then the <code>mongosh "$(grep '^MONGODB_URI=' .env …)"</code> smoke test in step 7.1 must return <code>{ ok: 1 }</code>. Common causes: <code>rs0</code> never initiated (step 4.3), wrong password in the URI, DB user created outside the <code>admin</code> DB (step 4.4), or special characters in the password not percent-encoded (<code>@</code> → <code>%40</code>, <code>:</code> → <code>%3A</code>)</td></tr>
       <tr><td><code>next build</code> dies with "Killed" or exit 137</td>
           <td>Out of RAM</td>
           <td>Add the swap from step 03; rebuild</td></tr>
