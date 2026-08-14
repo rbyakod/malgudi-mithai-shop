@@ -21,7 +21,7 @@
 # Plan constraint enforced below: IPA < 30 MB.
 set -euo pipefail
 
-cd "$(dirname "$0")/../.." # apps/ios
+cd "$(dirname "$0")/.." # apps/ios
 
 TEAM_ID="${APPLE_TEAM_ID:-}"
 if [ -z "$TEAM_ID" ]; then
@@ -57,6 +57,7 @@ xcodebuild archive \
   -destination 'generic/platform=iOS' \
   -archivePath "$ARCHIVE" \
   DEVELOPMENT_TEAM="$TEAM_ID" \
+  CODE_SIGN_IDENTITY="Apple Development" \
   -allowProvisioningUpdates \
   | tee build/archive.log | grep -E "^\*\* ARCHIVE" || {
     echo "ERROR: archive failed — see build/archive.log" >&2; exit 1;
