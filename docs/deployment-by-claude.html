@@ -472,7 +472,8 @@ sudo chown -R mithai:mithai /opt/mithai-shop</code></pre></div>
   <p class="callout warn"><b>Two shells — read this once, save confusion later.</b> From here on you juggle two shells, and every command block below is tagged for one of them:<br>
   • <b>Admin shell</b> — the one you SSH'd into (<code>whoami</code> shows <code>root</code> or your sudo user). Anything starting with <code>sudo</code> (systemctl, nginx, certbot, useradd, chown) runs here.<br>
   • <b>App shell</b> — entered with <code>sudo -iu mithai</code> (<code>whoami</code> shows <code>mithai</code>). Git, pnpm, nano-editing <code>.env</code>, seeds run here. This user has <b>no sudo rights by design</b> — it exists so the website process can't touch the rest of the server.<br>
-  <b>If you ever see <code>&lt;user&gt; is not in the sudoers file</code></b>, you're in the wrong shell: type <code>exit</code> to return to the admin shell and rerun the command there. Quick orientation any time: <code>whoami</code>.</p>
+  <b>If you ever see <code>&lt;user&gt; is not in the sudoers file</code></b>, you're in the wrong shell: type <code>exit</code> to return to the admin shell and rerun the command there. Quick orientation any time: <code>whoami</code>.<br>
+  <b>Same trap, different symptom:</b> a <code>[sudo] password for mithai:</code> prompt inside the app shell will <b>never</b> accept any password — the <code>mithai</code> account was created locked (no password exists) and has no sudo rights regardless. <code>Ctrl-C</code> to cancel the prompt, <code>exit</code>, rerun from the admin shell.</p>
 
   <h4>5.2 Option A — git clone (recommended)</h4>
   <p class="lede">The GitHub repo <code>github.com/rbyakod/malgudi-mithai-shop</code> is private, so the VPS needs read access via a <b>fine-grained personal access token</b>. Generate it once on your Mac — it takes two minutes:</p>
@@ -826,6 +827,9 @@ sudo tar czf /root/media-$(date +%F).tgz -C /opt/mithai-shop media</code></pre><
       <tr><td><code>&lt;user&gt; is not in the sudoers file. This incident will be reported.</code></td>
           <td>You're inside the <code>mithai</code> app shell (no sudo, by design) but ran a <code>sudo</code> command</td>
           <td>Type <code>exit</code> to return to the admin shell and rerun it there. Orient yourself any time with <code>whoami</code> — see the "two shells" note in step 5.1</td></tr>
+      <tr><td><code>[sudo] password for mithai:</code> — rejects every password</td>
+          <td>Same wrong-shell situation: <code>mithai</code> was created locked (no password exists) and lacks sudo rights regardless</td>
+          <td><code>Ctrl-C</code> to cancel the prompt, <code>exit</code> to the admin shell, rerun — sudo then asks for <i>your</i> SSH password</td></tr>
       <tr><td><code>Command 'pnpm' not found</code></td>
           <td>pnpm never installed, or installed per-user only, or shell cache stale</td>
           <td>Follow the Path A / Path B block in step 03 (<code>corepack</code> if present, else <code>sudo npm install -g pnpm</code>), then <code>hash -r</code>. Must work as <code>mithai</code> too — test with <code>sudo -iu mithai pnpm -v</code></td></tr>
