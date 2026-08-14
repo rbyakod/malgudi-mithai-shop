@@ -31,6 +31,15 @@ export async function POST(req: NextRequest) {
     const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
     const codeHash = await argon2.hash(code, { type: argon2.argon2id });
 
+    // Dev/test affordance: the code is only stored hashed, so local E2E
+    // (Maestro sign-in flow) and manual testing have no way to read it.
+    // Log it in non-production so it can be lifted from the dev-server
+    // console — the same role the planned staging OTP-log endpoint plays
+    // for CI. Never logged in production.
+    if (process.env.NODE_ENV !== 'production') {
+      logger.info({ traceId, phone: parsed.data.phone }, `[dev otp] ${code}`);
+    }
+
     const payload = await getPayload({ config });
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
     const created = await payload.create({
