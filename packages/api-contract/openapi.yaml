@@ -322,6 +322,52 @@ components:
         whatsappDigits:
           type: string
           description: Digits only, for wa.me deep links.
+    HeroSlide:
+      type: object
+      required: [id, vertical, slug, name, imageURL, imageAlt]
+      description: |
+        One resolved slide of the admin-curated `home-hero` global — the
+        same list the web hero renders. `vertical` + `slug` is the apps'
+        deep-link vocabulary (product detail for mithai, vertical detail
+        otherwise). Draft products and products without an image or slug
+        are dropped server-side; gift-boxes slides are skipped (no app
+        surface — web routes them into /build-a-gift).
+      properties:
+        id:
+          type: string
+          description: Product id (unique within its collection).
+        vertical:
+          type: string
+          enum: [mithai, qsr, snacks, merch]
+        slug:
+          type: string
+        name:
+          type: string
+          description: captionOverride when the admin set one, else product name.
+        priceLabel:
+          type: [string, 'null']
+          description: Mithai displayPrice / merch price; absent for other verticals.
+        imageURL:
+          type: string
+        imageAlt:
+          type: string
+    Hero:
+      type: object
+      required: [slides, autoplayMs]
+      description: |
+        Home hero carousel data. Empty `slides` means the global is unset or
+        nothing resolved — the apps keep their local fallback hero (first
+        featured product), never a blank screen.
+      properties:
+        slides:
+          type: array
+          maxItems: 12
+          items: { $ref: '#/components/schemas/HeroSlide' }
+        autoplayMs:
+          type: integer
+          minimum: 3000
+          maximum: 15000
+          description: Autoplay interval; clamped server-side. Apps must not autoplay under reduced motion.
     CartItem:
       type: object
       required: [productId, quantity]
@@ -1525,4 +1571,22 @@ paths:
                 required: [data]
                 properties:
                   data: { $ref: '#/components/schemas/Brand' }
+
+  /hero:
+    get:
+      tags: [hero]
+      security: []
+      description: |
+        Admin-curated home hero slides (the `home-hero` global the web
+        renders). ETag over the resolved slides; If-None-Match → 304.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Hero' }
 

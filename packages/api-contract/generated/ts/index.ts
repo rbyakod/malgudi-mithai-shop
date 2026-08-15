@@ -1808,6 +1808,47 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/hero": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Admin-curated home hero slides (the `home-hero` global the web
+         *     renders). ETag over the resolved slides; If-None-Match → 304.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Hero"];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1998,6 +2039,37 @@ export interface components {
             whatsappNumber: string;
             /** @description Digits only, for wa.me deep links. */
             whatsappDigits: string;
+        };
+        /**
+         * @description One resolved slide of the admin-curated `home-hero` global — the
+         *     same list the web hero renders. `vertical` + `slug` is the apps'
+         *     deep-link vocabulary (product detail for mithai, vertical detail
+         *     otherwise). Draft products and products without an image or slug
+         *     are dropped server-side; gift-boxes slides are skipped (no app
+         *     surface — web routes them into /build-a-gift).
+         */
+        HeroSlide: {
+            /** @description Product id (unique within its collection). */
+            id: string;
+            /** @enum {string} */
+            vertical: "mithai" | "qsr" | "snacks" | "merch";
+            slug: string;
+            /** @description captionOverride when the admin set one, else product name. */
+            name: string;
+            /** @description Mithai displayPrice / merch price; absent for other verticals. */
+            priceLabel?: string | null;
+            imageURL: string;
+            imageAlt: string;
+        };
+        /**
+         * @description Home hero carousel data. Empty `slides` means the global is unset or
+         *     nothing resolved — the apps keep their local fallback hero (first
+         *     featured product), never a blank screen.
+         */
+        Hero: {
+            slides: components["schemas"]["HeroSlide"][];
+            /** @description Autoplay interval; clamped server-side. Apps must not autoplay under reduced motion. */
+            autoplayMs: number;
         };
         CartItem: {
             productId: string;

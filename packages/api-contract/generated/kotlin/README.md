@@ -69,6 +69,7 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
 | *CatalogApi* | [**catalogServiceableGet**](docs/CatalogApi.md#catalogserviceableget) | **GET** /catalog/serviceable |  |
 | *CatalogApi* | [**catalogSnacksGet**](docs/CatalogApi.md#catalogsnacksget) | **GET** /catalog/snacks |  |
 | *CatalogApi* | [**catalogSnacksSlugGet**](docs/CatalogApi.md#catalogsnacksslugget) | **GET** /catalog/snacks/{slug} |  |
+| *HeroApi* | [**heroGet**](docs/HeroApi.md#heroget) | **GET** /hero |  |
 | *LoyaltyApi* | [**accountLoyaltyPassGet**](docs/LoyaltyApi.md#accountloyaltypassget) | **GET** /account/loyalty-pass | Generate / refresh the customer's Apple Wallet loyalty pass (signed URL) |
 | *NotificationsApi* | [**notificationsRegisterDevicePost**](docs/NotificationsApi.md#notificationsregisterdevicepost) | **POST** /notifications/register-device | Register / refresh a push token (idempotent upsert) |
 | *OrdersApi* | [**ordersGet**](docs/OrdersApi.md#ordersget) | **GET** /orders |  |
@@ -123,6 +124,9 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
  - [com.mishran.api.models.Customer](docs/Customer.md)
  - [com.mishran.api.models.Error](docs/Error.md)
  - [com.mishran.api.models.ErrorError](docs/ErrorError.md)
+ - [com.mishran.api.models.Hero](docs/Hero.md)
+ - [com.mishran.api.models.HeroGet200Response](docs/HeroGet200Response.md)
+ - [com.mishran.api.models.HeroSlide](docs/HeroSlide.md)
  - [com.mishran.api.models.LogoutResponse](docs/LogoutResponse.md)
  - [com.mishran.api.models.Merch](docs/Merch.md)
  - [com.mishran.api.models.NotificationsRegisterDevicePost200Response](docs/NotificationsRegisterDevicePost200Response.md)

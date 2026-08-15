@@ -50,6 +50,7 @@ Class | Method | HTTP request | Description
 *CatalogAPI* | [**catalogServiceableGet**](docs/CatalogAPI.md#catalogserviceableget) | **GET** /catalog/serviceable | 
 *CatalogAPI* | [**catalogSnacksGet**](docs/CatalogAPI.md#catalogsnacksget) | **GET** /catalog/snacks | 
 *CatalogAPI* | [**catalogSnacksSlugGet**](docs/CatalogAPI.md#catalogsnacksslugget) | **GET** /catalog/snacks/{slug} | 
+*HeroAPI* | [**heroGet**](docs/HeroAPI.md#heroget) | **GET** /hero | 
 *LoyaltyAPI* | [**accountLoyaltyPassGet**](docs/LoyaltyAPI.md#accountloyaltypassget) | **GET** /account/loyalty-pass | Generate / refresh the customer&#39;s Apple Wallet loyalty pass (signed URL)
 *NotificationsAPI* | [**notificationsRegisterDevicePost**](docs/NotificationsAPI.md#notificationsregisterdevicepost) | **POST** /notifications/register-device | Register / refresh a push token (idempotent upsert)
 *OrdersAPI* | [**ordersGet**](docs/OrdersAPI.md#ordersget) | **GET** /orders | 
@@ -102,6 +103,9 @@ Class | Method | HTTP request | Description
  - [CatalogSnacksSlugGet200Response](docs/CatalogSnacksSlugGet200Response.md)
  - [Customer](docs/Customer.md)
  - [ErrorError](docs/ErrorError.md)
+ - [Hero](docs/Hero.md)
+ - [HeroGet200Response](docs/HeroGet200Response.md)
+ - [HeroSlide](docs/HeroSlide.md)
  - [LogoutResponse](docs/LogoutResponse.md)
  - [Merch](docs/Merch.md)
  - [ModelError](docs/ModelError.md)

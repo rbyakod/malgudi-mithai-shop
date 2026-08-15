@@ -44,6 +44,10 @@ docs/CatalogSnacksSlugGet200Response.md
 docs/Customer.md
 docs/Error.md
 docs/ErrorError.md
+docs/Hero.md
+docs/HeroApi.md
+docs/HeroGet200Response.md
+docs/HeroSlide.md
 docs/LogoutResponse.md
 docs/LoyaltyApi.md
 docs/Merch.md
@@ -95,6 +99,7 @@ src/main/kotlin/com/mishran/api/apis/AuthApi.kt
 src/main/kotlin/com/mishran/api/apis/BrandApi.kt
 src/main/kotlin/com/mishran/api/apis/CartApi.kt
 src/main/kotlin/com/mishran/api/apis/CatalogApi.kt
+src/main/kotlin/com/mishran/api/apis/HeroApi.kt
 src/main/kotlin/com/mishran/api/apis/LoyaltyApi.kt
 src/main/kotlin/com/mishran/api/apis/NotificationsApi.kt
 src/main/kotlin/com/mishran/api/apis/OrdersApi.kt
@@ -157,6 +162,9 @@ src/main/kotlin/com/mishran/api/models/CatalogSnacksSlugGet200Response.kt
 src/main/kotlin/com/mishran/api/models/Customer.kt
 src/main/kotlin/com/mishran/api/models/Error.kt
 src/main/kotlin/com/mishran/api/models/ErrorError.kt
+src/main/kotlin/com/mishran/api/models/Hero.kt
+src/main/kotlin/com/mishran/api/models/HeroGet200Response.kt
+src/main/kotlin/com/mishran/api/models/HeroSlide.kt
 src/main/kotlin/com/mishran/api/models/LogoutResponse.kt
 src/main/kotlin/com/mishran/api/models/Merch.kt
 src/main/kotlin/com/mishran/api/models/NotificationsRegisterDevicePost200Response.kt
@@ -192,3 +200,7 @@ src/main/kotlin/com/mishran/api/models/StoriesGet200ResponseData.kt
 src/main/kotlin/com/mishran/api/models/StoriesSlugGet200Response.kt
 src/main/kotlin/com/mishran/api/models/Story.kt
 src/main/kotlin/com/mishran/api/models/StoryDetail.kt
+src/test/kotlin/com/mishran/api/apis/HeroApiTest.kt
+src/test/kotlin/com/mishran/api/models/HeroGet200ResponseTest.kt
+src/test/kotlin/com/mishran/api/models/HeroSlideTest.kt
+src/test/kotlin/com/mishran/api/models/HeroTest.kt

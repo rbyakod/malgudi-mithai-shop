@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 .swiftformat
 Cartfile
 OpenAPIClient.podspec
@@ -10,6 +9,7 @@ OpenAPIClient/Classes/OpenAPIs/APIs/AuthAPI.swift
 OpenAPIClient/Classes/OpenAPIs/APIs/BrandAPI.swift
 OpenAPIClient/Classes/OpenAPIs/APIs/CartAPI.swift
 OpenAPIClient/Classes/OpenAPIs/APIs/CatalogAPI.swift
+OpenAPIClient/Classes/OpenAPIs/APIs/HeroAPI.swift
 OpenAPIClient/Classes/OpenAPIs/APIs/LoyaltyAPI.swift
 OpenAPIClient/Classes/OpenAPIs/APIs/NotificationsAPI.swift
 OpenAPIClient/Classes/OpenAPIs/APIs/OrdersAPI.swift
@@ -60,6 +60,9 @@ OpenAPIClient/Classes/OpenAPIs/Models/CatalogSnacksGet200ResponseData.swift
 OpenAPIClient/Classes/OpenAPIs/Models/CatalogSnacksSlugGet200Response.swift
 OpenAPIClient/Classes/OpenAPIs/Models/Customer.swift
 OpenAPIClient/Classes/OpenAPIs/Models/ErrorError.swift
+OpenAPIClient/Classes/OpenAPIs/Models/Hero.swift
+OpenAPIClient/Classes/OpenAPIs/Models/HeroGet200Response.swift
+OpenAPIClient/Classes/OpenAPIs/Models/HeroSlide.swift
 OpenAPIClient/Classes/OpenAPIs/Models/LogoutResponse.swift
 OpenAPIClient/Classes/OpenAPIs/Models/Merch.swift
 OpenAPIClient/Classes/OpenAPIs/Models/ModelError.swift
@@ -145,6 +148,10 @@ docs/CatalogSnacksGet200ResponseData.md
 docs/CatalogSnacksSlugGet200Response.md
 docs/Customer.md
 docs/ErrorError.md
+docs/Hero.md
+docs/HeroAPI.md
+docs/HeroGet200Response.md
+docs/HeroSlide.md
 docs/LogoutResponse.md
 docs/LoyaltyAPI.md
 docs/Merch.md
