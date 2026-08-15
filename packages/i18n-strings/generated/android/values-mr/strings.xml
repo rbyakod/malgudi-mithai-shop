@@ -142,6 +142,8 @@
   <string name="home_shop_by_family">श्रेणीनुसार खरेदी करा</string>
   <string name="home_your_orders">तुमचे ऑर्डर</string>
   <string name="home_journal">गोष्टींमधून</string>
+  <string name="home_load_error">दुकान लोड होऊ शकले नाही. कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.</string>
+  <string name="home_retry">पुन्हा प्रयत्न करा</string>
   <string name="account_signed_in">साइन इन आहात</string>
   <string name="account_whatsapp">व्हॉट्अॅप करा</string>
   <string name="order_help">या ऑर्डरबद्दल मदत हवी आहे?</string>

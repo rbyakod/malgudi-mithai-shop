@@ -187,11 +187,34 @@ struct HomeView: View {
     @ViewBuilder
     private func bestSellersRail(_ viewModel: HomeViewModel) -> some View {
         if viewModel.products.isEmpty {
-            HStack {
-                Spacer()
-                ProgressView()
-                    .padding(.vertical, .mishranSpacingXl)
-                Spacer()
+            if viewModel.loadFailed {
+                // Failed first fetch with nothing cached — an error + retry
+                // row, never an eternal spinner (the pull-to-refresh above
+                // also reloads, but the user has to know to look for it).
+                VStack(spacing: .mishranSpacingSm) {
+                    Text(L("home.load_error"))
+                        .font(.mishranBodyMd)
+                        .foregroundStyle(Color.mishranStateError)
+                        .multilineTextAlignment(.center)
+                    Button {
+                        Task { await viewModel.load() }
+                    } label: {
+                        Label(L("home.retry"), systemImage: "arrow.clockwise")
+                            .font(.mishranBodyMd.weight(.semibold))
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(Color.mishranBrandAccent)
+                    .accessibilityHint("Reload the home screen")
+                }
+                .padding(.mishranSpacingLg)
+                .frame(maxWidth: .infinity)
+            } else {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .padding(.vertical, .mishranSpacingXl)
+                    Spacer()
+                }
             }
         } else {
             ScrollView(.horizontal, showsIndicators: false) {

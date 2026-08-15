@@ -24,17 +24,37 @@ export function slugify(name: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+/**
+ * Canonical public origin for media URLs — same source as the web's
+ * schema.org/sitemap helpers (lib/seo/schema.ts siteUrl).
+ */
+function mediaOrigin(): string {
+  return process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+}
+
+/**
+ * Payload stores media `url` relative (`/api/media/file/<name>.jpg`). The web
+ * resolves those against the page origin, but the apps' image loaders
+ * (AsyncImage / Coil) require absolute URLs — a bare path fails silently.
+ * Root site-relative paths at the site origin; anything else (absolute URLs,
+ * the ref-id fallbacks below, data URLs) passes through untouched.
+ */
+export function absoluteMediaURL(url: string): string {
+  return url.startsWith('/') ? `${mediaOrigin()}${url}` : url;
+}
+
 /** Upload-ref array → string[] (populated url → ref id → bare string). */
 function flattenImages(images: unknown): string[] {
   return (Array.isArray(images) ? images : [])
     .map((i: any) => i?.image?.url ?? i?.image ?? i?.url ?? i)
-    .filter((u: unknown): u is string => typeof u === 'string');
+    .filter((u: unknown): u is string => typeof u === 'string')
+    .map(absoluteMediaURL);
 }
 
 /** Single upload field → string | null (qsr uses this shape). */
 function flattenImage(image: unknown): string | null {
   const url = (image as any)?.url ?? image;
-  return typeof url === 'string' && url.length > 0 ? url : null;
+  return typeof url === 'string' && url.length > 0 ? absoluteMediaURL(url) : null;
 }
 
 // Shape mirrors collections/MithaiProducts.ts. `featured` drives the apps'

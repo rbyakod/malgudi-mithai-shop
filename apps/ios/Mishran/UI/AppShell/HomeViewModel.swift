@@ -27,6 +27,11 @@ final class HomeViewModel {
     private(set) var products: [ProductEntity] = []
     private(set) var stories: [StoryEntity] = []
     private(set) var portals: [VerticalPortal] = []
+    /// True when the catalog refresh failed AND nothing was cached — the
+    /// view swaps the rail's spinner for an error + retry row. Without it
+    /// a dead base URL or offline first launch spins forever (the catalog
+    /// repository surfaces errorMessage, but Home never read it).
+    private(set) var loadFailed = false
     /// Curated hero slides — empty (or a failed fetch) keeps the static
     /// featured-product hero exactly as before.
     private(set) var heroSlides: [HeroSlideDTO] = []
@@ -51,8 +56,10 @@ final class HomeViewModel {
         // parallel hop, never a gate: a slow/failed /hero can't delay the
         // catalog, and its failure collapses to nil (static hero stays).
         async let hero = heroRepository?.hero()
+        loadFailed = false
         await repository.getCatalog()
         products = repository.products
+        loadFailed = products.isEmpty && repository.errorMessage != nil
         if let storyRepository {
             await storyRepository.getStories()
             stories = storyRepository.stories

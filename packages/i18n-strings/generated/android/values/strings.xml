@@ -142,6 +142,8 @@
   <string name="home_shop_by_family">Shop by family</string>
   <string name="home_your_orders">Your orders</string>
   <string name="home_journal">From the journal</string>
+  <string name="home_load_error">Couldn\'t load the shop. Check your connection and try again.</string>
+  <string name="home_retry">Try again</string>
   <string name="account_signed_in">Signed in</string>
   <string name="account_whatsapp">WhatsApp us</string>
   <string name="order_help">Need help with this order?</string>

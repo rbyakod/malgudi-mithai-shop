@@ -141,6 +141,8 @@
 "home.shop_by_family" = "श्रेणी के अनुसार खरीदें";
 "home.your_orders" = "आपके ऑर्डर";
 "home.journal" = "कहानियों से";
+"home.load_error" = "दुकान लोड नहीं हो सका। कनेक्शन जाँचकर फिर से कोशिश करें।";
+"home.retry" = "फिर से कोशिश करें";
 "account.signed_in" = "साइन इन हैं";
 "account.whatsapp" = "व्हाट्सऐप पर संपर्क करें";
 "order.help" = "इस ऑर्डर में मदद चाहिए?";

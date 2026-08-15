@@ -23,6 +23,7 @@ import { createHash } from 'node:crypto';
 // 5 ../ to repo root from app/api/mobile/v1/hero/
 import config from '../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../lib/api/response';
+import { absoluteMediaURL } from '../../../../../lib/api/catalogSerializers';
 
 /** App vertical for each hero-eligible collection. Gift boxes: see header. */
 const VERTICAL_BY_COLLECTION: Record<string, string> = {
@@ -97,7 +98,9 @@ export async function GET(req: NextRequest) {
             slug: String(doc.slug),
             name: String(row.captionOverride?.trim() || doc.name || ''),
             priceLabel,
-            imageURL: String(media.url),
+            // Apps' image loaders need absolute URLs (relative /api/media
+            // paths resolve only in a browser) — catalogSerializers' rule.
+            imageURL: absoluteMediaURL(String(media.url)),
             imageAlt: String(media.alt || doc.name || ''),
           };
           return slide;

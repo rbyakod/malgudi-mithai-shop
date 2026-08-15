@@ -142,6 +142,8 @@
   <string name="home_shop_by_family">ವರ್ಗದ ಪ್ರಕಾರ ಖರೀದಿಸಿ</string>
   <string name="home_your_orders">ನಿಮ್ಮ ಆರ್ಡರ್‌ಗಳು</string>
   <string name="home_journal">ಕಥೆಗಳಿಂದ</string>
+  <string name="home_load_error">ಅಂಗಡಿಯನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.</string>
+  <string name="home_retry">ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ</string>
   <string name="account_signed_in">ಸೈನ್ ಇನ್ ಆಗಿದ್ದೀರಿ</string>
   <string name="account_whatsapp">ವಾಟ್ಸ್‌ಆಪ್ ಮಾಡಿ</string>
   <string name="order_help">ಈ ಆರ್ಡರ್ ಬಗ್ಗೆ ಸಹಾಯ ಬೇಕೇ?</string>

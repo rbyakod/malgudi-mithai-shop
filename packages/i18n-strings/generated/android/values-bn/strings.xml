@@ -142,6 +142,8 @@
   <string name="home_shop_by_family">বিভাগ অনুযায়ী কিনুন</string>
   <string name="home_your_orders">আপনার অর্ডার</string>
   <string name="home_journal">গল্প থেকে</string>
+  <string name="home_load_error">দোকান লোড করা যায়নি। সংযোগ দেখে আবার চেষ্টা করুন।</string>
+  <string name="home_retry">আবার চেষ্টা করুন</string>
   <string name="account_signed_in">সাইন ইন আছেন</string>
   <string name="account_whatsapp">হোয়াটসঅ্যাপ করুন</string>
   <string name="order_help">এই অর্ডার নিয়ে সাহায্য দরকার?</string>

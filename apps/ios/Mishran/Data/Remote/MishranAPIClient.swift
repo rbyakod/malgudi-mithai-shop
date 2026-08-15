@@ -32,7 +32,11 @@ actor MishranAPIClient {
         #if DEBUG
         return URL(string: "http://localhost:3000/api/mobile/v1")!
         #else
-        return URL(string: "https://api.mishran.app/api/mobile/v1")!
+        // NOTE: api.mishran.app was a placeholder for a domain we don't own
+        // (NXDOMAIN) — every release-build call died at DNS. The storefront's
+        // own domain serves the API; swap here if a dedicated api domain is
+        // ever registered.
+        return URL(string: "https://mishran.pranavb.com/api/mobile/v1")!
         #endif
     }()
 

@@ -141,6 +141,8 @@
   "home.shop_by_family": "શ્રેણી પ્રમાણે ખરીદો",
   "home.your_orders": "તમારા ઓર્ડર",
   "home.journal": "વાર્તાઓમાંથી",
+  "home.load_error": "દુકાન લોડ થઈ શકી નહીં. કનેક્શન ચેક કરીને ફરી પ્રયાસ કરો.",
+  "home.retry": "ફરી પ્રયાસ કરો",
   "account.signed_in": "સાઇન ઇન છો",
   "account.whatsapp": "વોટ્સએપ કરો",
   "order.help": "આ ઓર્ડર વિશે મદદ જોઈએ?",

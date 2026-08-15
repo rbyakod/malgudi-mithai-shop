@@ -142,6 +142,8 @@
   <string name="home_shop_by_family">విభాగం ప్రకారం కొనండి</string>
   <string name="home_your_orders">మీ ఆర్డర్లు</string>
   <string name="home_journal">కథల నుండి</string>
+  <string name="home_load_error">షాప్‌ను లోడ్ చేయడం సాధ్యం కాలేదు. కనెక్షన్ తనిఖీ చేసి మళ్లీ ప్రయత్నించండి.</string>
+  <string name="home_retry">మళ్లీ ప్రయత్నించండి</string>
   <string name="account_signed_in">సైన్ ఇన్ అయ్యారు</string>
   <string name="account_whatsapp">వాట్సాప్ చేయండి</string>
   <string name="order_help">ఈ ఆర్డర్‌పై సహాయం కావాలా?</string>

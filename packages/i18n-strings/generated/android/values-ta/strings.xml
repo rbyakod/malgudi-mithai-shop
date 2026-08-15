@@ -142,6 +142,8 @@
   <string name="home_shop_by_family">வகைப்படி வாங்க</string>
   <string name="home_your_orders">உங்கள் ஆர்டர்கள்</string>
   <string name="home_journal">கதைகளில் இருந்து</string>
+  <string name="home_load_error">கடையை ஏற்ற முடியவில்லை. இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.</string>
+  <string name="home_retry">மீண்டும் முயற்சிக்கவும்</string>
   <string name="account_signed_in">உள்நுழைந்துள்ளீர்கள்</string>
   <string name="account_whatsapp">வாட்ஸ்அப்பில் தொடர்பு கொள்ளுங்கள்</string>
   <string name="order_help">இந்த ஆர்டருக்கு உதவி வேண்டுமா?</string>

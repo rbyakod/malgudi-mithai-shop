@@ -61,3 +61,5 @@ playwright-report/
 test-results/
 
 .env
+
+apps/ios/build/
