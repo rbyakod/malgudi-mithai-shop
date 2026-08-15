@@ -25,6 +25,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +46,7 @@ import com.mishran.app.ui.orderconfirmed.orderReferenceLabel
 fun OrderListScreen(
     onOrderClick: (orderId: String) -> Unit,
     onBrowse: () -> Unit,
+    onOpenCart: () -> Unit = {},
     viewModel: OrderListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -73,7 +75,7 @@ fun OrderListScreen(
             !state.loaded -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-            state.orders.isEmpty() -> EmptyOrders(onBrowse)
+            state.orders.isEmpty() -> EmptyOrders(onBrowse, onOpenCart)
             else -> LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize(),
@@ -151,7 +153,7 @@ internal fun StatusChip(status: Order.Status) {
 }
 
 @Composable
-private fun EmptyOrders(onBrowse: () -> Unit) {
+private fun EmptyOrders(onBrowse: () -> Unit, onOpenCart: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize().padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -175,6 +177,9 @@ private fun EmptyOrders(onBrowse: () -> Unit) {
         )
         Button(onClick = onBrowse, modifier = Modifier.padding(top = 24.dp)) {
             Text("Browse sweets")
+        }
+        OutlinedButton(onClick = onOpenCart, modifier = Modifier.padding(top = 8.dp)) {
+            Text("Go to cart")
         }
     }
 }

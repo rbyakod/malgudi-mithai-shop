@@ -10,6 +10,7 @@
 // to gain from server-side filtering in v1).
 package com.mishran.app.ui.catalog
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mishran.api.models.Product
@@ -65,10 +66,15 @@ data class CatalogFilters(
 @HiltViewModel
 class CatalogViewModel @Inject constructor(
     private val getCatalog: GetCatalogUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val query = MutableStateFlow("")
-    private val filters = MutableStateFlow(CatalogFilters())
+
+    // Optional ?family= deep-link arg (Home's family cards) seeds the filter.
+    private val initialFamily = savedStateHandle.get<String>("family")
+        ?.let { name -> Product.Family.entries.firstOrNull { it.value == name } }
+    private val filters = MutableStateFlow(CatalogFilters(family = initialFamily))
 
     /** Bumped by refresh(); the first pass is a normal (ETag-conditional) load. */
     private val refreshTrigger = MutableStateFlow(0)

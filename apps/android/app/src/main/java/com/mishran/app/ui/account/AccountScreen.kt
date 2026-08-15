@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun AccountScreen(
+    onOpenAddresses: () -> Unit,
     onSignedOut: () -> Unit,
     viewModel: AccountViewModel = hiltViewModel(),
 ) {
@@ -60,6 +61,34 @@ fun AccountScreen(
                 Text(
                     text = phone ?: "Mishran customer",
                     style = MaterialTheme.typography.titleMedium,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onOpenAddresses,
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = "Delivery addresses",
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = "Saved addresses for faster checkout",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Text(
+                    text = "›",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
