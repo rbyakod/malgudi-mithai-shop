@@ -15,15 +15,11 @@ struct ProductDetailView: View {
         ScrollView {
             if let product = viewModel.product {
                 VStack(alignment: .leading, spacing: .mishranSpacingLg) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: .mishranRadiusMd)
-                            .fill(Color.mishranBrandAccent.opacity(0.10))
-                        Image(systemName: "photo")
-                            .font(.mishranDisplay)
-                            .foregroundStyle(Color.mishranBrandAccent.opacity(0.6))
-                    }
-                    .frame(height: 240)
-                    .accessibilityHidden(true)
+                    // v1 renders a single hero image (first catalog photo).
+                    ProductRemoteImage(imageURL: product.images?.first)
+                        .frame(height: 240)
+                        .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
+                        .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: .mishranSpacingSm) {
                         Text(product.name)

@@ -8,11 +8,11 @@ struct CartLineItem: View {
 
     var body: some View {
         HStack(spacing: .mishranSpacingMd) {
-            RoundedRectangle(cornerRadius: .mishranRadiusSm)
-                .fill(Color.mishranBrandAccent.opacity(0.10))
+            // Cart lines carry no image URL yet (CartItemEntity has no image
+            // field) — nil keeps the placeholder tile until that lands.
+            ProductRemoteImage(imageURL: nil)
                 .frame(width: 56, height: 56)
-                .overlay(Image(systemName: "photo")
-                    .foregroundStyle(Color.mishranBrandAccent.opacity(0.6)))
+                .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusSm))
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {

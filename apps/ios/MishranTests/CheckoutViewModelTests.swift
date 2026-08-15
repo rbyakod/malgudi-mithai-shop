@@ -150,7 +150,7 @@ final class CheckoutViewModelTests: XCTestCase {
         await vm.validatePincode("110001")
 
         XCTAssertFalse(vm.canPlaceOrder)
-        vm.address = AddressEntity(id: "a1", label: "Home", line1: "12 MG Road", city: "Delhi", pincode: "110001", phone: "+919876543210")
+        vm.address = AddressEntity(id: "a1", line1: "12 MG Road", city: "Delhi", state: "Delhi", pincode: "110001", tag: "home")
         XCTAssertFalse(vm.canPlaceOrder)
         vm.selectedSlot = vm.slotOptions.first
         XCTAssertFalse(vm.canPlaceOrder)

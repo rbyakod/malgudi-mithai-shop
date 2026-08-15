@@ -56,6 +56,105 @@ struct RefreshResponseDTO: Decodable {
     let refreshToken: String
 }
 
+// MARK: - Addresses (Task 48.2)
+
+/// Address tag (openapi enum: home | work | other).
+enum AddressTag: String, Codable, CaseIterable, Identifiable, Hashable {
+    case home, work, other
+
+    var id: String { rawValue }
+
+    var displayName: String { rawValue.capitalized }
+}
+
+/// Saved address (openapi Address schema). Everything is optional on the
+/// wire — the client stays lenient and lets the form validation own the
+/// required-field rules for input.
+struct AddressDTO: Decodable, Equatable, Identifiable, Hashable {
+    let id: String?
+    let customerId: String?
+    let line1: String?
+    let line2: String?
+    let city: String?
+    let state: String?
+    let pincode: String?
+    let lat: Double?
+    let lng: Double?
+    let tag: AddressTag?
+    let isDefault: Bool?
+}
+
+/// POST/PATCH body (openapi AddressInput — required: line1, city, state,
+/// pincode). Synthesized Encodable omits nil optionals, so blank line2/tag
+/// ride nothing, exactly like the Android client's null-skipping serializer.
+struct AddressInputDTO: Encodable, Equatable {
+    var line1: String
+    var line2: String?
+    var city: String
+    var state: String
+    var pincode: String
+    var lat: Double?
+    var lng: Double?
+    var tag: AddressTag?
+    var isDefault: Bool?
+
+    /// Rebuild a writable input from a fetched address (PATCH is a full
+    /// replace) — only the default flag flips on set-default.
+    init(
+        address: AddressDTO,
+        isDefault: Bool? = nil
+    ) {
+        self.init(
+            line1: address.line1 ?? "",
+            line2: address.line2,
+            city: address.city ?? "",
+            state: address.state ?? "",
+            pincode: address.pincode ?? "",
+            lat: address.lat,
+            lng: address.lng,
+            tag: address.tag,
+            isDefault: isDefault ?? address.isDefault
+        )
+    }
+
+    init(
+        line1: String,
+        line2: String? = nil,
+        city: String,
+        state: String,
+        pincode: String,
+        lat: Double? = nil,
+        lng: Double? = nil,
+        tag: AddressTag? = nil,
+        isDefault: Bool? = nil
+    ) {
+        self.line1 = line1
+        self.line2 = line2
+        self.city = city
+        self.state = state
+        self.pincode = pincode
+        self.lat = lat
+        self.lng = lng
+        self.tag = tag
+        self.isDefault = isDefault
+    }
+}
+
+/// GET /addresses page ({data:{items:[…]}}).
+struct AddressPageDTO: Decodable, Equatable {
+    let items: [AddressDTO]
+}
+
+/// POST/PATCH success body ({data:{address}}).
+struct AddressMutationResponseDTO: Decodable, Equatable {
+    let address: AddressDTO
+}
+
+/// {data:{ok:true}} — shared by DELETE /addresses/{id} and POST /auth/logout.
+struct OkResponseDTO: Decodable, Equatable {
+    let ok: Bool
+}
+
 // MARK: - Sign in with Apple
 
 /// POST /auth/apple — {identityToken, name?}. Synthesized Encodable uses

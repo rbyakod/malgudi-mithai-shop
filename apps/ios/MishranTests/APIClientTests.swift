@@ -268,4 +268,28 @@ final class APIClientTests: XCTestCase {
         let etagRequest = try XCTUnwrap(MockURLProtocol.lastRequests["/catalog/products"])
         XCTAssertEqual(etagRequest.value(forHTTPHeaderField: "If-None-Match"), "\"abc123\"")
     }
+
+    // MARK: sign-out (Task 48.1)
+
+    func testSignOutPostsLogoutWithBearerThenClearsTokens() async {
+        MockURLProtocol.routes["/auth/logout"] = (200, [:], json(#"{"data":{"ok":true}}"#))
+        let client = makeClient()
+
+        await client.signOut()
+
+        XCTAssertEqual(MockURLProtocol.calls["/auth/logout"], 1)
+        XCTAssertEqual(MockURLProtocol.authHeaders["/auth/logout"], ["Bearer old-access"])
+        XCTAssertNil(store.accessToken, "local tokens must drop after sign-out")
+        XCTAssertNil(store.refreshToken)
+    }
+
+    func testSignOutClearsTokensEvenWhenLogoutCallFails() async {
+        MockURLProtocol.routes["/auth/logout"] = (500, [:], Data("{}".utf8))
+        let client = makeClient()
+
+        await client.signOut()
+
+        XCTAssertNil(store.accessToken, "a failed logout call must never keep the session")
+        XCTAssertNil(store.refreshToken)
+    }
 }

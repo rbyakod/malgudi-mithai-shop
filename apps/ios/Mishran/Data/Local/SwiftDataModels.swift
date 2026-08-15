@@ -154,33 +154,66 @@ final class CartItemEntity {
 
 @Model
 final class AddressEntity {
+    // Task 48.2: redefined to mirror the server's Address schema (the old
+    // label/phone fields never matched anything real — nothing wrote this
+    // entity before the addresses flow landed). SwiftData's lightweight
+    // migration handles the field swap on existing pre-launch installs.
     @Attribute(.unique) var id: String
-    var label: String
     var line1: String
     var line2: String?
     var city: String
+    var state: String
     var pincode: String
-    var phone: String
+    /// Raw value-string ("home"/"work"/"other") — same enum-caching
+    /// convention as ProductEntity.family.
+    var tag: String?
     var isDefault: Bool
 
     init(
         id: String,
-        label: String,
         line1: String,
         line2: String? = nil,
         city: String,
+        state: String,
         pincode: String,
-        phone: String,
+        tag: String? = nil,
         isDefault: Bool = false
     ) {
         self.id = id
-        self.label = label
         self.line1 = line1
         self.line2 = line2
         self.city = city
+        self.state = state
         self.pincode = pincode
-        self.phone = phone
+        self.tag = tag
         self.isDefault = isDefault
+    }
+
+    convenience init(dto: AddressDTO) {
+        self.init(
+            id: dto.id ?? UUID().uuidString,
+            line1: dto.line1 ?? "",
+            line2: dto.line2,
+            city: dto.city ?? "",
+            state: dto.state ?? "",
+            pincode: dto.pincode ?? "",
+            tag: dto.tag?.rawValue,
+            isDefault: dto.isDefault ?? false
+        )
+    }
+
+    /// Server list → local rows: delete-all + re-insert (no per-row diffing
+    /// in v1 — AddressPicker's @Query just needs the current set). The
+    /// server is the source of truth; the cache exists so checkout works
+    /// the moment it renders.
+    static func replaceAll(with addresses: [AddressDTO], in context: ModelContext) {
+        for existing in (try? context.fetch(FetchDescriptor<AddressEntity>())) ?? [] {
+            context.delete(existing)
+        }
+        for address in addresses {
+            context.insert(AddressEntity(dto: address))
+        }
+        try? context.save()
     }
 }
 

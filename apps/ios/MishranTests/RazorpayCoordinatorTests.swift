@@ -79,8 +79,8 @@ final class RazorpayCoordinatorTests: XCTestCase {
         try? context.save()
 
         vm.address = AddressEntity(
-            id: "addr_1", label: "Home", line1: "12 MG Road",
-            city: "Delhi", pincode: "110001", phone: "+919876543210"
+            id: "addr_1", line1: "12 MG Road", city: "Delhi",
+            state: "Delhi", pincode: "110001", tag: "home"
         )
         vm.paymentMethod = .razorpay
 
