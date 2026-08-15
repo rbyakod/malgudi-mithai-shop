@@ -29,6 +29,7 @@ type CatalogProduct = {
   family: "classic" | "original" | "sugar-free" | "regional" | "seasonal";
   description: string;
   displayPrice: string;
+  weight?: string;
   images: string[];
   allergens: string[];
   dietaryTags: string[];
@@ -38,6 +39,20 @@ type CatalogProduct = {
   source: string;
   sourceUrl: string;
 };
+
+// Fold the scrape's mixed weight spellings ("1 kg" / "1 Kg" / "1kg" / "1Kg",
+// "480 gm") into one canonical form: "<n> g" under 1 kg, "<n> kg" at and
+// above, non-weights ("1 pack") passed through untouched.
+export function normalizeWeight(raw: string | undefined): string | null {
+  if (!raw) return null;
+  const m = raw.trim().match(/^(\d+(?:\.\d+)?)\s*(kg|Kg|KG|g|gm|grams?)$/);
+  if (!m) return raw.trim();
+  const value = Number(m[1]);
+  if (m[2].toLowerCase().startsWith("kg")) {
+    return `${Number.isInteger(value) ? value : value.toFixed(1)} kg`;
+  }
+  return `${value} g`;
+}
 
 // Payload lexical richText: one paragraph of plain text. Same shape as the
 // story seed in scripts/seed.ts.
@@ -307,6 +322,7 @@ async function main() {
       storage: p.storage,
       freshnessStatus: p.freshnessStatus,
       displayPrice: p.displayPrice,
+      weight: normalizeWeight(p.weight),
       images: imageIds.map((id) => ({ image: id })),
       story: lexicalParagraph(p.description || `${p.name} — a Mishran house specialty.`),
       _status: "published" as const,

@@ -3,18 +3,20 @@
 // `mithai-products` collection by slug and renders an editorial PDP.
 //
 // Design intent — avoid the generic e-commerce PDP template (big image left,
-// buy-box right, tabs below). Instead:
-//   - Two-column asymmetric header: left a hairline-anchored display-serif
-//     title + display price + freshness eyebrow; right the image panel with
-//     a tonal wash and gold rule, mirroring the home inset / MediaCard rhythm.
+// boxed buy-card right, tabs below). Instead:
+//   - Two-column asymmetric header: left a display-serif title, price, and
+//     the buy module (pincode check, pack sizes, quantity — the conversion
+//     affordances the reference sweet shops have, but editorial-styled);
+//     right the image panel with a tonal wash and gold rule, mirroring the
+//     home inset / MediaCard rhythm. The buy module is deliberate, not
+//     template drift — hairline rules and quiet uppercase labels keep the
+//     editorial voice.
 //   - Provenance strip (karigar + freshness + family) laid out as a
 //     horizontal hairline-divided list, like Pillars.tsx — not a 3-up card
 //     grid.
 //   - Story + ingredients read as a magazine spread: a wide italic lead on
 //     the left, an honest-label column (allergens, shelf life, storage) on
 //     the right, separated by a vertical hairline on lg+.
-//   - CTA is a borderless tracked-uppercase button styled as a hairline
-//     rule, not a chunky add-to-cart pill — keeps the editorial voice.
 //
 // 404s via `notFound()` when the slug matches no published doc.
 
@@ -23,20 +25,20 @@ import {notFound} from "next/navigation";
 import {getPayload} from "@/lib/payload-client";
 import {getTranslations} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
-import {AddToCartButton} from "@/components/mithai/AddToCartButton";
+import {BuyModule} from "@/components/mithai/BuyModule";
+import {derivePackSizes} from "@/lib/mithai/packSizes";
 
 type Props = {
   slug: string;
   locale: string;
 };
 
-// Freshness copy is intentionally terse — maps the `freshnessStatus` enum
-// (made-daily / made-to-order / batch-frozen) to a one-line promise. Could
-// be translation keys, but the enum values are stable and few.
-const FRESHNESS_COPY: Record<string, string> = {
-  "made-daily": "Made fresh each morning",
-  "made-to-order": "Made to order, finished on request",
-  "batch-frozen": "Finished fresh, frozen at peak",
+// Freshness promise keyed by the `freshnessStatus` enum — copy lives in
+// messages under Pdp.mithai.trust so hi/kn get it too.
+const FRESHNESS_KEY: Record<string, string> = {
+  "made-daily": "freshDaily",
+  "made-to-order": "freshToOrder",
+  "batch-frozen": "frozen",
 };
 
 export async function MithaiPDP({slug, locale}: Props) {
@@ -74,6 +76,7 @@ export async function MithaiPDP({slug, locale}: Props) {
           | string
           | null;
         displayPrice?: string;
+        weight?: string | null;
       }
     | undefined;
 
@@ -89,8 +92,14 @@ export async function MithaiPDP({slug, locale}: Props) {
   const karigarName =
     typeof doc!.karigar === "object" ? doc!.karigar?.name ?? null : null;
   const freshnessLabel = doc!.freshnessStatus
-    ? FRESHNESS_COPY[doc!.freshnessStatus] ?? doc!.freshnessStatus
+    ? FRESHNESS_KEY[doc!.freshnessStatus]
+      ? t(`trust.${FRESHNESS_KEY[doc!.freshnessStatus]}`)
+      : doc!.freshnessStatus
     : null;
+  const packSizes = derivePackSizes(doc!.displayPrice ?? "", doc!.weight);
+  const isVegetarian = (doc!.dietaryTags ?? []).some(
+    (tag) => tag.toLowerCase() === "vegetarian",
+  );
 
   return (
     <article className="pb-24 pt-8">
@@ -111,29 +120,9 @@ export async function MithaiPDP({slug, locale}: Props) {
           <span className="text-text-muted">{name}</span>
         </nav>
 
-        {/* Header — title + price column | image panel */}
+        {/* Header — buy column | image panel (image leads on mobile,
+            lg:order-first restores text-left / image-right on desktop) */}
         <div className="mt-10 grid gap-10 border-b border-border-card pb-12 lg:grid-cols-[0.5fr_0.5fr]">
-          <div className="flex flex-col justify-end">
-            {doc!.family ? (
-              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-                {doc!.family}
-              </p>
-            ) : null}
-            <h1 className="mt-3 font-display text-4xl font-light leading-[1.05] tracking-tight text-text-heading sm:text-5xl">
-              {name}
-            </h1>
-            {doc!.displayPrice ? (
-              <p className="mt-6 font-display text-2xl font-medium text-text-heading">
-                <span data-testid="display-price">{doc!.displayPrice}</span>
-              </p>
-            ) : null}
-            {freshnessLabel ? (
-              <p className="mt-4 text-sm italic leading-relaxed text-text-muted">
-                {freshnessLabel}
-              </p>
-            ) : null}
-          </div>
-
           {/* Image panel — or designed fallback */}
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm border border-border-image bg-bg-accent">
             {primaryImage ? (
@@ -158,6 +147,41 @@ export async function MithaiPDP({slug, locale}: Props) {
                 </span>
               </div>
             )}
+          </div>
+
+          <div className="flex flex-col lg:order-first">
+            {doc!.family ? (
+              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
+                {doc!.family}
+              </p>
+            ) : null}
+            <h1 className="mt-3 font-display text-4xl font-light leading-[1.05] tracking-tight text-text-heading sm:text-5xl">
+              {name}
+            </h1>
+            {freshnessLabel ? (
+              <p className="mt-4 text-sm italic leading-relaxed text-text-muted">
+                {freshnessLabel}
+              </p>
+            ) : null}
+
+            <BuyModule
+              productId={String(doc!.id)}
+              name={name}
+              image={primaryImage ?? ""}
+              displayPrice={doc!.displayPrice ?? ""}
+              packSizes={packSizes}
+            />
+
+            {/* Trust strip — real fields only, quiet uppercase microcopy */}
+            {freshnessLabel || doc!.shelfLife || isVegetarian ? (
+              <ul className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border-card pt-5 text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
+                {freshnessLabel ? <li>{freshnessLabel}</li> : null}
+                {doc!.shelfLife ? (
+                  <li>{t("trust.shelfLife", {shelfLife: doc!.shelfLife})}</li>
+                ) : null}
+                {isVegetarian ? <li>{t("trust.vegetarian")}</li> : null}
+              </ul>
+            ) : null}
           </div>
         </div>
 
@@ -236,18 +260,6 @@ export async function MithaiPDP({slug, locale}: Props) {
             ) : null}
           </aside>
         </section>
-
-        {/* CTA — add to draft cart */}
-        <div className="mt-16 flex justify-center">
-          <AddToCartButton
-            id={String(doc!.id)}
-            name={name}
-            priceLabel={doc!.displayPrice ?? ""}
-            image={primaryImage ?? ""}
-            label={t("addToCart")}
-            addedLabel={t("added")}
-          />
-        </div>
       </div>
     </article>
   );

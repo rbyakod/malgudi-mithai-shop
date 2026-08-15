@@ -91,5 +91,13 @@ export const MithaiProducts: CollectionConfig = {
         description: "Display-only. Commerce deferred to Phase 8.",
       },
     },
+    {
+      name: "weight",
+      type: "text",
+      admin: {
+        description:
+          'Net pack weight as display text, e.g. "250 g", "1 kg", "1 pack". Drives the PDP pack-size chip.',
+      },
+    },
   ],
 };
