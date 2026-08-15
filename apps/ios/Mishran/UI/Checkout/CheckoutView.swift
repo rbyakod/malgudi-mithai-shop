@@ -1,6 +1,10 @@
 // CheckoutView.swift — Task 17.2 (Mishran Mobile Apps v1).
 // Form: address → pincode serviceability (slot section appears only for
 // the fresh tier) → payment. Place Order lands with 17.3 (Razorpay).
+// Task 48.2: the picker's add-address path finally goes somewhere — the
+// sheet creates server-side, mirrors into SwiftData, and pre-selects the
+// new row so "Place order" is reachable in one flow.
+import SwiftData
 import SwiftUI
 
 struct CheckoutView: View {
@@ -8,11 +12,17 @@ struct CheckoutView: View {
     var onPlaceOrder: ((CheckoutViewModel) -> Void)? = nil
 
     @State private var pincodeField = ""
+    @State private var showingAddressForm = false
+    @Environment(\.modelContext) private var context
+    @State private var addressRepository = AddressRepository(client: MishranAPIClient())
 
     var body: some View {
         Form {
             Section("Delivery address") {
-                AddressPicker(selection: $viewModel.address)
+                AddressPicker(
+                    selection: $viewModel.address,
+                    onAddAddress: { showingAddressForm = true }
+                )
             }
 
             Section {
@@ -119,6 +129,35 @@ struct CheckoutView: View {
                 onPlaceOrder?(viewModel)
             }
         }
+        .sheet(isPresented: $showingAddressForm) {
+            AddressFormView { input in
+                await createAddress(input)
+            }
+        }
+    }
+
+    /// Task 48.2: create server-side, re-mirror the full list into
+    /// AddressEntity (the picker's @Query picks it up), and select the new
+    /// row when it's the first address or became the default — otherwise
+    /// the user just saved an address they still have to pick by hand.
+    private func createAddress(_ input: AddressInputDTO) async -> Bool {
+        guard let created = await addressRepository.create(input: input) else { return false }
+        let hadNoLocalAddresses = ((try? context.fetchCount(FetchDescriptor<AddressEntity>())) ?? 0) == 0
+        // Full re-list picks up the server-side default demotion too; if the
+        // list call fails, fall back to appending what we just created.
+        var serverList = await addressRepository.list()
+        if serverList.isEmpty {
+            serverList = [created]
+        }
+        AddressEntity.replaceAll(with: serverList, in: context)
+
+        if let id = created.id,
+           let entity = (try? context.fetch(FetchDescriptor<AddressEntity>()))?.first(where: { $0.id == id }) {
+            if hadNoLocalAddresses || created.isDefault == true {
+                viewModel.address = entity
+            }
+        }
+        return true
     }
 
     private func blockingText(_ reason: CheckoutViewModel.BlockingReason) -> String {

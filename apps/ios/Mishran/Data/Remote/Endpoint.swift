@@ -7,6 +7,7 @@ struct Endpoint: Sendable {
     enum Method: String, Sendable {
         case get = "GET"
         case post = "POST"
+        case patch = "PATCH"
         case delete = "DELETE"
     }
 
@@ -155,6 +156,18 @@ extension Endpoint {
         Endpoint(path: "auth/refresh", method: .post, requiresAuth: false)
     }
 
+    /// POST /auth/logout — revokes the refresh-token family server-side.
+    /// The contract lists the route as unauthenticated, so the bearer rides
+    /// a manual header (best effort): requiresAuth stays false on purpose —
+    /// a 401 here must NOT kick off a refresh loop on the way out the door.
+    static func authLogout(bearerToken: String?) -> Endpoint {
+        var endpoint = Endpoint(path: "auth/logout", method: .post, requiresAuth: false)
+        if let bearerToken {
+            endpoint.headers["Authorization"] = "Bearer \(bearerToken)"
+        }
+        return endpoint
+    }
+
     static func authApple(identityToken: String, name: String?) -> Endpoint {
         Endpoint(
             path: "auth/apple",
@@ -221,5 +234,36 @@ extension Endpoint {
         )
         endpoint.headers["Idempotency-Key"] = idempotencyKey
         return endpoint
+    }
+
+    // MARK: Addresses (Task 48.2) — owner-scoped CRUD
+
+    /// GET /addresses — the caller's saved addresses ({data:{items:[…]}}).
+    static func addressList() -> Endpoint {
+        Endpoint(path: "addresses")
+    }
+
+    /// POST /addresses — 201 {data:{address}}. Input mirrors the contract's
+    /// AddressInput (required: line1/city/state/pincode).
+    static func addressCreate(input: AddressInputDTO) -> Endpoint {
+        Endpoint(
+            path: "addresses",
+            method: .post,
+            body: try? JSONEncoder().encode(input)
+        )
+    }
+
+    /// PATCH /addresses/{id} — full-replace update ({data:{address}}).
+    static func addressUpdate(id: String, input: AddressInputDTO) -> Endpoint {
+        Endpoint(
+            path: "addresses/\(id)",
+            method: .patch,
+            body: try? JSONEncoder().encode(input)
+        )
+    }
+
+    /// DELETE /addresses/{id} — 200 {data:{ok:true}}.
+    static func addressDelete(id: String) -> Endpoint {
+        Endpoint(path: "addresses/\(id)", method: .delete)
     }
 }

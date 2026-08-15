@@ -122,11 +122,20 @@ struct MishranApp: App {
                                 await PushPermissionRequester.live.requestIfNeeded()
                                 UIApplication.shared.registerForRemoteNotifications()
                             }
+                        } onSignInRequested: {
+                            // Task 48.1: the toolbar's sign-in entry flips the
+                            // launch surface straight to the auth flow.
+                            launchScreen = .signIn
                         }
                     }
                 }
                 .navigationDestination(for: Route.self) { route in
-                    DestinationView(route: route, router: router)
+                    DestinationView(route: route, router: router, onSignedOut: {
+                        // Task 48.1: AccountView's sign-out lands back on the
+                        // auth flow — signedInOnce stays set, so the next
+                        // cold launch takes the same branch.
+                        launchScreen = .signIn
+                    })
                 }
             }
             .mishranTheme()
@@ -159,9 +168,12 @@ private struct AuthFlowView: View {
 
 /// Real destinations per route — every case renders its shipped screen
 /// (shell wiring owed since 16.3; orderConfirmed landed with it).
+/// Task 48.1: onSignedOut threads AccountView's sign-out back to the app
+/// shell (launch surface flip) — same closure pattern HomeView uses.
 struct DestinationView: View {
     let route: Route
     let router: Router
+    var onSignedOut: (() -> Void)? = nil
     @Environment(\.modelContext) private var context
 
     var body: some View {
@@ -183,7 +195,9 @@ struct DestinationView: View {
         case let .orderDetail(id):
             OrderDetailView(orderId: id)
         case .account:
-            AccountView()
+            AccountView(router: router, onSignedOut: onSignedOut)
+        case .addresses:
+            AddressesView()
         }
     }
 }

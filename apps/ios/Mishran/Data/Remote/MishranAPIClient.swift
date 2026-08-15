@@ -124,6 +124,17 @@ actor MishranAPIClient {
         return response
     }
 
+    /// Sign-out (Task 48.1): best-effort POST /auth/logout so the server
+    /// revokes the refresh-token family, then drop the local tokens no
+    /// matter what the call did. A failed logout call must never keep a
+    /// dead session on device.
+    func signOut() async {
+        if let accessToken = await authenticator.accessToken {
+            _ = try? await send(Endpoint.authLogout(bearerToken: accessToken), as: OkResponseDTO.self)
+        }
+        await authenticator.clearTokens()
+    }
+
     // MARK: - Core transport
 
     /// Raw send returning data + response, applying auth + retries.

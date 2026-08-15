@@ -11,15 +11,10 @@ struct ProductCard: View {
             onTap?()
         } label: {
             VStack(alignment: .leading, spacing: .mishranSpacingSm) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: .mishranRadiusMd)
-                        .fill(Color.mishranBrandAccent.opacity(0.10))
-                    Image(systemName: "photo")
-                        .font(.mishranBodyXxl)
-                        .foregroundStyle(Color.mishranBrandAccent.opacity(0.6))
-                }
-                .frame(height: 110)
-                .accessibilityHidden(true)
+                ProductRemoteImage(imageURL: product.images?.first)
+                    .frame(height: 110)
+                    .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
+                    .accessibilityHidden(true)
 
                 Text(product.name)
                     .font(.mishranBodyMd.weight(.semibold))

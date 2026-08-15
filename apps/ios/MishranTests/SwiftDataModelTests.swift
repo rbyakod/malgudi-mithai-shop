@@ -94,9 +94,9 @@ final class SwiftDataModelTests: XCTestCase {
     func testInsertAndFetchAddressEntity() throws {
         let context = makeContext()
         let address = AddressEntity(
-            id: "addr_1", label: "Home", line1: "12 MG Road", line2: nil,
-            city: "Bengaluru", pincode: "560001", phone: "+919876543210",
-            isDefault: true
+            id: "addr_1", line1: "12 MG Road", line2: nil,
+            city: "Bengaluru", state: "Karnataka", pincode: "560001",
+            tag: "home", isDefault: true
         )
         context.insert(address)
         try context.save()
@@ -105,6 +105,39 @@ final class SwiftDataModelTests: XCTestCase {
         XCTAssertEqual(fetched.count, 1)
         XCTAssertEqual(fetched.first?.pincode, "560001")
         XCTAssertEqual(fetched.first?.isDefault, true)
+    }
+
+    /// Task 48.2: the addresses flow's delete-all + re-insert reconcile —
+    /// the picker's @Query must end up holding exactly the server list.
+    func testAddressEntityReplaceAllReconciles() throws {
+        let context = makeContext()
+        context.insert(AddressEntity(
+            id: "stale", line1: "Old road", city: "Delhi",
+            state: "Delhi", pincode: "110001"
+        ))
+        try context.save()
+
+        let server = [
+            AddressDTO(
+                id: "a1", customerId: nil, line1: "12 MG Road", line2: "Flat 3",
+                city: "Bengaluru", state: "Karnataka", pincode: "560001",
+                lat: nil, lng: nil, tag: .home, isDefault: true
+            ),
+            AddressDTO(
+                id: "a2", customerId: nil, line1: "4 Park Street", line2: nil,
+                city: "Kolkata", state: "West Bengal", pincode: "700016",
+                lat: nil, lng: nil, tag: .work, isDefault: nil
+            ),
+        ]
+        AddressEntity.replaceAll(with: server, in: context)
+
+        let fetched = try context.fetch(FetchDescriptor<AddressEntity>())
+        XCTAssertEqual(Set(fetched.map(\.id)), ["a1", "a2"], "stale row must not survive the reconcile")
+        let first = fetched.first { $0.id == "a1" }
+        XCTAssertEqual(first?.line2, "Flat 3")
+        XCTAssertEqual(first?.tag, "home")
+        XCTAssertEqual(first?.isDefault, true)
+        XCTAssertEqual(fetched.first { $0.id == "a2" }?.state, "West Bengal")
     }
 
     // MARK: Factory — on-disk URL config

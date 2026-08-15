@@ -11,4 +11,6 @@ enum Route: Hashable {
     case orders
     case orderDetail(id: String)
     case account
+    /// Task 48.2: saved-address management (Account → Delivery addresses).
+    case addresses
 }
