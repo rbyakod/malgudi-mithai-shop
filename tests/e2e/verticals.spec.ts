@@ -17,6 +17,25 @@ test("mithai hub lists seeded kaju katli", async ({page}) => {
   await expect(page.getByText("Kaju Katli").first()).toBeVisible();
 });
 
+test("mithai hub quick add adds the selected item to cart", async ({page}) => {
+  await page.addInitScript(() => {
+    window.localStorage.removeItem("mithai-cart-v1");
+  });
+  await page.goto("/en/mithai");
+
+  const firstCard = page.locator("article").first();
+  const productName = await firstCard.locator("h3").innerText();
+  await firstCard.getByRole("button", {name: "Quick add"}).click();
+
+  await expect(firstCard.getByRole("button", {name: "Added"})).toBeVisible();
+  await expect(page.getByText(`${productName} added to cart`)).toBeVisible();
+
+  await page.goto("/en/cart");
+  const cartItem = page.locator("li").filter({hasText: productName}).first();
+  await expect(cartItem).toBeVisible();
+  await expect(cartItem.getByText(/^1$/).first()).toBeVisible();
+});
+
 test("qsr hub lists seeded item", async ({page}) => {
   await page.goto("/en/qsr");
 

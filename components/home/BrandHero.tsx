@@ -12,6 +12,9 @@ import {getPayload} from "@/lib/payload-client";
 import {resolveHomeHeroSlides} from "@/lib/home-hero";
 import {HeroRotator} from "./HeroRotator";
 
+const FALLBACK_HERO_IMAGE =
+  "/api/media/file/1_17966508-6230-43cc-a641-14bd2b412990.jpg";
+
 type BrandGlobal = {
   brandName?: string;
   tagline?: string;
@@ -115,6 +118,30 @@ export async function BrandHero() {
               {t("ctaBuildGift")}
             </Link>
           </div>
+
+          {!hasSlides ? (
+            <figure className="mt-10 overflow-hidden rounded-2xl border border-border-image bg-bg-card shadow-card lg:hidden">
+              <div className="relative aspect-[16/10] w-full bg-bg-accent">
+                <Image
+                  src={FALLBACK_HERO_IMAGE}
+                  alt={t("heroInsetAlt")}
+                  fill
+                  priority
+                  sizes="(max-width: 1023px) calc(100vw - 2rem), 0px"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg-darker/45 via-transparent to-transparent" />
+              </div>
+              <figcaption className="border-t border-border-card bg-bg-card px-4 py-3">
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-primary">
+                  {t("heroInsetLabel")}
+                </p>
+                <p className="mt-1 text-sm font-semibold leading-snug text-text-heading">
+                  {t("heroInsetTitle")}
+                </p>
+              </figcaption>
+            </figure>
+          ) : null}
         </div>
 
         {/* Right column — rotator when slides exist, else static fallback. */}
@@ -129,7 +156,7 @@ export async function BrandHero() {
               <div className="relative m-3 overflow-hidden rounded-[1.6rem]">
                 <div className="relative aspect-[4/5] w-full bg-bg-accent">
                   <Image
-                    src="/images/kaju-katli.jpg"
+                    src={FALLBACK_HERO_IMAGE}
                     alt={t("heroInsetAlt")}
                     fill
                     priority

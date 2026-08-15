@@ -1,8 +1,9 @@
 "use client";
 
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import Image from "next/image";
 import {Link} from "@/i18n/navigation";
+import {toast} from "sonner";
 import {useCart} from "@/context/CartContext";
 import {track} from "@/lib/analytics";
 import {
@@ -43,12 +44,22 @@ export function CatalogBrowser({
   const [tag, setTag] = useState("all");
   const [sort, setSort] = useState<SortKey>("featured");
   const [page, setPage] = useState(1);
+  const [addedItemId, setAddedItemId] = useState<string | null>(null);
+  const addedTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null);
   const isFullWidth = isFullWidthLayout(layoutMode);
   const normalizedPageSize = normalizeCatalogPageSize(pageSize);
   const gridClassName = [
     "grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3",
     isFullWidth ? "xl:grid-cols-4 2xl:grid-cols-5" : "",
   ].join(" ");
+
+  useEffect(() => {
+    return () => {
+      if (addedTimerRef.current) {
+        window.clearTimeout(addedTimerRef.current);
+      }
+    };
+  }, []);
 
   const tags = useMemo(
     () => Array.from(new Set(items.flatMap((item) => item.tag ? [item.tag] : []))).sort(),
@@ -241,11 +252,20 @@ export function CatalogBrowser({
                           priceLabel: item.priceLabel,
                           image: item.image ?? "",
                         });
+                        setAddedItemId(item.id);
+                        if (addedTimerRef.current) {
+                          window.clearTimeout(addedTimerRef.current);
+                        }
+                        addedTimerRef.current = window.setTimeout(() => {
+                          setAddedItemId(null);
+                        }, 1800);
+                        toast.success(`${item.title} added to cart`);
                         track("add_to_cart", {id: item.id, name: item.title, source: "catalog"});
                       }}
+                      aria-live="polite"
                       className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-text-light transition-colors hover:bg-primary-hover"
                     >
-                      Quick add
+                      {addedItemId === item.id ? "Added" : "Quick add"}
                     </button>
                     <Link
                       href={item.href}
