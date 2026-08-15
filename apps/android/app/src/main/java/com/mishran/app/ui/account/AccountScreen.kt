@@ -1,8 +1,10 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/account/AccountScreen.kt
+// apps/android/app/src/main/java/com/mishran/app/ui/account/AccountScreen.kt — P1 parity.
 //
-// The Account tab: signed-in identity + sign-out. Replaces the Phase 7
-// placeholder. Addresses/biometric/loyalty arrive with their real flows —
-// nothing here links to a screen that doesn't exist yet.
+// The Account tab: signed-in identity, delivery addresses, a support section
+// with the brand WhatsApp row (P1 parity — fetched from GET /brand,
+// placeholder until then), and sign-out. Addresses/biometric/loyalty arrive
+// with their real flows — nothing here links to a screen that doesn't exist
+// yet.
 package com.mishran.app.ui.account
 
 import androidx.compose.foundation.layout.Arrangement
@@ -14,8 +16,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -31,10 +36,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun AccountScreen(
     onOpenAddresses: () -> Unit,
+    onWhatsApp: (digits: String) -> Unit,
     onSignedOut: () -> Unit,
     viewModel: AccountViewModel = hiltViewModel(),
 ) {
     val phone by viewModel.phone.collectAsStateWithLifecycle()
+    val support by viewModel.support.collectAsStateWithLifecycle()
     val signingOut by viewModel.signingOut.collectAsStateWithLifecycle()
 
     Column(
@@ -81,6 +88,47 @@ fun AccountScreen(
                     )
                     Text(
                         text = "Saved addresses for faster checkout",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Text(
+                    text = "›",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+        // Support — the brand WhatsApp line (P1 parity). Number/digits come
+        // from GET /brand via the ViewModel; until that lands (or offline)
+        // the placeholder keeps the row actionable.
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { onWhatsApp(support.whatsappDigits) },
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Chat,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .padding(start = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = "WhatsApp us",
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = support.whatsappNumber,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

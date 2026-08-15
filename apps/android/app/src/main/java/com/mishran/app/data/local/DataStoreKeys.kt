@@ -26,6 +26,17 @@ object DataStoreKeys {
     /** Last catalog ETag, replayed as If-None-Match to short-circuit 304s. */
     val CATALOG_ETAG: Preferences.Key<String> = stringPreferencesKey("catalog_etag")
 
+    /**
+     * Brand WhatsApp number (display form, e.g. "+91-98765-43210") cached
+     * from GET /brand — fetched once per install, P1 parity support row.
+     */
+    val BRAND_WHATSAPP_NUMBER: Preferences.Key<String> =
+        stringPreferencesKey("brand_whatsapp_number")
+
+    /** Brand WhatsApp digits (wa.me links) cached alongside the number above. */
+    val BRAND_WHATSAPP_DIGITS: Preferences.Key<String> =
+        stringPreferencesKey("brand_whatsapp_digits")
+
     /** Persisted locale tag (en, hi, kn, …) chosen by the user, if any. */
     val LOCALE: Preferences.Key<String> = stringPreferencesKey("locale")
 

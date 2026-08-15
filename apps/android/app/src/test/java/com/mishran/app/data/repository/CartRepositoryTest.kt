@@ -1,6 +1,8 @@
-// apps/android/app/src/test/java/com/mishran/app/data/repository/CartRepositoryTest.kt — Task 10.1.
+// apps/android/app/src/test/java/com/mishran/app/data/repository/CartRepositoryTest.kt — Task 10.1 / P1 parity.
 //
-// JVM unit tests for the cart repository + the price-estimation helpers.
+// JVM unit tests for the cart repository + the price-estimation helpers,
+// including the pack-scoped adds (P1 parity): base pack keeps the bare
+// product id, derived packs key "${productId}:${label}".
 // The DAO is mocked with an in-memory map keyed by productId so quantity
 // stacking is exercised through the real repository logic. NOTE:
 // source-complete (no SDK).
@@ -9,6 +11,7 @@ package com.mishran.app.data.repository
 import com.mishran.api.models.Product
 import com.mishran.app.data.local.dao.CartDao
 import com.mishran.app.data.local.entity.CartItemEntity
+import com.mishran.app.ui.product.PackSize
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -105,6 +108,44 @@ class CartRepositoryTest {
 
         coVerify(exactly = 1) { cartDao.clear() }
         assertEquals(0, repository.count())
+    }
+
+    // ---- P1 parity: pack-scoped adds --------------------------------------
+
+    @Test
+    fun `a derived pack keys its line by product id and label`() = runTest {
+        val oneKg = PackSize(label = "1 kg", priceLabel = "₹1,440 / 1 kg", grams = 1000)
+        repository.add(kajuKatli, quantity = 1, pack = oneKg)
+
+        val line = table.getValue("p1:1 kg")
+        assertEquals("₹1,440 / 1 kg", line.displayPrice)
+        assertEquals("1 kg", line.packLabel)
+        assertEquals(1, line.quantity)
+    }
+
+    @Test
+    fun `the base pack keeps the bare product id so old lines still merge`() = runTest {
+        val base = PackSize(label = "500g", priceLabel = "₹720 / 500g", grams = 500)
+        repository.add(kajuKatli, quantity = 1, pack = base)
+
+        // Bare id, verbatim price — byte-for-byte the pre-pack shape except
+        // the decorative packLabel.
+        val line = table.getValue("p1")
+        assertEquals("₹720 / 500g", line.displayPrice)
+        assertEquals("500g", line.packLabel)
+        assertEquals(1, table.size)
+    }
+
+    @Test
+    fun `a pack add stacks quantity on its own line without touching the base`() = runTest {
+        val oneKg = PackSize(label = "1 kg", priceLabel = "₹1,440 / 1 kg", grams = 1000)
+        repository.add(kajuKatli, quantity = 1)
+        repository.add(kajuKatli, quantity = 1, pack = oneKg)
+        repository.add(kajuKatli, quantity = 2, pack = oneKg)
+
+        assertEquals(1, table.getValue("p1").quantity)
+        assertEquals(3, table.getValue("p1:1 kg").quantity)
+        assertEquals(setOf("p1", "p1:1 kg"), table.keys)
     }
 
     // ---- parsePaise / estimateTotalPaise (pure functions) -----------------

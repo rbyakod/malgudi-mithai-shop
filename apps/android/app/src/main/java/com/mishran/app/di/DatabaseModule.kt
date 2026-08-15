@@ -14,6 +14,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import com.mishran.app.data.local.MishranDatabase
+import com.mishran.app.data.local.MIGRATION_4_5
 import com.mishran.app.data.local.dao.CartDao
 import com.mishran.app.data.local.dao.NotificationSeenDao
 import com.mishran.app.data.local.dao.OrderDao
@@ -52,8 +53,10 @@ object DatabaseModule {
         @ApplicationContext context: Context,
     ): MishranDatabase =
         Room.databaseBuilder(context, MishranDatabase::class.java, "mishran.db")
-            // v1 catalog-only schema; fallback destructive migration is fine
-            // while the schema is still churning pre-launch.
+            // P1 parity (v5): explicit additive migration so an app update
+            // keeps the local cart; anything older still falls back
+            // destructively (pre-launch churn, see Database.kt).
+            .addMigrations(MIGRATION_4_5)
             .fallbackToDestructiveMigration()
             .build()
 

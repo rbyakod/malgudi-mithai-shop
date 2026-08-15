@@ -63,8 +63,10 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val products by viewModel.products.collectAsStateWithLifecycle()
-    val featured = products.take(FEATURED_COUNT)
-    val heroImage = featured.firstOrNull()?.images?.firstOrNull()
+    // Real best sellers since P1 parity: the featured rows (fallback: first
+    // eight of the catalog) — see HomeViewModel.
+    val bestSellers by viewModel.bestSellers.collectAsStateWithLifecycle()
+    val heroImage = bestSellers.firstOrNull()?.images?.firstOrNull()
 
     Column(
         modifier = Modifier
@@ -137,8 +139,8 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 4.dp),
             ) {
-                items(featured.size, key = { featured[it].id }) { index ->
-                    val product = featured[index]
+                items(bestSellers.size, key = { bestSellers[it].id }) { index ->
+                    val product = bestSellers[index]
                     ProductCard(
                         product = product,
                         onClick = { onProductClick(product.slug) },
@@ -194,5 +196,3 @@ private fun SectionHeader(title: String) {
         modifier = Modifier.padding(start = 20.dp, top = 24.dp, bottom = 12.dp),
     )
 }
-
-private const val FEATURED_COUNT = 8

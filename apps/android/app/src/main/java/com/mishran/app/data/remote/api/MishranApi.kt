@@ -17,6 +17,7 @@ import com.mishran.api.models.AddressInput
 import com.mishran.api.models.AddressesGet200Response
 import com.mishran.api.models.AddressesPost201Response
 import com.mishran.api.models.AuthLogoutPost200Response
+import com.mishran.api.models.BrandGet200Response
 import com.mishran.api.models.AuthOtpSendPost200Response
 import com.mishran.api.models.AuthOtpVerifyPost200Response
 import com.mishran.api.models.AuthRefreshPost200Response
@@ -101,6 +102,16 @@ interface MishranApi {
     /** 6-digit pincode; 200 = serviceable-or-not (check `data.serviceable`). */
     @GET("catalog/serviceable")
     suspend fun checkPincode(@Query("pincode") pincode: String): CatalogServiceableGet200Response
+
+    // ---- Brand (P1 parity: support surfaces) -----------------------------
+
+    /**
+     * Public brand support contact — WhatsApp number (display form) + digits
+     * (wa.me deep links). Tiny, cacheable, no auth; BrandRepository caches it
+     * in DataStore so the app asks at most once per install.
+     */
+    @GET("brand")
+    suspend fun getBrand(): BrandGet200Response
 
     // ---- Cart + payments (Task 10.x) ------------------------------------
 

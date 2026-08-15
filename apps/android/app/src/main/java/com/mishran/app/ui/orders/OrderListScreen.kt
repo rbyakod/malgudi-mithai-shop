@@ -1,10 +1,11 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/orders/OrderListScreen.kt — Task 11.1.
+// apps/android/app/src/main/java/com/mishran/app/ui/orders/OrderListScreen.kt — Task 11.1 / P1 parity.
 //
 // Orders tab: card list (reference, status chip, total, date) over the Room
 // cache, refreshed on entry + hourly by the WorkManager janitor. Offline the
 // stale list keeps serving with an inline notice; empty state offers the
-// catalog. Pull-to-refresh gesture is deferred to the material3 1.3 upgrade
-// (refresh() is already wired).
+// catalog. P1 parity wraps the list in material3's PullToRefreshBox — the
+// gesture the original header comment deferred to the 1.3 upgrade — which
+// also replaces the old 24dp header spinner (the box owns the indicator).
 package com.mishran.app.ui.orders
 
 import androidx.compose.foundation.clickable
@@ -23,11 +24,13 @@ import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,6 +45,7 @@ import com.mishran.api.models.Order
 import com.mishran.app.ui.cart.formatPaise
 import com.mishran.app.ui.orderconfirmed.orderReferenceLabel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderListScreen(
     onOrderClick: (orderId: String) -> Unit,
@@ -52,45 +56,51 @@ fun OrderListScreen(
     val state by viewModel.state.collectAsState()
     val refreshing by viewModel.refreshing.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+    // Pull-to-refresh over the whole tab (header + list); the box's built-in
+    // indicator is the only refresh affordance — the old inline 24dp header
+    // spinner was dropped as redundant.
+    PullToRefreshBox(
+        isRefreshing = refreshing,
+        onRefresh = viewModel::refresh,
+        modifier = Modifier.fillMaxSize(),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
         ) {
-            Text(
-                text = "Your orders",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.weight(1f).semantics { heading() },
-            )
-            if (refreshing) {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-            }
-        }
-
-        when {
-            !state.loaded -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-            state.orders.isEmpty() -> EmptyOrders(onBrowse, onOpenCart)
-            else -> LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxSize(),
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (state.refreshFailed) {
-                    item {
-                        Text(
-                            text = "Couldn't refresh — showing saved orders.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                Text(
+                    text = "Your orders",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.weight(1f).semantics { heading() },
+                )
+            }
+
+            when {
+                !state.loaded -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
                 }
-                items(state.orders, key = { it.id }) { order ->
-                    OrderCard(order = order, onClick = { onOrderClick(order.id) })
+                state.orders.isEmpty() -> EmptyOrders(onBrowse, onOpenCart)
+                else -> LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    if (state.refreshFailed) {
+                        item {
+                            Text(
+                                text = "Couldn't refresh — showing saved orders.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                    items(state.orders, key = { it.id }) { order ->
+                        OrderCard(order = order, onClick = { onOrderClick(order.id) })
+                    }
                 }
             }
         }

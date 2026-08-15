@@ -21,6 +21,15 @@ interface ProductDao {
     @Query("SELECT * FROM products ORDER BY name ASC")
     fun observeAll(): Flow<List<ProductEntity>>
 
+    /**
+     * Reactive featured products (the Home best-sellers rail), name-sorted.
+     * Empty when nothing is flagged yet — the caller falls back to a plain
+     * slice of [observeAll]. `featured = 1` misses NULL (unflagged /
+     * pre-migration rows), which is the intent.
+     */
+    @Query("SELECT * FROM products WHERE featured = 1 ORDER BY name ASC")
+    fun observeFeatured(): Flow<List<ProductEntity>>
+
     /** Reactive single product for the detail screen; null if absent. */
     @Query("SELECT * FROM products WHERE slug = :slug LIMIT 1")
     fun observeBySlug(slug: String): Flow<ProductEntity?>

@@ -1,9 +1,11 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/product/ProductDetailScreen.kt — Task 9.4.
+// apps/android/app/src/main/java/com/mishran/app/ui/product/ProductDetailScreen.kt — Task 9.4 / P1 parity.
 //
 // Product detail: swipeable image gallery (Coil), name/price/freshness badge,
-// ingredients / shelf life / storage / story sections, quantity stepper, and a
-// bottom Add-to-cart bar. The add callback is owned by the caller — Task 10.1
-// wires it to the cart repository once that exists.
+// pack-size chip row, ingredients / shelf life / storage / story sections,
+// quantity stepper, and a bottom Add-to-cart + Buy-now bar. The add callbacks
+// are owned by the caller — Task 10.1 wires the cart write; P1 parity adds
+// Buy now (same write, straight to checkout) and the pack chips (the
+// selected chip swaps the price line and scopes the cart line).
 package com.mishran.app.ui.product
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -28,9 +30,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
@@ -39,6 +43,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
@@ -56,6 +63,7 @@ import com.mishran.app.ui.common.UiState
 @Composable
 fun ProductDetailScreen(
     onAddedToCart: () -> Unit,
+    onBuyNow: () -> Unit = {},
     viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -65,6 +73,10 @@ fun ProductDetailScreen(
     // must never eat an Add-to-cart tap).
     LaunchedEffect(viewModel) {
         viewModel.added.collect { onAddedToCart() }
+    }
+    // Buy now: same write, then straight to checkout — no cart stop.
+    LaunchedEffect(viewModel) {
+        viewModel.bought.collect { onBuyNow() }
     }
 
     when (val s = state) {
@@ -89,6 +101,7 @@ fun ProductDetailScreen(
             onIncrement = viewModel::incrementQuantity,
             onDecrement = viewModel::decrementQuantity,
             onAddToCart = viewModel::addToCart,
+            onBuyNow = viewModel::buyNow,
         )
     }
 }
@@ -99,8 +112,21 @@ private fun ProductDetailContent(
     quantity: Int,
     onIncrement: () -> Unit,
     onDecrement: () -> Unit,
-    onAddToCart: () -> Unit,
+    onAddToCart: (PackSize?) -> Unit,
+    onBuyNow: (PackSize?) -> Unit,
 ) {
+    // Pack chips derive purely from the product (verbatim port of the web's
+    // lib/mithai/packSizes.ts). Products whose price/weight don't parse get
+    // none and render exactly the pre-pack UI.
+    val packSizes = remember(product) {
+        derivePackSizes(product.displayPrice.orEmpty(), product.weight)
+    }
+    // Default to the chip carrying the product's real (verbatim) price; the
+    // selected chip rewrites the price line + the cart line.
+    var selectedPack by remember(product) {
+        mutableStateOf(packSizes.basePackFor(product.displayPrice))
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -121,7 +147,7 @@ private fun ProductDetailContent(
                         style = MaterialTheme.typography.headlineSmall,
                         modifier = Modifier.semantics { heading() },
                     )
-                    product.displayPrice?.let {
+                    (selectedPack?.priceLabel ?: product.displayPrice)?.let {
                         Text(
                             text = it,
                             style = MaterialTheme.typography.titleMedium,
@@ -141,6 +167,14 @@ private fun ProductDetailContent(
                         border = null,
                     )
                 }
+            }
+
+            if (packSizes.isNotEmpty()) {
+                PackSizeRow(
+                    packs = packSizes,
+                    selected = selectedPack,
+                    onSelect = { selectedPack = it },
+                )
             }
 
             Section("Ingredients", product.ingredients)
@@ -173,10 +207,61 @@ private fun ProductDetailContent(
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = onAddToCart, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-                Text("Add to cart")
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(
+                    onClick = { onAddToCart(selectedPack) },
+                    modifier = Modifier.weight(1f).height(52.dp),
+                ) {
+                    Text("Add to cart")
+                }
+                OutlinedButton(
+                    onClick = { onBuyNow(selectedPack) },
+                    modifier = Modifier.weight(1f).height(52.dp),
+                ) {
+                    Text("Buy now")
+                }
             }
             Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+/**
+ * Pack-size selector between the price line and the detail sections. The
+ * chips are display-only estimates off the single real catalog price (the
+ * base chip carries it verbatim) — spelled out under the row so nobody reads
+ * a derived number as a quote; checkout re-validates server-side.
+ */
+@Composable
+private fun PackSizeRow(
+    packs: List<PackSize>,
+    selected: PackSize?,
+    onSelect: (PackSize) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = "Pack size",
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.semantics { heading() },
+        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.semantics { contentDescription = "Choose a pack size" },
+        ) {
+            packs.forEach { pack ->
+                FilterChip(
+                    selected = selected?.label == pack.label,
+                    onClick = { onSelect(pack) },
+                    label = { Text(pack.label) },
+                )
+            }
+        }
+        if (packs.size > 1) {
+            Text(
+                text = "Other sizes are estimated — the final price is confirmed at checkout.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

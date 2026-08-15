@@ -60,6 +60,14 @@ class CatalogRepository @Inject constructor(
         productDao.observeBySlug(slug).map { it?.toDomain() }
 
     /**
+     * Reactive featured products (Home best-sellers rail). Empty until the
+     * catalog carries at least one flagged row — the caller decides the
+     * fallback slice. Re-emits on every catalog upsert, like [getCatalog].
+     */
+    fun observeFeatured(): Flow<List<Product>> =
+        productDao.observeFeatured().map { rows -> rows.map { it.toDomain() } }
+
+    /**
      * One-shot product lookup for the detail screen: Room first, then a single
      * network fetch (cached back with the same freshness window) when the row
      * is not on disk yet — e.g. a deep link into a cold cache. Returns null
@@ -112,6 +120,8 @@ internal fun Product.toEntity(staleAt: Long): ProductEntity = ProductEntity(
     name = name,
     family = family.value,
     displayPrice = displayPrice,
+    weight = weight,
+    featured = featured,
     freshnessStatus = freshnessStatus?.value,
     dietaryTags = dietaryTags.orEmpty(),
     allergens = allergens.orEmpty(),
@@ -140,6 +150,8 @@ internal fun ProductEntity.toDomain(): Product {
         name = name,
         family = family,
         displayPrice = displayPrice,
+        weight = weight,
+        featured = featured,
         freshnessStatus = freshness,
         dietaryTags = dietaryTags.takeIf { it.isNotEmpty() },
         allergens = allergens.takeIf { it.isNotEmpty() },

@@ -1,11 +1,13 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/catalog/CatalogScreen.kt — Task 9.3.
+// apps/android/app/src/main/java/com/mishran/app/ui/catalog/CatalogScreen.kt — Task 9.3 / P1 parity.
 //
 // The catalog browse surface: search bar, active-filter chip row, and a
 // 2-column LazyVerticalGrid of product cards. Renders the Room cache the
 // instant it lands (Cached) and swaps in the refreshed rows (Fresh) without
 // losing scroll or filter state — the ViewModel owns both, the screen just
 // renders. Empty state distinguishes "no products match" (filtered) from
-// "catalog is empty" (unfiltered offline first run before sync).
+// "catalog is empty" (unfiltered offline first run before sync). P1 parity
+// wraps the scrollable content in material3's PullToRefreshBox (the
+// compose-material3 1.3 upgrade this screen pre-announced in its comments).
 package com.mishran.app.ui.catalog
 
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -58,9 +61,18 @@ fun CatalogScreen(
     val query by viewModel.searchQuery.collectAsState()
     val filters by viewModel.activeFilters.collectAsState()
     val availableTags by viewModel.availableDietaryTags.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
     var showFilterSheet by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    // Pull-to-refresh over the whole scrollable surface (grid + pinned
+    // header); the indicator lands at the top while the ViewModel's
+    // isRefreshing bridges gesture → refresh() → Fresh emission.
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = viewModel::refresh,
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -167,6 +179,7 @@ fun CatalogScreen(
                     }
                 }
             }
+        }
         }
     }
 

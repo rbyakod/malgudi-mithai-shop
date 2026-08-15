@@ -176,7 +176,10 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.9.1")
 
     // --- Compose (BOM keeps artifacts aligned) ---
-    implementation(platform("androidx.compose:compose-bom:2024.08.00"))
+    // P1 parity: 2024.09.00 pulls compose-material3 1.3.0, whose
+    // pulltorefresh package (PullToRefreshBox) the Catalog + Orders screens
+    // wrap their lists in.
+    implementation(platform("androidx.compose:compose-bom:2024.09.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -250,7 +253,7 @@ dependencies {
 
     // --- Instrumented tests (device) ---
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.08.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.09.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

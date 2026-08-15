@@ -1,15 +1,23 @@
-// apps/android/app/src/main/java/com/mishran/app/data/repository/CartRepository.kt — Task 10.1.
+// apps/android/app/src/main/java/com/mishran/app/data/repository/CartRepository.kt — Task 10.1 / P1 parity (pack sizes).
 //
 // The cart is local-only in v1 (Room table, no server cart). Adds upsert by
-// productId so tapping "Add to cart" twice stacks quantity instead of
+// line id so tapping "Add to cart" twice stacks quantity instead of
 // duplicating a line; setQuantity floors at 1 (removal is an explicit action).
 // Totals are *estimates* derived from displayPrice labels — the authoritative
 // price is whatever the server's cart-validate snapshot says at checkout.
+//
+// P1 parity (pack sizes): `add` takes the selected PDP pack. The BASE pack
+// (priceLabel == the product's verbatim displayPrice) keeps the bare
+// productId so pre-pack cart lines keep merging, exactly like the web
+// BuyModule; a DERIVED pack keys itself `${productId}:${label}` so sizes
+// stack as separate lines. The pack's estimated priceLabel becomes the
+// line's displayPrice so the estimated total scales with the chosen size.
 package com.mishran.app.data.repository
 
 import com.mishran.api.models.Product
 import com.mishran.app.data.local.dao.CartDao
 import com.mishran.app.data.local.entity.CartItemEntity
+import com.mishran.app.ui.product.PackSize
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,10 +30,14 @@ class CartRepository @Inject constructor(
     /** Live cart lines, oldest first. */
     fun observeItems(): Flow<List<CartItemEntity>> = cartDao.observeItems()
 
-    /** Add a product (stacks quantity when the line already exists). */
-    suspend fun add(product: Product, quantity: Int = 1) {
-        val existing = cartDao.findByProductId(product.id)?.quantity ?: 0
-        cartDao.upsert(product.toCartItem(quantity = existing + quantity))
+    /**
+     * Add a product (stacks quantity when the line already exists). [pack] is
+     * the selected PDP chip, if any — see the file header for the line-id rule.
+     */
+    suspend fun add(product: Product, quantity: Int = 1, pack: PackSize? = null) {
+        val line = product.toCartItem(quantity = quantity, pack = pack)
+        val existing = cartDao.findByProductId(line.productId)?.quantity ?: 0
+        cartDao.upsert(line.copy(quantity = existing + quantity))
     }
 
     /** Set an absolute quantity; values below 1 are normalized to 1. */
@@ -41,16 +53,28 @@ class CartRepository @Inject constructor(
     suspend fun count(): Int = cartDao.count()
 }
 
-/** Snapshot the catalog fields the cart renders; quantity/addedAt are cart-owned. */
-private fun Product.toCartItem(quantity: Int): CartItemEntity = CartItemEntity(
-    productId = id,
-    slug = slug,
-    name = name,
-    imageUrl = images.orEmpty().firstOrNull(),
-    displayPrice = displayPrice,
-    quantity = quantity,
-    addedAt = System.currentTimeMillis(),
-)
+/**
+ * Snapshot the catalog fields the cart renders; quantity/addedAt are
+ * cart-owned. A derived pack rewrites the line id + displayPrice (its
+ * estimate); the base pack / no-pack path is byte-for-byte the legacy shape.
+ */
+internal fun Product.toCartItem(quantity: Int, pack: PackSize? = null): CartItemEntity {
+    // Only a DERIVED pack (priceLabel ≠ the product's verbatim displayPrice)
+    // suffixed the id; the base chip / pack-less add keeps the bare id.
+    val derivedId = pack
+        ?.takeIf { it.priceLabel != displayPrice }
+        ?.let { "$id:${it.label}" }
+    return CartItemEntity(
+        productId = derivedId ?: id,
+        slug = slug,
+        name = name,
+        imageUrl = images.orEmpty().firstOrNull(),
+        displayPrice = pack?.priceLabel ?: displayPrice,
+        quantity = quantity,
+        packLabel = pack?.label,
+        addedAt = System.currentTimeMillis(),
+    )
+}
 
 /**
  * Parse a paise amount from a display-price label ("₹720 / 500g" → 72000).
