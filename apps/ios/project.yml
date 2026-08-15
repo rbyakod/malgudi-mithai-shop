@@ -114,6 +114,11 @@ targets:
     type: app-extension
     platform: iOS
     sources:
+      # Extension-only @main — a WidgetKit extension without a WidgetBundle
+      # entry point links an entry-less binary (App Store validation rejects
+      # it; WidgetKit can't discover the activity either). Never compiled
+      # into the app target, which has its own @main.
+      - path: MishranWidgets/MishranWidgetsBundle.swift
       # Shared attributes/state (also compiled into the app target).
       - path: Mishran/LiveActivity/DeliveryAttributes.swift
       # Shared L() helper — the activity's labels localize against the
