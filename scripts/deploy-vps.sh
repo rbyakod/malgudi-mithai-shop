@@ -37,13 +37,20 @@ fi
 echo "main @ ${REMOTE:0:7} — GitHub is current."
 
 step "2/4 VPS: git pull + pnpm install + pnpm build (as mithai)"
-ssh "$DEPLOY_SSH" "sudo -iu mithai bash -c '
-  set -euo pipefail
-  cd $APP_DIR
-  git pull origin main
-  pnpm install --frozen-lockfile
-  pnpm build
-'" || die "pull/install/build failed on the VPS — the running service was NOT touched."
+# NOTE: the remote command MUST stay on one line. `sudo -iu` over ssh
+# collapses embedded newlines to spaces, which turns a multi-line
+# `bash -c '...'` script into `set -euo pipefail cd ... && ...` — i.e. a
+# single `set` invocation that silently exits 0 without running anything.
+# That made deploys no-op while still reporting success.
+ssh "$DEPLOY_SSH" "sudo -iu mithai bash -c 'set -euo pipefail; cd $APP_DIR && git pull origin main && pnpm install --frozen-lockfile && pnpm build'" || die "pull/install/build failed on the VPS — the running service was NOT touched."
+
+# The pull can also no-op silently on a dirty checkout (local changes block
+# the merge). Verify the deployed commit actually matches local main.
+DEPLOYED="$(ssh "$DEPLOY_SSH" "sudo -iu mithai bash -c 'cd $APP_DIR && git rev-parse HEAD'")"
+if [ "$DEPLOYED" != "$LOCAL" ]; then
+  die "VPS is at ${DEPLOYED:0:7}, expected ${LOCAL:0:7}. The pull did not apply — check for a dirty checkout: ssh $DEPLOY_SSH \"sudo -iu mithai git -C $APP_DIR status\""
+fi
+echo "VPS at ${DEPLOYED:0:7} — matches local main."
 
 step "3/4 VPS: restart $SERVICE"
 ssh "$DEPLOY_SSH" "systemctl restart $SERVICE"
