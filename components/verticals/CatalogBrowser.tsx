@@ -5,7 +5,11 @@ import Image from "next/image";
 import {Link} from "@/i18n/navigation";
 import {useCart} from "@/context/CartContext";
 import {track} from "@/lib/analytics";
-import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
+import {
+  isFullWidthLayout,
+  normalizeCatalogPageSize,
+  type StorefrontLayoutMode,
+} from "@/lib/storefront-layout";
 
 export type CatalogItem = {
   id: string;
@@ -23,16 +27,24 @@ type Props = {
   items: CatalogItem[];
   emptyLabel: string;
   layoutMode?: StorefrontLayoutMode;
+  pageSize?: number;
 };
 
 type SortKey = "featured" | "name-asc" | "name-desc";
 
-export function CatalogBrowser({items, emptyLabel, layoutMode = "fixed"}: Props) {
+export function CatalogBrowser({
+  items,
+  emptyLabel,
+  layoutMode = "fixed",
+  pageSize,
+}: Props) {
   const {addItem} = useCart();
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState("all");
   const [sort, setSort] = useState<SortKey>("featured");
+  const [page, setPage] = useState(1);
   const isFullWidth = isFullWidthLayout(layoutMode);
+  const normalizedPageSize = normalizeCatalogPageSize(pageSize);
   const gridClassName = [
     "grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3",
     isFullWidth ? "xl:grid-cols-4 2xl:grid-cols-5" : "",
@@ -64,6 +76,12 @@ export function CatalogBrowser({items, emptyLabel, layoutMode = "fixed"}: Props)
       return 0;
     });
   }, [items, query, sort, tag]);
+  const pageCount = Math.max(1, Math.ceil(visibleItems.length / normalizedPageSize));
+  const currentPage = Math.min(page, pageCount);
+  const pageStart = (currentPage - 1) * normalizedPageSize;
+  const pagedItems = visibleItems.slice(pageStart, pageStart + normalizedPageSize);
+  const firstVisible = visibleItems.length === 0 ? 0 : pageStart + 1;
+  const lastVisible = Math.min(pageStart + pagedItems.length, visibleItems.length);
 
   if (items.length === 0) {
     return (
@@ -80,7 +98,10 @@ export function CatalogBrowser({items, emptyLabel, layoutMode = "fixed"}: Props)
           Search
           <input
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setPage(1);
+            }}
             placeholder="Search sweets, snacks, tags"
             className="h-11 rounded-full border border-border-input bg-bg-control px-4 text-sm font-normal normal-case tracking-normal text-text-heading outline-none transition-colors placeholder:text-text-muted focus:border-primary"
           />
@@ -89,7 +110,10 @@ export function CatalogBrowser({items, emptyLabel, layoutMode = "fixed"}: Props)
           Filter
           <select
             value={tag}
-            onChange={(event) => setTag(event.target.value)}
+            onChange={(event) => {
+              setTag(event.target.value);
+              setPage(1);
+            }}
             className="h-11 rounded-full border border-border-input bg-bg-control px-4 text-sm font-normal normal-case tracking-normal text-text-heading outline-none transition-colors focus:border-primary"
           >
             <option value="all">All</option>
@@ -102,7 +126,10 @@ export function CatalogBrowser({items, emptyLabel, layoutMode = "fixed"}: Props)
           Sort
           <select
             value={sort}
-            onChange={(event) => setSort(event.target.value as SortKey)}
+            onChange={(event) => {
+              setSort(event.target.value as SortKey);
+              setPage(1);
+            }}
             className="h-11 rounded-full border border-border-input bg-bg-control px-4 text-sm font-normal normal-case tracking-normal text-text-heading outline-none transition-colors focus:border-primary"
           >
             <option value="featured">Featured</option>
@@ -128,8 +155,38 @@ export function CatalogBrowser({items, emptyLabel, layoutMode = "fixed"}: Props)
           </button>
         </div>
       ) : (
-        <ul className={gridClassName}>
-          {visibleItems.map((item) => (
+        <>
+          <div className="flex flex-col gap-3 border-y border-border-card py-3 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              Showing {firstVisible}-{lastVisible} of {visibleItems.length}
+            </p>
+            {pageCount > 1 ? (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPage((current) => Math.max(1, current - 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-full border border-border-input px-3 py-1.5 font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Previous
+                </button>
+                <span className="min-w-20 text-center">
+                  Page {currentPage} of {pageCount}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((current) => Math.min(pageCount, current + 1))}
+                  disabled={currentPage === pageCount}
+                  className="rounded-full border border-border-input px-3 py-1.5 font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            ) : null}
+          </div>
+
+          <ul className={gridClassName}>
+          {pagedItems.map((item) => (
             <li key={item.id}>
               <article className="group flex h-full flex-col border-t border-border-card pt-5 transition-colors hover:bg-bg-accent/30">
                 <Link href={item.href} aria-label={item.title}>
@@ -201,7 +258,8 @@ export function CatalogBrowser({items, emptyLabel, layoutMode = "fixed"}: Props)
               </article>
             </li>
           ))}
-        </ul>
+          </ul>
+        </>
       )}
     </div>
   );

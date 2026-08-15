@@ -40,6 +40,18 @@ export const ThemeSettings: GlobalConfig = {
       },
     },
     {
+      name: "catalogPageSize",
+      type: "number",
+      label: "Catalog items per page",
+      defaultValue: 100,
+      min: 12,
+      max: 120,
+      admin: {
+        description:
+          "Controls how many products appear before pagination. Default is 100.",
+      },
+    },
+    {
       name: "themes",
       type: "array",
       fields: [

@@ -18,7 +18,10 @@ import {getPayload} from "@/lib/payload-client";
 import {getTranslations} from "next-intl/server";
 import {CatalogBrowser, type CatalogItem} from "@/components/verticals/CatalogBrowser";
 import {isFullWidthLayout} from "@/lib/storefront-layout";
-import {readStorefrontLayoutMode} from "@/lib/storefront-layout-server";
+import {
+  readCatalogPageSize,
+  readStorefrontLayoutMode,
+} from "@/lib/storefront-layout-server";
 
 type CollectionSlug =
   | "mithai-products"
@@ -140,18 +143,25 @@ export async function VerticalHub({collection, vertical}: Props) {
   const tShared = await getTranslations("Verticals");
   const title = t("title");
   const blurb = t("blurb");
-  const layoutMode = await readStorefrontLayoutMode();
+  const [layoutMode, catalogPageSize] = await Promise.all([
+    readStorefrontLayoutMode(),
+    readCatalogPageSize(),
+  ]);
   const isFullWidth = isFullWidthLayout(layoutMode);
 
-  // Read up to 100 docs (the seeded mithai catalog alone is 91 — the old
-  // limit of 24 hid two-thirds of it). Same ceiling the PDP lookup uses;
-  // paginate properly if a collection outgrows it. Failures (DB down,
-  // collection gone) degrade to an empty state — the hub still renders.
+  // Read the full collection in batches so storefront pagination does not
+  // silently hide products once a catalog grows past 100 records.
   let docs: Array<Record<string, unknown>> = [];
   try {
     const payload = await getPayload();
-    const r = await payload.find({collection, limit: 100});
-    docs = r.docs as Array<Record<string, unknown>>;
+    let page = 1;
+    let totalPages = 1;
+    do {
+      const r = await payload.find({collection, limit: 100, page});
+      docs = docs.concat(r.docs as Array<Record<string, unknown>>);
+      totalPages = r.totalPages ?? 1;
+      page += 1;
+    } while (page <= totalPages);
   } catch {
     docs = [];
   }
@@ -226,6 +236,7 @@ export async function VerticalHub({collection, vertical}: Props) {
           items={items}
           emptyLabel={tShared("empty")}
           layoutMode={layoutMode}
+          pageSize={catalogPageSize}
         />
       </div>
     </section>

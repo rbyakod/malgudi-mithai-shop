@@ -1,6 +1,7 @@
 import {getPayload} from "@/lib/payload-client";
 import {
   DEFAULT_STOREFRONT_LAYOUT_MODE,
+  normalizeCatalogPageSize,
   type StorefrontLayoutMode,
 } from "@/lib/storefront-layout";
 
@@ -26,5 +27,17 @@ export async function readThemeSwitcherEnabled(): Promise<boolean> {
     return (global as {showThemeSwitcher?: unknown}).showThemeSwitcher === true;
   } catch {
     return false;
+  }
+}
+
+export async function readCatalogPageSize(): Promise<number> {
+  try {
+    const payload = await getPayload();
+    const global = await payload.findGlobal({slug: "theme-settings"});
+    return normalizeCatalogPageSize(
+      (global as {catalogPageSize?: unknown}).catalogPageSize,
+    );
+  } catch {
+    return normalizeCatalogPageSize(null);
   }
 }
