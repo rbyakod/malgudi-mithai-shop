@@ -177,6 +177,8 @@
   "home.browse": "Browse sweets",
   "home.portal.mithai": "Made every day",
   "home.portal.snacks": "Retail packs",
+  "home.hero_carousel": "Home highlights carousel",
+  "home.hero_page": "Slide {page} of {total}",
   "product.added_to_cart": "Added to cart",
   "catalog.empty_hint": "Try a different search or clear filters.",
   "cart.empty_hint": "Browse the sweets catalog to fill it.",

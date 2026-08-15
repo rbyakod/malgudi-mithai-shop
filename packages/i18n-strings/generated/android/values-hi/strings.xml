@@ -178,6 +178,8 @@
   <string name="home_browse">मिठाई देखें</string>
   <string name="home_portal_mithai">रोज़ बनती है</string>
   <string name="home_portal_snacks">रिटेल पैक</string>
+  <string name="home_hero_carousel">होम हाइलाइट्स कैरोसेल</string>
+  <string name="home_hero_page">स्लाइड %1$s, कुल %2$s</string>
   <string name="product_added_to_cart">कार्ट में जोड़ा गया</string>
   <string name="catalog_empty_hint">कोई और खोज आज़माएँ या फ़िल्टर हटाएँ।</string>
   <string name="cart_empty_hint">भरने के लिए मिठाइयों की सूची देखें।</string>

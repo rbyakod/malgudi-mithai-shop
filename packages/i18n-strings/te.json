@@ -177,6 +177,8 @@
   "home.browse": "స్వీట్లు చూడండి",
   "home.portal.mithai": "రోజూ తయారవుతుంది",
   "home.portal.snacks": "రిటైల్ ప్యాక్‌లు",
+  "home.hero_carousel": "హోమ్ హైలైట్స్ కెరోసెల్",
+  "home.hero_page": "స్లైడ్ {page}, మొత్తం {total}",
   "product.added_to_cart": "కార్టులో చేర్చబడింది",
   "catalog.empty_hint": "వేరే శోధన ప్రయత్నించండి లేదా ఫిల్టర్‌లను తీసివేయండి.",
   "cart.empty_hint": "నింపడానికి స్వీట్ల జాబితా చూడండి.",

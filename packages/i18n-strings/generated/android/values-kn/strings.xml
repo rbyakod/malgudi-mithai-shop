@@ -178,6 +178,8 @@
   <string name="home_browse">ಸಿಹಿತಿಂಡಿಗಳನ್ನು ನೋಡಿ</string>
   <string name="home_portal_mithai">ಪ್ರತಿದಿನ ತಯಾರಾಗುತ್ತದೆ</string>
   <string name="home_portal_snacks">ಚಿಲ್ಲರೆ ಪ್ಯಾಕ್‌ಗಳು</string>
+  <string name="home_hero_carousel">ಮುಖಪುಟ ಹೈಲೈಟ್‌ಗಳ ಕ್ಯಾರೊಸೆಲ್</string>
+  <string name="home_hero_page">ಸ್ಲೈಡ್ %1$s, ಒಟ್ಟು %2$s</string>
   <string name="product_added_to_cart">ಬುಟ್ಟಿಗೆ ಸೇರಿಸಲಾಗಿದೆ</string>
   <string name="catalog_empty_hint">ಬೇರೆ ಹುಡುಕಾಟ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಶೋಧಕಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ.</string>
   <string name="cart_empty_hint">ಭರ್ತಿ ಮಾಡಲು ಸಿಹಿತಿಂಡಿಗಳ ಪಟ್ಟಿ ನೋಡಿ.</string>

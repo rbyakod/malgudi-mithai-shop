@@ -177,6 +177,8 @@
   "home.browse": "ಸಿಹಿತಿಂಡಿಗಳನ್ನು ನೋಡಿ",
   "home.portal.mithai": "ಪ್ರತಿದಿನ ತಯಾರಾಗುತ್ತದೆ",
   "home.portal.snacks": "ಚಿಲ್ಲರೆ ಪ್ಯಾಕ್‌ಗಳು",
+  "home.hero_carousel": "ಮುಖಪುಟ ಹೈಲೈಟ್‌ಗಳ ಕ್ಯಾರೊಸೆಲ್",
+  "home.hero_page": "ಸ್ಲೈಡ್ {page}, ಒಟ್ಟು {total}",
   "product.added_to_cart": "ಬುಟ್ಟಿಗೆ ಸೇರಿಸಲಾಗಿದೆ",
   "catalog.empty_hint": "ಬೇರೆ ಹುಡುಕಾಟ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಶೋಧಕಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ.",
   "cart.empty_hint": "ಭರ್ತಿ ಮಾಡಲು ಸಿಹಿತಿಂಡಿಗಳ ಪಟ್ಟಿ ನೋಡಿ.",

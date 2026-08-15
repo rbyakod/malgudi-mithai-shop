@@ -178,6 +178,8 @@
   <string name="home_browse">મઠાઈ જુઓ</string>
   <string name="home_portal_mithai">રોજ બને છે</string>
   <string name="home_portal_snacks">રિટેલ પેક</string>
+  <string name="home_hero_carousel">હોમ હાઇલાઇટ્સ કૅરોસેલ</string>
+  <string name="home_hero_page">સ્લાઇડ %1$s, કુલ %2$s</string>
   <string name="product_added_to_cart">કાર્ટમાં ઉમેર્યું</string>
   <string name="catalog_empty_hint">અલગ શોધ અજમાવો અથવા ફિલ્ટર દૂર કરો.</string>
   <string name="cart_empty_hint">ભરવા માટે મઠાઈની યાદી જુઓ.</string>

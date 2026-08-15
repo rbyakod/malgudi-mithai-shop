@@ -15,6 +15,12 @@
 // P2 net-new: `journal` exposes the three newest stories for the
 // "From the journal" rail (reactive off the stories Room cache, so it fills
 // in whenever the journal syncs — Home does not fetch it itself).
+//
+// P3 parity (admin hero): `hero` exposes the curated carousel (network-only
+// fetch in its own flow, so it loads in parallel with the catalog and never
+// blocks the screen). Null — not yet loaded, unset, or failed — keeps the
+// existing static hero rendering; the screen swaps the carousel in only
+// when slides exist.
 package com.mishran.app.ui.home
 
 import androidx.lifecycle.ViewModel
@@ -22,6 +28,8 @@ import androidx.lifecycle.viewModelScope
 import com.mishran.api.models.Product
 import com.mishran.api.models.Story
 import com.mishran.app.data.repository.CatalogRepository
+import com.mishran.app.data.repository.HeroCarousel
+import com.mishran.app.data.repository.HeroRepository
 import com.mishran.app.data.repository.StoryRepository
 import com.mishran.app.domain.usecase.GetCatalogUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +38,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
@@ -37,6 +46,7 @@ class HomeViewModel @Inject constructor(
     getCatalog: GetCatalogUseCase,
     catalogRepository: CatalogRepository,
     storyRepository: StoryRepository,
+    heroRepository: HeroRepository,
 ) : ViewModel() {
 
     /** Whole cached catalog — the screen slices hero + family counts from it. */
@@ -75,6 +85,22 @@ class HomeViewModel @Inject constructor(
             viewModelScope,
             SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
             emptyList(),
+        )
+
+    /**
+     * The admin-curated hero carousel, or null while unknown — the screen
+     * renders its static hero until (and unless) slides arrive. One fetch
+     * per subscription; the repository collapses every failure to null and
+     * the catch keeps the boundary airtight, so this flow never errors and
+     * the catalog flows above are unaffected.
+     */
+    val hero: StateFlow<HeroCarousel?> = flow {
+        emit(heroRepository.getHero())
+    }.catch { emit(null) }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            null,
         )
 
     private companion object {

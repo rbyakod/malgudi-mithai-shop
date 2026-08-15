@@ -21,24 +21,36 @@ final class HomeViewModel {
     /// container) can build the model without them.
     private let storyRepository: StoryRepository?
     private let verticalsRepository: VerticalsRepository?
+    /// Admin-curated hero carousel (optional for the same reason).
+    private let heroRepository: HeroRepository?
 
     private(set) var products: [ProductEntity] = []
     private(set) var stories: [StoryEntity] = []
     private(set) var portals: [VerticalPortal] = []
+    /// Curated hero slides — empty (or a failed fetch) keeps the static
+    /// featured-product hero exactly as before.
+    private(set) var heroSlides: [HeroSlideDTO] = []
+    private(set) var heroAutoplayMs: Int = 5000
 
     init(
         repository: CatalogRepository,
         storyRepository: StoryRepository? = nil,
-        verticalsRepository: VerticalsRepository? = nil
+        verticalsRepository: VerticalsRepository? = nil,
+        heroRepository: HeroRepository? = nil
     ) {
         self.repository = repository
         self.storyRepository = storyRepository
         self.verticalsRepository = verticalsRepository
+        self.heroRepository = heroRepository
         products = repository.products
         stories = storyRepository?.stories ?? []
     }
 
     func load() async {
+        // The hero fetch rides alongside the offline-first content — one
+        // parallel hop, never a gate: a slow/failed /hero can't delay the
+        // catalog, and its failure collapses to nil (static hero stays).
+        async let hero = heroRepository?.hero()
         await repository.getCatalog()
         products = repository.products
         if let storyRepository {
@@ -51,6 +63,17 @@ final class HomeViewModel {
                 products: products, snacks: pages.snacks, qsr: pages.qsr, merch: pages.merch
             )
         }
+        if let fetched = await hero {
+            heroSlides = fetched.slides
+            heroAutoplayMs = fetched.autoplayMs
+        }
+    }
+
+    /// Whether the curated carousel replaces the static hero (false until
+    /// /hero resolves with at least one slide; a failed first fetch leaves
+    /// it off, and a later refresh failure keeps the last good slides).
+    var hasHeroSlides: Bool {
+        !heroSlides.isEmpty
     }
 
     var bestSellers: [ProductEntity] {

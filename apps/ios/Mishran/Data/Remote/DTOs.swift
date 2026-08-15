@@ -246,6 +246,35 @@ struct BrandDTO: Codable, Equatable {
     let whatsappDigits: String
 }
 
+// MARK: - Hero (admin-curated home carousel)
+
+/// One resolved slide of the admin-curated `home-hero` global (GET /hero —
+/// the same list the web hero renders). `vertical` + `slug` is the apps'
+/// deep-link vocabulary: mithai pushes Route.productDetail, other verticals
+/// push Route.verticalDetail. Draft/imageless products are dropped
+/// server-side, so every field the carousel renders is contract-required
+/// except priceLabel (mithai displayPrice / merch price only).
+struct HeroSlideDTO: Decodable, Equatable, Identifiable, Hashable {
+    let id: String
+    /// "mithai" | "qsr" | "snacks" | "merch".
+    let vertical: String
+    let slug: String
+    /// captionOverride when the admin set one, else the product name.
+    let name: String
+    /// Display string, e.g. "₹720/kg"; nil on non-priced verticals.
+    let priceLabel: String?
+    let imageURL: String
+    let imageAlt: String
+}
+
+/// GET /hero payload. Empty `slides` means the global is unset or nothing
+/// resolved — the app keeps its local fallback hero, never a blank screen.
+struct HeroDTO: Decodable, Equatable {
+    let slides: [HeroSlideDTO]
+    /// Autoplay interval, clamped server-side (3000…15000).
+    let autoplayMs: Int
+}
+
 // MARK: - Cart snapshot + Razorpay payments (Task 17.3)
 
 /// POST /cart/validate item — the server re-fetches products and prices; the

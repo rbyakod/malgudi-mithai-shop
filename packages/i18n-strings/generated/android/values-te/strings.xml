@@ -178,6 +178,8 @@
   <string name="home_browse">స్వీట్లు చూడండి</string>
   <string name="home_portal_mithai">రోజూ తయారవుతుంది</string>
   <string name="home_portal_snacks">రిటైల్ ప్యాక్‌లు</string>
+  <string name="home_hero_carousel">హోమ్ హైలైట్స్ కెరోసెల్</string>
+  <string name="home_hero_page">స్లైడ్ %1$s, మొత్తం %2$s</string>
   <string name="product_added_to_cart">కార్టులో చేర్చబడింది</string>
   <string name="catalog_empty_hint">వేరే శోధన ప్రయత్నించండి లేదా ఫిల్టర్‌లను తీసివేయండి.</string>
   <string name="cart_empty_hint">నింపడానికి స్వీట్ల జాబితా చూడండి.</string>

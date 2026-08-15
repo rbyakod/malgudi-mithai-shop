@@ -178,6 +178,8 @@
   <string name="home_browse">মিষ্টি দেখুন</string>
   <string name="home_portal_mithai">প্রতিদিন তৈরি হয়</string>
   <string name="home_portal_snacks">রিটেইল প্যাক</string>
+  <string name="home_hero_carousel">হোম হাইলাইট ক্যারোসেল</string>
+  <string name="home_hero_page">স্লাইড %1$s, মোট %2$s</string>
   <string name="product_added_to_cart">কার্টে যোগ করা হয়েছে</string>
   <string name="catalog_empty_hint">অন্য একটি সার্চ করুন বা ফিল্টার সরান।</string>
   <string name="cart_empty_hint">ভরতে মিষ্টির তালিকা দেখুন।</string>

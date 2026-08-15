@@ -178,6 +178,8 @@
   <string name="home_browse">ਮਿਠਾਈ ਵੇਖੋ</string>
   <string name="home_portal_mithai">ਰੋਜ਼ ਬਣਦੀ ਹੈ</string>
   <string name="home_portal_snacks">ਰੀਟੇਲ ਪੈਕ</string>
+  <string name="home_hero_carousel">ਹੋਮ ਹਾਈਲਾਈਟਸ ਕੈਰੋਸਲ</string>
+  <string name="home_hero_page">ਸਲਾਈਡ %1$s, ਕੁੱਲ %2$s</string>
   <string name="product_added_to_cart">ਕਾਰਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ</string>
   <string name="catalog_empty_hint">ਹੋਰ ਖੋਜ ਅਜ਼ਮਾਓ ਜਾਂ ਫਿਲਟਰ ਹਟਾਓ।</string>
   <string name="cart_empty_hint">ਭਰਨ ਲਈ ਮਿਠਾਈਆਂ ਦੀ ਸੂਚੀ ਵੇਖੋ।</string>
