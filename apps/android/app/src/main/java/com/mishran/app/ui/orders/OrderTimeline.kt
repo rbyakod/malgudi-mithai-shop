@@ -8,6 +8,7 @@
 package com.mishran.app.ui.orders
 
 import com.mishran.api.models.Order
+import com.mishran.app.R
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -42,6 +43,27 @@ fun statusLabel(status: Order.Status): String = when (status) {
     Order.Status.returned -> "Returned"
     Order.Status.failed_delivery -> "Delivery failed"
     Order.Status.abandoned -> "Abandoned"
+}
+
+/**
+ * @StringRes counterpart of [statusLabel] for Compose call sites (resolved
+ * with stringResource). Returns null for the side states that have no
+ * generated key yet — callers fall back to [statusLabel]'s English.
+ * statusLabel itself stays the single source for the widget + push builders,
+ * which render outside composition.
+ */
+fun statusLabelRes(status: Order.Status): Int? = when (status) {
+    Order.Status.created -> R.string.orders_status_created
+    Order.Status.pending_payment -> R.string.orders_status_pending_payment
+    Order.Status.confirmed -> R.string.orders_status_confirmed
+    Order.Status.packed -> R.string.orders_status_packed
+    Order.Status.dispatched -> R.string.orders_status_dispatched
+    Order.Status.out_for_delivery -> R.string.orders_status_out_for_delivery
+    Order.Status.delivered -> R.string.orders_status_delivered
+    Order.Status.payment_failed -> R.string.orders_status_payment_failed
+    Order.Status.cancelled -> R.string.orders_status_cancelled
+    // TODO(i18n): missing keys orders.status_returned/_failed_delivery/_abandoned
+    else -> null
 }
 
 /** Visual tone for status chips/banners. */

@@ -24,12 +24,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mishran.app.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mishran.app.ui.common.UiState
@@ -61,7 +63,7 @@ fun PhoneEntryScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "Mishran",
+            text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
@@ -69,7 +71,7 @@ fun PhoneEntryScreen(
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Sign in to order fresh mithai.",
+            text = stringResource(R.string.auth_phone_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
@@ -78,8 +80,9 @@ fun PhoneEntryScreen(
         OutlinedTextField(
             value = phone,
             onValueChange = { viewModel.phone.value = it },
+            // TODO(i18n): missing key auth.phone_field
             label = { Text("Phone number") },
-            placeholder = { Text("+91 98765 43210") },
+            placeholder = { Text(stringResource(R.string.auth_phone_placeholder)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             modifier = Modifier.padding(horizontal = 8.dp),
@@ -107,7 +110,7 @@ fun PhoneEntryScreen(
                     modifier = Modifier.height(20.dp),
                 )
             } else {
-                Text("Send code")
+                Text(stringResource(R.string.auth_phone_cta))
             }
         }
     }

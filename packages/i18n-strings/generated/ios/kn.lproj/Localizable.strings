@@ -152,3 +152,14 @@
 "vertical.qsr.available_at" = "ಲಭ್ಯತೆ";
 "vertical.qsr.veg" = "ಸಸ್ಯಾಹಾರಿ";
 "vertical.qsr.spice" = "ಖಾರದ ಮಟ್ಟ";
+"home.shop_by_vertical" = "ವರ್ಗದ ಪ್ರಕಾರ ಖರೀದಿಸಿ";
+"home.browse" = "ಸಿಹಿತಿಂಡಿಗಳನ್ನು ನೋಡಿ";
+"product.added_to_cart" = "ಬುಟ್ಟಿಗೆ ಸೇರಿಸಲಾಗಿದೆ";
+"catalog.empty_hint" = "ಬೇರೆ ಹುಡುಕಾಟ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಶೋಧಕಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ.";
+"cart.empty_hint" = "ಭರ್ತಿ ಮಾಡಲು ಸಿಹಿತಿಂಡಿಗಳ ಪಟ್ಟಿ ನೋಡಿ.";
+"orders.empty_hint" = "ನಿಮ್ಮ ಸಿಹಿತಿಂಡಿ ಆರ್ಡರ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.";
+"common.load_error" = "ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಮರುಪ್ರಯತ್ನಿಸಿ.";
+"order.reference" = "ಆರ್ಡರ್ {id}";
+"order.confirmed" = "ಆರ್ಡರ್ ದೃಢೀಕರಿಸಲಾಗಿದೆ";
+"order.continue_shopping" = "ಖರೀದಿ ಮುಂದುವರಿಸಿ";
+"account.language_relaunch" = "ಮುಂದಿನ ಬಾರಿ ಆ್ಯಪ್ ತೆರೆದಾಗ ಅನ್ವಯಿಸುತ್ತದೆ.";

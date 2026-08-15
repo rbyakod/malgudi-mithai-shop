@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.mishran.app.R
 import com.mishran.api.models.QsrItem
 import com.mishran.app.ui.catalog.components.VegDot
 import com.mishran.app.ui.common.UiState
@@ -60,7 +62,7 @@ fun QsrDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Counter menu") },
+                title = { Text(stringResource(R.string.vertical_qsr_menu)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -85,7 +87,7 @@ fun QsrDetailScreen(
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                     )
-                    TextButton(onClick = viewModel::load) { Text("Try again") }
+                    TextButton(onClick = viewModel::load) { Text(stringResource(R.string.common_try_again)) }
                 }
             }
             is UiState.Success -> QsrDetailContent(
@@ -133,21 +135,27 @@ private fun QsrDetailContent(item: QsrItem, modifier: Modifier = Modifier) {
                     ) {
                         VegDot(veg = veg)
                         Text(
-                            text = if (veg) "Vegetarian" else "Non-vegetarian",
+                            text = if (veg) {
+                                stringResource(R.string.vertical_qsr_veg)
+                            } else {
+                                stringResource(R.string.vertical_qsr_nonveg)
+                            },
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
                 item.spiceLevel?.let { level ->
-                    InfoChip(text = "Spice · $level")
+                    // TODO(i18n): missing key vertical.qsr_spice_level (with %%1$d)
+                        InfoChip(text = "Spice · $level")
                 }
             }
+            // TODO(i18n): missing key vertical.description
             DetailSection(label = "Description", body = item.description)
 
             if (!item.availableAtStores.isNullOrEmpty()) {
                 Text(
-                    text = "Available at",
+                    text = stringResource(R.string.vertical_qsr_available_at),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(top = 8.dp).semantics { heading() },
                 )

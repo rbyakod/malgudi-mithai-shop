@@ -3,11 +3,14 @@
   Launch theme only. Compose (enableEdgeToEdge + MishranTheme, Task 7.2) owns
   all UI once the activity content is set; this XML theme just needs to be a
   valid NoActionBar theme so the cold-start window doesn't show an action bar
-  or a default magenta background. Platform Material theme avoids pulling in
-  the Material Components (View) dependency we otherwise don't need.
+  or a default magenta background. Theme.AppCompat (not the platform Material
+  theme) because MainActivity is an AppCompatActivity — required for the
+  per-app locale backport (AppCompatDelegate.setApplicationLocales, i18n
+  phase). Still no Material Components (View) dependency; windowBackground
+  stays the fixed cream so dark mode only affects the Compose layers.
 -->
 <resources>
-    <style name="Theme.Mishran" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.Mishran" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/mishran_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>

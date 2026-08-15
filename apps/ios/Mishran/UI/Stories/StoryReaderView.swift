@@ -3,8 +3,8 @@
 // one Text (the server joins Lexical paragraphs with \n — SwiftUI renders
 // those as line breaks). Back is the standard stack pop. Offline fallback:
 // the cached StoryEntity row renders everything except the body (the
-// excerpt stands in). TODO(i18n): labels match packages/i18n-strings/en.json;
-// the hardcode sweep wires String(localized:) later.
+// excerpt stands in). Labels resolve from packages/i18n-strings via the
+// L() helper — Task 20.3 wiring.
 import SwiftData
 import SwiftUI
 
@@ -40,7 +40,7 @@ final class StoryDetailViewModel {
             if let row = StoryEntity.fetch(slug: slug, in: context) {
                 cached = row
             } else {
-                errorMessage = "Couldn't load this story. Try again."
+                errorMessage = L("common.load_error")
             }
         }
     }
@@ -103,23 +103,23 @@ struct StoryReaderView: View {
                 }
                 .padding(.mishranSpacingLg)
             } else if viewModel.isLoading {
-                ProgressView("Loading…")
+                ProgressView(L("common.loading"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.top, .mishranSpacingXl)
             } else {
                 ContentUnavailableView {
-                    Label("Couldn't load this story", systemImage: "exclamationmark.triangle")
+                    Label(L("common.load_error"), systemImage: "exclamationmark.triangle")
                 } description: {
                     Text(viewModel.errorMessage ?? "")
                 } actions: {
-                    Button("Try again") {
+                    Button(L("common.retry")) {
                         Task { await viewModel.load() }
                     }
                 }
                 .padding(.top, .mishranSpacingXl)
             }
         }
-        .navigationTitle("Journal")
+        .navigationTitle(L("stories.title"))
         .navigationBarTitleDisplayMode(.inline)
         .task {
             if viewModel.presentation == nil {

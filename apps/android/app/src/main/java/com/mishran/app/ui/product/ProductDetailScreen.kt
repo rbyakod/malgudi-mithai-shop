@@ -53,11 +53,13 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mishran.api.models.Product
+import com.mishran.app.R
 import com.mishran.app.ui.common.UiState
 
 @Composable
@@ -177,11 +179,15 @@ private fun ProductDetailContent(
                 )
             }
 
-            Section("Ingredients", product.ingredients)
+            Section(stringResource(R.string.product_ingredients), product.ingredients)
+            // TODO(i18n): missing key product.shelf_life
             Section("Shelf life", product.shelfLife)
+            // TODO(i18n): missing key product.storage
             Section("Storage", product.storage)
+            // TODO(i18n): missing key product.story
             Section("Story", product.story)
             product.allergens.orEmpty().takeIf { it.isNotEmpty() }?.let { allergens ->
+                // TODO(i18n): missing key product.allergens
                 Section(label = "Allergens", body = allergens.joinToString(", "))
             }
 
@@ -190,7 +196,7 @@ private fun ProductDetailContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("Quantity", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.product_quantity), style = MaterialTheme.typography.titleSmall)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedIconButton(onClick = onDecrement, enabled = quantity > 1) {
                         Icon(Icons.Filled.Remove, contentDescription = "One less")
@@ -212,13 +218,13 @@ private fun ProductDetailContent(
                     onClick = { onAddToCart(selectedPack) },
                     modifier = Modifier.weight(1f).height(52.dp),
                 ) {
-                    Text("Add to cart")
+                    Text(stringResource(R.string.product_add_to_cart))
                 }
                 OutlinedButton(
                     onClick = { onBuyNow(selectedPack) },
                     modifier = Modifier.weight(1f).height(52.dp),
                 ) {
-                    Text("Buy now")
+                    Text(stringResource(R.string.product_buy_now))
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -240,7 +246,7 @@ private fun PackSizeRow(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = "Pack size",
+            text = stringResource(R.string.product_pack_size),
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.semantics { heading() },
         )
@@ -258,7 +264,7 @@ private fun PackSizeRow(
         }
         if (packs.size > 1) {
             Text(
-                text = "Other sizes are estimated — the final price is confirmed at checkout.",
+                text = stringResource(R.string.product_pack_estimate),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

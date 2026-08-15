@@ -10,7 +10,7 @@ struct AddToCartButton: View {
             action()
         } label: {
             Label(
-                isAdded ? "Added to cart" : "Add to cart",
+                isAdded ? L("product.added_to_cart") : L("product.add_to_cart"),
                 systemImage: isAdded ? "checkmark.circle.fill" : "cart.badge.plus"
             )
             .font(.mishranBodyLg.weight(.semibold))
@@ -22,6 +22,6 @@ struct AddToCartButton: View {
         .controlSize(.large)
         .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
         .animation(.easeInOut(duration: 0.15), value: isAdded)
-        .accessibilityLabel(isAdded ? "Added to cart" : "Add to cart")
+        .accessibilityLabel(isAdded ? L("product.added_to_cart") : L("product.add_to_cart"))
     }
 }

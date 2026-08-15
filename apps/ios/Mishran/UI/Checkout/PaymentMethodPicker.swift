@@ -6,12 +6,12 @@ struct PaymentMethodPicker: View {
     @Binding var selection: CheckoutViewModel.PaymentMethod?
 
     var body: some View {
-        Picker("Payment", selection: $selection) {
+        Picker(L("checkout.payment.title"), selection: $selection) {
             ForEach(CheckoutViewModel.PaymentMethod.allCases) { method in
                 Text(method.displayName).tag(CheckoutViewModel.PaymentMethod?.some(method))
             }
         }
         .pickerStyle(.navigationLink)
-        .accessibilityLabel("Payment method")
+        .accessibilityLabel(L("checkout.payment.title"))
     }
 }

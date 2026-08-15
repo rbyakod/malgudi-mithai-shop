@@ -152,3 +152,14 @@
 "vertical.qsr.available_at" = "পাওয়া যায়";
 "vertical.qsr.veg" = "নিরামিষ";
 "vertical.qsr.spice" = "ঝাল";
+"home.shop_by_vertical" = "বিভাগ অনুযায়ী কিনুন";
+"home.browse" = "মিষ্টি দেখুন";
+"product.added_to_cart" = "কার্টে যোগ করা হয়েছে";
+"catalog.empty_hint" = "অন্য একটি সার্চ করুন বা ফিল্টার সরান।";
+"cart.empty_hint" = "ভরতে মিষ্টির তালিকা দেখুন।";
+"orders.empty_hint" = "আপনার মিষ্টির অর্ডারগুলি এখানে দেখা যাবে।";
+"common.load_error" = "লোড করা যায়নি। আবার চেষ্টা করুন।";
+"order.reference" = "অর্ডার {id}";
+"order.confirmed" = "অর্ডার নিশ্চিত হয়েছে";
+"order.continue_shopping" = "শপিং চালিয়ে যান";
+"account.language_relaunch" = "পরের বার অ্যাপ খুললে প্রযোজ্য হবে।";

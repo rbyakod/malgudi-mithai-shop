@@ -22,13 +22,15 @@ struct DeliverySlot: Equatable, Identifiable, Hashable {
     let window: String
 
     /// Fresh-tier windows: today + tomorrow, morning + evening (parity with
-    /// Android's slot factory).
+    /// Android's slot factory). Labels localize the day word
+    /// (checkout.slot.today/tomorrow); the window suffix stays English
+    /// until slot-window keys land.
     static func freshTierOptions() -> [DeliverySlot] {
         [
-            DeliverySlot(id: "today-morning", label: "Today, morning", date: "today", window: "morning"),
-            DeliverySlot(id: "today-evening", label: "Today, evening", date: "today", window: "evening"),
-            DeliverySlot(id: "tomorrow-morning", label: "Tomorrow, morning", date: "tomorrow", window: "morning"),
-            DeliverySlot(id: "tomorrow-evening", label: "Tomorrow, evening", date: "tomorrow", window: "evening"),
+            DeliverySlot(id: "today-morning", label: "\(L("checkout.slot.today")), morning", date: "today", window: "morning"),
+            DeliverySlot(id: "today-evening", label: "\(L("checkout.slot.today")), evening", date: "today", window: "evening"),
+            DeliverySlot(id: "tomorrow-morning", label: "\(L("checkout.slot.tomorrow")), morning", date: "tomorrow", window: "morning"),
+            DeliverySlot(id: "tomorrow-evening", label: "\(L("checkout.slot.tomorrow")), evening", date: "tomorrow", window: "evening"),
         ]
     }
 }
@@ -126,6 +128,13 @@ final class CheckoutViewModel {
         guard address != nil, isServiceable, paymentMethod != nil else { return false }
         if isFreshTier, selectedSlot == nil { return false }
         return true
+    }
+
+    /// Display-only cart total for the Pay CTA (checkout.pay {amount});
+    /// delivery/taxes are quoted server-side at validation.
+    var cartTotalPaise: Int {
+        let lines = (try? context.fetch(FetchDescriptor<CartItemEntity>())) ?? []
+        return lines.reduce(0) { $0 + $1.unitPricePaise * $1.quantity }
     }
 
     /// True while a placeOrder attempt is in flight (sheet included).

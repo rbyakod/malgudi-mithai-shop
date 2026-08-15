@@ -10,8 +10,7 @@
 // exists.
 // Task 48.1: with no session the toolbar also offers the sign-in entry —
 // before this the auth flow was unreachable outside launch arguments.
-// TODO(i18n): section strings match packages/i18n-strings/en.json
-// (home.best_sellers / home.shop_by_vertical / home.journal / home.your_orders).
+// Task 20.3: section strings wired to packages/i18n-strings via L().
 import SwiftData
 import SwiftUI
 
@@ -62,31 +61,31 @@ struct HomeView: View {
             Button {
                 router.push(.catalog(vertical: .mithai, family: nil))
             } label: {
-                Label("Sweets", systemImage: "square.grid.2x2")
+                Label(L("nav.catalog"), systemImage: "square.grid.2x2")
             }
             .accessibilityLabel("Browse all sweets")
             if !hasSession {
                 Button {
                     onSignInRequested?()
                 } label: {
-                    Label("Sign in", systemImage: "person.badge.key")
+                    Label(L("home.sign_in"), systemImage: "person.badge.key")
                 }
-                .accessibilityLabel("Sign in")
+                .accessibilityLabel(L("home.sign_in"))
             }
         }
         ToolbarItemGroup(placement: .topBarTrailing) {
             NavigationLink(value: Route.cart) {
-                Label("Cart", systemImage: "cart")
+                Label(L("nav.cart"), systemImage: "cart")
             }
-            .accessibilityLabel("Cart")
+            .accessibilityLabel(L("nav.cart"))
             NavigationLink(value: Route.orders) {
-                Label("Orders", systemImage: "shippingbox")
+                Label(L("nav.orders"), systemImage: "shippingbox")
             }
-            .accessibilityLabel("Orders")
+            .accessibilityLabel(L("nav.orders"))
             NavigationLink(value: Route.account) {
-                Label("Account", systemImage: "person.crop.circle")
+                Label(L("nav.account"), systemImage: "person.crop.circle")
             }
-            .accessibilityLabel("Account")
+            .accessibilityLabel(L("nav.account"))
         }
     }
 
@@ -96,14 +95,14 @@ struct HomeView: View {
             VStack(alignment: .leading, spacing: 0) {
                 hero(bestSellers: viewModel.bestSellers)
 
-                sectionHeader("Best sellers")
+                sectionHeader(L("home.best_sellers"))
                 bestSellersRail(viewModel)
 
-                sectionHeader("Shop by vertical")
+                sectionHeader(L("home.shop_by_vertical"))
                 verticalPortalsRow(viewModel)
 
                 if !viewModel.latestStories.isEmpty {
-                    sectionHeader("From the journal")
+                    sectionHeader(L("home.journal"))
                     journalRail(viewModel)
                 }
 
@@ -113,7 +112,7 @@ struct HomeView: View {
                     Button {
                         router.push(.orders)
                     } label: {
-                        Label("Your orders", systemImage: "shippingbox")
+                        Label(L("home.your_orders"), systemImage: "shippingbox")
                             .font(.mishranBodyLg.weight(.semibold))
                             .frame(maxWidth: .infinity)
                     }
@@ -150,23 +149,23 @@ struct HomeView: View {
             )
             .allowsHitTesting(false)
             VStack(alignment: .leading, spacing: .mishranSpacingSm) {
-                Text("Mishran")
+                Text(L("app.name"))
                     .font(.mishranDisplay.weight(.light))
                     .foregroundStyle(.white)
-                Text("Fresh mithai, made every day.")
+                Text(L("app.tagline"))
                     .font(.mishranBodyLg)
                     .foregroundStyle(.white.opacity(0.85))
                 Button {
                     router.push(.catalog(vertical: .mithai, family: nil))
                 } label: {
-                    Text("Browse sweets")
+                    Text(L("home.browse"))
                         .font(.mishranBodyMd.weight(.semibold))
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(.white)
                 .foregroundStyle(Color.mishranBrandAccent)
                 .controlSize(.large)
-                .accessibilityLabel("Browse sweets")
+                .accessibilityLabel(L("home.browse"))
                 .accessibilityHint("Open the full sweets catalog")
             }
             .padding(.mishranSpacingLg)

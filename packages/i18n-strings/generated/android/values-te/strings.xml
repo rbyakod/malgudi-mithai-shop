@@ -27,7 +27,17 @@
   <string name="catalog_filter_title">ఫిల్టర్</string>
   <string name="catalog_filter_category">వర్గం</string>
   <string name="catalog_filter_dietary">ఆహార ప్రాధాన్యత</string>
+  <string name="catalog_family_all">అన్ని వర్గాలు</string>
+  <string name="catalog_family_classic">క్లాసిక్</string>
+  <string name="catalog_family_originals">హౌస్ ఒరిజినల్స్</string>
+  <string name="catalog_family_sugar_free">చక్కెర లేని</string>
+  <string name="catalog_family_regional">ప్రాంతీయ</string>
+  <string name="catalog_family_seasonal">కాలానుగుణ</string>
   <string name="catalog_empty">మీ ఫిల్టర్లకు సరిపోయే మిఠాయీలు లేవు.</string>
+  <string name="catalog_empty_sync">సింక్ అయ్యాక జాబితా ఇక్కడ కనిపిస్తుంది.</string>
+  <string name="catalog_empty_snacks">ఇంకా స్నాక్స్ లేవు.</string>
+  <string name="catalog_empty_qsr">కౌంటర్ మెనూ త్వరలో వస్తుంది.</string>
+  <string name="catalog_empty_merch">ఇంకా మెర్చ్ లేదు.</string>
   <string name="catalog_stale_banner">%1$s నిమిషాల క్రితం అప్‌డేట్ చేయబడింది</string>
   <string name="product_add_to_cart">కార్ట్‌లో చేర్చండి</string>
   <string name="product_quantity">పరిమాణం</string>
@@ -62,6 +72,10 @@
   <string name="checkout_payment_netbanking">నెట్ బ్యాంకింగ్</string>
   <string name="checkout_payment_wallet">వాలెట్</string>
   <string name="checkout_pay">%1$s చెల్లించండి</string>
+  <string name="checkout_cta_place_order">ఆర్డర్ చేయండి</string>
+  <string name="checkout_cta_select_address">డెలివరీ చిరునామాను ఎంచుకోండి</string>
+  <string name="checkout_cta_checking">డెలివరీ తనిఖీ అవుతోంది…</string>
+  <string name="checkout_cta_pick_slot">డెలివరీ సమయం ఎంచుకోండి</string>
   <string name="checkout_error_pincode_not_serviceable">%1$s కు ఇంకా డెలివరీ లేదు.</string>
   <string name="checkout_error_cart_changed">కొన్ని వస్తువులు మారాయి. సరిచూసి మళ్లీ ప్రయత్నించండి.</string>
   <string name="checkout_error_stock_insufficient">%1$s సుమారు %2$s మాత్రమే ఉన్నాయి.</string>
@@ -96,6 +110,10 @@
   <string name="account_locale_gu">ગુજરાતી</string>
   <string name="account_locale_bn">বাংলা</string>
   <string name="account_locale_pa">ਪੰਜਾਬੀ</string>
+  <string name="common_back">వెనుకకు</string>
+  <string name="common_try_again">మళ్లీ ప్రయత్నించండి</string>
+  <string name="common_see_all">అన్నీ చూడండి</string>
+  <string name="common_clear_all">అన్నీ క్లియర్ చేయండి</string>
   <string name="common_retry">మళ్లీ ప్రయత్నించండి</string>
   <string name="common_cancel">రద్దు చేయండి</string>
   <string name="common_confirm">నిర్ధారించండి</string>
@@ -119,6 +137,7 @@
   <string name="product_buy_now">ఇప్పుడే కొనండి</string>
   <string name="product_bestseller">బెస్ట్‌సెల్లర్</string>
   <string name="home_sign_in">సైన్ ఇన్</string>
+  <string name="home_hero_tagline">రోజూ తాజాగా తయారయ్యే మిఠాయీలు.</string>
   <string name="home_best_sellers">బెస్ట్ సెల్లర్స్</string>
   <string name="home_shop_by_family">విభాగం ప్రకారం కొనండి</string>
   <string name="home_your_orders">మీ ఆర్డర్లు</string>
@@ -153,4 +172,19 @@
   <string name="vertical_qsr_available_at">అందుబాటులో</string>
   <string name="vertical_qsr_veg">శాఖాహారం</string>
   <string name="vertical_qsr_spice">కారం</string>
+  <string name="vertical_qsr_menu">కౌంటర్ మెనూ</string>
+  <string name="vertical_qsr_nonveg">నాన్-వెజ్</string>
+  <string name="home_shop_by_vertical">విభాగం వారీగా కొనండి</string>
+  <string name="home_browse">స్వీట్లు చూడండి</string>
+  <string name="home_portal_mithai">రోజూ తయారవుతుంది</string>
+  <string name="home_portal_snacks">రిటైల్ ప్యాక్‌లు</string>
+  <string name="product_added_to_cart">కార్టులో చేర్చబడింది</string>
+  <string name="catalog_empty_hint">వేరే శోధన ప్రయత్నించండి లేదా ఫిల్టర్‌లను తీసివేయండి.</string>
+  <string name="cart_empty_hint">నింపడానికి స్వీట్ల జాబితా చూడండి.</string>
+  <string name="orders_empty_hint">మీ స్వీట్స్ ఆర్డర్‌లు ఇక్కడ కనిపిస్తాయి.</string>
+  <string name="common_load_error">లోడ్ కాలేదు. మళ్లీ ప్రయత్నించండి.</string>
+  <string name="order_reference">ఆర్డర్ %1$s</string>
+  <string name="order_confirmed">ఆర్డర్ నిర్ధారించబడింది</string>
+  <string name="order_continue_shopping">షాపింగ్ కొనసాగించండి</string>
+  <string name="account_language_relaunch">తర్వాతిసారి యాప్ తెరిచినప్పుడు వర్తిస్తుంది.</string>
 </resources>

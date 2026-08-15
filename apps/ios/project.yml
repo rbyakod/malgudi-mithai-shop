@@ -52,6 +52,15 @@ targets:
       # `pnpm codegen:swift` in packages/brand-tokens.
       - path: ../../packages/brand-tokens/generated/swift
         group: Generated
+      # Generated i18n tables (Task 20.3 sweep): 9 locales of flat
+      # dot-key Localizable.strings, consumed at runtime by the L() helper
+      # (Mishran/Support/Localization.swift). Regenerate with
+      # `pnpm --filter @mishran/i18n-strings codegen:ios`. Replaces the
+      # hand-copied Mishran/Resources/<locale>.lproj (deleted — the
+      # generated tree is the source of truth).
+      - path: ../../packages/i18n-strings/generated/ios
+        group: Generated
+        buildPhase: resources
       # Test plan (Task 14.5): project-level file, no target membership —
       # selectable from Xcode Cloud and usable via `xcodebuild -testPlan`.
       - path: Mishran.xctestplan
@@ -107,11 +116,19 @@ targets:
     sources:
       # Shared attributes/state (also compiled into the app target).
       - path: Mishran/LiveActivity/DeliveryAttributes.swift
+      # Shared L() helper — the activity's labels localize against the
+      # extension's own copy of the generated i18n tables (Task 20.3).
+      - path: Mishran/Support/Localization.swift
       # Widget rendering — extension-only (inert in the app bundle).
       - path: Mishran/LiveActivity/DeliveryActivity.swift
       # Brand tokens for the activity UI (same srcDir convention as the app).
       - path: ../../packages/brand-tokens/generated/swift
         group: Generated
+      # i18n tables for the activity UI — the extension bundle needs its
+      # own copy (it can't read the app bundle's Localizable.strings).
+      - path: ../../packages/i18n-strings/generated/ios
+        group: Generated
+        buildPhase: resources
     info:
       path: MishranWidgets/Info.plist
       properties:

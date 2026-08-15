@@ -10,7 +10,7 @@ struct BuyNowButton: View {
         Button {
             action()
         } label: {
-            Label("Buy now", systemImage: "bolt")
+            Label(L("product.buy_now"), systemImage: "bolt")
                 .font(.mishranBodyLg.weight(.semibold))
                 .frame(maxWidth: .infinity)
         }
@@ -18,7 +18,7 @@ struct BuyNowButton: View {
         .tint(Color.mishranBrandAccent)
         .controlSize(.large)
         .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
-        .accessibilityLabel("Buy now")
+        .accessibilityLabel(L("product.buy_now"))
         .accessibilityHint("Adds this to your cart and goes straight to checkout")
     }
 }

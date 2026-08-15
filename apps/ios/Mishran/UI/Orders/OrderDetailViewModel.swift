@@ -97,18 +97,20 @@ enum OrderTimeline {
         stages.firstIndex(of: status)
     }
 
-    /// Friendly copy per status.
+    /// Friendly copy per status (orders.status.* keys; the three side
+    /// states without keys stay English until the contract's wording
+    /// lands in the i18n source of truth).
     nonisolated static func label(for status: OrderStatus) -> String {
         switch status {
-        case .created: "Just placed"
-        case .pendingPayment: "Payment pending"
-        case .confirmed: "Confirmed"
-        case .packed: "Packed"
-        case .dispatched: "Dispatched"
-        case .outForDelivery: "Out for delivery"
-        case .delivered: "Delivered"
-        case .paymentFailed: "Payment failed"
-        case .cancelled: "Cancelled"
+        case .created: L("orders.status.created")
+        case .pendingPayment: L("orders.status.pending_payment")
+        case .confirmed: L("orders.status.confirmed")
+        case .packed: L("orders.status.packed")
+        case .dispatched: L("orders.status.dispatched")
+        case .outForDelivery: L("orders.status.out_for_delivery")
+        case .delivered: L("orders.status.delivered")
+        case .paymentFailed: L("orders.status.payment_failed")
+        case .cancelled: L("orders.status.cancelled")
         case .returned: "Returned"
         case .failedDelivery: "Delivery failed"
         case .abandoned: "Abandoned"

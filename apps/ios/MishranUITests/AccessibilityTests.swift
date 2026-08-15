@@ -11,7 +11,13 @@ final class AccessibilityTests: XCTestCase {
         let app = XCUIApplication()
         // -resetStore keeps the audit hermetic: a live-API run earlier in
         // the suite would otherwise swap the seeded rows out from under us.
-        app.launchArguments = ["-resetStore", "-seedCatalog", "-signedInOnce", "false"]
+        // -AppleLanguages pins English so the label assertions below stay
+        // deterministic regardless of the host simulator's language (Task
+        // 20.3 wired every label through the i18n tables).
+        app.launchArguments = [
+            "-resetStore", "-seedCatalog", "-signedInOnce", "false",
+            "-AppleLanguages", "(en)",
+        ]
         if let sizeCategory {
             // Classic launch-argument override of the content size category.
             app.launchArguments += ["-UIPreferredContentSizeCategoryName", sizeCategory]

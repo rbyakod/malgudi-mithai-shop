@@ -11,11 +11,11 @@ struct SearchBar: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
                     .accessibilityHidden(true)
-                TextField("Search sweets", text: $text)
+                TextField(L("catalog.search.placeholder"), text: $text)
                     .font(.mishranBodyMd)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
-                    .accessibilityLabel("Search sweets")
+                    .accessibilityLabel(L("catalog.search.placeholder"))
                     .accessibilityHint("Filter by name")
                 if !text.isEmpty {
                     Button {
@@ -45,7 +45,7 @@ struct SearchBar: View {
                     .foregroundStyle(Color.mishranBrandAccent)
             }
             .mishranIconAction(
-                label: "Filters",
+                label: L("catalog.filter.title"),
                 hint: "Filter by category and dietary needs"
             )
         }

@@ -1,9 +1,9 @@
 // SnackDetailView.swift — P2 (Mishran Mobile Apps v1).
 // Snack detail: hero, name, MSRP + weight chip, description, and the
 // "Where to buy" retailer rows — each opens the retailer's site externally
-// (openURL); retail snacks never enter the app's cart. Labels match
-// packages/i18n-strings/en.json (vertical.snacks.retailers) — TODO(i18n):
-// hardcode sweep wires String(localized:) later.
+// (openURL); retail snacks never enter the app's cart. Labels resolve
+// from packages/i18n-strings (vertical.snacks.retailers) via the L()
+// helper — Task 20.3 wiring.
 import SwiftUI
 
 struct SnackDetailView: View {
@@ -19,16 +19,16 @@ struct SnackDetailView: View {
             if let snack {
                 content(snack)
             } else if isLoading {
-                ProgressView("Loading…")
+                ProgressView(L("common.loading"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.top, .mishranSpacingXl)
             } else {
                 ContentUnavailableView {
-                    Label("Couldn't load this snack", systemImage: "exclamationmark.triangle")
+                    Label(L("common.load_error"), systemImage: "exclamationmark.triangle")
                 } description: {
                     Text(errorMessage ?? "")
                 } actions: {
-                    Button("Try again") {
+                    Button(L("common.retry")) {
                         Task { await load() }
                     }
                 }
@@ -76,7 +76,7 @@ struct SnackDetailView: View {
 
             if let retailers = snack.retailers, !retailers.isEmpty {
                 VStack(alignment: .leading, spacing: .mishranSpacingSm) {
-                    Text("Where to buy")
+                    Text(L("vertical.snacks.retailers"))
                         .font(.mishranBodyLg.weight(.semibold))
                     ForEach(retailers) { retailer in
                         Button {
@@ -114,7 +114,7 @@ struct SnackDetailView: View {
         } catch let error as APIError {
             errorMessage = Self.message(for: error)
         } catch {
-            errorMessage = "Couldn't load this snack. Try again."
+            errorMessage = L("common.load_error")
         }
     }
 
@@ -122,6 +122,6 @@ struct SnackDetailView: View {
         if case let .api(_, message, _, _) = error {
             return message
         }
-        return "Couldn't load this snack. Try again."
+        return L("common.load_error")
     }
 }

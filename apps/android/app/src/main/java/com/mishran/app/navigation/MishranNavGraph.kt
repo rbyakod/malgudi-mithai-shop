@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -465,8 +466,10 @@ private fun MishranBottomBar(
             NavigationBarItem(
                 selected = currentRoute == destination.route,
                 onClick = { onNavigate(destination) },
-                icon = { Icon(destination.icon, contentDescription = destination.label) },
-                label = { Text(destination.label) },
+                icon = {
+                    Icon(destination.icon, contentDescription = stringResource(destination.labelRes))
+                },
+                label = { Text(stringResource(destination.labelRes)) },
             )
         }
     }

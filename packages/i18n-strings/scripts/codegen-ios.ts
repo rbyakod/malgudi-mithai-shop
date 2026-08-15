@@ -1,7 +1,10 @@
 // codegen-ios.ts — Task 20.3 (Mishran Mobile Apps v1).
 // Generates Localizable.strings per locale from the JSON source of truth
-// into apps/ios/Mishran/Resources/<locale>.lproj (en lands as the base
-// bundle the SwiftUI Text() fallbacks read). Mirrors codegen-android.ts.
+// into generated/ios/<locale>.lproj — the tree apps/ios/project.yml wires
+// into the Mishran + MishranWidgets bundles (the hand-copied
+// apps/ios/Mishran/Resources tree is gone; this is the only output).
+// Mirrors codegen-android.ts. The L() helper (apps/ios/Mishran/Support/
+// Localization.swift) reads these tables and substitutes {token} args.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 

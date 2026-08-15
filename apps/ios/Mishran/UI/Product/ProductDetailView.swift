@@ -54,7 +54,7 @@ struct ProductDetailView: View {
                         PackSizePicker(options: viewModel.packSizes, selection: packSelection)
                         // Display-only estimates (commerce is deferred
                         // server-side; cart/validate prices the base pack).
-                        Text("Prices for other sizes are estimates — checkout uses the listed price.")
+                        Text(L("product.pack_estimate"))
                             .font(.mishranBodySm)
                             .foregroundStyle(.secondary)
                     }
@@ -103,16 +103,16 @@ struct ProductDetailView: View {
                 }
                 .padding(.mishranSpacingLg)
             } else if viewModel.isLoading {
-                ProgressView("Loading…")
+                ProgressView(L("common.loading"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.top, .mishranSpacingLg)
             } else if let message = viewModel.errorMessage {
                 ContentUnavailableView {
-                    Label("Couldn't load this sweet", systemImage: "exclamationmark.triangle")
+                    Label(L("common.load_error"), systemImage: "exclamationmark.triangle")
                 } description: {
                     Text(message)
                 } actions: {
-                    Button("Try again") {
+                    Button(L("common.retry")) {
                         Task { await viewModel.load() }
                     }
                 }
@@ -145,7 +145,7 @@ struct ProductDetailView: View {
     private func detailRows(for product: ProductEntity) -> [DetailRow] {
         var rows: [DetailRow] = []
         if let story = product.story { rows.append(DetailRow(label: "Story", value: story)) }
-        if let ingredients = product.ingredients { rows.append(DetailRow(label: "Ingredients", value: ingredients)) }
+        if let ingredients = product.ingredients { rows.append(DetailRow(label: L("product.ingredients"), value: ingredients)) }
         if let shelfLife = product.shelfLife { rows.append(DetailRow(label: "Shelf life", value: shelfLife)) }
         if let storage = product.storage { rows.append(DetailRow(label: "Storage", value: storage)) }
         if let allergens = product.allergens, !allergens.isEmpty {

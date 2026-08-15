@@ -45,6 +45,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.mishran.app.R
 import com.mishran.api.models.Story
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,7 +70,7 @@ fun StoriesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Journal") },
+                title = { Text(stringResource(R.string.stories_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -92,7 +94,7 @@ fun StoriesScreen(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "Stories are coming soon",
+                        text = stringResource(R.string.stories_empty),
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                     )

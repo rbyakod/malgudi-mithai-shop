@@ -31,19 +31,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.mishran.app.R
 import com.mishran.api.models.Product
 import com.mishran.app.ui.catalog.CatalogFilters
 
-/** Human labels for the family enum — value-strings ("sugar-free") are not UI copy. */
-private val FAMILY_LABELS: Map<Product.Family, String> = mapOf(
-    Product.Family.classic to "Classic",
-    Product.Family.original to "Originals",
-    Product.Family.sugarMinusFree to "Sugar-free",
-    Product.Family.regional to "Regional",
-    Product.Family.seasonal to "Seasonal",
+/**
+ * Human labels for the family enum — value-strings ("sugar-free") are not UI
+ * copy. Resolved with stringResource() at the use sites (this file + the
+ * CatalogScreen filter chip). Falls back to "All families" on a miss.
+ */
+internal val FAMILY_LABEL_RES: Map<Product.Family, Int> = mapOf(
+    Product.Family.classic to R.string.catalog_family_classic,
+    Product.Family.original to R.string.catalog_family_originals,
+    Product.Family.sugarMinusFree to R.string.catalog_family_sugar_free,
+    Product.Family.regional to R.string.catalog_family_regional,
+    Product.Family.seasonal to R.string.catalog_family_seasonal,
 )
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -67,12 +73,14 @@ fun FilterSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    "Filter",
+                    stringResource(R.string.catalog_filter_title),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.semantics { heading() },
                 )
                 if (filters.isActive) {
-                    TextButton(onClick = { onChange(CatalogFilters()) }) { Text("Clear all") }
+                    TextButton(onClick = { onChange(CatalogFilters()) }) {
+                        Text(stringResource(R.string.common_clear_all))
+                    }
                 }
             }
 
@@ -84,7 +92,7 @@ fun FilterSheet(
             if (availableDietaryTags.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        "Dietary",
+                        stringResource(R.string.catalog_filter_dietary),
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.semantics { heading() },
                     )
@@ -117,7 +125,8 @@ private fun FamilyDropdown(
     onSelect: (Product.Family?) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val selectedLabel = selected?.let { FAMILY_LABELS[it] } ?: "All families"
+    val selectedLabelRes = selected?.let { FAMILY_LABEL_RES[it] } ?: R.string.catalog_family_all
+    val selectedLabel = stringResource(selectedLabelRes)
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -127,7 +136,7 @@ private fun FamilyDropdown(
             value = selectedLabel,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Category") },
+            label = { Text(stringResource(R.string.catalog_filter_category)) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
@@ -137,15 +146,15 @@ private fun FamilyDropdown(
         )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
-                text = { Text("All families") },
+                text = { Text(stringResource(R.string.catalog_family_all)) },
                 onClick = {
                     onSelect(null)
                     expanded = false
                 },
             )
-            FAMILY_LABELS.forEach { (family, label) ->
+            FAMILY_LABEL_RES.forEach { (family, labelRes) ->
                 DropdownMenuItem(
-                    text = { Text(label) },
+                    text = { Text(stringResource(labelRes)) },
                     onClick = {
                         onSelect(family)
                         expanded = false

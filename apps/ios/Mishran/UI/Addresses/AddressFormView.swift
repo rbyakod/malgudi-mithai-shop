@@ -65,15 +65,15 @@ struct AddressFormView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Address line 1", text: $form.line1)
+                    TextField(L("checkout.address.line1"), text: $form.line1)
                         .accessibilityLabel("Address line 1")
-                    TextField("Address line 2 (optional)", text: $form.line2)
+                    TextField(L("checkout.address.line2"), text: $form.line2)
                         .accessibilityLabel("Address line 2, optional")
-                    TextField("City", text: $form.city)
+                    TextField(L("checkout.address.city"), text: $form.city)
                         .accessibilityLabel("City")
-                    TextField("State", text: $form.state)
+                    TextField(L("checkout.address.state"), text: $form.state)
                         .accessibilityLabel("State")
-                    TextField("Pincode (6 digits)", text: $form.pincode)
+                    TextField("\(L("checkout.address.pincode")) (6 digits)", text: $form.pincode)
                         .keyboardType(.numberPad)
                         .onChange(of: form.pincode) { _, newValue in
                             form.pincode = String(newValue.filter(\.isNumber).prefix(6))
@@ -82,7 +82,7 @@ struct AddressFormView: View {
                 }
 
                 Section {
-                    Picker("Tag", selection: $form.tag) {
+                    Picker(L("checkout.address.tag"), selection: $form.tag) {
                         ForEach(AddressTag.allCases) { tag in
                             Text(tag.displayName).tag(tag)
                         }
@@ -106,7 +106,7 @@ struct AddressFormView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("common.cancel")) { dismiss() }
                         .disabled(isSaving)
                 }
                 ToolbarItem(placement: .confirmationAction) {

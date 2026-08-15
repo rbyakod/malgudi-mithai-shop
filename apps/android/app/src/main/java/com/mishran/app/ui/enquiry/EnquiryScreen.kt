@@ -44,10 +44,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mishran.app.R
 import com.mishran.app.ui.common.UiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +65,7 @@ fun EnquiryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Bulk & events") },
+                title = { Text(stringResource(R.string.enquiry_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -121,26 +123,30 @@ private fun EnquiryFormContent(
                     shape = SegmentedButtonDefaults.itemShape(index, EnquiryType.entries.size),
                 ) {
                     Text(
-                        text = if (type == EnquiryType.WEDDING) "Wedding" else "Corporate",
+                        text = if (type == EnquiryType.WEDDING) {
+                                stringResource(R.string.enquiry_type_wedding)
+                            } else {
+                                stringResource(R.string.enquiry_type_corporate)
+                            },
                     )
                 }
             }
         }
 
         FormField(
-            label = "Name",
+            label = stringResource(R.string.enquiry_field_name),
             value = form.name,
             error = errors[EnquiryField.NAME],
             onValueChange = { onFieldChange(EnquiryField.NAME, it) },
         )
         FormField(
-            label = "Phone",
+            label = stringResource(R.string.enquiry_field_phone),
             value = form.phone,
             error = errors[EnquiryField.PHONE],
             onValueChange = { onFieldChange(EnquiryField.PHONE, it) },
         )
         FormField(
-            label = "Email",
+            label = stringResource(R.string.enquiry_field_email),
             value = form.email,
             error = errors[EnquiryField.EMAIL],
             onValueChange = { onFieldChange(EnquiryField.EMAIL, it) },
@@ -149,18 +155,18 @@ private fun EnquiryFormContent(
         when (form.type) {
             EnquiryType.WEDDING -> {
                 FormField(
-                    label = "Event date",
+                    label = stringResource(R.string.enquiry_field_date),
                     value = form.eventDate,
                     placeholder = "e.g. 12 Nov 2026",
                     onValueChange = { onExtraChange { copy(eventDate = it) } },
                 )
                 FormField(
-                    label = "City",
+                    label = stringResource(R.string.enquiry_field_city),
                     value = form.city,
                     onValueChange = { onExtraChange { copy(city = it) } },
                 )
                 FormField(
-                    label = "Guests",
+                    label = stringResource(R.string.enquiry_field_guests),
                     value = form.guests,
                     placeholder = "e.g. 400",
                     onValueChange = { onExtraChange { copy(guests = it) } },
@@ -168,18 +174,18 @@ private fun EnquiryFormContent(
             }
             EnquiryType.CORPORATE -> {
                 FormField(
-                    label = "Company",
+                    label = stringResource(R.string.enquiry_field_company),
                     value = form.company,
                     onValueChange = { onExtraChange { copy(company = it) } },
                 )
                 FormField(
-                    label = "Quantity",
+                    label = stringResource(R.string.enquiry_field_quantity),
                     value = form.quantity,
                     placeholder = "e.g. 250 boxes",
                     onValueChange = { onExtraChange { copy(quantity = it) } },
                 )
                 FormField(
-                    label = "Needed by",
+                    label = stringResource(R.string.enquiry_field_deadline),
                     value = form.neededBy,
                     placeholder = "e.g. 20 Oct 2026",
                     onValueChange = { onExtraChange { copy(neededBy = it) } },
@@ -188,7 +194,7 @@ private fun EnquiryFormContent(
         }
 
         FormField(
-            label = "Message",
+            label = stringResource(R.string.enquiry_field_message),
             value = form.message,
             error = errors[EnquiryField.MESSAGE],
             minLines = 4,
@@ -201,7 +207,7 @@ private fun EnquiryFormContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Button(onClick = onSubmit, enabled = !submitting) {
-                Text("Submit")
+                Text(stringResource(R.string.enquiry_submit))
             }
             if (submitting) {
                 Spacer(Modifier.width(12.dp))
@@ -228,17 +234,19 @@ private fun EnquirySuccess(
         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
     ) {
         Text(
-            text = "Thank you. Our events team will be in touch within one business day.",
+            text = stringResource(R.string.enquiry_success),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
         )
         if (leadId.isNotBlank()) {
             Text(
+                // TODO(i18n): missing key enquiry.reference (with %%1$s)
                 text = "Reference: $leadId",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+        // TODO(i18n): missing key enquiry.send_another
         TextButton(onClick = onAnother) { Text("Send another enquiry") }
     }
 }

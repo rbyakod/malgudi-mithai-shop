@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.mishran.app.R
 import com.mishran.api.models.Merch
 import com.mishran.app.ui.common.UiState
 
@@ -60,7 +62,7 @@ fun MerchDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Merch") },
+                title = { Text(stringResource(R.string.vertical_merch)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -85,7 +87,7 @@ fun MerchDetailScreen(
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                     )
-                    TextButton(onClick = viewModel::load) { Text("Try again") }
+                    TextButton(onClick = viewModel::load) { Text(stringResource(R.string.common_try_again)) }
                 }
             }
             is UiState.Success -> MerchDetailContent(
@@ -130,11 +132,12 @@ private fun MerchDetailContent(
                     InfoChip(text = availability)
                 }
             }
+            // TODO(i18n): missing key vertical.description
             DetailSection(label = "Description", body = merch.description)
 
             Spacer(Modifier.height(8.dp))
             Button(onClick = onEnquire, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-                Text("Enquire")
+                Text(stringResource(R.string.merch_enquire))
             }
             Spacer(Modifier.height(24.dp))
         }

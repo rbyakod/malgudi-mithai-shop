@@ -18,8 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.mishran.app.R
 import com.mishran.app.ui.checkout.SlotOption
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -33,11 +35,12 @@ fun SlotPicker(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            "Delivery slot",
+            stringResource(R.string.checkout_slot_title),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.semantics { heading() },
         )
         Text(
+            // TODO(i18n): missing key checkout.slot_hint
             text = "You're in our same-day fresh network — pick a slot.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

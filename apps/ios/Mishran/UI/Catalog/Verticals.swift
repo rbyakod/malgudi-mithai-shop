@@ -2,9 +2,9 @@
 // Shared vocabulary for the catalog's vertical tabs. Mithai is the existing
 // products flow; snacks (retail-only, MSRP + external retailers), QSR
 // (walk-in counter menu, no cart), and merch (enquiry-led) load from their
-// own public mobile-v1 endpoints. Labels match packages/i18n-strings/en.json
-// (vertical.mithai/snacks/qsr/merch) — TODO(i18n): hardcode sweep wires
-// String(localized:) later.
+// own public mobile-v1 endpoints. Labels resolve from
+// packages/i18n-strings (vertical.mithai/snacks/qsr/merch) via the L()
+// helper — Task 20.3 wiring.
 import Foundation
 
 /// Catalog vertical tabs (Mithai · Snacks · QSR · Merch).
@@ -15,10 +15,10 @@ enum Vertical: String, CaseIterable, Identifiable, Hashable {
 
     var displayName: String {
         switch self {
-        case .mithai: "Mithai"
-        case .snacks: "Snacks"
-        case .qsr: "QSR"
-        case .merch: "Merch"
+        case .mithai: L("vertical.mithai")
+        case .snacks: L("vertical.snacks")
+        case .qsr: L("vertical.qsr")
+        case .merch: L("vertical.merch")
         }
     }
 

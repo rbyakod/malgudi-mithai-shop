@@ -32,10 +32,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mishran.app.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mishran.app.ui.common.UiState
@@ -106,12 +108,13 @@ fun OtpScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "Enter the code",
+            text = stringResource(R.string.auth_otp_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(Modifier.height(8.dp))
         Text(
+            // TODO(i18n): missing key auth.otp_subtitle_plain (auth.otp_subtitle needs %%1$s phone)
             text = "We texted a 6-digit code to your phone.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -121,7 +124,7 @@ fun OtpScreen(
         OutlinedTextField(
             value = code,
             onValueChange = { entered -> viewModel.code.value = entered.filter { it.isDigit() }.take(6) },
-            label = { Text("6-digit code") },
+            label = { Text(stringResource(R.string.auth_otp_placeholder)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             modifier = Modifier.padding(horizontal = 8.dp),
@@ -149,12 +152,12 @@ fun OtpScreen(
                     modifier = Modifier.height(20.dp),
                 )
             } else {
-                Text("Verify")
+                Text(stringResource(R.string.auth_otp_cta))
             }
         }
         Spacer(Modifier.height(8.dp))
         TextButton(onClick = onResend) {
-            Text("Resend code")
+            Text(stringResource(R.string.auth_otp_resend))
         }
     }
 }

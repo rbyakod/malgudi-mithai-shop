@@ -27,7 +27,17 @@
   <string name="catalog_filter_title">Filter</string>
   <string name="catalog_filter_category">Category</string>
   <string name="catalog_filter_dietary">Dietary</string>
+  <string name="catalog_family_all">All families</string>
+  <string name="catalog_family_classic">Classic</string>
+  <string name="catalog_family_originals">House originals</string>
+  <string name="catalog_family_sugar_free">Sugar-free</string>
+  <string name="catalog_family_regional">Regional</string>
+  <string name="catalog_family_seasonal">Seasonal</string>
   <string name="catalog_empty">No sweets match your filters.</string>
+  <string name="catalog_empty_sync">The catalog will appear here once it syncs.</string>
+  <string name="catalog_empty_snacks">No snacks yet.</string>
+  <string name="catalog_empty_qsr">The counter menu is coming soon.</string>
+  <string name="catalog_empty_merch">No merch yet.</string>
   <string name="catalog_stale_banner">Updated %1$s min ago</string>
   <string name="product_add_to_cart">Add to cart</string>
   <string name="product_quantity">Quantity</string>
@@ -62,6 +72,10 @@
   <string name="checkout_payment_netbanking">Netbanking</string>
   <string name="checkout_payment_wallet">Wallet</string>
   <string name="checkout_pay">Pay %1$s</string>
+  <string name="checkout_cta_place_order">Place order</string>
+  <string name="checkout_cta_select_address">Select a delivery address</string>
+  <string name="checkout_cta_checking">Checking delivery…</string>
+  <string name="checkout_cta_pick_slot">Pick a delivery slot</string>
   <string name="checkout_error_pincode_not_serviceable">We can\'t deliver to %1$s yet.</string>
   <string name="checkout_error_cart_changed">Some items changed. Review and try again.</string>
   <string name="checkout_error_stock_insufficient">%1$s only has %2$s left.</string>
@@ -96,6 +110,10 @@
   <string name="account_locale_gu">ગુજરાતી</string>
   <string name="account_locale_bn">বাংলা</string>
   <string name="account_locale_pa">ਪੰਜਾਬੀ</string>
+  <string name="common_back">Back</string>
+  <string name="common_try_again">Try again</string>
+  <string name="common_see_all">See all</string>
+  <string name="common_clear_all">Clear all</string>
   <string name="common_retry">Retry</string>
   <string name="common_cancel">Cancel</string>
   <string name="common_confirm">Confirm</string>
@@ -119,6 +137,7 @@
   <string name="product_buy_now">Buy now</string>
   <string name="product_bestseller">Bestseller</string>
   <string name="home_sign_in">Sign in</string>
+  <string name="home_hero_tagline">Fresh mithai, made every day.</string>
   <string name="home_best_sellers">Best sellers</string>
   <string name="home_shop_by_family">Shop by family</string>
   <string name="home_your_orders">Your orders</string>
@@ -153,4 +172,19 @@
   <string name="vertical_qsr_available_at">Available at</string>
   <string name="vertical_qsr_veg">Vegetarian</string>
   <string name="vertical_qsr_spice">Spice</string>
+  <string name="vertical_qsr_menu">Counter menu</string>
+  <string name="vertical_qsr_nonveg">Non-vegetarian</string>
+  <string name="home_shop_by_vertical">Shop by vertical</string>
+  <string name="home_browse">Browse sweets</string>
+  <string name="home_portal_mithai">Made every day</string>
+  <string name="home_portal_snacks">Retail packs</string>
+  <string name="product_added_to_cart">Added to cart</string>
+  <string name="catalog_empty_hint">Try a different search or clear filters.</string>
+  <string name="cart_empty_hint">Browse the sweets catalog to fill it.</string>
+  <string name="orders_empty_hint">Your sweet orders will appear here.</string>
+  <string name="common_load_error">Couldn\'t load this. Try again.</string>
+  <string name="order_reference">Order %1$s</string>
+  <string name="order_confirmed">Order confirmed</string>
+  <string name="order_continue_shopping">Continue shopping</string>
+  <string name="account_language_relaunch">Applies the next time you open the app.</string>
 </resources>

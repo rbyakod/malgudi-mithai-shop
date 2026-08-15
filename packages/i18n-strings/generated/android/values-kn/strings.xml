@@ -27,7 +27,17 @@
   <string name="catalog_filter_title">ಶೋಧಕ</string>
   <string name="catalog_filter_category">ವರ್ಗ</string>
   <string name="catalog_filter_dietary">ಆಹಾರ ಆದ್ಯತೆ</string>
+  <string name="catalog_family_all">ಎಲ್ಲಾ ವರ್ಗಗಳು</string>
+  <string name="catalog_family_classic">ಕ್ಲಾಸಿಕ್</string>
+  <string name="catalog_family_originals">ಹೌಸ್ ಒರಿಜಿನಲ್ಸ್</string>
+  <string name="catalog_family_sugar_free">ಸಕ್ಕರೆ ಮುಕ್ತ</string>
+  <string name="catalog_family_regional">ಪ್ರಾದೇಶಿಕ</string>
+  <string name="catalog_family_seasonal">ಕಾಲೋಚಿತ</string>
   <string name="catalog_empty">ನಿಮ್ಮ ಶೋಧಕಗಳಿಗೆ ಸರಿಹೊಂದುವ ಸಿಹಿತಿಂಡಿ ಇಲ್ಲ.</string>
+  <string name="catalog_empty_sync">ಸಿಂಕ್ ಆದ ನಂತರ ಪಟ್ಟಿ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.</string>
+  <string name="catalog_empty_snacks">ಇನ್ನೂ ಯಾವುದೇ ತಿಂಡಿಗಳಿಲ್ಲ.</string>
+  <string name="catalog_empty_qsr">ಕೌಂಟರ್ ಮೆನು ಶೀಘ್ರದಲ್ಲಿ ಬರುತ್ತದೆ.</string>
+  <string name="catalog_empty_merch">ಇನ್ನೂ ಯಾವುದೇ ಮಾರ್ಚ್ ಇಲ್ಲ.</string>
   <string name="catalog_stale_banner">%1$s ನಿಮಿಷಗಳ ಹಿಂದೆ ನವೀಕರಿಸಲಾಗಿದೆ</string>
   <string name="product_add_to_cart">ಬುಟ್ಟಿಗೆ ಸೇರಿಸಿ</string>
   <string name="product_quantity">ಪ್ರಮಾಣ</string>
@@ -62,6 +72,10 @@
   <string name="checkout_payment_netbanking">ನೆಟ್‌ಬ್ಯಾಂಕಿಂಗ್</string>
   <string name="checkout_payment_wallet">ವಾಲೆಟ್</string>
   <string name="checkout_pay">%1$s ಪಾವತಿಸಿ</string>
+  <string name="checkout_cta_place_order">ಆರ್ಡರ್ ಮಾಡಿ</string>
+  <string name="checkout_cta_select_address">ವಿತರಣಾ ವಿಳಾಸ ಆಯ್ಕೆಮಾಡಿ</string>
+  <string name="checkout_cta_checking">ವಿತರಣೆ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…</string>
+  <string name="checkout_cta_pick_slot">ವಿತರಣಾ ಸಮಯ ಆಯ್ಕೆಮಾಡಿ</string>
   <string name="checkout_error_pincode_not_serviceable">ಈಗೂ %1$s ಗೆ ವಿತರಣೆ ಇಲ್ಲ.</string>
   <string name="checkout_error_cart_changed">ಕೆಲವು ವಸ್ತುಗಳು ಬದಲಾಗಿವೆ. ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.</string>
   <string name="checkout_error_stock_insufficient">%1$s ಬರಿ %2$s ಉಳಿದಿವೆ.</string>
@@ -96,6 +110,10 @@
   <string name="account_locale_gu">ગુજરાતી</string>
   <string name="account_locale_bn">বাংলা</string>
   <string name="account_locale_pa">ਪੰਜਾਬੀ</string>
+  <string name="common_back">ಹಿಂದೆ</string>
+  <string name="common_try_again">ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ</string>
+  <string name="common_see_all">ಎಲ್ಲವನ್ನೂ ನೋಡಿ</string>
+  <string name="common_clear_all">ಎಲ್ಲವನ್ನೂ ಅಳಿಸಿ</string>
   <string name="common_retry">ಮರುಪ್ರಯತ್ನಿಸಿ</string>
   <string name="common_cancel">ರದ್ದುಮಾಡಿ</string>
   <string name="common_confirm">ದೃಢೀಕರಿಸಿ</string>
@@ -119,6 +137,7 @@
   <string name="product_buy_now">ಈಗ ಖರೀದಿಸಿ</string>
   <string name="product_bestseller">ಜನಪ್ರಿಯ</string>
   <string name="home_sign_in">ಸೈನ್ ಇನ್</string>
+  <string name="home_hero_tagline">ಪ್ರತಿದಿನ ತಯಾರಾಗುವ ತಾಜಾ ಸಿಹಿತಿಂಡಿ.</string>
   <string name="home_best_sellers">ಜನಪ್ರಿಯ ಆಯ್ಕೆ</string>
   <string name="home_shop_by_family">ವರ್ಗದ ಪ್ರಕಾರ ಖರೀದಿಸಿ</string>
   <string name="home_your_orders">ನಿಮ್ಮ ಆರ್ಡರ್‌ಗಳು</string>
@@ -153,4 +172,19 @@
   <string name="vertical_qsr_available_at">ಲಭ್ಯತೆ</string>
   <string name="vertical_qsr_veg">ಸಸ್ಯಾಹಾರಿ</string>
   <string name="vertical_qsr_spice">ಖಾರದ ಮಟ್ಟ</string>
+  <string name="vertical_qsr_menu">ಕೌಂಟರ್ ಮೆನು</string>
+  <string name="vertical_qsr_nonveg">ಮಾಂಸಾಹಾರಿ</string>
+  <string name="home_shop_by_vertical">ವರ್ಗದ ಪ್ರಕಾರ ಖರೀದಿಸಿ</string>
+  <string name="home_browse">ಸಿಹಿತಿಂಡಿಗಳನ್ನು ನೋಡಿ</string>
+  <string name="home_portal_mithai">ಪ್ರತಿದಿನ ತಯಾರಾಗುತ್ತದೆ</string>
+  <string name="home_portal_snacks">ಚಿಲ್ಲರೆ ಪ್ಯಾಕ್‌ಗಳು</string>
+  <string name="product_added_to_cart">ಬುಟ್ಟಿಗೆ ಸೇರಿಸಲಾಗಿದೆ</string>
+  <string name="catalog_empty_hint">ಬೇರೆ ಹುಡುಕಾಟ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಶೋಧಕಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ.</string>
+  <string name="cart_empty_hint">ಭರ್ತಿ ಮಾಡಲು ಸಿಹಿತಿಂಡಿಗಳ ಪಟ್ಟಿ ನೋಡಿ.</string>
+  <string name="orders_empty_hint">ನಿಮ್ಮ ಸಿಹಿತಿಂಡಿ ಆರ್ಡರ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.</string>
+  <string name="common_load_error">ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಮರುಪ್ರಯತ್ನಿಸಿ.</string>
+  <string name="order_reference">ಆರ್ಡರ್ %1$s</string>
+  <string name="order_confirmed">ಆರ್ಡರ್ ದೃಢೀಕರಿಸಲಾಗಿದೆ</string>
+  <string name="order_continue_shopping">ಖರೀದಿ ಮುಂದುವರಿಸಿ</string>
+  <string name="account_language_relaunch">ಮುಂದಿನ ಬಾರಿ ಆ್ಯಪ್ ತೆರೆದಾಗ ಅನ್ವಯಿಸುತ್ತದೆ.</string>
 </resources>

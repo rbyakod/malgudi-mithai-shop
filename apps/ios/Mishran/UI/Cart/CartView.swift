@@ -18,7 +18,7 @@ struct CartView: View {
                     .onAppear { viewModel = CartViewModel(context: context) }
             }
         }
-        .navigationTitle("Cart")
+        .navigationTitle(L("cart.title"))
         .onAppear { viewModel?.reload() }
     }
 
@@ -26,9 +26,9 @@ struct CartView: View {
     private func content(_ viewModel: CartViewModel) -> some View {
         if lines.isEmpty {
             ContentUnavailableView(
-                "Your cart is empty",
+                L("cart.empty"),
                 systemImage: "cart",
-                description: Text("Browse the sweets catalog to fill it.")
+                description: Text(L("cart.empty_hint"))
             )
         } else {
             List {
@@ -50,7 +50,7 @@ struct CartView: View {
 
                 Section {
                     row(label: "Items", value: "\(viewModel.itemCount)")
-                    row(label: "Total", value: Self.rupees(viewModel.totalPaise))
+                    row(label: L("cart.total"), value: Self.rupees(viewModel.totalPaise))
                         .font(.mishranBodyLg.weight(.semibold))
                 } footer: {
                     Text("Delivery calculated at checkout.")
@@ -60,7 +60,7 @@ struct CartView: View {
                     Button {
                         onCheckout?()
                     } label: {
-                        Text("Checkout")
+                        Text(L("cart.checkout"))
                             .font(.mishranBodyLg.weight(.semibold))
                             .frame(maxWidth: .infinity)
                     }
@@ -69,7 +69,7 @@ struct CartView: View {
                     .foregroundStyle(Color.mishranBrandCanvas)
                     .controlSize(.large)
                     .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
-                    .accessibilityLabel("Checkout")
+                    .accessibilityLabel(L("cart.checkout"))
 
                     Button("Clear cart", role: .destructive) {
                         viewModel.clear()

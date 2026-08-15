@@ -152,3 +152,14 @@
 "vertical.qsr.available_at" = "उपलब्ध";
 "vertical.qsr.veg" = "शाकाहारी";
 "vertical.qsr.spice" = "तिखटपणा";
+"home.shop_by_vertical" = "श्रेणीनुसार खरेदी करा";
+"home.browse" = "मिठाई पहा";
+"product.added_to_cart" = "कार्टमध्ये जोडले";
+"catalog.empty_hint" = "वेगळा शोध वापरा किंवा फिल्टर काढा.";
+"cart.empty_hint" = "भरण्यासाठी मिठाईची यादी पहा.";
+"orders.empty_hint" = "तुमचे मिठाई ऑर्डर येथे दिसतील.";
+"common.load_error" = "लोड करता आले नाही. पुन्हा प्रयत्न करा.";
+"order.reference" = "ऑर्डर {id}";
+"order.confirmed" = "ऑर्डरची पुष्टी झाली";
+"order.continue_shopping" = "खरेदी सुरू ठेवा";
+"account.language_relaunch" = "पुढच्या वेळी अ‍ॅप उघडल्यावर लागू होईल.";

@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.mishran.api.models.Address
 import com.mishran.api.models.CartValidateRequestSlot
 import com.mishran.api.models.ServiceableResponse
+import com.mishran.app.R
 import com.mishran.app.data.repository.AddressRepository
 import com.mishran.app.data.repository.CartRepository
 import com.mishran.app.domain.usecase.CreateOrderResult
@@ -47,11 +48,12 @@ sealed interface ServiceabilityState {
 }
 
 /** Payment channel selection — Razorpay renders the actual sheet. */
-enum class PaymentMethod(val label: String) {
-    UPI("UPI"),
-    CARD("Card"),
-    NETBANKING("Netbanking"),
-    WALLET("Wallet"),
+/** Label resource per method — resolved with stringResource() at the use site. */
+enum class PaymentMethod(@androidx.annotation.StringRes val labelRes: Int) {
+    UPI(R.string.checkout_payment_upi),
+    CARD(R.string.checkout_payment_card),
+    NETBANKING(R.string.checkout_payment_netbanking),
+    WALLET(R.string.checkout_payment_wallet),
 }
 
 data class CheckoutUiState(
