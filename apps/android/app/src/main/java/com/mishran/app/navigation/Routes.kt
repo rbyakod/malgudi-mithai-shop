@@ -7,12 +7,14 @@
 // truth — no drift between the manifest intent-filter and the NavHost.
 package com.mishran.app.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.mishran.app.R
 
 object Routes {
     const val SPLASH = "splash"
@@ -71,8 +73,8 @@ object Routes {
 }
 
 /**
- * A bottom-navigation destination. Labels are plain English for now; once the
- * i18n layer is wired (Phase 12), these become string-resource references.
+ * A bottom-navigation destination. Labels are string-resource ids resolved
+ * with stringResource() at the call site (the enum itself is not composable).
  *
  * `route` is the NavHost pattern (used for selected-state matching); `navRoute`
  * is what tab taps actually navigate to — they differ only for CATALOG, whose
@@ -80,12 +82,12 @@ object Routes {
  */
 enum class BottomDestination(
     val route: String,
-    val label: String,
+    @StringRes val labelRes: Int,
     val icon: ImageVector,
     val navRoute: String = route,
 ) {
-    HOME(Routes.HOME, "Home", Icons.Filled.Home),
-    CATALOG(Routes.CATALOG, "Catalog", Icons.Filled.MenuBook, navRoute = Routes.catalog()),
-    ORDERS(Routes.ORDERS, "Orders", Icons.Filled.ReceiptLong),
-    ACCOUNT(Routes.ACCOUNT, "Account", Icons.Filled.Person),
+    HOME(Routes.HOME, R.string.nav_home, Icons.Filled.Home),
+    CATALOG(Routes.CATALOG, R.string.nav_catalog, Icons.Filled.MenuBook, navRoute = Routes.catalog()),
+    ORDERS(Routes.ORDERS, R.string.nav_orders, Icons.Filled.ReceiptLong),
+    ACCOUNT(Routes.ACCOUNT, R.string.nav_account, Icons.Filled.Person),
 }

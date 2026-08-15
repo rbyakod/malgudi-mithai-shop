@@ -36,10 +36,12 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mishran.api.models.Order
+import com.mishran.app.R
 import com.mishran.app.ui.cart.formatPaise
 import com.mishran.app.ui.common.UiState
 import com.mishran.app.ui.orderconfirmed.orderReferenceLabel
@@ -59,7 +61,7 @@ fun OrderDetailScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(current.message, style = MaterialTheme.typography.bodyLarge)
                 Button(onClick = viewModel::load, modifier = Modifier.padding(top = 16.dp)) {
-                    Text("Try again")
+                    Text(stringResource(R.string.common_try_again))
                 }
             }
         }
@@ -91,6 +93,7 @@ private fun OrderDetailContent(
                 modifier = Modifier.semantics { heading() },
             )
             Text(
+                // TODO(i18n): missing key order.placed_at (with %%1$s)
                 text = "Placed ${formatOrderDate(order.createdAt)}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -119,6 +122,7 @@ private fun OrderDetailContent(
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            // TODO(i18n): missing key order.items_title
             Text("Items", style = MaterialTheme.typography.titleMedium)
             order.items.forEach { item ->
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -139,15 +143,18 @@ private fun OrderDetailContent(
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            // TODO(i18n): missing key order.totals_title
             Text("Totals", style = MaterialTheme.typography.titleMedium)
-            TotalRow("Items", order.totals.itemsTotalInPaise)
-            TotalRow("Delivery", order.totals.deliveryFeeInPaise)
+            TotalRow(stringResource(R.string.cart_subtotal), order.totals.itemsTotalInPaise)
+            TotalRow(stringResource(R.string.cart_delivery_fee), order.totals.deliveryFeeInPaise)
+            // TODO(i18n): missing key order.taxes
             if (order.totals.taxesInPaise > 0) TotalRow("Taxes", order.totals.taxesInPaise)
+            // TODO(i18n): missing key order.discount
             if (order.totals.discountInPaise > 0) TotalRow("Discount", -order.totals.discountInPaise)
             HorizontalDivider()
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Total",
+                    text = stringResource(R.string.cart_total),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.weight(1f),
@@ -161,6 +168,7 @@ private fun OrderDetailContent(
         }
 
         TextButton(onClick = onCallSupport) {
+            // TODO(i18n): missing key order.help_call (order.help covers only part)
             Text("Need help with this order? Call support")
         }
     }
@@ -201,7 +209,8 @@ private fun Timeline(stageIndex: Int) {
                     )
                 }
                 Text(
-                    text = statusLabel(stage) + if (current) " • now" else "",
+                    text = (statusLabelRes(stage)?.let { stringResource(it) } ?: statusLabel(stage)) +
+                        if (current) " • now" else "",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = if (current) FontWeight.SemiBold else FontWeight.Normal,
                     color = if (done || current) MaterialTheme.colorScheme.onSurface
@@ -221,7 +230,7 @@ private fun SideStateBanner(order: Order) {
         shape = MaterialTheme.shapes.medium,
     ) {
         Text(
-            text = "${statusLabel(order.status)} — ${supportLine(order.status)}",
+            text = "${statusLabelRes(order.status)?.let { stringResource(it) } ?: statusLabel(order.status)} — ${supportLine(order.status)}",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.fillMaxWidth().padding(16.dp),
         )

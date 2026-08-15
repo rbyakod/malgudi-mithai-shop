@@ -39,10 +39,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.mishran.app.R
 import com.mishran.app.data.local.entity.CartItemEntity
 import java.util.Locale
 
@@ -84,6 +86,7 @@ fun CartScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
+                    // TODO(i18n): missing key cart.estimated_total
                     Text("Estimated total", style = MaterialTheme.typography.titleSmall)
                     Text(
                         text = formatPaise(state.estimatedTotalPaise) +
@@ -93,6 +96,7 @@ fun CartScreen(
                 }
                 if (state.hasUnpricedLines) {
                     Text(
+                        // TODO(i18n): missing key cart.unpriced_hint
                         text = "Some items show no price yet — the final total is confirmed at checkout.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -102,12 +106,14 @@ fun CartScreen(
                     onClick = onCheckout,
                     modifier = Modifier.fillMaxWidth().height(52.dp),
                 ) {
+                    // TODO(i18n): missing key cart.checkout_items (with %%1$d)
                     Text("Checkout (${state.itemCount} items)")
                 }
                 OutlinedButton(
                     onClick = viewModel::clear,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
+                    // TODO(i18n): missing key cart.clear
                     Text("Clear cart")
                 }
             }
@@ -176,7 +182,7 @@ private fun CartLine(
                         // No size override: OutlinedIconButton floors itself at
                         // the 48dp touch-target minimum (Task 12.4).
                     ) {
-                        Icon(Icons.Filled.Remove, contentDescription = "One less")
+                        Icon(Icons.Filled.Remove, contentDescription = stringResource(R.string.cart_qty_decrease))
                     }
                     Text(
                         text = line.quantity.toString(),
@@ -186,12 +192,12 @@ private fun CartLine(
                     OutlinedIconButton(
                         onClick = onIncrement,
                     ) {
-                        Icon(Icons.Filled.Add, contentDescription = "One more")
+                        Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.cart_qty_increase))
                     }
                 }
             }
             IconButton(onClick = onRemove) {
-                Icon(Icons.Filled.Close, contentDescription = "Remove ${line.name}")
+                Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.cart_remove) + " ${line.name}")
             }
         }
     }
@@ -214,11 +220,11 @@ private fun EmptyCart(onBrowse: () -> Unit) {
                 modifier = Modifier.size(56.dp),
             )
             Text(
-                text = "Your cart is empty",
+                text = stringResource(R.string.cart_empty),
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
             )
-            Button(onClick = onBrowse) { Text("Browse sweets") }
+            Button(onClick = onBrowse) { Text(stringResource(R.string.cart_empty_cta)) }
         }
     }
 }

@@ -48,10 +48,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mishran.app.R
 import com.mishran.api.models.Address
 import com.mishran.api.models.AddressInput
 
@@ -78,7 +80,7 @@ fun AddressesScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Delivery addresses") },
+                title = { Text(stringResource(R.string.account_addresses)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -110,6 +112,7 @@ fun AddressesScreen(
                 if (state.addresses.isEmpty()) {
                     item {
                         Text(
+                            // TODO(i18n): missing key account.addresses_empty
                             text = "No saved addresses yet — add one for faster checkout.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -118,7 +121,7 @@ fun AddressesScreen(
                 }
                 item {
                     Button(onClick = { showForm = true }, modifier = Modifier.fillMaxWidth()) {
-                        Text("Add address")
+                        Text(stringResource(R.string.checkout_address_add_new))
                     }
                 }
             }
@@ -139,6 +142,7 @@ fun AddressesScreen(
     addressPendingDelete?.let { address ->
         AlertDialog(
             onDismissRequest = { addressPendingDelete = null },
+            // TODO(i18n): missing key account.address_delete_title
             title = { Text("Delete this address?") },
             confirmButton = {
                 TextButton(
@@ -146,10 +150,11 @@ fun AddressesScreen(
                         viewModel.deleteAddress(address)
                         addressPendingDelete = null
                     },
+                // TODO(i18n): missing key common.delete
                 ) { Text("Delete") }
             },
             dismissButton = {
-                TextButton(onClick = { addressPendingDelete = null }) { Text("Cancel") }
+                TextButton(onClick = { addressPendingDelete = null }) { Text(stringResource(R.string.common_cancel)) }
             },
         )
     }
@@ -180,6 +185,7 @@ private fun AddressRow(
                     }
                     if (isDefault) {
                         Text(
+                            // TODO(i18n): missing key account.address_default
                             text = "Default",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
@@ -229,40 +235,41 @@ private fun AddAddressDialog(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
+                // TODO(i18n): missing key account.address_new
                 Text("New address", style = MaterialTheme.typography.titleLarge)
 
                 OutlinedTextField(
                     value = line1,
                     onValueChange = { line1 = it },
-                    label = { Text("Address line 1") },
+                    label = { Text(stringResource(R.string.checkout_address_line1)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                 )
                 OutlinedTextField(
                     value = line2,
                     onValueChange = { line2 = it },
-                    label = { Text("Address line 2 (optional)") },
+                    label = { Text(stringResource(R.string.checkout_address_line2)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                 )
                 OutlinedTextField(
                     value = city,
                     onValueChange = { city = it },
-                    label = { Text("City") },
+                    label = { Text(stringResource(R.string.checkout_address_city)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                 )
                 OutlinedTextField(
                     value = stateName,
                     onValueChange = { stateName = it },
-                    label = { Text("State") },
+                    label = { Text(stringResource(R.string.checkout_address_state)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                 )
                 OutlinedTextField(
                     value = pincode,
                     onValueChange = { if (it.length <= 6 && it.all { c -> c.isDigit() }) pincode = it },
-                    label = { Text("Pincode (6 digits)") },
+                    label = { Text(stringResource(R.string.checkout_address_pincode)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     isError = pincode.isNotEmpty() && !pincodeValid,
@@ -282,6 +289,7 @@ private fun AddAddressDialog(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = isDefault, onCheckedChange = { isDefault = it })
+                    // TODO(i18n): missing key account.address_set_default
                     Text("Set as default", style = MaterialTheme.typography.bodyMedium)
                 }
 
@@ -289,7 +297,7 @@ private fun AddAddressDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    TextButton(onClick = onDismiss) { Text("Cancel") }
+                    TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
                     Spacer(Modifier.width(8.dp))
                     Button(
                         onClick = {
@@ -307,6 +315,7 @@ private fun AddAddressDialog(
                         },
                         enabled = formValid,
                     ) {
+                        // TODO(i18n): missing key common.save
                         Text("Save")
                     }
                 }

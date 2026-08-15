@@ -170,6 +170,9 @@ android {
 dependencies {
     // --- AndroidX core + lifecycle ---
     implementation("androidx.core:core-ktx:1.13.1")
+    // AppCompat (per-app locales): AppCompatDelegate.setApplicationLocales
+    // backports the API 33 locale store to minSdk 26 via AppCompatActivity.
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")

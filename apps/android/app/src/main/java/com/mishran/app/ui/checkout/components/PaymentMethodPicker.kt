@@ -15,8 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.mishran.app.R
 import com.mishran.app.ui.checkout.PaymentMethod
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -27,7 +29,7 @@ fun PaymentMethodPicker(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            "Pay with",
+            stringResource(R.string.checkout_payment_title),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.semantics { heading() },
         )
@@ -36,7 +38,7 @@ fun PaymentMethodPicker(
                 FilterChip(
                     selected = method == selected,
                     onClick = { onSelect(method) },
-                    label = { Text(method.label) },
+                    label = { Text(stringResource(method.labelRes)) },
                 )
             }
         }

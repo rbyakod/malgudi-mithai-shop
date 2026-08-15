@@ -10,10 +10,6 @@
 // that row hides off the Mithai tab. Pull-to-refresh wraps everything:
 // products refresh (ETag-bypassing) on Mithai, a plain reload on the others.
 // P1 parity wrapped the scrollable content in material3's PullToRefreshBox.
-//
-// TODO(i18n): tab labels + empty/error lines hardcode the English copy from
-// packages/i18n-strings/en.json (vertical.mithai/snacks/qsr/merch, …) — swap
-// for R.string references in the sweep that wires generated resources.
 package com.mishran.app.ui.catalog
 
 import androidx.compose.foundation.layout.Arrangement
@@ -52,10 +48,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mishran.api.models.Product
+import com.mishran.app.R
+import com.mishran.app.ui.catalog.components.FAMILY_LABEL_RES
 import com.mishran.app.ui.catalog.components.FilterSheet
 import com.mishran.app.ui.catalog.components.MerchCard
 import com.mishran.app.ui.catalog.components.ProductCard
@@ -112,10 +111,10 @@ fun CatalogScreen(
                         label = {
                             Text(
                                 text = when (tab) {
-                                    CatalogVertical.MITHAI -> "Mithai"
-                                    CatalogVertical.SNACKS -> "Snacks"
-                                    CatalogVertical.QSR -> "QSR"
-                                    CatalogVertical.MERCH -> "Merch"
+                                    CatalogVertical.MITHAI -> stringResource(R.string.vertical_mithai)
+                                    CatalogVertical.SNACKS -> stringResource(R.string.vertical_snacks)
+                                    CatalogVertical.QSR -> stringResource(R.string.vertical_qsr)
+                                    CatalogVertical.MERCH -> stringResource(R.string.vertical_merch)
                                 },
                                 maxLines = 1,
                             )
@@ -124,7 +123,7 @@ fun CatalogScreen(
                 }
             }
             IconButton(onClick = onCartClick) {
-                Icon(Icons.Filled.ShoppingCart, contentDescription = "Cart")
+                Icon(Icons.Filled.ShoppingCart, contentDescription = stringResource(R.string.nav_cart))
             }
         }
 
@@ -140,7 +139,7 @@ fun CatalogScreen(
                     value = query,
                     onValueChange = viewModel::onSearchQueryChange,
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Search sweets") },
+                    placeholder = { Text(stringResource(R.string.catalog_search_placeholder)) },
                     singleLine = true,
                     trailingIcon = {
                         if (query.isNotEmpty()) {
@@ -161,7 +160,7 @@ fun CatalogScreen(
                 FilterChip(
                     selected = filters.isActive,
                     onClick = { showFilterSheet = true },
-                    label = { Text("Filters") },
+                    label = { Text(stringResource(R.string.catalog_filter_title)) },
                     leadingIcon = {
                         Icon(Icons.Filled.FilterList, contentDescription = null)
                     },
@@ -171,7 +170,13 @@ fun CatalogScreen(
                     FilterChip(
                         selected = true,
                         onClick = { viewModel.onFiltersChange(filters.copy(family = null)) },
-                        label = { Text(family.value) },
+                        label = {
+                            Text(
+                                stringResource(
+                                    FAMILY_LABEL_RES[family] ?: R.string.catalog_family_all,
+                                ),
+                            )
+                        },
                     )
                 }
                 filters.dietaryTags.forEach { tag ->
@@ -213,9 +218,9 @@ fun CatalogScreen(
                         ) {
                             Text(
                                 text = if (query.isNotBlank() || filters.isActive) {
-                                    "No sweets match your search or filters."
+                                    stringResource(R.string.catalog_empty)
                                 } else {
-                                    "The catalog will appear here once it syncs."
+                                    stringResource(R.string.catalog_empty_sync)
                                 },
                                 style = MaterialTheme.typography.bodyLarge,
                                 textAlign = TextAlign.Center,
@@ -235,7 +240,7 @@ fun CatalogScreen(
                 loading = state.loading,
                 error = state.error,
                 isEmpty = state.items.isEmpty(),
-                emptyMessage = "No snacks yet.",
+                emptyMessage = stringResource(R.string.catalog_empty_snacks),
                 onRetry = viewModel::retryVertical,
             ) {
                 items(state.items, key = { it.id }) { snack ->
@@ -250,7 +255,7 @@ fun CatalogScreen(
                 loading = state.loading,
                 error = state.error,
                 isEmpty = state.items.isEmpty(),
-                emptyMessage = "The counter menu is coming soon.",
+                emptyMessage = stringResource(R.string.catalog_empty_qsr),
                 onRetry = viewModel::retryVertical,
             ) {
                 items(state.items, key = { it.id }) { item ->
@@ -265,7 +270,7 @@ fun CatalogScreen(
                 loading = state.loading,
                 error = state.error,
                 isEmpty = state.items.isEmpty(),
-                emptyMessage = "No merch yet.",
+                emptyMessage = stringResource(R.string.catalog_empty_merch),
                 onRetry = viewModel::retryVertical,
             ) {
                 items(state.items, key = { it.id }) { merch ->
@@ -338,7 +343,7 @@ private fun VerticalGridSection(
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
             )
-            Button(onClick = onRetry) { Text("Try again") }
+            Button(onClick = onRetry) { Text(stringResource(R.string.common_try_again)) }
         }
         isEmpty -> Box(
             modifier = Modifier.fillMaxSize().padding(16.dp),

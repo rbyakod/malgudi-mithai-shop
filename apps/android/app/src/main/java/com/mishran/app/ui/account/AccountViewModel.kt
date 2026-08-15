@@ -6,25 +6,31 @@
 // until the fetch succeeds, so the support row is always actionable.
 package com.mishran.app.ui.account
 
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mishran.app.data.repository.AuthRepository
 import com.mishran.app.data.repository.BrandRepository
 import com.mishran.app.data.repository.PLACEHOLDER_WHATSAPP_DIGITS
 import com.mishran.app.data.repository.PLACEHOLDER_WHATSAPP_NUMBER
+import com.mishran.app.data.repository.SettingsRepository
 import com.mishran.app.data.repository.SupportContact
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
     private val authRepository: AuthRepository,
+    private val settingsRepository: SettingsRepository,
     brandRepository: BrandRepository,
 ) : ViewModel() {
 
@@ -69,6 +75,29 @@ class AccountViewModel @Inject constructor(
             } finally {
                 _signingOut.value = false
                 onSignedOut()
+            }
+        }
+    }
+
+    /** Persisted locale tag driving the Language row's selected value. */
+    val localeTag: StateFlow<String?> = settingsRepository.localeTagFlow()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            null,
+        )
+
+    /**
+     * Persist the chosen tag, then hand it to AppCompat's per-app locale
+     * backport — MainActivity re-applies it on every cold start. Persisting
+     * FIRST means a process death between the write and the apply still lands
+     * in the right language next launch.
+     */
+    fun setLocale(tag: String) {
+        viewModelScope.launch {
+            settingsRepository.setLocaleTag(tag)
+            withContext(Dispatchers.Main) {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
             }
         }
     }

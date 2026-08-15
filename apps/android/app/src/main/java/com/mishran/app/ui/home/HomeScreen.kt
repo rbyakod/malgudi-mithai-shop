@@ -50,27 +50,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.mishran.api.models.Product
 import com.mishran.api.models.Story
+import com.mishran.app.R
 import com.mishran.app.ui.catalog.components.ProductCard
 
+// Label resources (not Strings) so the top-level map stays composable-agnostic;
+// the use site resolves them with stringResource().
 private val FAMILY_LABELS = linkedMapOf(
-    Product.Family.classic to "Classic",
-    Product.Family.original to "House originals",
-    Product.Family.sugarMinusFree to "Sugar-free",
-    Product.Family.regional to "Regional",
-    Product.Family.seasonal to "Seasonal",
+    Product.Family.classic to R.string.catalog_family_classic,
+    Product.Family.original to R.string.catalog_family_originals,
+    Product.Family.sugarMinusFree to R.string.catalog_family_sugar_free,
+    Product.Family.regional to R.string.catalog_family_regional,
+    Product.Family.seasonal to R.string.catalog_family_seasonal,
 )
 
-/** Portal tiles for "Shop by vertical" — wire names match Routes.catalog args. */
+/**
+ * Portal tiles for "Shop by vertical" — wire names match Routes.catalog args.
+ * (labelRes, taglineRes, wireValue).
+ */
 private val VERTICAL_PORTALS = listOf(
-    Triple("Mithai", "Made every day", "mithai"),
-    Triple("Snacks", "Retail packs", "snacks"),
-    Triple("QSR", "Counter menu", "qsr"),
-    Triple("Merch", "Enquire", "merch"),
+    Triple(R.string.vertical_mithai, R.string.home_portal_mithai, "mithai"),
+    Triple(R.string.vertical_snacks, R.string.home_portal_snacks, "snacks"),
+    Triple(R.string.vertical_qsr, R.string.vertical_qsr_menu, "qsr"),
+    Triple(R.string.vertical_merch, R.string.merch_enquire, "merch"),
 )
 
 @Composable
@@ -127,13 +134,13 @@ fun HomeScreen(
                     .padding(20.dp),
             ) {
                 Text(
-                    text = "Mishran",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Light,
                     color = Color.White,
                 )
                 Text(
-                    text = "Fresh mithai, made every day.",
+                    text = stringResource(R.string.home_hero_tagline),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.85f),
                 )
@@ -145,13 +152,13 @@ fun HomeScreen(
                         contentColor = MaterialTheme.colorScheme.primary,
                     ),
                 ) {
-                    Text("Browse sweets")
+                    Text(stringResource(R.string.home_browse))
                 }
             }
         }
 
         // Best sellers — the rail the web home calls its best-sellers grid.
-        SectionHeader("Best sellers")
+        SectionHeader(stringResource(R.string.home_best_sellers))
         when {
             products.isEmpty() -> Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
@@ -175,13 +182,14 @@ fun HomeScreen(
         }
 
         // Shop by family — deep-links into the filtered catalog.
-        SectionHeader("Shop by family")
+        SectionHeader(stringResource(R.string.home_shop_by_family))
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 4.dp),
         ) {
             items(FAMILY_LABELS.size) { index ->
-                val (family, label) = FAMILY_LABELS.entries.toList()[index]
+                val (family, labelRes) = FAMILY_LABELS.entries.toList()[index]
+                val label = stringResource(labelRes)
                 val count = products.count { it.family == family }
                 SuggestionChip(
                     onClick = { onFamilyClick(family.value) },
@@ -200,16 +208,16 @@ fun HomeScreen(
         }
 
         // Shop by vertical (P2) — portals into the catalog's tabbed surfaces.
-        SectionHeader("Shop by vertical")
+        SectionHeader(stringResource(R.string.home_shop_by_vertical))
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 4.dp),
         ) {
             items(VERTICAL_PORTALS.size) { index ->
-                val (label, tagline, wireValue) = VERTICAL_PORTALS[index]
+                val (labelRes, taglineRes, wireValue) = VERTICAL_PORTALS[index]
                 VerticalPortalCard(
-                    label = label,
-                    tagline = tagline,
+                    label = stringResource(labelRes),
+                    tagline = stringResource(taglineRes),
                     containerColor = when (index) {
                         0 -> MaterialTheme.colorScheme.primaryContainer
                         1 -> MaterialTheme.colorScheme.secondaryContainer
@@ -229,7 +237,11 @@ fun HomeScreen(
 
         // From the journal (P2) — three newest stories; hidden until synced.
         if (journal.isNotEmpty()) {
-            SectionHeader(title = "From the journal", actionLabel = "See all", onAction = onJournal)
+            SectionHeader(
+                title = stringResource(R.string.home_journal),
+                actionLabel = stringResource(R.string.common_see_all),
+                onAction = onJournal,
+            )
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 4.dp),
@@ -250,7 +262,7 @@ fun HomeScreen(
                 .padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.Center,
         ) {
-            OutlinedButton(onClick = onOrders) { Text("Your orders") }
+            OutlinedButton(onClick = onOrders) { Text(stringResource(R.string.home_your_orders)) }
         }
         Spacer(Modifier.height(20.dp))
     }

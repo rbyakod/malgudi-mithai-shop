@@ -26,9 +26,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mishran.app.R
 
 @Composable
 fun OrderConfirmedScreen(
@@ -55,7 +57,7 @@ fun OrderConfirmedScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Order confirmed",
+            text = stringResource(R.string.order_confirmed),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.semantics { heading() },
@@ -77,6 +79,7 @@ fun OrderConfirmedScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
         Text(
+            // TODO(i18n): missing key order.receipt_note
             text = "A receipt is on its way by SMS. Payment is collected only for confirmed orders.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -87,10 +90,10 @@ fun OrderConfirmedScreen(
             onClick = { onTrackOrder(orderId) },
             modifier = Modifier.fillMaxWidth().height(52.dp),
         ) {
-            Text("Track order")
+            Text(stringResource(R.string.orders_track))
         }
         TextButton(onClick = onContinueShopping, modifier = Modifier.fillMaxWidth()) {
-            Text("Continue shopping")
+            Text(stringResource(R.string.order_continue_shopping))
         }
     }
 }
@@ -107,6 +110,7 @@ internal fun orderReferenceLabel(orderId: String): String {
 }
 
 /** Fresh-tier ETA from the picked slot; null when no slot was chosen. */
+// TODO(i18n): missing keys order.arriving_slot / order.arriving_days
 internal fun etaLine(slotLabel: String?): String? =
     slotLabel?.let { "Arriving $it" }
 

@@ -24,9 +24,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mishran.api.models.Address
+import com.mishran.app.R
 import com.mishran.app.ui.checkout.ServiceabilityState
 import com.mishran.app.ui.checkout.formatAddressLine
 
@@ -39,7 +41,7 @@ fun AddressPicker(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            "Deliver to",
+            stringResource(R.string.checkout_address_title),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.semantics { heading() },
         )
@@ -101,7 +103,7 @@ private fun ServiceabilityReadout(serviceability: ServiceabilityState) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CircularProgressIndicator(modifier = Modifier.size(16.dp))
-            Text("Checking delivery…", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.checkout_cta_checking), style = MaterialTheme.typography.bodySmall)
         }
         is ServiceabilityState.Serviceable -> Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -112,6 +114,7 @@ private fun ServiceabilityReadout(serviceability: ServiceabilityState) {
                 onClick = {},
                 label = {
                     Text(
+                        // TODO(i18n): missing keys checkout.tier_fresh / checkout.tier_shelf
                         when (serviceability.tier) {
                             "fresh" -> "Fresh — same-day network"
                             else -> "Shelf — shipped"
@@ -121,6 +124,7 @@ private fun ServiceabilityReadout(serviceability: ServiceabilityState) {
             )
             serviceability.slaDays?.let { days ->
                 Text(
+                    // TODO(i18n): missing key checkout.arrives_days (with %1$d)
                     text = if (days <= 1) "Arrives in ~1 day" else "Arrives in ~$days days",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -129,6 +133,8 @@ private fun ServiceabilityReadout(serviceability: ServiceabilityState) {
         }
         is ServiceabilityState.NotServiceable -> Text(
             text = when (serviceability.reason) {
+                // TODO(i18n): missing keys checkout.error_invalid_pincode /
+                // checkout.error_serviceability_check / checkout.error_not_serviceable
                 "invalid_pincode" -> "That pincode looks invalid."
                 null -> "Couldn't check this pincode — check your connection and retry."
                 else -> "We don't deliver to this pincode yet."

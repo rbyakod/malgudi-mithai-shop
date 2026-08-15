@@ -38,10 +38,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mishran.api.models.Order
+import com.mishran.app.R
 import com.mishran.app.ui.cart.formatPaise
 import com.mishran.app.ui.orderconfirmed.orderReferenceLabel
 
@@ -74,7 +76,7 @@ fun OrderListScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Your orders",
+                    text = stringResource(R.string.orders_title),
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.weight(1f).semantics { heading() },
                 )
@@ -92,6 +94,7 @@ fun OrderListScreen(
                     if (state.refreshFailed) {
                         item {
                             Text(
+                                // TODO(i18n): missing key orders.refresh_failed
                                 text = "Couldn't refresh — showing saved orders.",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -155,7 +158,7 @@ internal fun StatusChip(status: Order.Status) {
     }
     Surface(color = container, contentColor = content, shape = MaterialTheme.shapes.small) {
         Text(
-            text = statusLabel(status),
+            text = statusLabelRes(status)?.let { stringResource(it) } ?: statusLabel(status),
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
         )
@@ -176,19 +179,20 @@ private fun EmptyOrders(onBrowse: () -> Unit, onOpenCart: () -> Unit) {
             modifier = Modifier.size(64.dp),
         )
         Text(
-            text = "No orders yet",
+            text = stringResource(R.string.orders_empty),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
         )
         Text(
-            text = "Your Mishran orders will appear here.",
+            text = stringResource(R.string.orders_empty_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Button(onClick = onBrowse, modifier = Modifier.padding(top = 24.dp)) {
-            Text("Browse sweets")
+            Text(stringResource(R.string.cart_empty_cta))
         }
         OutlinedButton(onClick = onOpenCart, modifier = Modifier.padding(top = 8.dp)) {
+            // TODO(i18n): missing key orders.go_to_cart
             Text("Go to cart")
         }
     }

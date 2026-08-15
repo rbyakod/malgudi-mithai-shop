@@ -15,10 +15,14 @@
 // never fire.
 package com.mishran.app
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.LocaleListCompat
+import com.mishran.app.data.repository.SettingsRepositoryEntryPoint
 import com.mishran.app.navigation.MishranAppRoot
 import com.mishran.app.ui.theme.MishranTheme
 import com.mishran.app.util.PaymentResultSignatureHolder
@@ -26,16 +30,38 @@ import com.mishran.app.util.RazorpaySdkLauncher
 import com.razorpay.PaymentData
 import com.razorpay.PaymentResultWithDataListener
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import javax.inject.Inject
+import kotlinx.coroutines.runBlocking
 
-// FragmentActivity (not plain ComponentActivity) because androidx.biometric's
-// BiometricPrompt mounts an internal fragment and requires a FragmentActivity
-// host. FragmentActivity still extends ComponentActivity, so enableEdgeToEdge()
-// + setContent() compose-hosting both keep working.
+// AppCompatActivity (which extends FragmentActivity) for two reasons:
+// androidx.biometric's BiometricPrompt mounts an internal fragment and needs a
+// FragmentActivity host, and the AppCompat per-app locale backport
+// (AppCompatDelegate.setApplicationLocales) only engages under AppCompatActivity
+// on API < 33. ComponentActivity's enableEdgeToEdge() + setContent() keep working.
 @AndroidEntryPoint
-class MainActivity : FragmentActivity(), PaymentResultWithDataListener {
+class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
 
     @Inject lateinit var razorpayLauncher: RazorpaySdkLauncher
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(newBase)
+        // Restore the persisted locale before onCreate so the first frame
+        // already renders in the chosen language (no recreate flicker). Hilt
+        // field injection hasn't run this early, so the repository comes via
+        // the entry point. runBlocking is the accepted trade here: one tiny
+        // DataStore read that must complete before any UI inflates.
+        val tag = runBlocking {
+            EntryPointAccessors.fromApplication<SettingsRepositoryEntryPoint>(applicationContext)
+                .settingsRepository()
+                .localeTag()
+        }
+        if (!tag.isNullOrEmpty() &&
+            AppCompatDelegate.getApplicationLocales() != LocaleListCompat.forLanguageTags(tag)
+        ) {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

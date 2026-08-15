@@ -36,8 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mishran.app.R
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -158,7 +160,7 @@ private fun GateSplash(state: GateState) {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "Mishran",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.semantics { heading() },
@@ -167,6 +169,7 @@ private fun GateSplash(state: GateState) {
             when (state) {
                 GateState.Checking, GateState.Unlocking -> CircularProgressIndicator()
                 GateState.Prompt -> Text(
+                    // TODO(i18n): missing key auth.biometric_waiting
                     text = "Waiting for biometric…",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

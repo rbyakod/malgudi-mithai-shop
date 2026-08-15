@@ -32,9 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mishran.api.models.Address
+import com.mishran.app.R
 import com.mishran.app.ui.checkout.components.AddressPicker
 import com.mishran.app.ui.checkout.components.PaymentMethodPicker
 import com.mishran.app.ui.checkout.components.SlotPicker
@@ -57,6 +59,11 @@ fun CheckoutScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
+    // Snackbar fallbacks resolved up front — the events collector below runs
+    // in a coroutine, where stringResource() is not callable.
+    val cartChangedMessage = stringResource(R.string.checkout_error_cart_changed)
+    val paymentFailedMessage = stringResource(R.string.checkout_error_payment_failed)
+
     // One-shot events: open the sheet, navigate, or surface a failure message.
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
@@ -74,6 +81,7 @@ fun CheckoutScreen(
                             viewModel::onRazorpayOutcome,
                         )
                     } else {
+                        // TODO(i18n): missing key checkout.error_payment_sheet
                         snackbarHostState.showSnackbar("Couldn't open the payment sheet.")
                     }
                 }
@@ -83,12 +91,13 @@ fun CheckoutScreen(
                     event.shelfSlaDays,
                 )
                 is CheckoutEvent.CartChanged -> snackbarHostState.showSnackbar(
-                    event.message ?: "Your cart changed — please review it and try again.",
+                    event.message ?: cartChangedMessage,
                 )
                 is CheckoutEvent.PaymentFailed -> snackbarHostState.showSnackbar(
-                    event.message ?: "Payment failed. If money was deducted it will be refunded within 5-7 days.",
+                    event.message ?: paymentFailedMessage,
                 )
                 is CheckoutEvent.Failed -> snackbarHostState.showSnackbar(
+                    // TODO(i18n): missing key checkout.error_generic
                     event.message ?: "Something went wrong — please try again.",
                 )
             }
@@ -128,7 +137,7 @@ private fun CheckoutContent(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Text(
-            "Checkout",
+            stringResource(R.string.checkout_title),
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.semantics { heading() },
         )
@@ -160,16 +169,17 @@ private fun CheckoutContent(
         ) {
             Text(
                 text = when {
-                    state.selectedAddress == null -> "Select a delivery address"
-                    state.serviceability is ServiceabilityState.Checking -> "Checking delivery…"
-                    state.isFreshTier && state.selectedSlot == null -> "Pick a delivery slot"
-                    else -> "Place order"
+                    state.selectedAddress == null -> stringResource(R.string.checkout_cta_select_address)
+                    state.serviceability is ServiceabilityState.Checking -> stringResource(R.string.checkout_cta_checking)
+                    state.isFreshTier && state.selectedSlot == null -> stringResource(R.string.checkout_cta_pick_slot)
+                    else -> stringResource(R.string.checkout_cta_place_order)
                 },
             )
         }
 
         if (state.serviceability is ServiceabilityState.NotServiceable) {
             Text(
+                // TODO(i18n): missing key checkout.payment_note
                 text = "Payment is collected only after the order is confirmed.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
