@@ -49,7 +49,18 @@ export async function POST(req: NextRequest) {
       throw new ApiError(ErrorCode.OTP_INVALID, 'Too many attempts');
     }
 
-    const ok = await argon2.verify(otp.codeHash, parsed.data.code);
+    // Test login seam (temporary): when OTP_BYPASS_PHONE/OTP_BYPASS_CODE are
+    // set, that single number verifies with the fixed code — the hash compare
+    // is skipped but every other rule (fresh unconsumed request, expiry,
+    // attempt throttle, consume-on-success, customer upsert) is enforced, so
+    // testers exercise the real flow. Unset the env vars to delete the seam.
+    const bypassPhone = process.env.OTP_BYPASS_PHONE;
+    const bypassCode = process.env.OTP_BYPASS_CODE;
+    const bypassMatch = Boolean(
+      bypassPhone && bypassCode && otp.phone === bypassPhone && parsed.data.code === bypassCode,
+    );
+
+    const ok = bypassMatch || (await argon2.verify(otp.codeHash, parsed.data.code));
     // Increment attempts regardless of result to throttle brute force.
     await payload.update({
       collection: 'otpRequests',
