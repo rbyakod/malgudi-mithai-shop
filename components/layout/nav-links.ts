@@ -7,14 +7,22 @@
 
 export type NavLink = {href: string; key: string};
 
-export const NAV_LINKS: readonly NavLink[] = [
+export const SHOP_NAV_LINKS: readonly NavLink[] = [
   {href: "/mithai", key: "nav.mithai"},
   {href: "/build-a-gift", key: "nav.buildAGift"},
   {href: "/qsr", key: "nav.qsr"},
   {href: "/snacks", key: "nav.snacks"},
   {href: "/merch", key: "nav.merch"},
+] as const;
+
+export const STORY_NAV_LINKS: readonly NavLink[] = [
   {href: "/stories", key: "nav.stories"},
   {href: "/stories/farms", key: "nav.farms"},
   {href: "/stories/karigars", key: "nav.karigars"},
   {href: "/stories/journal", key: "nav.journal"},
+] as const;
+
+export const NAV_LINKS: readonly NavLink[] = [
+  ...SHOP_NAV_LINKS,
+  ...STORY_NAV_LINKS,
 ] as const;

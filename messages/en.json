@@ -9,6 +9,8 @@
     "cart": "Cart"
   },
   "Nav": {
+    "shop": "Shop",
+    "learn": "Learn",
     "mithai": "Mithai",
     "buildAGift": "Build a Gift",
     "qsr": "QSR",

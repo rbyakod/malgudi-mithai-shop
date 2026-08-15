@@ -14,3 +14,17 @@ export async function readStorefrontLayoutMode(): Promise<StorefrontLayoutMode> 
     return DEFAULT_STOREFRONT_LAYOUT_MODE;
   }
 }
+
+export async function readThemeSwitcherEnabled(): Promise<boolean> {
+  if (process.env.NEXT_PUBLIC_ENABLE_THEME_SWITCHER === "true") {
+    return true;
+  }
+
+  try {
+    const payload = await getPayload();
+    const global = await payload.findGlobal({slug: "theme-settings"});
+    return (global as {showThemeSwitcher?: unknown}).showThemeSwitcher === true;
+  } catch {
+    return false;
+  }
+}
