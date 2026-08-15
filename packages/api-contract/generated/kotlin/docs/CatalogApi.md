@@ -4,10 +4,112 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
 
 | Method | HTTP request | Description |
 | ------------- | ------------- | ------------- |
+| [**catalogMerchGet**](CatalogApi.md#catalogMerchGet) | **GET** /catalog/merch |  |
+| [**catalogMerchSlugGet**](CatalogApi.md#catalogMerchSlugGet) | **GET** /catalog/merch/{slug} |  |
 | [**catalogProductsGet**](CatalogApi.md#catalogProductsGet) | **GET** /catalog/products |  |
 | [**catalogProductsSlugGet**](CatalogApi.md#catalogProductsSlugGet) | **GET** /catalog/products/{slug} |  |
+| [**catalogQsrGet**](CatalogApi.md#catalogQsrGet) | **GET** /catalog/qsr |  |
+| [**catalogQsrSlugGet**](CatalogApi.md#catalogQsrSlugGet) | **GET** /catalog/qsr/{slug} |  |
 | [**catalogServiceableGet**](CatalogApi.md#catalogServiceableGet) | **GET** /catalog/serviceable |  |
+| [**catalogSnacksGet**](CatalogApi.md#catalogSnacksGet) | **GET** /catalog/snacks |  |
+| [**catalogSnacksSlugGet**](CatalogApi.md#catalogSnacksSlugGet) | **GET** /catalog/snacks/{slug} |  |
 
+
+<a id="catalogMerchGet"></a>
+# **catalogMerchGet**
+> CatalogMerchGet200Response catalogMerchGet(ifNoneMatch, type, page, pageSize)
+
+
+
+Merchandise list. Enquiry-led; availability routes the app to the leads form.
+
+### Example
+```kotlin
+// Import classes:
+//import com.mishran.api.infrastructure.*
+//import com.mishran.api.models.*
+
+val apiInstance = CatalogApi()
+val ifNoneMatch : kotlin.String = ifNoneMatch_example // kotlin.String | 
+val type : kotlin.String = type_example // kotlin.String | 
+val page : kotlin.Int = 56 // kotlin.Int | 
+val pageSize : kotlin.Int = 56 // kotlin.Int | 
+try {
+    val result : CatalogMerchGet200Response = apiInstance.catalogMerchGet(ifNoneMatch, type, page, pageSize)
+    println(result)
+} catch (e: ClientException) {
+    println("4xx response calling CatalogApi#catalogMerchGet")
+    e.printStackTrace()
+} catch (e: ServerException) {
+    println("5xx response calling CatalogApi#catalogMerchGet")
+    e.printStackTrace()
+}
+```
+
+### Parameters
+| **ifNoneMatch** | **kotlin.String**|  | [optional] |
+| **type** | **kotlin.String**|  | [optional] |
+| **page** | **kotlin.Int**|  | [optional] [default to 1] |
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **pageSize** | **kotlin.Int**|  | [optional] [default to 50] |
+
+### Return type
+
+[**CatalogMerchGet200Response**](CatalogMerchGet200Response.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+<a id="catalogMerchSlugGet"></a>
+# **catalogMerchSlugGet**
+> CatalogMerchSlugGet200Response catalogMerchSlugGet(slug)
+
+
+
+### Example
+```kotlin
+// Import classes:
+//import com.mishran.api.infrastructure.*
+//import com.mishran.api.models.*
+
+val apiInstance = CatalogApi()
+val slug : kotlin.String = slug_example // kotlin.String | slugify(name) — server-computed.
+try {
+    val result : CatalogMerchSlugGet200Response = apiInstance.catalogMerchSlugGet(slug)
+    println(result)
+} catch (e: ClientException) {
+    println("4xx response calling CatalogApi#catalogMerchSlugGet")
+    e.printStackTrace()
+} catch (e: ServerException) {
+    println("5xx response calling CatalogApi#catalogMerchSlugGet")
+    e.printStackTrace()
+}
+```
+
+### Parameters
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **slug** | **kotlin.String**| slugify(name) — server-computed. | |
+
+### Return type
+
+[**CatalogMerchSlugGet200Response**](CatalogMerchSlugGet200Response.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
 
 <a id="catalogProductsGet"></a>
 # **catalogProductsGet**
@@ -109,6 +211,102 @@ No authorization required
  - **Content-Type**: Not defined
  - **Accept**: application/json
 
+<a id="catalogQsrGet"></a>
+# **catalogQsrGet**
+> CatalogQsrGet200Response catalogQsrGet(ifNoneMatch, category, page, pageSize)
+
+
+
+QSR counter-menu list. Walk-in vertical — no price, no cart.
+
+### Example
+```kotlin
+// Import classes:
+//import com.mishran.api.infrastructure.*
+//import com.mishran.api.models.*
+
+val apiInstance = CatalogApi()
+val ifNoneMatch : kotlin.String = ifNoneMatch_example // kotlin.String | 
+val category : kotlin.String = category_example // kotlin.String | 
+val page : kotlin.Int = 56 // kotlin.Int | 
+val pageSize : kotlin.Int = 56 // kotlin.Int | 
+try {
+    val result : CatalogQsrGet200Response = apiInstance.catalogQsrGet(ifNoneMatch, category, page, pageSize)
+    println(result)
+} catch (e: ClientException) {
+    println("4xx response calling CatalogApi#catalogQsrGet")
+    e.printStackTrace()
+} catch (e: ServerException) {
+    println("5xx response calling CatalogApi#catalogQsrGet")
+    e.printStackTrace()
+}
+```
+
+### Parameters
+| **ifNoneMatch** | **kotlin.String**|  | [optional] |
+| **category** | **kotlin.String**|  | [optional] |
+| **page** | **kotlin.Int**|  | [optional] [default to 1] |
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **pageSize** | **kotlin.Int**|  | [optional] [default to 50] |
+
+### Return type
+
+[**CatalogQsrGet200Response**](CatalogQsrGet200Response.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+<a id="catalogQsrSlugGet"></a>
+# **catalogQsrSlugGet**
+> CatalogQsrSlugGet200Response catalogQsrSlugGet(slug)
+
+
+
+### Example
+```kotlin
+// Import classes:
+//import com.mishran.api.infrastructure.*
+//import com.mishran.api.models.*
+
+val apiInstance = CatalogApi()
+val slug : kotlin.String = slug_example // kotlin.String | slugify(name) — server-computed; the collection has no slug field.
+try {
+    val result : CatalogQsrSlugGet200Response = apiInstance.catalogQsrSlugGet(slug)
+    println(result)
+} catch (e: ClientException) {
+    println("4xx response calling CatalogApi#catalogQsrSlugGet")
+    e.printStackTrace()
+} catch (e: ServerException) {
+    println("5xx response calling CatalogApi#catalogQsrSlugGet")
+    e.printStackTrace()
+}
+```
+
+### Parameters
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **slug** | **kotlin.String**| slugify(name) — server-computed; the collection has no slug field. | |
+
+### Return type
+
+[**CatalogQsrSlugGet200Response**](CatalogQsrSlugGet200Response.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
 <a id="catalogServiceableGet"></a>
 # **catalogServiceableGet**
 > CatalogServiceableGet200Response catalogServiceableGet(pincode)
@@ -145,6 +343,102 @@ try {
 ### Return type
 
 [**CatalogServiceableGet200Response**](CatalogServiceableGet200Response.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+<a id="catalogSnacksGet"></a>
+# **catalogSnacksGet**
+> CatalogSnacksGet200Response catalogSnacksGet(ifNoneMatch, category, page, pageSize)
+
+
+
+Retail snacks list. MSRP display-only; CTAs route to external retailers.
+
+### Example
+```kotlin
+// Import classes:
+//import com.mishran.api.infrastructure.*
+//import com.mishran.api.models.*
+
+val apiInstance = CatalogApi()
+val ifNoneMatch : kotlin.String = ifNoneMatch_example // kotlin.String | 
+val category : kotlin.String = category_example // kotlin.String | 
+val page : kotlin.Int = 56 // kotlin.Int | 
+val pageSize : kotlin.Int = 56 // kotlin.Int | 
+try {
+    val result : CatalogSnacksGet200Response = apiInstance.catalogSnacksGet(ifNoneMatch, category, page, pageSize)
+    println(result)
+} catch (e: ClientException) {
+    println("4xx response calling CatalogApi#catalogSnacksGet")
+    e.printStackTrace()
+} catch (e: ServerException) {
+    println("5xx response calling CatalogApi#catalogSnacksGet")
+    e.printStackTrace()
+}
+```
+
+### Parameters
+| **ifNoneMatch** | **kotlin.String**|  | [optional] |
+| **category** | **kotlin.String**|  | [optional] |
+| **page** | **kotlin.Int**|  | [optional] [default to 1] |
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **pageSize** | **kotlin.Int**|  | [optional] [default to 50] |
+
+### Return type
+
+[**CatalogSnacksGet200Response**](CatalogSnacksGet200Response.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+<a id="catalogSnacksSlugGet"></a>
+# **catalogSnacksSlugGet**
+> CatalogSnacksSlugGet200Response catalogSnacksSlugGet(slug)
+
+
+
+### Example
+```kotlin
+// Import classes:
+//import com.mishran.api.infrastructure.*
+//import com.mishran.api.models.*
+
+val apiInstance = CatalogApi()
+val slug : kotlin.String = slug_example // kotlin.String | slugify(name) — server-computed.
+try {
+    val result : CatalogSnacksSlugGet200Response = apiInstance.catalogSnacksSlugGet(slug)
+    println(result)
+} catch (e: ClientException) {
+    println("4xx response calling CatalogApi#catalogSnacksSlugGet")
+    e.printStackTrace()
+} catch (e: ServerException) {
+    println("5xx response calling CatalogApi#catalogSnacksSlugGet")
+    e.printStackTrace()
+}
+```
+
+### Parameters
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **slug** | **kotlin.String**| slugify(name) — server-computed. | |
+
+### Return type
+
+[**CatalogSnacksSlugGet200Response**](CatalogSnacksSlugGet200Response.md)
 
 ### Authorization
 

@@ -26,7 +26,6 @@ package com.mishran.api.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -56,10 +55,7 @@ data class CartSnapshotItem (
     @Json(name = "freshnessStatus")
     val freshnessStatus: CartSnapshotItem.FreshnessStatus?
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
     /**
      * 

@@ -26,7 +26,6 @@ package com.mishran.api.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -44,10 +43,7 @@ data class CartItem (
     @Json(name = "quantity")
     val quantity: kotlin.Int
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

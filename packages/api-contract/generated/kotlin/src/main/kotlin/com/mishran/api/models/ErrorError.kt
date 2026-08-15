@@ -26,7 +26,6 @@ package com.mishran.api.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -52,15 +51,12 @@ data class ErrorError (
     @Json(name = "traceId")
     val traceId: kotlin.String? = null
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
     /**
      * 
      *
-     * Values: RATE_LIMITED,OTP_INVALID,OTP_EXPIRED,PINCODE_NOT_SERVICEABLE,CART_CHANGED,STOCK_INSUFFICIENT,PAYMENT_FAILED,PAYMENT_ABANDONED,ORDER_NOT_FOUND,SNAPSHOT_NOT_FOUND,INVALID_STATE_TRANSITION,TOKEN_EXPIRED,TOKEN_REVOKED,CONFLICT,VALIDATION,INTERNAL,OTP_PROVIDER_DOWN
+     * Values: RATE_LIMITED,OTP_INVALID,OTP_EXPIRED,PINCODE_NOT_SERVICEABLE,CART_CHANGED,STOCK_INSUFFICIENT,PAYMENT_FAILED,PAYMENT_ABANDONED,ORDER_NOT_FOUND,SNAPSHOT_NOT_FOUND,PRODUCT_NOT_FOUND,STORY_NOT_FOUND,NOT_FOUND,INVALID_STATE_TRANSITION,TOKEN_EXPIRED,TOKEN_REVOKED,CONFLICT,VALIDATION,INTERNAL,OTP_PROVIDER_DOWN
      */
     @JsonClass(generateAdapter = false)
     enum class Code(val value: kotlin.String) {
@@ -74,6 +70,9 @@ data class ErrorError (
         @Json(name = "PAYMENT_ABANDONED") PAYMENT_ABANDONED("PAYMENT_ABANDONED"),
         @Json(name = "ORDER_NOT_FOUND") ORDER_NOT_FOUND("ORDER_NOT_FOUND"),
         @Json(name = "SNAPSHOT_NOT_FOUND") SNAPSHOT_NOT_FOUND("SNAPSHOT_NOT_FOUND"),
+        @Json(name = "PRODUCT_NOT_FOUND") PRODUCT_NOT_FOUND("PRODUCT_NOT_FOUND"),
+        @Json(name = "STORY_NOT_FOUND") STORY_NOT_FOUND("STORY_NOT_FOUND"),
+        @Json(name = "NOT_FOUND") NOT_FOUND("NOT_FOUND"),
         @Json(name = "INVALID_STATE_TRANSITION") INVALID_STATE_TRANSITION("INVALID_STATE_TRANSITION"),
         @Json(name = "TOKEN_EXPIRED") TOKEN_EXPIRED("TOKEN_EXPIRED"),
         @Json(name = "TOKEN_REVOKED") TOKEN_REVOKED("TOKEN_REVOKED"),

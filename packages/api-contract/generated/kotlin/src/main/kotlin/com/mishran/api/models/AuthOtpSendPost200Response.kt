@@ -27,7 +27,6 @@ import com.mishran.api.models.OtpSendResponse
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -41,10 +40,7 @@ data class AuthOtpSendPost200Response (
     @Json(name = "data")
     val `data`: OtpSendResponse? = null
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

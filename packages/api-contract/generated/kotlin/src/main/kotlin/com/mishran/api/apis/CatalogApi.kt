@@ -27,10 +27,17 @@ import java.io.IOException
 import okhttp3.Call
 import okhttp3.HttpUrl
 
+import com.mishran.api.models.CatalogMerchGet200Response
+import com.mishran.api.models.CatalogMerchSlugGet200Response
 import com.mishran.api.models.CatalogProductsGet200Response
 import com.mishran.api.models.CatalogProductsSlugGet200Response
 import com.mishran.api.models.CatalogProductsSlugGet404Response
+import com.mishran.api.models.CatalogQsrGet200Response
+import com.mishran.api.models.CatalogQsrSlugGet200Response
 import com.mishran.api.models.CatalogServiceableGet200Response
+import com.mishran.api.models.CatalogSnacksGet200Response
+import com.mishran.api.models.CatalogSnacksSlugGet200Response
+import com.mishran.api.models.Error
 
 import com.squareup.moshi.Json
 
@@ -54,6 +61,173 @@ open class CatalogApi(basePath: kotlin.String = defaultBasePath, client: Call.Fa
         val defaultBasePath: String by lazy {
             System.getProperties().getProperty(ApiClient.BASE_URL_KEY, "http://localhost:3000/api/mobile/v1")
         }
+    }
+
+    /**
+     * GET /catalog/merch
+     * 
+     * Merchandise list. Enquiry-led; availability routes the app to the leads form.
+     * @param ifNoneMatch  (optional)
+     * @param type  (optional)
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 50)
+     * @return CatalogMerchGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun catalogMerchGet(ifNoneMatch: kotlin.String? = null, type: kotlin.String? = null, page: kotlin.Int? = 1, pageSize: kotlin.Int? = 50) : CatalogMerchGet200Response {
+        val localVarResponse = catalogMerchGetWithHttpInfo(ifNoneMatch = ifNoneMatch, type = type, page = page, pageSize = pageSize)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CatalogMerchGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * GET /catalog/merch
+     * 
+     * Merchandise list. Enquiry-led; availability routes the app to the leads form.
+     * @param ifNoneMatch  (optional)
+     * @param type  (optional)
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 50)
+     * @return ApiResponse<CatalogMerchGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun catalogMerchGetWithHttpInfo(ifNoneMatch: kotlin.String?, type: kotlin.String?, page: kotlin.Int?, pageSize: kotlin.Int?) : ApiResponse<CatalogMerchGet200Response?> {
+        val localVariableConfig = catalogMerchGetRequestConfig(ifNoneMatch = ifNoneMatch, type = type, page = page, pageSize = pageSize)
+
+        return request<Unit, CatalogMerchGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation catalogMerchGet
+     *
+     * @param ifNoneMatch  (optional)
+     * @param type  (optional)
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 50)
+     * @return RequestConfig
+     */
+    fun catalogMerchGetRequestConfig(ifNoneMatch: kotlin.String?, type: kotlin.String?, page: kotlin.Int?, pageSize: kotlin.Int?) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                if (type != null) {
+                    put("type", listOf(type.toString()))
+                }
+                if (page != null) {
+                    put("page", listOf(page.toString()))
+                }
+                if (pageSize != null) {
+                    put("pageSize", listOf(pageSize.toString()))
+                }
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        ifNoneMatch?.apply { localVariableHeaders["If-None-Match"] = this.toString() }
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/catalog/merch",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * GET /catalog/merch/{slug}
+     * 
+     * 
+     * @param slug slugify(name) — server-computed.
+     * @return CatalogMerchSlugGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun catalogMerchSlugGet(slug: kotlin.String) : CatalogMerchSlugGet200Response {
+        val localVarResponse = catalogMerchSlugGetWithHttpInfo(slug = slug)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CatalogMerchSlugGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * GET /catalog/merch/{slug}
+     * 
+     * 
+     * @param slug slugify(name) — server-computed.
+     * @return ApiResponse<CatalogMerchSlugGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun catalogMerchSlugGetWithHttpInfo(slug: kotlin.String) : ApiResponse<CatalogMerchSlugGet200Response?> {
+        val localVariableConfig = catalogMerchSlugGetRequestConfig(slug = slug)
+
+        return request<Unit, CatalogMerchSlugGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation catalogMerchSlugGet
+     *
+     * @param slug slugify(name) — server-computed.
+     * @return RequestConfig
+     */
+    fun catalogMerchSlugGetRequestConfig(slug: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/catalog/merch/{slug}".replace("{"+"slug"+"}", encodeURIComponent(slug.toString())),
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
     }
 
     /**
@@ -280,6 +454,173 @@ open class CatalogApi(basePath: kotlin.String = defaultBasePath, client: Call.Fa
     }
 
     /**
+     * GET /catalog/qsr
+     * 
+     * QSR counter-menu list. Walk-in vertical — no price, no cart.
+     * @param ifNoneMatch  (optional)
+     * @param category  (optional)
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 50)
+     * @return CatalogQsrGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun catalogQsrGet(ifNoneMatch: kotlin.String? = null, category: kotlin.String? = null, page: kotlin.Int? = 1, pageSize: kotlin.Int? = 50) : CatalogQsrGet200Response {
+        val localVarResponse = catalogQsrGetWithHttpInfo(ifNoneMatch = ifNoneMatch, category = category, page = page, pageSize = pageSize)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CatalogQsrGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * GET /catalog/qsr
+     * 
+     * QSR counter-menu list. Walk-in vertical — no price, no cart.
+     * @param ifNoneMatch  (optional)
+     * @param category  (optional)
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 50)
+     * @return ApiResponse<CatalogQsrGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun catalogQsrGetWithHttpInfo(ifNoneMatch: kotlin.String?, category: kotlin.String?, page: kotlin.Int?, pageSize: kotlin.Int?) : ApiResponse<CatalogQsrGet200Response?> {
+        val localVariableConfig = catalogQsrGetRequestConfig(ifNoneMatch = ifNoneMatch, category = category, page = page, pageSize = pageSize)
+
+        return request<Unit, CatalogQsrGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation catalogQsrGet
+     *
+     * @param ifNoneMatch  (optional)
+     * @param category  (optional)
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 50)
+     * @return RequestConfig
+     */
+    fun catalogQsrGetRequestConfig(ifNoneMatch: kotlin.String?, category: kotlin.String?, page: kotlin.Int?, pageSize: kotlin.Int?) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                if (category != null) {
+                    put("category", listOf(category.toString()))
+                }
+                if (page != null) {
+                    put("page", listOf(page.toString()))
+                }
+                if (pageSize != null) {
+                    put("pageSize", listOf(pageSize.toString()))
+                }
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        ifNoneMatch?.apply { localVariableHeaders["If-None-Match"] = this.toString() }
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/catalog/qsr",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * GET /catalog/qsr/{slug}
+     * 
+     * 
+     * @param slug slugify(name) — server-computed; the collection has no slug field.
+     * @return CatalogQsrSlugGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun catalogQsrSlugGet(slug: kotlin.String) : CatalogQsrSlugGet200Response {
+        val localVarResponse = catalogQsrSlugGetWithHttpInfo(slug = slug)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CatalogQsrSlugGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * GET /catalog/qsr/{slug}
+     * 
+     * 
+     * @param slug slugify(name) — server-computed; the collection has no slug field.
+     * @return ApiResponse<CatalogQsrSlugGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun catalogQsrSlugGetWithHttpInfo(slug: kotlin.String) : ApiResponse<CatalogQsrSlugGet200Response?> {
+        val localVariableConfig = catalogQsrSlugGetRequestConfig(slug = slug)
+
+        return request<Unit, CatalogQsrSlugGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation catalogQsrSlugGet
+     *
+     * @param slug slugify(name) — server-computed; the collection has no slug field.
+     * @return RequestConfig
+     */
+    fun catalogQsrSlugGetRequestConfig(slug: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/catalog/qsr/{slug}".replace("{"+"slug"+"}", encodeURIComponent(slug.toString())),
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
      * GET /catalog/serviceable
      * 
      * Check if a pincode is serviceable for delivery.
@@ -348,6 +689,173 @@ open class CatalogApi(basePath: kotlin.String = defaultBasePath, client: Call.Fa
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/catalog/serviceable",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * GET /catalog/snacks
+     * 
+     * Retail snacks list. MSRP display-only; CTAs route to external retailers.
+     * @param ifNoneMatch  (optional)
+     * @param category  (optional)
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 50)
+     * @return CatalogSnacksGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun catalogSnacksGet(ifNoneMatch: kotlin.String? = null, category: kotlin.String? = null, page: kotlin.Int? = 1, pageSize: kotlin.Int? = 50) : CatalogSnacksGet200Response {
+        val localVarResponse = catalogSnacksGetWithHttpInfo(ifNoneMatch = ifNoneMatch, category = category, page = page, pageSize = pageSize)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CatalogSnacksGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * GET /catalog/snacks
+     * 
+     * Retail snacks list. MSRP display-only; CTAs route to external retailers.
+     * @param ifNoneMatch  (optional)
+     * @param category  (optional)
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 50)
+     * @return ApiResponse<CatalogSnacksGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun catalogSnacksGetWithHttpInfo(ifNoneMatch: kotlin.String?, category: kotlin.String?, page: kotlin.Int?, pageSize: kotlin.Int?) : ApiResponse<CatalogSnacksGet200Response?> {
+        val localVariableConfig = catalogSnacksGetRequestConfig(ifNoneMatch = ifNoneMatch, category = category, page = page, pageSize = pageSize)
+
+        return request<Unit, CatalogSnacksGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation catalogSnacksGet
+     *
+     * @param ifNoneMatch  (optional)
+     * @param category  (optional)
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 50)
+     * @return RequestConfig
+     */
+    fun catalogSnacksGetRequestConfig(ifNoneMatch: kotlin.String?, category: kotlin.String?, page: kotlin.Int?, pageSize: kotlin.Int?) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                if (category != null) {
+                    put("category", listOf(category.toString()))
+                }
+                if (page != null) {
+                    put("page", listOf(page.toString()))
+                }
+                if (pageSize != null) {
+                    put("pageSize", listOf(pageSize.toString()))
+                }
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        ifNoneMatch?.apply { localVariableHeaders["If-None-Match"] = this.toString() }
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/catalog/snacks",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * GET /catalog/snacks/{slug}
+     * 
+     * 
+     * @param slug slugify(name) — server-computed.
+     * @return CatalogSnacksSlugGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun catalogSnacksSlugGet(slug: kotlin.String) : CatalogSnacksSlugGet200Response {
+        val localVarResponse = catalogSnacksSlugGetWithHttpInfo(slug = slug)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CatalogSnacksSlugGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * GET /catalog/snacks/{slug}
+     * 
+     * 
+     * @param slug slugify(name) — server-computed.
+     * @return ApiResponse<CatalogSnacksSlugGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun catalogSnacksSlugGetWithHttpInfo(slug: kotlin.String) : ApiResponse<CatalogSnacksSlugGet200Response?> {
+        val localVariableConfig = catalogSnacksSlugGetRequestConfig(slug = slug)
+
+        return request<Unit, CatalogSnacksSlugGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation catalogSnacksSlugGet
+     *
+     * @param slug slugify(name) — server-computed.
+     * @return RequestConfig
+     */
+    fun catalogSnacksSlugGetRequestConfig(slug: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/catalog/snacks/{slug}".replace("{"+"slug"+"}", encodeURIComponent(slug.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,

@@ -26,7 +26,6 @@ package com.mishran.api.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -40,10 +39,7 @@ data class NotificationsRegisterDevicePost200ResponseData (
     @Json(name = "ok")
     val ok: kotlin.Boolean
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

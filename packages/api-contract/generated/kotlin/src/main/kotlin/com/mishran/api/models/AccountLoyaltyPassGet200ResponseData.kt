@@ -26,7 +26,6 @@ package com.mishran.api.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -48,10 +47,7 @@ data class AccountLoyaltyPassGet200ResponseData (
     @Json(name = "tier")
     val tier: AccountLoyaltyPassGet200ResponseData.Tier
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
     /**
      * 

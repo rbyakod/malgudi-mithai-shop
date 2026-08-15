@@ -27,7 +27,6 @@ import com.mishran.api.models.ServiceableResponse
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -41,10 +40,7 @@ data class CatalogServiceableGet200Response (
     @Json(name = "data")
     val `data`: ServiceableResponse
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

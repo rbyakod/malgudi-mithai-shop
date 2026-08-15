@@ -26,7 +26,6 @@ package com.mishran.api.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * Catalog product. Mirrors collections/MithaiProducts.ts. `images` are resolved URLs (Payload upload refs flattened to strings). 
@@ -36,6 +35,8 @@ import java.io.Serializable
  * @param name 
  * @param family 
  * @param displayPrice Display-only. Commerce deferred to Phase 8.
+ * @param weight Net pack weight as display text, e.g. \"250 g\", \"1 kg\". Drives the pack-size chip.
+ * @param featured Flags the product for the apps' Best sellers rail.
  * @param freshnessStatus 
  * @param dietaryTags 
  * @param allergens 
@@ -66,6 +67,14 @@ data class Product (
     /* Display-only. Commerce deferred to Phase 8. */
     @Json(name = "displayPrice")
     val displayPrice: kotlin.String? = null,
+
+    /* Net pack weight as display text, e.g. \"250 g\", \"1 kg\". Drives the pack-size chip. */
+    @Json(name = "weight")
+    val weight: kotlin.String? = null,
+
+    /* Flags the product for the apps' Best sellers rail. */
+    @Json(name = "featured")
+    val featured: kotlin.Boolean? = null,
 
     @Json(name = "freshnessStatus")
     val freshnessStatus: Product.FreshnessStatus? = null,
@@ -98,10 +107,7 @@ data class Product (
     @Json(name = "updatedAt")
     val updatedAt: kotlin.String? = null
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
     /**
      * 

@@ -27,7 +27,6 @@ import com.mishran.api.models.Order
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -41,10 +40,7 @@ data class RazorpayVerifyResponse (
     @Json(name = "order")
     val order: Order
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

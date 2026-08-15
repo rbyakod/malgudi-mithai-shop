@@ -27,7 +27,6 @@ import com.mishran.api.models.ErrorError
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -41,10 +40,7 @@ data class Error (
     @Json(name = "error")
     val error: ErrorError
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }
