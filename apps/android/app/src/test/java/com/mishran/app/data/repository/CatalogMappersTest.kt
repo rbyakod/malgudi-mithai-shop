@@ -21,12 +21,16 @@ class CatalogMappersTest {
         dietaryTags: List<String>? = listOf("sugar-free", "eggless"),
         allergens: List<String>? = listOf("nuts"),
         images: List<String>? = listOf("https://cdn.mishran.in/kaju-katli.jpg"),
+        weight: String? = "500 g",
+        featured: Boolean? = true,
     ) = Product(
         id = "prod-1",
         slug = "kaju-katli",
         name = "Kaju Katli",
         family = family,
         displayPrice = "₹720 / 500g",
+        weight = weight,
+        featured = featured,
         freshnessStatus = freshnessStatus,
         dietaryTags = dietaryTags,
         allergens = allergens,
@@ -90,5 +94,33 @@ class CatalogMappersTest {
     fun `classic family value round-trips without enum fallback`() {
         val domain = sampleProduct(family = Product.Family.classic).toEntity(staleAt = 0L).toDomain()
         assertEquals(Product.Family.classic, domain.family)
+    }
+
+    // ---- P1 parity: weight (pack chips) + featured (best sellers) ---------
+
+    @Test
+    fun `weight and featured persist onto the cache row`() {
+        val entity = sampleProduct().toEntity(staleAt = 0L)
+        assertEquals("500 g", entity.weight)
+        assertEquals(true, entity.featured)
+    }
+
+    @Test
+    fun `null weight and featured stay null end to end`() {
+        val domain = sampleProduct(weight = null, featured = null)
+            .toEntity(staleAt = 0L)
+            .toDomain()
+        assertNull(domain.weight)
+        assertNull(domain.featured)
+    }
+
+    @Test
+    fun `a pre-parity cache row lacking flags maps to null not false`() {
+        // Rows written before the v5 migration read back with featured = null,
+        // which must NOT become a hard false (the badge checks == true, and
+        // observeFeatured misses nulls by design).
+        val legacy = sampleProduct().toEntity(staleAt = 0L).copy(featured = null, weight = null)
+        assertNull(legacy.toDomain().featured)
+        assertNull(legacy.toDomain().weight)
     }
 }

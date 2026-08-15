@@ -14,6 +14,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -111,5 +112,54 @@ class ProductDetailViewModelTest {
         advanceUntilIdle()
         assertEquals(UiState.Success(product), vm.state.value)
         coVerify(exactly = 2) { repository.getProduct("kaju-katli") }
+    }
+
+    // ---- P1 parity: pack-scoped cart writes + buy now ---------------------
+
+    @Test
+    fun `addToCart forwards the selected pack with quantity`() = runTest(dispatcher) {
+        coEvery { repository.getProduct(any()) } returns product
+        coEvery { cartRepository.add(any(), any(), any()) } returns Unit
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        var added = 0
+        val collector = launch { vm.added.collect { added++ } }
+        advanceUntilIdle()
+
+        val oneKg = PackSize(label = "1 kg", priceLabel = "₹1,440 / 1 kg", grams = 1000)
+        vm.incrementQuantity()
+        vm.addToCart(oneKg)
+        advanceUntilIdle()
+
+        assertEquals(1, added)
+        coVerify(exactly = 1) { cartRepository.add(product, 2, oneKg) }
+        collector.cancel()
+    }
+
+    @Test
+    fun `buyNow writes the pack then emits bought not added`() = runTest(dispatcher) {
+        coEvery { repository.getProduct(any()) } returns product
+        coEvery { cartRepository.add(any(), any(), any()) } returns Unit
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        var bought = 0
+        var added = 0
+        val boughtCollector = launch { vm.bought.collect { bought++ } }
+        val addedCollector = launch { vm.added.collect { added++ } }
+        advanceUntilIdle()
+
+        val fiveHundred = PackSize(label = "500g", priceLabel = "₹720 / 500g", grams = 500)
+        vm.buyNow(fiveHundred)
+        advanceUntilIdle()
+
+        assertEquals(1, bought)
+        assertEquals(0, added) // one-shot flow: the screen navigates on `bought`
+        coVerify(exactly = 1) { cartRepository.add(product, 1, fiveHundred) }
+        boughtCollector.cancel()
+        addedCollector.cancel()
     }
 }

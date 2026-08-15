@@ -1,10 +1,11 @@
-// apps/android/app/src/test/java/com/mishran/app/domain/usecase/PlaceOrderUseCaseTest.kt — Task 10.3.
+// apps/android/app/src/test/java/com/mishran/app/domain/usecase/PlaceOrderUseCaseTest.kt — Task 10.3 / P1 parity.
 //
 // JVM branch tests for the checkout transaction: success, CART_CHANGED (409),
 // create-order failure, verify success/failure, and idempotency-key stability
-// per snapshot. HttpExceptions are built from real retrofit Response.error
-// bodies carrying the backend's {error:{code,message}} envelope. NOTE:
-// source-complete (no SDK).
+// per snapshot — plus (P1 parity) the pack-line collapse that folds
+// "p1:500g"-style cart lines onto base product ids before validate.
+// HttpExceptions are built from real retrofit Response.error bodies carrying
+// the backend's {error:{code,message}} envelope. NOTE: source-complete (no SDK).
 package com.mishran.app.domain.usecase
 
 import com.mishran.api.models.CartItem
@@ -125,6 +126,65 @@ class PlaceOrderUseCaseTest {
         assertEquals(listOf(CartItem(productId = "p1", quantity = 2)), body.captured.items)
         assertEquals("110001", body.captured.pincode)
     }
+
+    // ---- P1 parity: pack-line collapse before validate --------------------
+
+    @Test
+    fun `baseProductId strips the pack suffix and passes bare ids through`() {
+        assertEquals("p1", baseProductId("p1:500g"))
+        assertEquals("p1", baseProductId("p1:1 kg"))
+        assertEquals("p1", baseProductId("p1"))
+        assertEquals("p-42", baseProductId("p-42"))
+    }
+
+    @Test
+    fun `collapsePackLines sums pack lines into their base product`() {
+        val collapsed = collapsePackLines(
+            listOf(
+                packLine("p1", label = null, quantity = 2),
+                packLine("p1", label = "1 kg", quantity = 1),
+                packLine("p2", label = "500g", quantity = 3),
+            ),
+        )
+
+        // Order preserves first appearance; quantities merge per base id.
+        assertEquals(
+            listOf(CartItem(productId = "p1", quantity = 3), CartItem(productId = "p2", quantity = 3)),
+            collapsed,
+        )
+    }
+
+    @Test
+    fun `createPaymentRequest validates the collapsed cart not the pack lines`() = runTest {
+        coEvery { api.validateCart(any()) } returns CartValidatePost200Response(snapshot)
+        coEvery { api.createOrder(any(), any(), any()) } returns createOrderResponse
+
+        // Without the collapse the server would see productId "p1:500g" —
+        // an unknown product — and reject the validate call.
+        useCase.createPaymentRequest(
+            listOf(packLine("p1", label = "500g", quantity = 2)),
+            "110001",
+            "addr-1",
+            slot = null,
+        )
+
+        val body = slot<CartValidateRequest>()
+        coVerify { api.validateCart(capture(body)) }
+        assertEquals(listOf(CartItem(productId = "p1", quantity = 2)), body.captured.items)
+    }
+
+    /** A cart line keyed like the PDP's pack-sized add does (base or derived). */
+    private fun packLine(productId: String, label: String?, quantity: Int): CartItemEntity =
+        CartItemEntity(
+            productId = if (label == null) productId else "$productId:$label",
+            slug = "$productId-slug",
+            name = "Sweet $productId",
+            imageUrl = null,
+            displayPrice = "₹720 / 500g",
+            packLabel = label,
+            quantity = quantity,
+            addedAt = 0L,
+        )
 
     @Test
     fun `409 CART_CHANGED surfaces as CartChanged with the server message`() = runTest {

@@ -228,7 +228,12 @@ fun MishranAppRoot() {
             ) {
                 // Task 9.4/10.1: detail (gallery + stepper); Add-to-cart writes
                 // the Room cart, then pops back to where the user came from.
-                ProductDetailScreen(onAddedToCart = { navController.popBackStack() })
+                // P1 parity: Buy now performs the same write (selected pack +
+                // qty) and goes straight to checkout — the one-shot flow.
+                ProductDetailScreen(
+                    onAddedToCart = { navController.popBackStack() },
+                    onBuyNow = { navController.navigate(Routes.CHECKOUT) },
+                )
             }
             composable(Routes.CART) {
                 // Task 10.1: local cart. Checkout is Task 10.2-10.4.
@@ -324,10 +329,20 @@ fun MishranAppRoot() {
                 )
             }
             composable(Routes.ACCOUNT) {
-                // Signed-in identity + sign-out. Clearing the whole stack back
-                // to AUTH_PHONE keeps Back from resurrecting the dead session.
+                // Signed-in identity + support + sign-out. Clearing the whole
+                // stack back to AUTH_PHONE keeps Back from resurrecting the
+                // dead session. P1 parity: the support row opens WhatsApp via
+                // wa.me/<digits> (the brand number from GET /brand, placeholder
+                // digits until that lands — the ViewModel resolves which).
                 AccountScreen(
                     onOpenAddresses = { navController.navigate(Routes.ADDRESSES) },
+                    onWhatsApp = { digits ->
+                        val chat = android.content.Intent(
+                            android.content.Intent.ACTION_VIEW,
+                            android.net.Uri.parse("https://wa.me/$digits"),
+                        )
+                        context.startActivity(chat)
+                    },
                     onSignedOut = {
                         navController.navigate(Routes.AUTH_PHONE) {
                             popUpTo(navController.graph.findStartDestination().id) {

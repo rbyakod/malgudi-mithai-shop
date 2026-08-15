@@ -6,6 +6,9 @@ import SwiftUI
 
 struct OrderDetailView: View {
     @State private var viewModel: OrderDetailViewModel?
+    /// P1: wa.me support link off GET /brand (fallback number when offline).
+    @State private var helpURL: URL?
+    @Environment(\.openURL) private var openURL
     let orderId: String
 
     var body: some View {
@@ -85,8 +88,28 @@ struct OrderDetailView: View {
                             .font(.mishranBodyLg.weight(.semibold))
                     }
                 }
+
+                Section {
+                    Button {
+                        if let helpURL { openURL(helpURL) }
+                    } label: {
+                        Label("Need help? WhatsApp us", systemImage: "message.circle.fill")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .disabled(helpURL == nil)
+                    .accessibilityLabel("Need help? WhatsApp us")
+                    .accessibilityHint("Opens WhatsApp chat with Mishran support")
+                }
             }
             .refreshable { await viewModel.load() }
+            .task {
+                // P1: resolve the cached/fetched support digits once per
+                // appearance; the row stays disabled until a URL exists.
+                guard helpURL == nil else { return }
+                let repository = BrandRepository(client: MishranAPIClient())
+                let digits = await repository.whatsappDigits()
+                helpURL = BrandRepository.whatsappURL(digits: digits)
+            }
         } else if viewModel.isLoading {
             ProgressView()
         } else {

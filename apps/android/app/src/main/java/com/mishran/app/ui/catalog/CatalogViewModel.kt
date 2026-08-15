@@ -20,6 +20,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -79,6 +80,10 @@ class CatalogViewModel @Inject constructor(
     /** Bumped by refresh(); the first pass is a normal (ETag-conditional) load. */
     private val refreshTrigger = MutableStateFlow(0)
 
+    /** True from refresh() until that pass's post-refresh emission lands. */
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     val uiState: StateFlow<CatalogUiState> = refreshTrigger
         .flatMapLatest { pass ->
             // Flow has no mapIndexed; count emissions inline instead (the
@@ -89,6 +94,7 @@ class CatalogViewModel @Inject constructor(
                     // Emit #0 is the Room cache; anything after is post-refresh.
                     val state = if (index == 0) CatalogUiState.Cached(products)
                     else CatalogUiState.Fresh(products)
+                    if (index >= 1) _isRefreshing.value = false
                     index++
                     state
                 }
@@ -142,6 +148,7 @@ class CatalogViewModel @Inject constructor(
 
     /** Pull-to-refresh / retry: restarts the flow with `force = true`. */
     fun refresh() {
+        _isRefreshing.value = true
         refreshTrigger.value += 1
     }
 

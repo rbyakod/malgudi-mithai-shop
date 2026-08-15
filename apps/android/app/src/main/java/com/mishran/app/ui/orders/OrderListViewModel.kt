@@ -1,10 +1,10 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/orders/OrderListViewModel.kt — Task 11.1.
+// apps/android/app/src/main/java/com/mishran/app/ui/orders/OrderListViewModel.kt — Task 11.1 / P1 parity.
 //
 // Orders tab state: streams the Room cache (offline-first), kicks a network
 // refresh on entry, and exposes a lightweight refresh-failure flag the screen
-// renders as an inline notice (the stale list stays visible). Pull-to-refresh
-// gesture is deferred to the material3 1.3 upgrade; refresh() is already the
-// hook for it.
+// renders as an inline notice (the stale list stays visible). `refreshing`
+// drives the screen's PullToRefreshBox indicator (P1 parity — the gesture
+// this file long pre-announced); refresh() stays the single entry point.
 package com.mishran.app.ui.orders
 
 import androidx.lifecycle.ViewModel

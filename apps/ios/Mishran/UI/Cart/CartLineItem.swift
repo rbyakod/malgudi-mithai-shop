@@ -16,7 +16,9 @@ struct CartLineItem: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(line.name)
+                // Derived pack lines carry their chip in the label ("500g");
+                // base lines render the bare product name as before.
+                Text(line.packLabel.map { "\(line.name) (\($0))" } ?? line.name)
                     .font(.mishranBodyMd.weight(.semibold))
                 Text(rupees(from: line.unitPricePaise))
                     .font(.mishranBodySm)

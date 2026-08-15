@@ -205,6 +205,21 @@ final class CheckoutViewModel {
         DeliverySlot.freshTierOptions()
     }
 
+    /// Pack lines stack as separate rows ("p1:250g", "p1:1 kg") but the
+    /// server CartItem has no variant field — collapse by BASE productId
+    /// (everything before the first ":"), summing quantities. First-seen
+    /// order is preserved so the validate body is deterministic.
+    nonisolated static func collapsedCartItems(_ lines: [CartItemEntity]) -> [CartValidateItemDTO] {
+        var quantities: [String: Int] = [:]
+        var order: [String] = []
+        for line in lines {
+            let base = line.baseProductId
+            if quantities[base] == nil { order.append(base) }
+            quantities[base, default: 0] += line.quantity
+        }
+        return order.map { CartValidateItemDTO(productId: $0, quantity: quantities[$0] ?? 0) }
+    }
+
     // MARK: place order (Task 17.3)
 
     /// validate → create-order → Razorpay sheet → verify.
@@ -228,7 +243,7 @@ final class CheckoutViewModel {
 
             paymentState = .validatingCart
             let validate: CartValidateResponseDTO = try await client.request(Endpoint.cartValidate(
-                items: lines.map { CartValidateItemDTO(productId: $0.productId, quantity: $0.quantity) },
+                items: Self.collapsedCartItems(lines),
                 pincode: address.pincode,
                 slot: selectedSlot
             ))

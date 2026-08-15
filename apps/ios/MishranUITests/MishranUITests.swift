@@ -7,15 +7,18 @@ final class MishranUITests: XCTestCase {
     func testAppBoots() throws {
         let app = XCUIApplication()
         // Argument-domain override: even if a leftover persistent
-        // "signed in once" flag exists, this launch must land on the catalog
-        // (the Task 20.5 sign-in gate must only trip when a session really
-        // died, never on a pristine boot).
+        // "signed in once" flag exists, this launch must land on the home
+        // surface (the Task 20.5 sign-in gate must only trip when a session
+        // really died, never on a pristine boot).
         app.launchArguments = ["-signedInOnce", "false"]
         app.launch()
-        // The catalog is the home surface since the shell wiring landed.
+        // P1: home restructured to the Android shape (hero + best-sellers
+        // rail + family chips); the catalog grid is one push away.
         XCTAssertTrue(
-            app.navigationBars["Sweets"].waitForExistence(timeout: 5),
-            "App should boot to the catalog screen"
+            app.buttons["Browse sweets"].waitForExistence(timeout: 5),
+            "App should boot to the home hero"
         )
+        XCTAssertTrue(app.staticTexts["Best sellers"].exists)
+        XCTAssertTrue(app.buttons["Your orders"].exists)
     }
 }

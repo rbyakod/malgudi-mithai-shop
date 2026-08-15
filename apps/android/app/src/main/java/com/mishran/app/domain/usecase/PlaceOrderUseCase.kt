@@ -9,6 +9,11 @@
 // Idempotency: create-order and verify share one UUID v4 per snapshot, kept
 // in memory for the process lifetime — a retry after a network blip replays
 // the same key and the backend dedupes instead of double-charging.
+//
+// P1 parity (pack sizes): local cart lines may be pack-scoped ("p1:500g").
+// The server contract has no variant field, so createPaymentRequest first
+// collapses the lines by BASE productId (suffix stripped, quantities summed)
+// before POST /cart/validate — see [collapsePackLines].
 package com.mishran.app.domain.usecase
 
 import com.mishran.api.models.CartItem
@@ -80,7 +85,7 @@ class PlaceOrderUseCase @Inject constructor(
         val snapshot = try {
             api.validateCart(
                 CartValidateRequest(
-                    items = items.map { CartItem(productId = it.productId, quantity = it.quantity) },
+                    items = collapsePackLines(items),
                     pincode = pincode,
                     slot = slot,
                 ),
@@ -151,6 +156,28 @@ class PlaceOrderUseCase @Inject constructor(
         const val ERROR_CART_CHANGED = "CART_CHANGED"
     }
 }
+
+/**
+ * Strip the pack suffix off a cart line id ("p1:500g" → "p1"; bare ids pass
+ * through). The server's CartItem carries no variant field, so validate and
+ * create-order only ever see BASE product ids.
+ */
+internal fun baseProductId(lineId: String): String = lineId.substringBefore(CART_ID_SEPARATOR)
+
+/** Separator between a product id and its pack label in a cart line id. */
+private const val CART_ID_SEPARATOR = ':'
+
+/**
+ * Collapse cart lines by BASE productId, summing quantities per product and
+ * preserving first-appearance order. Required because pack-size lines are
+ * local-only ("p1" + "p1:1 kg" both map to product p1): sent as-is, the
+ * server would reject the suffixed ids as unknown products and validate
+ * would fail.
+ */
+internal fun collapsePackLines(items: List<CartItemEntity>): List<CartItem> =
+    items
+        .groupBy(keySelector = { baseProductId(it.productId) }, valueTransform = { it.quantity })
+        .map { (productId, quantities) -> CartItem(productId = productId, quantity = quantities.sum()) }
 
 /**
  * Parsed error envelopes, cached per exception: an OkHttp response body is

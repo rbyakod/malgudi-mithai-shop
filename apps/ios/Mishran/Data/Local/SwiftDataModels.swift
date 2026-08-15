@@ -13,6 +13,11 @@ final class ProductEntity {
     var name: String
     var family: String
     var displayPrice: String?
+    /// Net pack weight as display text ("250 g") — the pack-size fallback
+    /// (P1 parity). Optional add → SwiftData lightweight migration.
+    var weight: String?
+    /// Flags the Best sellers rail (nil = unflagged; P1 parity).
+    var featured: Bool?
     var freshnessStatus: String?
     var dietaryTags: [String]?
     var allergens: [String]?
@@ -29,6 +34,8 @@ final class ProductEntity {
         name: String,
         family: String,
         displayPrice: String? = nil,
+        weight: String? = nil,
+        featured: Bool? = nil,
         freshnessStatus: String? = nil,
         dietaryTags: [String]? = nil,
         allergens: [String]? = nil,
@@ -44,6 +51,8 @@ final class ProductEntity {
         self.name = name
         self.family = family
         self.displayPrice = displayPrice
+        self.weight = weight
+        self.featured = featured
         self.freshnessStatus = freshnessStatus
         self.dietaryTags = dietaryTags
         self.allergens = allergens
@@ -62,6 +71,8 @@ final class ProductEntity {
             name: dto.name,
             family: dto.family.rawValue,
             displayPrice: dto.displayPrice,
+            weight: dto.weight,
+            featured: dto.featured,
             freshnessStatus: dto.freshnessStatus,
             dietaryTags: dto.dietaryTags,
             allergens: dto.allergens,
@@ -124,9 +135,19 @@ final class CartItemEntity {
     /// cascade rules on children with unique attributes (verified by the
     /// 16.1 cascade test); one-item-per-product is enforced by the
     /// repository, not the store.
+    ///
+    /// P1 parity (pack sizes): a DERIVED pack line keys itself as
+    /// `${productId}:${packLabel}` ("p1:500g") so sibling sizes stack as
+    /// separate lines; the base pack keeps the bare productId so pre-pack
+    /// carts keep merging. The server CartItem has no variant field — the
+    /// place-order path collapses lines by BASE productId (everything
+    /// before the first ":") before POST cart/validate.
     var productId: String
     var name: String
     var slug: String
+    /// Selected pack chip ("500g"), when the line was added from a derived
+    /// one — display metadata only (nil = base pack).
+    var packLabel: String?
     /// Paise — integer money, never floats (contract parity).
     var unitPricePaise: Int
     var quantity: Int
@@ -137,6 +158,7 @@ final class CartItemEntity {
         productId: String,
         name: String,
         slug: String,
+        packLabel: String? = nil,
         unitPricePaise: Int,
         quantity: Int,
         addedAt: Date = Date(),
@@ -145,10 +167,18 @@ final class CartItemEntity {
         self.productId = productId
         self.name = name
         self.slug = slug
+        self.packLabel = packLabel
         self.unitPricePaise = unitPricePaise
         self.quantity = quantity
         self.addedAt = addedAt
         self.cart = cart
+    }
+
+    /// The catalog id a line collapses to at place-order time — derived pack
+    /// ids carry a ":label" suffix, base ids never do.
+    var baseProductId: String {
+        guard let separator = productId.firstIndex(of: ":") else { return productId }
+        return String(productId[..<separator])
     }
 }
 
