@@ -114,8 +114,7 @@ fun OtpScreen(
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            // TODO(i18n): missing key auth.otp_subtitle_plain (auth.otp_subtitle needs %%1$s phone)
-            text = "We texted a 6-digit code to your phone.",
+            text = stringResource(R.string.auth_otp_subtitle_plain),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,

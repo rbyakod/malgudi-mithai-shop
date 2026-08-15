@@ -112,8 +112,7 @@ fun AddressesScreen(
                 if (state.addresses.isEmpty()) {
                     item {
                         Text(
-                            // TODO(i18n): missing key account.addresses_empty
-                            text = "No saved addresses yet — add one for faster checkout.",
+                            text = stringResource(R.string.account_addresses_empty),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -142,16 +141,14 @@ fun AddressesScreen(
     addressPendingDelete?.let { address ->
         AlertDialog(
             onDismissRequest = { addressPendingDelete = null },
-            // TODO(i18n): missing key account.address_delete_title
-            title = { Text("Delete this address?") },
+            title = { Text(stringResource(R.string.account_address_delete_title)) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         viewModel.deleteAddress(address)
                         addressPendingDelete = null
                     },
-                // TODO(i18n): missing key common.delete
-                ) { Text("Delete") }
+                ) { Text(stringResource(R.string.common_delete)) }
             },
             dismissButton = {
                 TextButton(onClick = { addressPendingDelete = null }) { Text(stringResource(R.string.common_cancel)) }
@@ -185,8 +182,7 @@ private fun AddressRow(
                     }
                     if (isDefault) {
                         Text(
-                            // TODO(i18n): missing key account.address_default
-                            text = "Default",
+                            text = stringResource(R.string.account_address_default),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
                         )
@@ -235,8 +231,7 @@ private fun AddAddressDialog(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                // TODO(i18n): missing key account.address_new
-                Text("New address", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.account_address_new), style = MaterialTheme.typography.titleLarge)
 
                 OutlinedTextField(
                     value = line1,
@@ -289,8 +284,7 @@ private fun AddAddressDialog(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = isDefault, onCheckedChange = { isDefault = it })
-                    // TODO(i18n): missing key account.address_set_default
-                    Text("Set as default", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.account_address_set_default), style = MaterialTheme.typography.bodyMedium)
                 }
 
                 Row(
@@ -315,8 +309,7 @@ private fun AddAddressDialog(
                         },
                         enabled = formValid,
                     ) {
-                        // TODO(i18n): missing key common.save
-                        Text("Save")
+                        Text(stringResource(R.string.common_save))
                     }
                 }
             }

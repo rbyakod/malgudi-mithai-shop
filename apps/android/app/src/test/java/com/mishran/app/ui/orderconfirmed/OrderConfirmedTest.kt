@@ -30,14 +30,14 @@ class OrderConfirmedTest {
     fun `eta line renders a picked slot and is null without one`() {
         assertEquals(
             "Arriving Thu 14 Aug, 10:00–14:00",
-            etaLine("Thu 14 Aug, 10:00–14:00"),
+            etaLine("Thu 14 Aug, 10:00–14:00", "Arriving %1\$s"),
         )
-        assertNull(etaLine(null))
+        assertNull(etaLine(null, "Arriving %1\$s"))
     }
 
     @Test
     fun `fallback eta reflects the shelf SLA`() {
-        assertEquals("Arriving in 3–4 days", shelfEtaLine(3))
-        assertEquals("Arriving in 1–2 days", shelfEtaLine(1))
+        assertEquals("Arriving in 3–4 days", shelfEtaLine(3, "Arriving in %1\$s–%2\$s days"))
+        assertEquals("Arriving in 1–2 days", shelfEtaLine(1, "Arriving in %1\$s–%2\$s days"))
     }
 }

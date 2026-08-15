@@ -94,8 +94,7 @@ fun OrderListScreen(
                     if (state.refreshFailed) {
                         item {
                             Text(
-                                // TODO(i18n): missing key orders.refresh_failed
-                                text = "Couldn't refresh — showing saved orders.",
+                                text = stringResource(R.string.orders_refresh_failed),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -192,8 +191,7 @@ private fun EmptyOrders(onBrowse: () -> Unit, onOpenCart: () -> Unit) {
             Text(stringResource(R.string.cart_empty_cta))
         }
         OutlinedButton(onClick = onOpenCart, modifier = Modifier.padding(top = 8.dp)) {
-            // TODO(i18n): missing key orders.go_to_cart
-            Text("Go to cart")
+            Text(stringResource(R.string.orders_go_to_cart))
         }
     }
 }

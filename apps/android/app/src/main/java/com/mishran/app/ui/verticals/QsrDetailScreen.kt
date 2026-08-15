@@ -146,12 +146,10 @@ private fun QsrDetailContent(item: QsrItem, modifier: Modifier = Modifier) {
                     }
                 }
                 item.spiceLevel?.let { level ->
-                    // TODO(i18n): missing key vertical.qsr_spice_level (with %%1$d)
-                        InfoChip(text = "Spice · $level")
+                        InfoChip(text = stringResource(R.string.vertical_qsr_spice_level, level))
                 }
             }
-            // TODO(i18n): missing key vertical.description
-            DetailSection(label = "Description", body = item.description)
+            DetailSection(label = stringResource(R.string.vertical_description), body = item.description)
 
             if (!item.availableAtStores.isNullOrEmpty()) {
                 Text(

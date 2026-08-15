@@ -114,18 +114,17 @@ private fun ServiceabilityReadout(serviceability: ServiceabilityState) {
                 onClick = {},
                 label = {
                     Text(
-                        // TODO(i18n): missing keys checkout.tier_fresh / checkout.tier_shelf
                         when (serviceability.tier) {
-                            "fresh" -> "Fresh — same-day network"
-                            else -> "Shelf — shipped"
+                            "fresh" -> stringResource(R.string.checkout_tier_fresh)
+                            else -> stringResource(R.string.checkout_tier_shelf)
                         },
                     )
                 },
             )
             serviceability.slaDays?.let { days ->
                 Text(
-                    // TODO(i18n): missing key checkout.arrives_days (with %1$d)
-                    text = if (days <= 1) "Arrives in ~1 day" else "Arrives in ~$days days",
+                    text = if (days <= 1) stringResource(R.string.checkout_arrives_day)
+                    else stringResource(R.string.checkout_arrives_days, days),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -133,11 +132,9 @@ private fun ServiceabilityReadout(serviceability: ServiceabilityState) {
         }
         is ServiceabilityState.NotServiceable -> Text(
             text = when (serviceability.reason) {
-                // TODO(i18n): missing keys checkout.error_invalid_pincode /
-                // checkout.error_serviceability_check / checkout.error_not_serviceable
-                "invalid_pincode" -> "That pincode looks invalid."
-                null -> "Couldn't check this pincode — check your connection and retry."
-                else -> "We don't deliver to this pincode yet."
+                "invalid_pincode" -> stringResource(R.string.checkout_error_invalid_pincode)
+                null -> stringResource(R.string.checkout_error_serviceability_check)
+                else -> stringResource(R.string.checkout_error_not_serviceable)
             },
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,

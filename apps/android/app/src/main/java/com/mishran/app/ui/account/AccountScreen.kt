@@ -82,8 +82,7 @@ fun AccountScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    // TODO(i18n): missing key account.signed_in_guest
-                    text = phone ?: "Mishran customer",
+                    text = phone ?: stringResource(R.string.account_signed_in_guest),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
@@ -104,8 +103,7 @@ fun AccountScreen(
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
-                        // TODO(i18n): missing key account.addresses_hint
-                        text = "Saved addresses for faster checkout",
+                        text = stringResource(R.string.account_addresses_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -164,8 +162,7 @@ fun AccountScreen(
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
-                        // TODO(i18n): missing key stories.subtitle
-                        text = "Stories from the kitchen and the karigars",
+                        text = stringResource(R.string.stories_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -193,8 +190,7 @@ fun AccountScreen(
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
-                        // TODO(i18n): missing key enquiry.subtitle
-                        text = "Weddings, corporate gifting and wholesale",
+                        text = stringResource(R.string.enquiry_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

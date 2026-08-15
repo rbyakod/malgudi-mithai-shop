@@ -40,8 +40,7 @@ fun SlotPicker(
             modifier = Modifier.semantics { heading() },
         )
         Text(
-            // TODO(i18n): missing key checkout.slot_hint
-            text = "You're in our same-day fresh network — pick a slot.",
+            text = stringResource(R.string.checkout_slot_hint),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

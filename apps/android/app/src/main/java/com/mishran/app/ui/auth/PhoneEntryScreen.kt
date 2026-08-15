@@ -80,8 +80,7 @@ fun PhoneEntryScreen(
         OutlinedTextField(
             value = phone,
             onValueChange = { viewModel.phone.value = it },
-            // TODO(i18n): missing key auth.phone_field
-            label = { Text("Phone number") },
+            label = { Text(stringResource(R.string.auth_phone_label)) },
             placeholder = { Text(stringResource(R.string.auth_phone_placeholder)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
