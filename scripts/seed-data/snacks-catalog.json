@@ -1,308 +1,488 @@
 {
-  "generated": "scraped from bikanervala.com + haldirams.com (test seed data)",
-  "products": [
-    {
-      "name": "Bikano Natkhat Nimbu",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Experience the lively taste of Bikano Natkhat Nimbu , a traditional Indian snack bursting with tangy lemon flavor and a hint of spice. Made with premium ingredients, this crispy and zesty namkeen is perfect for tea-time, festive gatherings, family celebrations, or gifting.",
-      "msrp": "₹60",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Natkhat_Nimbu_200g.jpg?v=1745393249"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/natkhat-nimbu"
-    },
-    {
-      "name": "Bikano Aloo Lachcha",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Savour the authentic taste of Bikano Aloo Lachcha , a traditional Indian snack made from premium potato and aromatic spices. Deep-fried to perfection, these crunchy, spiral-shaped treats are perfect for tea-time, festive occasions, family gatherings, or travel snacking. Enjoy the rich flavour and satisfying crunch in every bite, reminiscent of homemade namkeen.",
-      "msrp": "₹50",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Aloo_Lachha_1.png?v=1779256917"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/aloo-lachcha-150gm"
-    },
-    {
-      "name": "Khatta Meetha",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Enjoy the timeless taste of Khatta Meetha, a popular Indian namkeen that combines sweet, tangy, and savory flavors in one irresistible snack. Crafted with a delightful blend of crunchy poha, roasted peanuts, crispy sev, lentils, and aromatic spices, this traditional mixture offers a satisfying crunch and a burst of flavor in every handful. Bikano’s Khatta Meetha | Sweet & Tangy Indian Snack Mix | Perfect for Snacking, Sharing & Celebrating Every Moment",
-      "msrp": "₹114",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Khatta_Meetha_c5960cea-073a-4778-ae33-4b33b12ad829.jpg?v=1781159284",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Khatta_Meetha_Namkeen.png?v=1778485071"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/khatta-meetha"
-    },
-    {
-      "name": "Bhelpuri (200 g, Pack of 4)",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Enjoy the classic flavours of Bikano Bhelpuri , a traditional Indian snack combining crisp puffed rice, crunchy sev, peanuts, and tangy spices. Ready-to-eat and full of vibrant flavours, it’s perfect for tea-time, family gatherings, parties, festive celebrations, or a quick on-the-go snack. Every bite delivers a satisfying crunch with authentic taste, making it a favourite for all ages.",
-      "msrp": "₹220",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Bhelpuri.jpg?v=1765002453",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/BhelpuriMix200g-2.jpg?v=1696313796"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bhelpuri-pack-of-4"
-    },
-    {
-      "name": "Bikano Lajawab Mixture",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Indulge in the bold flavours of Bikano Lajawab Mixture , a traditional Indian namkeen made with a medley of premium ingredients and aromatic spices. Its perfect blend of tanginess, crispiness, and spice makes it a delightful snack for all occasions.",
-      "msrp": "₹67",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Bikano_Lajawab_Mixture.png?v=1764845965",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/5_a7843515-6f10-4c50-ad85-ca60b2d27dc8.jpg?v=1696311891"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/lajawab-mixture"
-    },
-    {
-      "name": "Bikaneri Bhujia",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Bring home the authentic taste of Rajasthan with Bikanervala's Bikaneri Bhujia, a timeless Indian snack loved for its crispy texture and flavorful spice blend. Made from premium-quality gram flour and carefully selected spices, this traditional namkeen offers the perfect balance of crunch and taste in every bite. Bikano Bhujia – Authentic Spicy Snack from Bikaner | Crispy & Flavorful | Traditional Indian Namkeen | Perfect Tea-Time Snack | Premium Quality by Bikano",
-      "msrp": "₹120",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Bikano_Bikaneri_Bhujia.jpg?v=1771494007",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/2_71cbd07f-0fcd-42af-900d-07730172636b.jpg?v=1771494007"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikaneri-bhujia"
-    },
-    {
-      "name": "Bikano Moong Dal (200 gms, Pack of 5)",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Savour the authentic taste of Bikano Moong Dal , crafted from high-quality moong dal and lightly spiced for a perfect crunch. These golden, crispy bites are ideal for tea-time, sharing with family and friends, festive celebrations, or quick snacking anytime. Each bite delivers a satisfying, crunchy texture with a flavourful punch, making it a favourite among snack lovers.",
-      "msrp": "₹299",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Moong_Dal_1.jpg?v=1781159284"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/moong-dal-200-gms-pack-of-5"
-    },
-    {
-      "name": "Aloo Bhujia",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Bikano Aloo Bhujia | Crunchy and Spicy Aloo Bhujia Snack | Perfect Tea-Time Namkeen",
-      "msrp": "₹114",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Aloo_Bhujia.jpg?v=1764845880",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/5_854a2af0-0bc8-4f9f-9560-9a57b52ae695.png?v=1764845843"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/aloo-bhujia"
-    },
-    {
-      "name": "Navratan Mixture",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Indulge in the authentic taste of Bikano Navratan Mixture , a classic Indian namkeen combining a variety of crunchy ingredients, spices, and flavors. This premium mixture offers a perfect blend of tanginess, mild spiciness, and crisp texture, making it ideal for tea-time, family gatherings, parties, and festive celebrations.",
-      "msrp": "₹114",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Navratan_Mixture.jpg?v=1764845749",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/5_0be40936-efa5-4a24-998b-d2c7bf1562c4.jpg?v=1764845798"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/navratan-mixture"
-    },
-    {
-      "name": "Bikano Dal Moth",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Experience the authentic taste of Bikano Dal Moth , a traditional Indian namkeen made with high-quality dal and aromatic spices. Crispy, tangy, and flavourful, this snack delivers the perfect crunch in every bite.",
-      "msrp": "₹60",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/dal_moth_a79ccd1a-baa1-4009-bfdb-ed72e3fc265f.jpg?v=1781159284",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/2_a092299f-59c3-4bb8-8434-86cdb094bba1.jpg?v=1696316056"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/dal-moth"
-    },
-    {
-      "name": "Paneer bhujia",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Experience the perfect blend of crunch and flavour with our Paneer Bhujia , made from premium paneer and aromatic spices. This light and crispy namkeen delivers an authentic Indian taste in every bite. Ideal for tea-time, travel, snacking, and gifting. Packed for freshness to ensure long-lasting crunch and taste.",
-      "msrp": "₹67",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Paneer_bhujia_1.png?v=1778647934"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/paneer-bhujia"
-    },
-    {
-      "name": "Bikano Tasty",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Indulge in Bikano Tasty , a classic Indian snack crafted with premium ingredients and aromatic spices. Its crisp texture and rich flavour make it a perfect companion for tea-time, family gatherings, parties, or festive celebrations.",
-      "msrp": "₹120",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Tasty.jpg?v=1764845691",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Tasty_d1282a48-438c-4fa3-8a80-f39d85274770.jpg?v=1781157408"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/tasty"
-    },
-    {
-      "name": "Bikano Khatta Meetha",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Experience the irresistible taste of Bikano Khatta Meetha, a classic Indian namkeen crafted for those who love a balance of sweet, tangy, and mildly spicy flavours. Made with a delicious mix of rice flakes, peanuts, lentils, green peas, and crispy gram flour sev, this crunchy snack delivers a burst of flavour in every bite. Bikano’s Khatta Meetha | Sweet & Tangy Indian Snack Mix | Perfect for Snacking, Sharing & Celebrating Every Moment",
-      "msrp": "₹235",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Khatta_Meetha.jpg?v=1764845598",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/7_f912bf88-4517-4973-9058-82decddd9425.png?v=1746622708"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikano-khatta-meetha"
-    },
-    {
-      "name": "Khatta Meetha (400 gm pack of 3)",
-      "category": "namkeen",
-      "weight": "1 pack",
-      "description": "Enjoy the authentic taste of Bikano Khatta Meetha , a traditional Indian snack that masterfully balances sweet, tangy, and salty flavours. Made from premium ingredients and lightly spiced for perfect crunch, it’s perfect for tea-time, sharing with family and friends, festive celebrations, or travel snacking. Every bite delivers a delightful combination of flavours, making it an irresistible treat for all.",
-      "msrp": "₹342",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/KhattaMeetha400g-1.jpg?v=1696313667",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/KhattaMeetha400g-2.jpg?v=1696313677"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/khatta-meetha-400-gm-pack-of-3"
-    },
-    {
-      "name": "Chocochip Cookies 150g (Tin)",
-      "category": "cookie",
-      "weight": "1 pack",
-      "description": "Chocochip Cookies | Chocolate Chip Treat | Crunchy Cookies | Bikanervala Sweets | Premium Snack Gift",
-      "msrp": "₹160",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/chocochipsnew.png?v=1749450945"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/chocochip-cookies-150g"
-    },
-    {
-      "name": "Multigrain Cookies 150g (Tin)",
-      "category": "cookie",
-      "weight": "1 pack",
-      "description": "Delight in the goodness of wholesome grains with our Multigrain Cookies. Packed with nutrition and a satisfying crunch, they’re the perfect guilt-free treat anytime.",
-      "msrp": "₹140",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Multigraincookiesnew.png?v=1749450007"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/multigrain-cookies-150g"
-    },
-    {
-      "name": "Premium Milk Kaju Cookies 400g",
-      "category": "cookie",
-      "weight": "1 pack",
-      "description": "Bikano Premium Milk Kaju Cookies – Rich, Buttery Cookies Infused with the Creaminess of Milk and Crunch of Cashew Nuts | A Deliciously Balanced Sweet Snack with a Nutty Twist | Ideal for Tea-Time, Gifting, or Anytime Cravings | Made with Premium Ingredients for a Smooth, Crunchy Bite",
-      "msrp": "₹190",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-premium-milk-kaju-cookies-cashew-snack.png?v=1745488060"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikano-premium-milk-kaju-cookies"
-    },
-    {
-      "name": "Premium Namkeen Kaju Cookies 400g",
-      "category": "cookie",
-      "weight": "1 pack",
-      "description": "Bikano Namkeen Kaju Cookies – Crunchy, Savory Cookies with the Rich Taste of Cashew Nuts | Lightly Salted for a Balanced Flavor and Perfect Tea-Time Pairing | A Unique Twist on Traditional Cookies with a Nutty, Salty Bite | Made Using Premium Ingredients for Freshness and Taste in Every Crunch",
-      "msrp": "₹162",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-namkeen-kaju-cookies-savory-snack.jpg?v=1745488769"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikano-namkeen-kaju-cashew-cookie"
-    },
-    {
-      "name": "Premium Kaju Pista Cookies 400g",
-      "category": "cookie",
-      "weight": "1 pack",
-      "description": "Bikano Premium Cookies Kaju Pista – Delightfully Crunchy and Rich Cookies Made with Cashews and Pistachios | A Perfect Blend of Nutty Flavors and Textures | Ideal for Tea-Time, Gifting, or Anytime Indulgence | Premium Quality Ingredients for a Truly Exquisite Taste",
-      "msrp": "₹200",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-premium-cookies-kaju-pista-nutty-delight.jpg?v=1745478336",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Kaju_Pista_Cookies_400g-2.jpg?v=1733290554"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/baked-del-kaju-pista-400g"
-    },
-    {
-      "name": "Premium Coconut Cookies 400g",
-      "category": "cookie",
-      "weight": "1 pack",
-      "description": "Bikano Premium Coconut Cookies – Crispy, Golden-Baked Cookies Infused with Real Coconut Flakes | Lightly Sweet with a Rich Coconut Aroma and Crunchy Texture | A Perfect Snack for Tea-Time, Gifting, or Midday Munching | Made with Quality Ingredients for a Tropical Treat",
-      "msrp": "₹162",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-premium-coconut-cookies-crispy-tea-snack.png?v=1745480836"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikano-premium-coconut-cookies"
-    },
-    {
-      "name": "Dried Red Cherry",
-      "category": "dry-fruit",
-      "weight": "1 pack",
-      "description": "Dried Red Cherry | Sweet & Tart Snack | Healthy Fruit Treat | Bikanervala Dry Fruits | Natural Cherry Bites",
-      "msrp": "₹1,076",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/cherry.png?v=1749474883",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Packaging_Might_be_Different_e98fbfde-903c-46a3-a35b-2f3c4920709c.png?v=1749195086"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/dried-red-cherry"
-    },
-    {
-      "name": "Dried Strawberry",
-      "category": "dry-fruit",
-      "weight": "1 pack",
-      "description": "Dried Strawberry | Sweet Fruit Snack | Healthy Munch | Bikanervala Dry Fruits | Chewy Natural Berries",
-      "msrp": "₹1,470",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/strawberrydried.png?v=1749474964",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Packaging_Might_be_Different_e98fbfde-903c-46a3-a35b-2f3c4920709c.png?v=1749195086"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/dried-strawberry"
-    },
-    {
-      "name": "Dried Kiwi",
-      "category": "dry-fruit",
-      "weight": "1 pack",
-      "description": "Dried Kiwi | Tangy Fruit Snack | Healthy Munch | Bikanervala Dry Fruits | Natural Chewy Treat",
-      "msrp": "₹1,103",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/kiwi_81bcc2fa-e977-46ab-9ba4-9c3aee81e137.png?v=1749474843",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Packaging_Might_be_Different_e98fbfde-903c-46a3-a35b-2f3c4920709c.png?v=1749195086"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/dried-kiwi"
-    },
-    {
-      "name": "Dried Mango",
-      "category": "dry-fruit",
-      "weight": "1 pack",
-      "description": "Dried Mango | Tangy Mango Slices | Tropical Snack | Bikanervala Dry Fruits | Healthy Fruit Treat",
-      "msrp": "₹1,300",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/mangodried.png?v=1749475045",
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Packaging_Might_be_Different_e98fbfde-903c-46a3-a35b-2f3c4920709c.png?v=1749195086"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/dried-mango"
-    }
-  ]
+ "generated": "scraped from bikanervala.com + haldirams.com (test seed data)",
+ "products": [
+  {
+   "name": "All In One",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "All In One namkeen by Haldiram's in a handy 200g, 400g and 1 Kg pack – a crunchy mix of sev, nuts and savoury bites. The perfect tea-time snack. Buy online today.",
+   "msrp": "₹60",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/blu08261.jpg?v=1774606287"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/all-in-one"
+  },
+  {
+   "name": "All In One (Standy)",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "All In One by Haldiram's – a rich, crunchy mixed namkeen in a 200g pack. The perfect tea-time snack. Order this classic mixture online now.",
+   "msrp": "₹175",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_db1fc7a5-a755-446c-afe7-b0fbf929b421.avif?v=1782741746"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/all-in-one-standy"
+  },
+  {
+   "name": "Aloo Bhujia",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Bikano Aloo Bhujia | Crunchy and Spicy Aloo Bhujia Snack | Perfect Tea-Time Namkeen",
+   "msrp": "₹114",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Aloo_Bhujia.jpg?v=1764845880",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/5_854a2af0-0bc8-4f9f-9560-9a57b52ae695.png?v=1764845843"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/aloo-bhujia"
+  },
+  {
+   "name": "Aloo Bhujia (Standy)",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Aloo Bhujia by Haldiram's – thin, crispy spiced potato bhujia in a 200g pack. A timeless snack. Order this classic namkeen online today.",
+   "msrp": "₹175",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_ccfd128a-60df-46ee-89c7-c9117e3982d5.avif?v=1782741810"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/aloo-bhujia-standy"
+  },
+  {
+   "name": "Bhel Puri",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Bhel Puri by Haldiram's – tangy, crunchy bhel puri chaat in a 270g pack. Authentic Mumbai street food. Order this snack online now.",
+   "msrp": "₹70",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_77389362-c9ff-4207-8a81-6a529f72ecaa.avif?v=1782794439"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/bhel-puri"
+  },
+  {
+   "name": "Bhelpuri (200 g, Pack of 4)",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Enjoy the classic flavours of Bikano Bhelpuri , a traditional Indian snack combining crisp puffed rice, crunchy sev, peanuts, and tangy spices. Ready-to-eat and full of vibrant flavours, it’s perfect for tea-time, family gatherings, parties, festive celebrations, or a quick on-the-go snack. Every bite delivers a satisfying crunch with authentic taste, making it a favourite for all ages.",
+   "msrp": "₹220",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Bhelpuri.jpg?v=1765002453",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/BhelpuriMix200g-2.jpg?v=1696313796"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bhelpuri-pack-of-4"
+  },
+  {
+   "name": "Bhujia Sev",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Crafted from tepary beans (Moth Dal), gram flour (Besan), and a medley of exotic Indian spices, Haldiram's Bhujia Sev offers the perfect blend of crispiness laced with bold flavours. Top off your favourite meal or indulge in a handful straight from the pack—let Bhujia Sev spice up your day!",
+   "msrp": "₹60",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_7.avif?v=1783503884"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/bhujia-sev"
+  },
+  {
+   "name": "Bhujia Sev Jar",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Bhujia Sev Jar by Haldiram's – iconic crispy bhujia in a fresh-keeping 600g jar. A timeless snack. Order this classic namkeen online today.",
+   "msrp": "₹215",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_d4f24c5c-95ec-41d6-9ab6-3fc59a36c70c.avif?v=1782742865"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/bhujia-sev-jar"
+  },
+  {
+   "name": "Bhujia Sev (Standy)",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Infused with a zesty kick of red chilli and Garam Masala, Haldiram's Bhujia Sev now comes in a convenient Standy pack. Elevate your tea time or add a tantalising crunch to bland, regular dishes with this Namkeen snack!",
+   "msrp": "₹175",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/blu07852_1.jpg?v=1774612182"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/bhujia-sev-200-g"
+  },
+  {
+   "name": "Bikaneri Bhujia",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Bring home the authentic taste of Rajasthan with Bikanervala's Bikaneri Bhujia, a timeless Indian snack loved for its crispy texture and flavorful spice blend. Made from premium-quality gram flour and carefully selected spices, this traditional namkeen offers the perfect balance of crunch and taste in every bite. Bikano Bhujia – Authentic Spicy Snack from Bikaner | Crispy & Flavorful | Traditional Indian Namkeen | Perfect Tea-Time Snack | Premium Quality by Bikano",
+   "msrp": "₹120",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Bikano_Bikaneri_Bhujia.jpg?v=1771494007",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/2_71cbd07f-0fcd-42af-900d-07730172636b.jpg?v=1771494007"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikaneri-bhujia"
+  },
+  {
+   "name": "Bikano Aloo Lachcha",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Savour the authentic taste of Bikano Aloo Lachcha , a traditional Indian snack made from premium potato and aromatic spices. Deep-fried to perfection, these crunchy, spiral-shaped treats are perfect for tea-time, festive occasions, family gatherings, or travel snacking. Enjoy the rich flavour and satisfying crunch in every bite, reminiscent of homemade namkeen.",
+   "msrp": "₹50",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Aloo_Lachha_1.png?v=1779256917"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/aloo-lachcha-150gm"
+  },
+  {
+   "name": "Bikano Dal Moth",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Experience the authentic taste of Bikano Dal Moth , a traditional Indian namkeen made with high-quality dal and aromatic spices. Crispy, tangy, and flavourful, this snack delivers the perfect crunch in every bite.",
+   "msrp": "₹60",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/dal_moth_a79ccd1a-baa1-4009-bfdb-ed72e3fc265f.jpg?v=1781159284",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/2_a092299f-59c3-4bb8-8434-86cdb094bba1.jpg?v=1696316056"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/dal-moth"
+  },
+  {
+   "name": "Bikano Khatta Meetha",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Experience the irresistible taste of Bikano Khatta Meetha, a classic Indian namkeen crafted for those who love a balance of sweet, tangy, and mildly spicy flavours. Made with a delicious mix of rice flakes, peanuts, lentils, green peas, and crispy gram flour sev, this crunchy snack delivers a burst of flavour in every bite. Bikano’s Khatta Meetha | Sweet & Tangy Indian Snack Mix | Perfect for Snacking, Sharing & Celebrating Every Moment",
+   "msrp": "₹235",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Khatta_Meetha.jpg?v=1764845598",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/7_f912bf88-4517-4973-9058-82decddd9425.png?v=1746622708"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikano-khatta-meetha"
+  },
+  {
+   "name": "Bikano Lajawab Mixture",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Indulge in the bold flavours of Bikano Lajawab Mixture , a traditional Indian namkeen made with a medley of premium ingredients and aromatic spices. Its perfect blend of tanginess, crispiness, and spice makes it a delightful snack for all occasions.",
+   "msrp": "₹67",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Bikano_Lajawab_Mixture.png?v=1764845965",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/5_a7843515-6f10-4c50-ad85-ca60b2d27dc8.jpg?v=1696311891"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/lajawab-mixture"
+  },
+  {
+   "name": "Bikano Moong Dal (200 gms, Pack of 5)",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Savour the authentic taste of Bikano Moong Dal , crafted from high-quality moong dal and lightly spiced for a perfect crunch. These golden, crispy bites are ideal for tea-time, sharing with family and friends, festive celebrations, or quick snacking anytime. Each bite delivers a satisfying, crunchy texture with a flavourful punch, making it a favourite among snack lovers.",
+   "msrp": "₹299",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Moong_Dal_1.jpg?v=1781159284"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/moong-dal-200-gms-pack-of-5"
+  },
+  {
+   "name": "Bikano Natkhat Nimbu",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Experience the lively taste of Bikano Natkhat Nimbu , a traditional Indian snack bursting with tangy lemon flavor and a hint of spice. Made with premium ingredients, this crispy and zesty namkeen is perfect for tea-time, festive gatherings, family celebrations, or gifting.",
+   "msrp": "₹60",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Natkhat_Nimbu_200g.jpg?v=1745393249"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/natkhat-nimbu"
+  },
+  {
+   "name": "Bikano Tasty",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Indulge in Bikano Tasty , a classic Indian snack crafted with premium ingredients and aromatic spices. Its crisp texture and rich flavour make it a perfect companion for tea-time, family gatherings, parties, or festive celebrations.",
+   "msrp": "₹120",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Tasty.jpg?v=1764845691",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Tasty_d1282a48-438c-4fa3-8a80-f39d85274770.jpg?v=1781157408"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/tasty"
+  },
+  {
+   "name": "Boondi",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Boondi by Haldiram's – crunchy, savoury boondi namkeen in a 200g pack. The perfect tea-time snack. Order this classic namkeen online now.",
+   "msrp": "₹55",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_9ff3aee0-f48c-4a16-ac75-f50960c492fb.avif?v=1782743850"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/boondi"
+  },
+  {
+   "name": "Boondi Bhujia",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Boondi Bhujia by Haldiram's – crunchy, savoury boondi namkeen in a 150g pack. The perfect tea-time snack. Order this namkeen online now.",
+   "msrp": "₹60",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_eb456ea8-be27-42b2-b0fb-d9fb132ae426.avif?v=1782743475"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/boondi-bhujia"
+  },
+  {
+   "name": "Chai Puri",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Chai Puri by Haldiram's – crispy, flaky puris in a 200g pack. The perfect companion for chai. Order this traditional tea-time snack online now.",
+   "msrp": "₹65",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_3dc73128-ef71-46ff-943f-91b0b4c14c11.avif?v=1782742376"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/chai-puri"
+  },
+  {
+   "name": "Chana Choor (Standy)",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Chana Choor by Haldiram's – a crunchy, spiced gram namkeen mix in a 200g pack. The perfect tea-time snack. Order this namkeen online now.",
+   "msrp": "₹175",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_462e67d6-b217-482e-a528-59dc7ca82fbe.avif?v=1782742999"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/chana-choor-standy"
+  },
+  {
+   "name": "Chana Jor Garam",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Chana Jor Garam by Haldiram's – tangy, spiced flattened gram in a 200g pack. Authentic street-style crunch. Order this namkeen online today.",
+   "msrp": "₹34",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_c494c6e6-6a3e-4174-bc17-33b71d4e598f.avif?v=1782793930"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/chana-jor-garam"
+  },
+  {
+   "name": "Chana Nuts",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Chana Nuts by Haldiram's – a crunchy, spiced gram and nut namkeen in a 200g pack. The perfect tea-time snack. Order this namkeen online today.",
+   "msrp": "₹60",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_f5269a46-5cc7-4008-8092-348aaf98c03e.avif?v=1782743792"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/chana-nuts"
+  },
+  {
+   "name": "Chana Nuts (Standy)",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Dive into the irresistible crunch of Haldiram’s Chana Nuts. Ideal for tea-time munching, on-the-go cravings, or festive gatherings, this savoury treat guarantees satisfaction in every nibble!",
+   "msrp": "₹140",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/ChanaNuts200gm.png?v=1784283814"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/chana-nuts-200-g"
+  },
+  {
+   "name": "Chatpata Dal",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Chatpata Dal by Haldiram's – crispy, tangy-spiced fried lentils in a 200g pack. A bold tea-time snack. Order this namkeen online today.",
+   "msrp": "₹55",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_c704a19d-94e4-4526-b13a-dedbacf780f0.avif?v=1782743745"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/namkeen/chatpata-dal-1"
+  },
+  {
+   "name": "Chocochip Cookies 150g (Tin)",
+   "category": "cookie",
+   "weight": "1 pack",
+   "description": "Chocochip Cookies | Chocolate Chip Treat | Crunchy Cookies | Bikanervala Sweets | Premium Snack Gift",
+   "msrp": "₹160",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/chocochipsnew.png?v=1749450945"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/chocochip-cookies-150g"
+  },
+  {
+   "name": "Dried Kiwi",
+   "category": "dry-fruit",
+   "weight": "1 pack",
+   "description": "Dried Kiwi | Tangy Fruit Snack | Healthy Munch | Bikanervala Dry Fruits | Natural Chewy Treat",
+   "msrp": "₹1,103",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/kiwi_81bcc2fa-e977-46ab-9ba4-9c3aee81e137.png?v=1749474843",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Packaging_Might_be_Different_e98fbfde-903c-46a3-a35b-2f3c4920709c.png?v=1749195086"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/dried-kiwi"
+  },
+  {
+   "name": "Dried Mango",
+   "category": "dry-fruit",
+   "weight": "1 pack",
+   "description": "Dried Mango | Tangy Mango Slices | Tropical Snack | Bikanervala Dry Fruits | Healthy Fruit Treat",
+   "msrp": "₹1,300",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/mangodried.png?v=1749475045",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Packaging_Might_be_Different_e98fbfde-903c-46a3-a35b-2f3c4920709c.png?v=1749195086"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/dried-mango"
+  },
+  {
+   "name": "Dried Red Cherry",
+   "category": "dry-fruit",
+   "weight": "1 pack",
+   "description": "Dried Red Cherry | Sweet & Tart Snack | Healthy Fruit Treat | Bikanervala Dry Fruits | Natural Cherry Bites",
+   "msrp": "₹1,076",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/cherry.png?v=1749474883",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Packaging_Might_be_Different_e98fbfde-903c-46a3-a35b-2f3c4920709c.png?v=1749195086"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/dried-red-cherry"
+  },
+  {
+   "name": "Dried Strawberry",
+   "category": "dry-fruit",
+   "weight": "1 pack",
+   "description": "Dried Strawberry | Sweet Fruit Snack | Healthy Munch | Bikanervala Dry Fruits | Chewy Natural Berries",
+   "msrp": "₹1,470",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/strawberrydried.png?v=1749474964",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Packaging_Might_be_Different_e98fbfde-903c-46a3-a35b-2f3c4920709c.png?v=1749195086"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/dried-strawberry"
+  },
+  {
+   "name": "Khatta Meetha",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Enjoy the timeless taste of Khatta Meetha, a popular Indian namkeen that combines sweet, tangy, and savory flavors in one irresistible snack. Crafted with a delightful blend of crunchy poha, roasted peanuts, crispy sev, lentils, and aromatic spices, this traditional mixture offers a satisfying crunch and a burst of flavor in every handful. Bikano’s Khatta Meetha | Sweet & Tangy Indian Snack Mix | Perfect for Snacking, Sharing & Celebrating Every Moment",
+   "msrp": "₹114",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Khatta_Meetha_c5960cea-073a-4778-ae33-4b33b12ad829.jpg?v=1781159284",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Khatta_Meetha_Namkeen.png?v=1778485071"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/khatta-meetha"
+  },
+  {
+   "name": "Khatta Meetha (400 gm pack of 3)",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Enjoy the authentic taste of Bikano Khatta Meetha , a traditional Indian snack that masterfully balances sweet, tangy, and salty flavours. Made from premium ingredients and lightly spiced for perfect crunch, it’s perfect for tea-time, sharing with family and friends, festive celebrations, or travel snacking. Every bite delivers a delightful combination of flavours, making it an irresistible treat for all.",
+   "msrp": "₹342",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/KhattaMeetha400g-1.jpg?v=1696313667",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/KhattaMeetha400g-2.jpg?v=1696313677"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/khatta-meetha-400-gm-pack-of-3"
+  },
+  {
+   "name": "Multigrain Cookies 150g (Tin)",
+   "category": "cookie",
+   "weight": "1 pack",
+   "description": "Delight in the goodness of wholesome grains with our Multigrain Cookies. Packed with nutrition and a satisfying crunch, they’re the perfect guilt-free treat anytime.",
+   "msrp": "₹140",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Multigraincookiesnew.png?v=1749450007"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/multigrain-cookies-150g"
+  },
+  {
+   "name": "Navratan Mixture",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Indulge in the authentic taste of Bikano Navratan Mixture , a classic Indian namkeen combining a variety of crunchy ingredients, spices, and flavors. This premium mixture offers a perfect blend of tanginess, mild spiciness, and crisp texture, making it ideal for tea-time, family gatherings, parties, and festive celebrations.",
+   "msrp": "₹114",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Navratan_Mixture.jpg?v=1764845749",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/5_0be40936-efa5-4a24-998b-d2c7bf1562c4.jpg?v=1764845798"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/navratan-mixture"
+  },
+  {
+   "name": "Paneer bhujia",
+   "category": "namkeen",
+   "weight": "1 pack",
+   "description": "Experience the perfect blend of crunch and flavour with our Paneer Bhujia , made from premium paneer and aromatic spices. This light and crispy namkeen delivers an authentic Indian taste in every bite. Ideal for tea-time, travel, snacking, and gifting. Packed for freshness to ensure long-lasting crunch and taste.",
+   "msrp": "₹67",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Paneer_bhujia_1.png?v=1778647934"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/paneer-bhujia"
+  },
+  {
+   "name": "Premium Coconut Cookies 400g",
+   "category": "cookie",
+   "weight": "1 pack",
+   "description": "Bikano Premium Coconut Cookies – Crispy, Golden-Baked Cookies Infused with Real Coconut Flakes | Lightly Sweet with a Rich Coconut Aroma and Crunchy Texture | A Perfect Snack for Tea-Time, Gifting, or Midday Munching | Made with Quality Ingredients for a Tropical Treat",
+   "msrp": "₹162",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-premium-coconut-cookies-crispy-tea-snack.png?v=1745480836"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikano-premium-coconut-cookies"
+  },
+  {
+   "name": "Premium Kaju Pista Cookies 400g",
+   "category": "cookie",
+   "weight": "1 pack",
+   "description": "Bikano Premium Cookies Kaju Pista – Delightfully Crunchy and Rich Cookies Made with Cashews and Pistachios | A Perfect Blend of Nutty Flavors and Textures | Ideal for Tea-Time, Gifting, or Anytime Indulgence | Premium Quality Ingredients for a Truly Exquisite Taste",
+   "msrp": "₹200",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-premium-cookies-kaju-pista-nutty-delight.jpg?v=1745478336",
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/Kaju_Pista_Cookies_400g-2.jpg?v=1733290554"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/baked-del-kaju-pista-400g"
+  },
+  {
+   "name": "Premium Milk Kaju Cookies 400g",
+   "category": "cookie",
+   "weight": "1 pack",
+   "description": "Bikano Premium Milk Kaju Cookies – Rich, Buttery Cookies Infused with the Creaminess of Milk and Crunch of Cashew Nuts | A Deliciously Balanced Sweet Snack with a Nutty Twist | Ideal for Tea-Time, Gifting, or Anytime Cravings | Made with Premium Ingredients for a Smooth, Crunchy Bite",
+   "msrp": "₹190",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-premium-milk-kaju-cookies-cashew-snack.png?v=1745488060"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikano-premium-milk-kaju-cookies"
+  },
+  {
+   "name": "Premium Namkeen Kaju Cookies 400g",
+   "category": "cookie",
+   "weight": "1 pack",
+   "description": "Bikano Namkeen Kaju Cookies – Crunchy, Savory Cookies with the Rich Taste of Cashew Nuts | Lightly Salted for a Balanced Flavor and Perfect Tea-Time Pairing | A Unique Twist on Traditional Cookies with a Nutty, Salty Bite | Made Using Premium Ingredients for Freshness and Taste in Every Crunch",
+   "msrp": "₹162",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-namkeen-kaju-cookies-savory-snack.jpg?v=1745488769"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikano-namkeen-kaju-cashew-cookie"
+  }
+ ]
 }
