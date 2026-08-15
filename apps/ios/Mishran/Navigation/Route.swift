@@ -7,8 +7,12 @@ enum Route: Hashable {
     case productDetail(slug: String)
     /// P1: the full catalog grid (Home keeps the marketing surface; family
     /// seeds the catalog tab's filter — the iOS stand-in for Android's
-    /// SavedStateHandle deep link).
-    case catalog(family: ProductFamily?)
+    /// SavedStateHandle deep link). P2: the grid grew vertical tabs, so the
+    /// route now also carries the preselected tab (Home's portals push with
+    /// snacks/qsr/merch).
+    case catalog(vertical: Vertical, family: ProductFamily?)
+    /// P2: per-vertical detail screen (snack / QSR item / merch).
+    case verticalDetail(vertical: Vertical, slug: String)
     case cart
     case checkout
     case orderConfirmed(id: String)
@@ -17,4 +21,10 @@ enum Route: Hashable {
     case account
     /// Task 48.2: saved-address management (Account → Delivery addresses).
     case addresses
+    /// P2: journal list + reader (Home rail and Account both push here).
+    case stories
+    case story(slug: String)
+    /// P2: bulk & events enquiry. Merch detail pushes with .corporate
+    /// pre-set; Account's row defaults to .wedding.
+    case enquiry(type: EnquiryType)
 }

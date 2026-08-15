@@ -1,6 +1,8 @@
 // HomeViewModelTests.swift — P1 parity (Mishran Mobile Apps v1).
 // Pure derivations off the catalog rows: the featured-first best-sellers
-// rule with its first-8-by-name fallback, and the family chip counts.
+// rule with its first-8-by-name fallback, and — since P2 — the
+// shop-by-vertical portal assembly (counts + lead imagery, one portal per
+// vertical, dead verticals degrade to placeholders).
 import XCTest
 @testable import Mishran
 
@@ -9,10 +11,12 @@ final class HomeViewModelTests: XCTestCase {
         _ id: String,
         name: String,
         family: ProductFamily = .classic,
-        featured: Bool? = nil
+        featured: Bool? = nil,
+        image: String? = nil
     ) -> ProductEntity {
         ProductEntity(dto: ProductDTO(
-            id: id, slug: id, name: name, family: family, featured: featured
+            id: id, slug: id, name: name, family: family, displayPrice: nil,
+            weight: nil, featured: featured, images: [image].compactMap { $0 }
         ))
     }
 
@@ -53,20 +57,53 @@ final class HomeViewModelTests: XCTestCase {
         )
     }
 
-    func testFamilyChipsCountEveryFamily() {
+    // MARK: P2 vertical portals
+
+    private func snackPage(total: Int = 39, image: String? = "https://cdn.test/snack.jpg") -> SnackPageDTO {
+        SnackPageDTO(
+            items: [SnackDTO(
+                id: "s1", slug: "bhujia", name: "Bhujia", category: nil, description: nil,
+                images: [image].compactMap { $0 }, weight: "200 g", msrp: "₹60", retailers: nil,
+                updatedAt: nil
+            )],
+            total: total, page: 1, pageSize: 50
+        )
+    }
+
+    func testPortalsCoverEveryVerticalWithCountsAndLeadImagery() {
         let products = [
             product("p1", name: "A", family: .classic),
             product("p2", name: "B", family: .classic),
-            product("p3", name: "C", family: .regional),
         ]
 
-        let chips = HomeViewModel.familyChips(from: products)
+        let portals = HomeViewModel.portals(
+            products: products, snacks: snackPage(total: 39), qsr: nil, merch: nil
+        )
 
-        XCTAssertEqual(chips.map(\.family), ProductFamily.allCases, "every family chips, declared order")
-        XCTAssertEqual(chips.first { $0.family == .classic }?.count, 2)
-        XCTAssertEqual(chips.first { $0.family == .regional }?.count, 1)
-        XCTAssertEqual(chips.first { $0.family == .seasonal }?.count, 0, "empty families still chip with count 0")
-        XCTAssertEqual(chips.first { $0.family == .seasonal }?.label, "Seasonal", "zero-count chips drop the count suffix")
-        XCTAssertEqual(chips.first { $0.family == .classic }?.label, "Classic · 2")
+        XCTAssertEqual(portals.map(\.vertical), Vertical.allCases, "one portal per vertical, declared order")
+        XCTAssertEqual(portals.first { $0.vertical == .mithai }?.count, 2)
+        XCTAssertEqual(portals.first { $0.vertical == .snacks }?.count, 39)
+        XCTAssertEqual(
+            portals.first { $0.vertical == .snacks }?.imageURL, "https://cdn.test/snack.jpg",
+            "snacks portal leads with its first item's image"
+        )
+        XCTAssertEqual(portals.first { $0.vertical == .snacks }?.label, "Snacks · 39")
+    }
+
+    func testDeadVerticalsDegradeToPlaceholderPortals() {
+        // All three vertical fetches failed (nil pages) — portals still
+        // render with count 0 / no image; the mithai portal stays real.
+        let products = [product("p1", name: "A", image: "https://cdn.test/kaju.jpg")]
+
+        let portals = HomeViewModel.portals(products: products, snacks: nil, qsr: nil, merch: nil)
+
+        XCTAssertEqual(portals.count, 4, "a failed vertical never drops its portal card")
+        XCTAssertEqual(portals.first { $0.vertical == .qsr }?.count, 0)
+        XCTAssertNil(portals.first { $0.vertical == .merch }?.imageURL)
+        XCTAssertEqual(portals.first { $0.vertical == .merch }?.label, "Merch", "count 0 drops the suffix")
+        XCTAssertEqual(
+            portals.first { $0.vertical == .mithai }?.imageURL, "https://cdn.test/kaju.jpg",
+            "mithai imagery derives off the offline catalog, untouched by vertical failures"
+        )
     }
 }

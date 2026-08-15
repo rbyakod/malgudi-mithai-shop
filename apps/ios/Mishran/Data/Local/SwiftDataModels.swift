@@ -275,3 +275,86 @@ final class OrderEntity {
         self.syncedAt = syncedAt
     }
 }
+
+/// Journal story cache (P2). Offline read model for the stories list +
+/// home rail — the reader's `body` is NOT cached (it only ships on the
+/// detail route and would double the row size for a rarely-read field), so
+/// an offline reader falls back to title/hero/excerpt off the cached row.
+@Model
+final class StoryEntity {
+    @Attribute(.unique) var id: String
+    @Attribute(.unique) var slug: String
+    var title: String
+    /// Editorial pillar as raw value-string ("sweets", "people", …).
+    var pillar: String?
+    var excerpt: String?
+    var heroImage: String?
+    /// ISO-8601 string as the contract ships it — parsed only for sorting
+    /// (newest first) and display.
+    var publishedAt: String?
+    var updatedAt: String?
+
+    init(
+        id: String,
+        slug: String,
+        title: String,
+        pillar: String? = nil,
+        excerpt: String? = nil,
+        heroImage: String? = nil,
+        publishedAt: String? = nil,
+        updatedAt: String? = nil
+    ) {
+        self.id = id
+        self.slug = slug
+        self.title = title
+        self.pillar = pillar
+        self.excerpt = excerpt
+        self.heroImage = heroImage
+        self.publishedAt = publishedAt
+        self.updatedAt = updatedAt
+    }
+
+    convenience init(dto: StoryDTO) {
+        self.init(
+            id: dto.id,
+            slug: dto.slug,
+            title: dto.title,
+            pillar: dto.pillar,
+            excerpt: dto.excerpt,
+            heroImage: dto.heroImage,
+            publishedAt: dto.publishedAt,
+            updatedAt: dto.updatedAt
+        )
+    }
+
+    /// Cached rows, newest first (nil/unparseable publishedAt sorts last,
+    /// name as the tiebreak so the order stays deterministic).
+    static func cachedStories(in context: ModelContext) -> [StoryEntity] {
+        let rows = (try? context.fetch(FetchDescriptor<StoryEntity>())) ?? []
+        return rows.sorted { lhs, rhs in
+            let lhsDate = StoryFormatting.date(fromISO: lhs.publishedAt) ?? .distantPast
+            let rhsDate = StoryFormatting.date(fromISO: rhs.publishedAt) ?? .distantPast
+            if lhsDate != rhsDate { return lhsDate > rhsDate }
+            return lhs.title < rhs.title
+        }
+    }
+
+    /// Server list → local rows: delete-all + re-insert (the same full-swap
+    /// reconcile AddressEntity uses — no per-row diffing in v1, the server
+    /// is the source of truth and the set is small).
+    static func replaceAll(with stories: [StoryDTO], in context: ModelContext) {
+        for existing in (try? context.fetch(FetchDescriptor<StoryEntity>())) ?? [] {
+            context.delete(existing)
+        }
+        for story in stories {
+            context.insert(StoryEntity(dto: story))
+        }
+        try? context.save()
+    }
+
+    /// One cached row by slug (reader's offline fallback).
+    static func fetch(slug: String, in context: ModelContext) -> StoryEntity? {
+        let descriptor = FetchDescriptor<StoryEntity>(predicate: #Predicate { $0.slug == slug })
+        return (try? context.fetch(descriptor))?.first
+    }
+}

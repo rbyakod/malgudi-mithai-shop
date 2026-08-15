@@ -187,8 +187,10 @@ struct DestinationView: View {
                 context: context,
                 onBuyNow: { router.push(.checkout) }
             )
-        case let .catalog(family):
-            CatalogDestination(router: router, context: context, family: family)
+        case let .catalog(vertical, family):
+            CatalogDestination(router: router, context: context, vertical: vertical, family: family)
+        case let .verticalDetail(vertical, slug):
+            VerticalDetailView(vertical: vertical, slug: slug, router: router)
         case .cart:
             CartView(onCheckout: { router.push(.checkout) })
         case .checkout:
@@ -207,27 +209,118 @@ struct DestinationView: View {
             AccountView(router: router, onSignedOut: onSignedOut)
         case .addresses:
             AddressesView()
+        case .stories:
+            StoriesView()
+        case let .story(slug):
+            StoryReaderView(
+                slug: slug,
+                repository: StoryRepository(client: MishranAPIClient(), context: context),
+                context: context
+            )
+        case let .enquiry(type):
+            EnquiryView(initialType: type)
         }
     }
 }
 
-/// Catalog grid pushed from Home (hero CTA / toolbar / family chip). Same
-/// view model construction Home used pre-restructure: cache + repository
-/// off the ambient model context; the route's family seeds the filter.
+/// P2: per-vertical detail dispatcher — the three non-mithai verticals each
+/// have their own screen (retailers / walk-in stores / enquiry CTA); mithai
+/// details ride the existing productDetail route, so that branch is
+/// unreachable by construction.
+struct VerticalDetailView: View {
+    let vertical: Vertical
+    let slug: String
+    let router: Router
+
+    var body: some View {
+        switch vertical {
+        case .mithai:
+            EmptyView()
+        case .snacks:
+            SnackDetailView(slug: slug)
+        case .qsr:
+            QsrDetailView(slug: slug)
+        case .merch:
+            MerchDetailView(slug: slug, router: router)
+        }
+    }
+}
+
+/// Catalog pushed from Home (hero CTA / toolbar / portal). P2: the grid
+/// grew vertical tabs — a segmented Mithai · Snacks · QSR · Merch header
+/// switches between the existing products flow (unchanged, route family
+/// still seeds its filter) and the verticals view model. Same construction
+/// Home used pre-restructure: cache + repository off the ambient model
+/// context.
 private struct CatalogDestination: View {
     let router: Router
     let context: ModelContext
     let family: ProductFamily?
+    /// P2: the preselected tab (Home's portals push with a vertical set).
+    @State private var selectedTab: Vertical
     @State private var viewModel: CatalogViewModel?
+    @State private var verticalsViewModel: VerticalCatalogViewModel?
+
+    init(router: Router, context: ModelContext, vertical: Vertical, family: ProductFamily?) {
+        self.router = router
+        self.context = context
+        self.family = family
+        _selectedTab = State(initialValue: vertical)
+    }
 
     var body: some View {
-        Group {
-            if let viewModel {
-                CatalogView(viewModel: viewModel) { product in
-                    router.push(.productDetail(slug: product.slug))
+        VStack(spacing: .mishranSpacingSm) {
+            // Pill tabs, not a segmented Picker: the native control's segments
+            // are 32pt tall, under the 44pt minimum tap target the a11y audit
+            // enforces (AccessibilityTests.auditButtons).
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: .mishranSpacingSm) {
+                    ForEach(Vertical.allCases) { vertical in
+                        let isSelected = vertical == selectedTab
+                        Button {
+                            selectedTab = vertical
+                        } label: {
+                            Text(vertical.displayName)
+                                .font(.mishranBodySm.weight(.semibold))
+                                .padding(.horizontal, .mishranSpacingMd)
+                                .frame(minHeight: 44)
+                                .background(
+                                    Capsule().fill(
+                                        isSelected ? Color.mishranBrandAccent : Color.mishranBrandSurface
+                                    )
+                                )
+                                .overlay(
+                                    Capsule().strokeBorder(
+                                        Color.mishranBrandAccent.opacity(isSelected ? 0 : 0.25),
+                                        lineWidth: 1
+                                    )
+                                )
+                                .foregroundStyle(isSelected ? .white : Color.mishranBrandInk)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityAddTraits(isSelected ? .isSelected : [])
+                    }
                 }
-            } else {
-                ProgressView()
+                .padding(.horizontal, .mishranSpacingMd)
+            }
+
+            switch selectedTab {
+            case .mithai:
+                if let viewModel {
+                    CatalogView(viewModel: viewModel) { product in
+                        router.push(.productDetail(slug: product.slug))
+                    }
+                } else {
+                    ProgressView()
+                }
+            case .snacks, .qsr, .merch:
+                if let verticalsViewModel {
+                    VerticalListView(viewModel: verticalsViewModel) { card in
+                        router.push(.verticalDetail(vertical: card.vertical, slug: card.slug))
+                    }
+                } else {
+                    ProgressView()
+                }
             }
         }
         .task {
@@ -240,6 +333,15 @@ private struct CatalogDestination: View {
                 viewModel.filters.family = family
             }
             self.viewModel = viewModel
+            let verticalsViewModel = VerticalCatalogViewModel(
+                repository: VerticalsRepository(client: MishranAPIClient()),
+                selected: selectedTab
+            )
+            self.verticalsViewModel = verticalsViewModel
+            await verticalsViewModel.select(selectedTab)
+        }
+        .onChange(of: selectedTab) { _, newValue in
+            Task { await verticalsViewModel?.select(newValue) }
         }
     }
 }

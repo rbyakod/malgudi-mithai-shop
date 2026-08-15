@@ -59,6 +59,9 @@ enum SeedData {
         for category in (try? context.fetch(FetchDescriptor<CategoryEntity>())) ?? [] {
             context.delete(category)
         }
+        for story in (try? context.fetch(FetchDescriptor<StoryEntity>())) ?? [] {
+            context.delete(story)
+        }
         UserDefaults.standard.removeObject(forKey: CatalogCache.etagKey)
         try? context.save()
     }

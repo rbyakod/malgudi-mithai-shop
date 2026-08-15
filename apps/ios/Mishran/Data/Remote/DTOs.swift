@@ -207,12 +207,13 @@ extension ProductDTO {
         family: ProductFamily,
         displayPrice: String? = nil,
         weight: String? = nil,
-        featured: Bool? = nil
+        featured: Bool? = nil,
+        images: [String]? = nil
     ) {
         self.init(id: id, slug: slug, name: name, family: family, displayPrice: displayPrice,
                   weight: weight, featured: featured,
                   freshnessStatus: nil, dietaryTags: nil, allergens: nil, ingredients: nil,
-                  shelfLife: nil, storage: nil, images: nil, story: nil, updatedAt: nil)
+                  shelfLife: nil, storage: nil, images: images, story: nil, updatedAt: nil)
     }
 }
 
@@ -344,4 +345,163 @@ struct LoyaltyPassResponseDTO: Decodable {
     let url: String
     let serialNumber: String
     let tier: LoyaltyTier
+}
+
+// MARK: - Stories (P2 journal)
+
+/// Story list projection (openapi Story schema via serializeStory). The
+/// [slug] route adds `body` — see StoryDetailDTO.
+struct StoryDTO: Decodable, Equatable, Identifiable, Hashable {
+    let id: String
+    let slug: String
+    let title: String
+    /// Editorial pillar ("sweets", "people", …) — rendered as the row chip.
+    let pillar: String?
+    let excerpt: String?
+    let heroImage: String?
+    let publishedAt: String?
+    let updatedAt: String?
+}
+
+/// GET /stories page ({data:{items:[…]}}) — mirrors ProductPageDTO.
+struct StoryPageDTO: Decodable, Equatable {
+    let items: [StoryDTO]
+    let total: Int
+    let page: Int
+    let pageSize: Int
+}
+
+/// GET /stories/{slug} — the list projection plus the flattened body (the
+/// server joins Lexical paragraphs into a plain \n-joined string, so the
+/// reader renders one Text with system line breaks).
+struct StoryDetailDTO: Decodable, Equatable {
+    let id: String
+    let slug: String
+    let title: String
+    let pillar: String?
+    let excerpt: String?
+    let heroImage: String?
+    let publishedAt: String?
+    let updatedAt: String?
+    let body: String?
+
+    /// List-projection view of the detail (cache inserts, rails).
+    var story: StoryDTO {
+        StoryDTO(
+            id: id, slug: slug, title: title, pillar: pillar, excerpt: excerpt,
+            heroImage: heroImage, publishedAt: publishedAt, updatedAt: updatedAt
+        )
+    }
+}
+
+// MARK: - Verticals (P2: snacks / QSR / merch)
+
+/// External retailer row on a snack (serializeSnack `retailers[]`) — the
+/// "Where to buy" links open outside the app.
+struct SnackRetailerDTO: Decodable, Equatable, Identifiable, Hashable {
+    let label: String
+    let url: String
+    var id: String { url }
+}
+
+/// Retail snack (SnackProducts schema). MSRP is display-only — purchases
+/// happen at external retailers, never in-app.
+struct SnackDTO: Decodable, Equatable, Identifiable, Hashable {
+    let id: String
+    /// Server-computed slugify(name) — no slug field on the collection.
+    let slug: String
+    let name: String
+    let category: String?
+    let description: String?
+    let images: [String]?
+    let weight: String?
+    /// Display string, e.g. "₹60" (text field on the collection).
+    let msrp: String?
+    let retailers: [SnackRetailerDTO]?
+    let updatedAt: String?
+}
+
+struct SnackPageDTO: Decodable, Equatable {
+    let items: [SnackDTO]
+    let total: Int
+    let page: Int
+    let pageSize: Int
+}
+
+/// QSR counter-menu item (QsrMenuItems schema). Walk-in vertical: no price,
+/// no cart CTA — the app only says where to find it.
+struct QsrItemDTO: Decodable, Equatable, Identifiable, Hashable {
+    let id: String
+    let slug: String
+    let name: String
+    let category: String?
+    let description: String?
+    /// Single hero image (unlike snacks/merch's array).
+    let image: String?
+    let veg: Bool?
+    /// "mild" | "medium" | "hot" (collection select).
+    let spiceLevel: String?
+    /// Plain store-slug strings, e.g. ["indiranagar"].
+    let availableAtStores: [String]?
+    let updatedAt: String?
+}
+
+struct QsrPageDTO: Decodable, Equatable {
+    let items: [QsrItemDTO]
+    let total: Int
+    let page: Int
+    let pageSize: Int
+}
+
+/// Merch product (MerchProducts schema). Enquiry-led vertical: price is
+/// display-only and `availability` ("enquiry-only") routes the UI to the
+/// leads form instead of a cart CTA.
+struct MerchDTO: Decodable, Equatable, Identifiable, Hashable {
+    let id: String
+    let slug: String
+    let name: String
+    let type: String?
+    let description: String?
+    let images: [String]?
+    let price: String?
+    let availability: String?
+    let updatedAt: String?
+}
+
+struct MerchPageDTO: Decodable, Equatable {
+    let items: [MerchDTO]
+    let total: Int
+    let page: Int
+    let pageSize: Int
+}
+
+// MARK: - Leads (P2 enquiry)
+
+/// POST /api/leads request body — mirrors the web LeadSubmission shape
+/// (type + nested contact; everything else rides the free-form payload).
+/// Required server-side: type, contact.name, contact.email. Synthesized
+/// Encodable omits nil optionals, so blank email/company ride nothing.
+struct LeadInputDTO: Encodable, Equatable {
+    struct Contact: Encodable, Equatable {
+        let name: String
+        var email: String?
+        var phone: String?
+        var company: String?
+    }
+
+    /// Lead type literal (collections/Leads.ts options) — the app's enquiry
+    /// screen sends "wedding" or "corporate".
+    let type: String
+    let contact: Contact
+    /// Free-form extras: message + the type-specific fields.
+    var payload: [String: String]
+    var source: String?
+}
+
+/// POST /api/leads success body — BARE JSON, deliberately NOT wrapped in the
+/// mobile v1 {data} envelope (that route predates the contract). Decoded by
+/// MishranAPIClient.submitLead, not request(_:).
+struct LeadResponseDTO: Decodable, Equatable {
+    let leadId: String
+    let message: String
 }
