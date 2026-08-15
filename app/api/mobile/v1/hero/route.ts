@@ -64,7 +64,14 @@ export async function GET(req: NextRequest) {
       await Promise.all(
         rows.map(async (row) => {
           const collection = row?.product?.relationTo;
-          const id = row?.product?.value;
+          // findGlobal populates polymorphic relationships — value arrives
+          // as the FULL product doc, not the bare id (verified live: REST
+          // /api/globals/home-hero returns a dict at default depth). Passing
+          // the doc to findByID throws and every slide silently dropped —
+          // the carousel never rendered on any surface. Normalize both
+          // shapes before the draft:false re-read.
+          const rawValue = row?.product?.value;
+          const id = rawValue && typeof rawValue === 'object' ? rawValue.id : rawValue;
           const vertical = VERTICAL_BY_COLLECTION[collection ?? ''];
           if (!collection || !id || !vertical) return null;
 

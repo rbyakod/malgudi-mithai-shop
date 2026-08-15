@@ -51,7 +51,7 @@ const AUTOPLAY_MAX = 15000;
 
 type PolymorphicRef = {
   relationTo: string;
-  value: string;
+  value: string | { id: string | number };
 };
 
 type GlobalRow = {
@@ -129,7 +129,13 @@ async function resolveOne(
   locale: string | undefined
 ): Promise<Slide | null> {
   if (!row.product?.relationTo || !row.product?.value) return null;
-  const { relationTo: collection, value: id } = row.product;
+  const { relationTo: collection, value } = row.product;
+  // findGlobal populates polymorphic relationships — value arrives as the
+  // FULL product doc, not the bare id (Payload populates to depth 2 by
+  // default on every read path). Passing the doc to findByID throws and
+  // the slide silently dropped, so the carousel never rendered despite a
+  // curated global. Accept both shapes.
+  const id = typeof value === "object" && value !== null ? String(value.id) : value;
 
   let doc: PayloadDoc;
   try {
