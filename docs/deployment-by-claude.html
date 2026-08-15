@@ -159,8 +159,10 @@
     <a href="#family"><i>12</i>Share with family</a>
     <div class="group">After</div>
     <a href="#ops"><i>13</i>Daily operations</a>
-    <a href="#trouble"><i>14</i>Troubleshooting</a>
-    <a href="#rollback"><i>15</i>Rollback</a>
+    <a href="#cofounder"><i>14</i>Co-founder setup</a>
+    <a href="#claude-on-vps"><i>15</i>Claude Code on the VPS</a>
+    <a href="#trouble"><i>16</i>Troubleshooting</a>
+    <a href="#rollback"><i>17</i>Rollback</a>
   </nav>
   <div class="side-note">Every terminal command has a copy button. Lines starting with <code>#</code> are explanations, not commands. Pair with the repo <code>README.md</code> (golden test data section).</div>
 </aside>
@@ -920,6 +922,120 @@ sudo tail -f /var/log/nginx/error.log</code></pre></div></div>
 sudo tar czf /root/media-$(date +%F).tgz -C /opt/mithai-shop media</code></pre></div></div>
   </div>
   <p class="callout">Full restore from an empty database is three commands — <code>pnpm seed &amp;&amp; pnpm seed:catalog &amp;&amp; pnpm seed:branding</code> — documented in the repo README under "Golden test data".</p>
+
+  <h2 id="cofounder">Co-founder setup — develop, build and deploy from their MacBook</h2>
+  <p class="lede"><b>Yes, create a separate Linux user on the VPS for your co-founder</b> — don't share the root login. A named account keeps an audit trail (whose key deployed what in <code>auth.log</code>/<code>journalctl</code>), can be revoked individually, and the deploy script works unchanged by just pointing <code>DEPLOY_SSH</code> at it. Everything below is one-time setup, then his loop is <code>git push</code> → <code>bash scripts/deploy-vps.sh</code>.</p>
+
+  <h3>1 — One-time on the VPS: create his user (run as root)</h3>
+  <p>He first sends you his public key. On his MacBook:</p>
+  <div class="code-block"><div class="code-title"><span>His Mac — print the key to send you (or generate one first)</span><button class="copy">copy</button></div>
+<pre><code>test -f ~/.ssh/id_ed25519.pub || ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519
+cat ~/.ssh/id_ed25519.pub</code></pre></div>
+  <p>Then on the VPS (paste his key where shown — <b>replace <code>cofounder</code> with his name if you prefer</b>):</p>
+  <div class="code-block"><div class="code-title"><span>VPS, as root — create the user with sudo + key login</span><button class="copy">copy</button></div>
+<pre><code>sudo useradd -m -s /bin/bash cofounder
+sudo usermod -aG sudo cofounder
+sudo mkdir -p /home/cofounder/.ssh
+printf '%s\n' 'ssh-ed25519 AAAA...PASTE-HIS-KEY-HERE... cofounder@macbook' | sudo tee /home/cofounder/.ssh/authorized_keys
+sudo chmod 700 /home/cofounder/.ssh
+sudo chmod 600 /home/cofounder/.ssh/authorized_keys
+sudo chown -R cofounder:cofounder /home/cofounder/.ssh</code></pre></div>
+  <p class="callout ok"><b>Why sudo:</b> the deploy script runs <code>sudo -iu mithai</code> to build and <code>systemctl restart mithai-shop</code> — both need sudo. If you'd rather not give full sudo, replace the <code>usermod</code> line with a targeted sudoers rule (same idea as the <code>mithai</code> rule shown in the Claude-on-VPS section below, granting only <code>systemctl restart/status mithai-shop</code> and <code>sudo -iu mithai</code>).</p>
+  <p>Verify from his Mac before moving on:</p>
+  <div class="code-block"><div class="code-title"><span>His Mac — should drop into a shell without a password</span><button class="copy">copy</button></div>
+<pre><code>ssh cofounder@2.24.221.70 'whoami &amp;&amp; sudo -n true &amp;&amp; echo sudo-ok'</code></pre></div>
+
+  <h3>2 — One-time on his MacBook: repo + toolchain</h3>
+  <p><b>GitHub access:</b> the repo owner adds him as a collaborator (GitHub → repo → Settings → Collaborators). He adds a Git SSH key if he doesn't have one (the same command as above prints it; paste it into GitHub → Settings → SSH keys), then clones:</p>
+  <div class="code-block"><div class="code-title"><span>His Mac</span><button class="copy">copy</button></div>
+<pre><code>git clone git@github.com:rbyakod/malgudi-mithai-shop.git
+cd malgudi-mithai-shop
+git branch --set-upstream-to=origin/main main   <span class="c"># work happens on main</span></code></pre></div>
+  <p><b>Toolchain:</b> Node 22 and pnpm (the VPS runs pnpm 11.x via corepack):</p>
+  <div class="code-block"><div class="code-title"><span>His Mac</span><button class="copy">copy</button></div>
+<pre><code>brew install node@22
+corepack enable &amp;&amp; corepack prepare pnpm@11 --activate
+pnpm --version   <span class="c"># should print 11.x</span></code></pre></div>
+  <p><b>Local MongoDB</b> (Payload needs a replica set for transactions). One-time brew setup:</p>
+  <div class="code-block"><div class="code-title"><span>His Mac — MongoDB with the rs0 replica set the .env expects</span><button class="copy">copy</button></div>
+<pre><code>brew tap mongodb/brew &amp;&amp; brew install mongodb-community
+printf '%s\n' 'replication:' '  replSetName: rs0' | sudo tee -a /opt/homebrew/etc/mongod.conf
+brew services start mongodb-community
+sleep 2 &amp;&amp; mongosh --quiet --eval 'rs.initiate()' --eval 'quit()'
+mongosh --quiet --eval 'db.getSiblingDB("admin").createUser({user:"mishran",pwd:"mishrandev",roles:["root"]})'</code></pre></div>
+  <p><b>Environment file:</b> copy the template and fill in the local values. Providers (Razorpay/MSG91/Resend/Apple) run in fake/stub mode outside production, so non-empty placeholders are fine locally — <b>never put real production keys in a laptop .env</b>.</p>
+  <div class="code-block"><div class="code-title"><span>His Mac — .env for local dev</span><button class="copy">copy</button></div>
+<pre><code>cp .env.example .env
+printf '%s\n' \
+  'PAYLOAD_SECRET='$(openssl rand -hex 32) \
+  'JWT_PRIVATE_KEY='$(openssl genrsa 2048 2&gt;/dev/null | sed ':a;N;$!ba;s/\n/\\n/g') \
+  'JWT_PUBLIC_KEY='$(openssl genrsa 2048 2&gt;/dev/null | openssl rsa -pubout 2&gt;/dev/null | sed ':a;N;$!ba;s/\n/\\n/g') \
+  'RAZORPAY_KEY_ID=placeholder' 'RAZORPAY_KEY_SECRET=placeholder' 'RAZORPAY_WEBHOOK_SECRET=placeholder' \
+  'MSG91_AUTH_KEY=placeholder' 'MSG91_SENDER_ID=placeholder' 'MSG91_TEMPLATE_OTP=placeholder' \
+  'RESEND_API_KEY=placeholder' \
+  &gt;&gt; .env
+pnpm install
+pnpm seed &amp;&amp; pnpm seed:catalog &amp;&amp; pnpm seed:branding
+pnpm dev      <span class="c"># → http://localhost:3000</span></code></pre></div>
+  <p class="callout">If <code>mongosh</code> complains about auth, the <code>MONGODB_URI</code> already in <code>.env.example</code> matches the user created above (<code>mishran</code>/<code>mishrandev</code>, <code>authSource=admin</code>). Run through the README "Quick start" once — it's the source of truth for local dev.</p>
+
+  <h3>3 — His deploy loop (identical to yours)</h3>
+  <div class="code-block"><div class="code-title"><span>His Mac — from the repo root, after committing + pushing to main</span><button class="copy">copy</button></div>
+<pre><code>DEPLOY_SSH=cofounder@2.24.221.70 bash scripts/deploy-vps.sh</code></pre></div>
+  <p>The script's guarantees apply to him too: it refuses to deploy unpushed work, never restarts the service after a failed build, and verifies the commit running on the VPS matches <code>main</code>. On failure it prints the exact <code>journalctl</code> command to investigate — or he can look himself:</p>
+  <div class="code-block"><div class="code-title"><span>His Mac — inspect the running service</span><button class="copy">copy</button></div>
+<pre><code>ssh cofounder@2.24.221.70 'sudo journalctl -u mithai-shop -n 100 --no-pager'</code></pre></div>
+
+  <h3>4 — Testing web and the mobile apps</h3>
+  <table>
+    <thead><tr><th>What</th><th>Where</th><th>How</th></tr></thead>
+    <tbody>
+      <tr><td>Web, functional testing</td><td>local</td><td><code>pnpm dev</code> → <code>http://localhost:3000</code> (seeded data, fake payments/OTP — safe to click through checkout)</td></tr>
+      <tr><td>Web, production check</td><td>live</td><td><code>https://mishran.pranavb.com</code> — read-mostly; orders/leads created here are real, keep heavy testing local</td></tr>
+      <tr><td>Admin/CMS</td><td>local or live</td><td><code>/admin</code> (local: seeded user from <code>pnpm seed</code>; live: the admin created in step 09)</td></tr>
+      <tr><td>iOS app (simulator)</td><td>local</td><td>Xcode 15+ with the iOS 17.2 simulator runtime. <code>pnpm ios:xcodegen</code> once, then <code>pnpm ios:build</code> — or open <code>apps/ios/Mishran.xcodeproj</code> and ⌘R the <b>Mishran</b> scheme. Debug builds automatically target <code>http://localhost:3000/api/mobile/v1</code>, so have <code>pnpm dev</code> running.</td></tr>
+      <tr><td>Android app (emulator)</td><td>local</td><td>Android Studio + JDK 17. <code>cd apps/android &amp;&amp; ./gradlew assembleDebug</code>, install <code>apps/android/app/build/outputs/apk/debug/app-debug.apk</code> on an emulator — or run the <code>app</code> configuration from Studio. Debug builds target <code>http://10.0.2.2:3000/api/mobile/v1</code> (the emulator's alias for your Mac's localhost), so have <code>pnpm dev</code> running.</td></tr>
+      <tr><td>Mobile against the live VPS</td><td>live</td><td>Temporarily point the URL constants at <code>https://mishran.pranavb.com/api/mobile/v1</code>: <code>apps/ios/Mishran/Data/Remote/MishranAPIClient.swift</code> (release branch) and <code>API_BASE_URL</code> in <code>apps/android/app/build.gradle.kts</code>. <b>Don't commit this change</b> — the real production domain lands in the mobile phase.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="claude-on-vps">Running Claude Code on the VPS itself</h2>
+  <p class="lede">Claude Code can work directly on the VPS — useful for "pull, build, restart" chores, log-diving when the site misbehaves, and small fixes without a full laptop setup. It edits the same repo, so the discipline is: <b>whatever Claude changes on the VPS gets committed and pushed</b> so the Macs stay in sync (the repo's stop-hook auto-commit does this if you let Claude finish its turn).</p>
+
+  <h3>1 — Install + login (as root, once)</h3>
+  <div class="code-block"><div class="code-title"><span>VPS</span><button class="copy">copy</button></div>
+<pre><code>npm i -g @anthropic-ai/claude-code
+claude    <span class="c"># first run walks you through login; the /login flow prints a URL + code</span></code></pre></div>
+  <p>Login from a headless box: run <code>claude</code>, pick "Log in", copy the URL it prints, open it in a browser on the Mac, paste back the code it shows. Alternatively <code>claude setup-token</code> with an API key from the Anthropic console.</p>
+
+  <h3>2 — Grant the app user just enough sudo (as root, once)</h3>
+  <p>Claude will run as <code>mithai</code> (the owner of <code>/opt/mithai-shop</code>). It needs to restart the service and read logs — give it those two, nothing broader:</p>
+  <div class="code-block"><div class="code-title"><span>VPS, as root — targeted sudoers rule</span><button class="copy">copy</button></div>
+<pre><code>printf '%s\n' 'mithai ALL=(root) NOPASSWD: /usr/bin/systemctl restart mithai-shop, /usr/bin/systemctl status mithai-shop, /usr/bin/systemctl is-active mithai-shop, /usr/bin/journalctl -u mithai-shop *' | sudo tee /etc/sudoers.d/mithai-shop
+sudo chmod 440 /etc/sudoers.d/mithai-shop
+sudo visudo -c    <span class="c"># must say "parsed OK" — a broken sudoers file locks you out of sudo</span></code></pre></div>
+
+  <h3>3 — Push access from the VPS (as mithai, once)</h3>
+  <p>For Claude on the VPS to <code>git push</code>, the <code>mithai</code> user needs write credentials. A repo <b>deploy key</b> (single-repo, revocable) is the cleanest:</p>
+  <div class="code-block"><div class="code-title"><span>VPS — generate the key, then add it on GitHub as a deploy key with write access</span><button class="copy">copy</button></div>
+<pre><code>sudo -iu mithai ssh-keygen -t ed25519 -N "" -f /home/mithai/.ssh/id_ed25519
+sudo -iu mithai cat /home/mithai/.ssh/id_ed25519.pub</code></pre></div>
+  <p>On GitHub: repo → Settings → Deploy keys → Add → paste → tick <b>Allow write access</b>. Then switch the checkout's remote to SSH:</p>
+  <div class="code-block"><div class="code-title"><span>VPS — switch remote and verify both directions</span><button class="copy">copy</button></div>
+<pre><code>sudo -iu mithai git -C /opt/mithai-shop remote set-url origin git@github.com:rbyakod/malgudi-mithai-shop.git
+sudo -iu mithai git -C /opt/mithai-shop fetch &amp;&amp; echo fetch-ok</code></pre></div>
+
+  <h3>4 — Using it</h3>
+  <div class="code-block"><div class="code-title"><span>VPS — start Claude in the app checkout</span><button class="copy">copy</button></div>
+<pre><code>sudo -iu mithai bash
+cd /opt/mithai-shop &amp;&amp; claude</code></pre></div>
+  <p>Typical asks:</p>
+  <ul>
+    <li>"Pull latest main, build, and restart the service" — the same cycle as <code>deploy-vps.sh</code>, done locally</li>
+    <li>"<code>/en/mithai/xyz</code> is returning a 500 — check the logs and fix it"</li>
+    <li>"Re-run <code>pnpm seed:catalog</code> — the catalog is stale"</li>
+  </ul>
+  <p class="callout"><b>Two cautions:</b> (1) <code>/opt/mithai-shop/.env</code> holds production secrets — fine for Claude to <em>read</em> when wiring things, never paste values into chat or commit them. (2) If Claude edits code on the VPS, make sure it commits <em>and pushes</em> before anyone deploys from a Mac, or the next deploy will silently overwrite the VPS-side change (the deploy script's commit check catches this: it dies unless the VPS commit matches <code>origin/main</code>).</p>
 
   <h3 id="rotate">Change values later: passwords, secrets, keys</h3>
   <p class="lede">The universal flow is <b>edit <code>.env</code> → restart → verify</b>. The only exception: anything starting with <code>NEXT_PUBLIC_</code> is compiled into the browser bundle, so those need a rebuild too.</p>
