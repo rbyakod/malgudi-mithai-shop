@@ -19,6 +19,9 @@ object DataStoreKeys {
     /** Customer id from the verified token; used for owner-scoped cache keys. */
     val CUSTOMER_ID: Preferences.Key<String> = stringPreferencesKey("customer_id")
 
+    /** Signed-in customer's phone (E.164), shown on the Account screen. */
+    val CUSTOMER_PHONE: Preferences.Key<String> = stringPreferencesKey("customer_phone")
+
     /** Last catalog ETag, replayed as If-None-Match to short-circuit 304s. */
     val CATALOG_ETAG: Preferences.Key<String> = stringPreferencesKey("catalog_etag")
 
