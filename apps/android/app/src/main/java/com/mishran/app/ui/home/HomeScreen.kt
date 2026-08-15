@@ -8,11 +8,19 @@
 // surfaces) plus the "From the journal" rail over the three newest stories.
 // Replaces the Phase 7 placeholder.
 //
+// P3 parity (admin hero): when the curated `home-hero` global resolves, the
+// static photo hero is replaced by a swipeable autoplay carousel whose
+// slides deep-link into product/vertical detail; anything else (unset,
+// offline, single slide) keeps the original hero untouched below.
+//
 // TODO(i18n): "From the journal" and the portal labels hardcode the English
 // copy from packages/i18n-strings/en.json (home.journal, vertical.mithai/
 // snacks/qsr/merch) — swap for R.string references in the i18n sweep.
 package com.mishran.app.ui.home
 
+import android.content.Context
+import android.provider.Settings
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +35,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -42,22 +53,31 @@ import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.mishran.api.models.HeroSlide
 import com.mishran.api.models.Product
 import com.mishran.api.models.Story
 import com.mishran.app.R
+import com.mishran.app.data.repository.HeroCarousel
 import com.mishran.app.ui.catalog.components.ProductCard
+import kotlinx.coroutines.delay
 
 // Label resources (not Strings) so the top-level map stays composable-agnostic;
 // the use site resolves them with stringResource().
@@ -86,6 +106,7 @@ fun HomeScreen(
     onBrowseCatalog: () -> Unit,
     onFamilyClick: (familyValue: String) -> Unit,
     onVerticalClick: (verticalValue: String) -> Unit,
+    onHeroSlideClick: (verticalValue: String, slug: String) -> Unit,
     onStoryClick: (slug: String) -> Unit,
     onJournal: () -> Unit,
     onOrders: () -> Unit,
@@ -97,6 +118,10 @@ fun HomeScreen(
     val bestSellers by viewModel.bestSellers.collectAsStateWithLifecycle()
     // P2 net-new: three newest journal stories; empty until the journal syncs.
     val journal by viewModel.journal.collectAsStateWithLifecycle()
+    // P3 parity: the admin-curated carousel; null until resolved and on any
+    // failure — the static hero below keeps rendering in the meantime.
+    val hero by viewModel.hero.collectAsStateWithLifecycle()
+    val heroCarousel = hero?.takeIf { it.slides.isNotEmpty() }
     val heroImage = bestSellers.firstOrNull()?.images?.firstOrNull()
 
     Column(
@@ -104,55 +129,63 @@ fun HomeScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
-        // Hero — photo, scrim, wordmark + tagline + CTA (web home's counterpart).
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(280.dp),
-        ) {
-            if (heroImage != null) {
-                AsyncImage(
-                    model = heroImage,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
+        // Hero — the curated carousel when the global has slides (P3),
+        // else the photo, scrim, wordmark + tagline + CTA hero unchanged.
+        if (heroCarousel != null) {
+            HeroCarousel(
+                carousel = heroCarousel,
+                onSlideClick = onHeroSlideClick,
+            )
+        } else {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            0f to Color.Black.copy(alpha = 0.25f),
-                            1f to Color.Black.copy(alpha = 0.7f),
-                        ),
-                    ),
-            )
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(20.dp),
+                    .fillMaxWidth()
+                    .height(280.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.displaySmall,
-                    fontWeight = FontWeight.Light,
-                    color = Color.White,
+                if (heroImage != null) {
+                    AsyncImage(
+                        model = heroImage,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                0f to Color.Black.copy(alpha = 0.25f),
+                                1f to Color.Black.copy(alpha = 0.7f),
+                            ),
+                        ),
                 )
-                Text(
-                    text = stringResource(R.string.home_hero_tagline),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.White.copy(alpha = 0.85f),
-                )
-                Spacer(Modifier.height(14.dp))
-                Button(
-                    onClick = onBrowseCatalog,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = MaterialTheme.colorScheme.primary,
-                    ),
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(20.dp),
                 ) {
-                    Text(stringResource(R.string.home_browse))
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.displaySmall,
+                        fontWeight = FontWeight.Light,
+                        color = Color.White,
+                    )
+                    Text(
+                        text = stringResource(R.string.home_hero_tagline),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White.copy(alpha = 0.85f),
+                    )
+                    Spacer(Modifier.height(14.dp))
+                    Button(
+                        onClick = onBrowseCatalog,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                    ) {
+                        Text(stringResource(R.string.home_browse))
+                    }
                 }
             }
         }
@@ -267,6 +300,144 @@ fun HomeScreen(
         Spacer(Modifier.height(20.dp))
     }
 }
+
+/**
+ * The admin-curated hero: a swipeable pager with a dot strip and gentle
+ * autoplay. Autoplay is skipped for a single slide and under reduced motion
+ * (animator duration scale 0 — the accepted heuristic); because the timer
+ * effect is keyed on the current page, every settle — auto-advance OR a
+ * manual swipe — restarts the interval. Tapping a slide is the CTA
+ * (product detail for mithai, vertical detail otherwise — the nav graph
+ * owns the routing via [onSlideClick]).
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun HeroCarousel(
+    carousel: HeroCarousel,
+    onSlideClick: (verticalValue: String, slug: String) -> Unit,
+) {
+    val slides = carousel.slides
+    val pagerState = rememberPagerState(pageCount = { slides.size })
+    // Group label for the pager; the strip below announces the position.
+    val carouselLabel = stringResource(R.string.home_hero_carousel)
+    val pageLabel = stringResource(R.string.home_hero_page, pagerState.currentPage + 1, slides.size)
+    val autoplay = slides.size > 1 && !animationsDisabled(LocalContext.current)
+
+    if (autoplay) {
+        LaunchedEffect(pagerState.currentPage, carousel.autoplayMs) {
+            delay(carousel.autoplayMs.toLong())
+            pagerState.animateScrollToPage((pagerState.currentPage + 1) % slides.size)
+        }
+    }
+
+    Column(modifier = Modifier.semantics { contentDescription = carouselLabel }) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(280.dp),
+        ) { page ->
+            HeroSlideCard(
+                slide = slides[page],
+                pageLabel = stringResource(R.string.home_hero_page, page + 1, slides.size),
+                onSlideClick = onSlideClick,
+            )
+        }
+        if (slides.size > 1) {
+            // Same dot strip idiom as ProductDetailScreen's gallery: the
+            // strip announces the page position, the dots themselves carry
+            // no semantics; inactive dots stay onSurfaceVariant for
+            // contrast (Task 12.4).
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .semantics { contentDescription = pageLabel },
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                repeat(slides.size) { index ->
+                    val active = pagerState.currentPage == index
+                    Box(
+                        modifier = Modifier
+                            .width(if (active) 16.dp else 6.dp)
+                            .height(6.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (active) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                            ),
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** One carousel page: full-bleed photo, scrim, name + optional price, CTA tap. */
+@Composable
+private fun HeroSlideCard(
+    slide: HeroSlide,
+    pageLabel: String,
+    onSlideClick: (verticalValue: String, slug: String) -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable { onSlideClick(slide.vertical.value, slide.slug) }
+            // Per-page state: TalkBack reads "Slide 2 of 5" as the page's
+            // state alongside the image's alt text.
+            .semantics { stateDescription = pageLabel },
+    ) {
+        AsyncImage(
+            model = slide.imageURL,
+            contentDescription = slide.imageAlt,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize(),
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        0f to Color.Black.copy(alpha = 0.25f),
+                        1f to Color.Black.copy(alpha = 0.7f),
+                    ),
+                ),
+        )
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(20.dp),
+        ) {
+            Text(
+                text = slide.name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White,
+                maxLines = 2,
+            )
+            slide.priceLabel?.let { price ->
+                Text(
+                    text = price,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.White.copy(alpha = 0.85f),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Reduced-motion heuristic (accepted for this surface): the global animator
+ * duration scale is 0 when the user has disabled animations — the carousel
+ * then sits still and only responds to swipes.
+ */
+private fun animationsDisabled(context: Context): Boolean =
+    Settings.Global.getFloat(
+        context.contentResolver,
+        Settings.Global.ANIMATOR_DURATION_SCALE,
+        1f,
+    ) == 0f
 
 /**
  * One vertical portal tile. A themed container instead of a photo on purpose:

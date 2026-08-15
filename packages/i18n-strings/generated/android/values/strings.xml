@@ -178,6 +178,8 @@
   <string name="home_browse">Browse sweets</string>
   <string name="home_portal_mithai">Made every day</string>
   <string name="home_portal_snacks">Retail packs</string>
+  <string name="home_hero_carousel">Home highlights carousel</string>
+  <string name="home_hero_page">Slide %1$s of %2$s</string>
   <string name="product_added_to_cart">Added to cart</string>
   <string name="catalog_empty_hint">Try a different search or clear filters.</string>
   <string name="cart_empty_hint">Browse the sweets catalog to fill it.</string>

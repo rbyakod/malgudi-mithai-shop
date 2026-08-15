@@ -86,6 +86,13 @@ extension Endpoint {
         Endpoint(path: "brand", requiresAuth: false)
     }
 
+    /// GET /hero — admin-curated home carousel ({data:{slides,autoplayMs}}).
+    /// Network-only on iOS (no SwiftData cache): a fresh fetch per Home
+    /// load, ETag-less. Empty slides → the local fallback hero stands.
+    static var hero: Endpoint {
+        Endpoint(path: "hero", requiresAuth: false)
+    }
+
     /// GET /orders — customer-scoped (JWT), newest first, paginated.
     static func orders(page: Int = 1, pageSize: Int = 20) -> Endpoint {
         Endpoint(

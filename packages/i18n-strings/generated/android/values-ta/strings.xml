@@ -178,6 +178,8 @@
   <string name="home_browse">இனிப்புகளைப் பார்க்கவும்</string>
   <string name="home_portal_mithai">தினமும் தயாரிக்கப்படுகிறது</string>
   <string name="home_portal_snacks">சில்லறை பேக்குகள்</string>
+  <string name="home_hero_carousel">முகப்பு சிறப்புக் காட்சிகள் கெரொசல்</string>
+  <string name="home_hero_page">ஸ்லைடு %1$s, மொத்தம் %2$s</string>
   <string name="product_added_to_cart">கார்ட்டில் சேர்க்கப்பட்டது</string>
   <string name="catalog_empty_hint">வேறு தேடலை முயற்சிக்கவும் அல்லது வடிகட்டிகளை அழிக்கவும்.</string>
   <string name="cart_empty_hint">நிரப்ப இனிப்பு பட்டியலைப் பாருங்கள்.</string>

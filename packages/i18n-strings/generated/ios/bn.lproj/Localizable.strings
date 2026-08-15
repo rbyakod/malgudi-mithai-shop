@@ -177,6 +177,8 @@
 "home.browse" = "মিষ্টি দেখুন";
 "home.portal.mithai" = "প্রতিদিন তৈরি হয়";
 "home.portal.snacks" = "রিটেইল প্যাক";
+"home.hero_carousel" = "হোম হাইলাইট ক্যারোসেল";
+"home.hero_page" = "স্লাইড {page}, মোট {total}";
 "product.added_to_cart" = "কার্টে যোগ করা হয়েছে";
 "catalog.empty_hint" = "অন্য একটি সার্চ করুন বা ফিল্টার সরান।";
 "cart.empty_hint" = "ভরতে মিষ্টির তালিকা দেখুন।";

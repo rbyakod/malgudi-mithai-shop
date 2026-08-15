@@ -48,7 +48,8 @@ struct HomeView: View {
             let model = HomeViewModel(
                 repository: CatalogRepository(client: MishranAPIClient(), cache: cache),
                 storyRepository: StoryRepository(client: MishranAPIClient(), context: container.mainContext),
-                verticalsRepository: VerticalsRepository(client: MishranAPIClient())
+                verticalsRepository: VerticalsRepository(client: MishranAPIClient()),
+                heroRepository: HeroRepository(client: MishranAPIClient())
             )
             viewModel = model
             await model.load()
@@ -93,7 +94,18 @@ struct HomeView: View {
     private func content(_ viewModel: HomeViewModel) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                hero(bestSellers: viewModel.bestSellers)
+                // Admin-curated carousel replaces the static hero when /hero
+                // resolves slides; empty/failed keeps the featured fallback.
+                if viewModel.hasHeroSlides {
+                    HeroCarousel(
+                        slides: viewModel.heroSlides,
+                        autoplayMs: viewModel.heroAutoplayMs
+                    ) { route in
+                        router.push(route)
+                    }
+                } else {
+                    hero(bestSellers: viewModel.bestSellers)
+                }
 
                 sectionHeader(L("home.best_sellers"))
                 bestSellersRail(viewModel)

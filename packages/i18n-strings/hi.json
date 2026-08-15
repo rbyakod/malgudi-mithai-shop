@@ -177,6 +177,8 @@
   "home.browse": "मिठाई देखें",
   "home.portal.mithai": "रोज़ बनती है",
   "home.portal.snacks": "रिटेल पैक",
+  "home.hero_carousel": "होम हाइलाइट्स कैरोसेल",
+  "home.hero_page": "स्लाइड {page}, कुल {total}",
   "product.added_to_cart": "कार्ट में जोड़ा गया",
   "catalog.empty_hint": "कोई और खोज आज़माएँ या फ़िल्टर हटाएँ।",
   "cart.empty_hint": "भरने के लिए मिठाइयों की सूची देखें।",

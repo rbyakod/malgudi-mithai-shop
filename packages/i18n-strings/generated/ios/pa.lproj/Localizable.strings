@@ -177,6 +177,8 @@
 "home.browse" = "ਮਿਠਾਈ ਵੇਖੋ";
 "home.portal.mithai" = "ਰੋਜ਼ ਬਣਦੀ ਹੈ";
 "home.portal.snacks" = "ਰੀਟੇਲ ਪੈਕ";
+"home.hero_carousel" = "ਹੋਮ ਹਾਈਲਾਈਟਸ ਕੈਰੋਸਲ";
+"home.hero_page" = "ਸਲਾਈਡ {page}, ਕੁੱਲ {total}";
 "product.added_to_cart" = "ਕਾਰਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ";
 "catalog.empty_hint" = "ਹੋਰ ਖੋਜ ਅਜ਼ਮਾਓ ਜਾਂ ਫਿਲਟਰ ਹਟਾਓ।";
 "cart.empty_hint" = "ਭਰਨ ਲਈ ਮਿਠਾਈਆਂ ਦੀ ਸੂਚੀ ਵੇਖੋ।";

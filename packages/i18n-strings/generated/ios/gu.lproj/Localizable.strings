@@ -177,6 +177,8 @@
 "home.browse" = "મઠાઈ જુઓ";
 "home.portal.mithai" = "રોજ બને છે";
 "home.portal.snacks" = "રિટેલ પેક";
+"home.hero_carousel" = "હોમ હાઇલાઇટ્સ કૅરોસેલ";
+"home.hero_page" = "સ્લાઇડ {page}, કુલ {total}";
 "product.added_to_cart" = "કાર્ટમાં ઉમેર્યું";
 "catalog.empty_hint" = "અલગ શોધ અજમાવો અથવા ફિલ્ટર દૂર કરો.";
 "cart.empty_hint" = "ભરવા માટે મઠાઈની યાદી જુઓ.";

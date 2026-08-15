@@ -32,6 +32,7 @@ import com.mishran.api.models.CatalogQsrSlugGet200Response
 import com.mishran.api.models.CatalogServiceableGet200Response
 import com.mishran.api.models.CatalogSnacksGet200Response
 import com.mishran.api.models.CatalogSnacksSlugGet200Response
+import com.mishran.api.models.HeroGet200Response
 import com.mishran.api.models.NotificationsRegisterDevicePost200Response
 import com.mishran.api.models.NotificationsRegisterDevicePostRequest
 import com.mishran.api.models.OtpSendRequest
@@ -193,6 +194,17 @@ interface MishranApi {
      */
     @GET("brand")
     suspend fun getBrand(): BrandGet200Response
+
+    // ---- Home hero (P3 parity: admin-curated carousel) -------------------
+
+    /**
+     * Admin-curated home hero slides (the web's `home-hero` global). Public,
+     * tiny, ETag'd — the app keeps it network-only (browse-y surface, same
+     * call as the verticals in [VerticalRepository]); an empty or failed
+     * fetch simply leaves Home on its local static hero.
+     */
+    @GET("hero")
+    suspend fun getHero(): HeroGet200Response
 
     // ---- Cart + payments (Task 10.x) ------------------------------------
 

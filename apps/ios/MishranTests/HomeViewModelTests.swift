@@ -2,7 +2,10 @@
 // Pure derivations off the catalog rows: the featured-first best-sellers
 // rule with its first-8-by-name fallback, and — since P2 — the
 // shop-by-vertical portal assembly (counts + lead imagery, one portal per
-// vertical, dead verticals degrade to placeholders).
+// vertical, dead verticals degrade to placeholders). P3 adds the curated
+// hero: /hero success populates the carousel state; failure or empty
+// slides keep the static featured-hero path (hasHeroSlides false).
+import SwiftData
 import XCTest
 @testable import Mishran
 
@@ -105,5 +108,79 @@ final class HomeViewModelTests: XCTestCase {
             portals.first { $0.vertical == .mithai }?.imageURL, "https://cdn.test/kaju.jpg",
             "mithai imagery derives off the offline catalog, untouched by vertical failures"
         )
+    }
+
+    // MARK: Admin-curated hero (P3 parity)
+
+    private let heroBaseURL = URL(string: "https://api.test/api/mobile/v1")!
+
+    /// Real HomeViewModel over the MockURLProtocol seam (VerticalCatalog
+    /// ViewModelTests' client setup): the catalog route stays unrouted so
+    /// only the hero feed answers — load() must tolerate that. Routes are
+    /// registered by each test BEFORE building the model (the reset here
+    /// only clears state leaked from earlier classes).
+    @MainActor
+    private func makeHomeViewModel() -> HomeViewModel {
+        UserDefaults.standard.removeObject(forKey: CatalogCache.etagKey)
+        let session = { () -> URLSession in
+            let config = URLSessionConfiguration.ephemeral
+            config.protocolClasses = [MockURLProtocol.self]
+            return URLSession(configuration: config)
+        }
+        let client = MishranAPIClient(
+            session: session(), refreshSession: session(),
+            baseURL: heroBaseURL,
+            authenticator: Authenticator(store: InMemoryTokenStore(), session: session(), baseURL: heroBaseURL),
+            retryDelay: 0
+        )
+        let container = try! ModelContainerFactory.makeContainer(inMemory: true)
+        return HomeViewModel(
+            repository: CatalogRepository(
+                client: client,
+                cache: CatalogCache(context: container.mainContext)
+            ),
+            heroRepository: HeroRepository(client: client)
+        )
+    }
+
+    @MainActor
+    func testHeroPopulatesOnSuccessWithoutBlockingTheCatalog() async {
+        MockURLProtocol.reset()
+        MockURLProtocol.routes["hero"] = (
+            200, [:],
+            Data(#"{"data":{"slides":[{"id":"p1","vertical":"mithai","slug":"kaju-katli","name":"Kaju Katli","priceLabel":"₹720/kg","imageURL":"https://cdn.test/kaju.jpg","imageAlt":"Kaju katli"}],"autoplayMs":7000}}"#.utf8)
+        )
+        let viewModel = makeHomeViewModel()
+
+        await viewModel.load()
+
+        XCTAssertTrue(viewModel.hasHeroSlides)
+        XCTAssertEqual(viewModel.heroSlides.map(\.slug), ["kaju-katli"])
+        XCTAssertEqual(viewModel.heroAutoplayMs, 7000)
+        // The unrouted catalog failed silently — hero state is independent.
+        XCTAssertEqual(viewModel.products.isEmpty, true)
+    }
+
+    @MainActor
+    func testHeroFailureKeepsTheFeaturedFallback() async {
+        MockURLProtocol.reset()
+        MockURLProtocol.routes["hero"] = (500, [:], Data("{}".utf8))
+        let viewModel = makeHomeViewModel()
+
+        await viewModel.load()
+
+        XCTAssertFalse(viewModel.hasHeroSlides, "a dead /hero must leave the static hero in place")
+        XCTAssertEqual(viewModel.heroAutoplayMs, 5000, "default interval survives a failure")
+    }
+
+    @MainActor
+    func testEmptySlidesKeepTheFeaturedFallback() async {
+        MockURLProtocol.reset()
+        MockURLProtocol.routes["hero"] = (200, [:], Data(#"{"data":{"slides":[],"autoplayMs":8000}}"#.utf8))
+        let viewModel = makeHomeViewModel()
+
+        await viewModel.load()
+
+        XCTAssertFalse(viewModel.hasHeroSlides, "an unset global means the local hero, never a blank screen")
     }
 }

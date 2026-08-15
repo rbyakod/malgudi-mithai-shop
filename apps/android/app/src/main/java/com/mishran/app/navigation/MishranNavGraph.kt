@@ -204,13 +204,23 @@ fun MishranAppRoot() {
                 // Real home since the placeholder era: greeting + featured rail
                 // off the cached catalog, CTAs into Catalog and Orders. P2
                 // net-new: the journal rail + vertical portals deep-link into
-                // the new surfaces.
+                // the new surfaces. P3: the admin hero carousel's slide CTA —
+                // mithai slides go to product detail, other verticals to
+                // their Batch E detail routes.
                 HomeScreen(
                     onProductClick = { slug -> navController.navigate(Routes.product(slug)) },
                     onBrowseCatalog = { navController.navigate(Routes.catalog()) },
                     onFamilyClick = { family -> navController.navigate(Routes.catalog(family)) },
                     onVerticalClick = { vertical ->
                         navController.navigate(Routes.catalog(vertical = vertical))
+                    },
+                    onHeroSlideClick = { vertical, slug ->
+                        when (vertical) {
+                            "mithai" -> navController.navigate(Routes.product(slug))
+                            "snacks" -> navController.navigate(Routes.snack(slug))
+                            "qsr" -> navController.navigate(Routes.qsrItem(slug))
+                            "merch" -> navController.navigate(Routes.merchItem(slug))
+                        }
                     },
                     onStoryClick = { slug -> navController.navigate(Routes.story(slug)) },
                     onJournal = { navController.navigate(Routes.STORIES) },
