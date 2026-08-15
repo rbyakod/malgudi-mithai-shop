@@ -771,6 +771,8 @@ export interface paths {
                         /** @enum {string} */
                         platform: "android" | "ios";
                         pushToken: string;
+                        /** @description ActivityKit push token while a delivery Live Activity is in flight (iOS). */
+                        liveActivityToken?: string;
                         appVersion?: string;
                         deviceModel?: string;
                         osVersion?: string;
