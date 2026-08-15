@@ -35,6 +35,7 @@ const seeds: Seed[] = [
       shelfLife: "7 days",
       storage: "Room temperature, airtight.",
       displayPrice: "₹920 / 250g",
+      weight: "250 g",
       freshnessStatus: "made-to-order",
       ingredients: "Cashew, sugar, kakvi.",
     },
