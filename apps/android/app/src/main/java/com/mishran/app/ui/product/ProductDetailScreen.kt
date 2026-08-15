@@ -180,15 +180,11 @@ private fun ProductDetailContent(
             }
 
             Section(stringResource(R.string.product_ingredients), product.ingredients)
-            // TODO(i18n): missing key product.shelf_life
-            Section("Shelf life", product.shelfLife)
-            // TODO(i18n): missing key product.storage
-            Section("Storage", product.storage)
-            // TODO(i18n): missing key product.story
-            Section("Story", product.story)
+            Section(stringResource(R.string.product_shelf_life), product.shelfLife)
+            Section(stringResource(R.string.product_storage), product.storage)
+            Section(stringResource(R.string.product_story), product.story)
             product.allergens.orEmpty().takeIf { it.isNotEmpty() }?.let { allergens ->
-                // TODO(i18n): missing key product.allergens
-                Section(label = "Allergens", body = allergens.joinToString(", "))
+                Section(label = stringResource(R.string.product_allergens), body = allergens.joinToString(", "))
             }
 
             Row(

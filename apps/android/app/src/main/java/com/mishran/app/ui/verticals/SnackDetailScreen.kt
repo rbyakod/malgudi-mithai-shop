@@ -140,8 +140,7 @@ private fun SnackDetailContent(
                     InfoChip(text = weight)
                 }
             }
-            // TODO(i18n): missing key vertical.description
-            DetailSection(label = "Description", body = snack.description)
+            DetailSection(label = stringResource(R.string.vertical_description), body = snack.description)
 
             if (!snack.retailers.isNullOrEmpty()) {
                 Text(
@@ -167,8 +166,7 @@ private fun SnackDetailContent(
                                     style = MaterialTheme.typography.titleMedium,
                                 )
                                 Text(
-                                    // TODO(i18n): missing key vertical.opens_in_browser
-                                    text = "Opens in your browser",
+                                    text = stringResource(R.string.vertical_opens_in_browser),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )

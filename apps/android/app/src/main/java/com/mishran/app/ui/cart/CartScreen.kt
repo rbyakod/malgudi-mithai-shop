@@ -86,8 +86,7 @@ fun CartScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    // TODO(i18n): missing key cart.estimated_total
-                    Text("Estimated total", style = MaterialTheme.typography.titleSmall)
+                    Text(stringResource(R.string.cart_estimated_total), style = MaterialTheme.typography.titleSmall)
                     Text(
                         text = formatPaise(state.estimatedTotalPaise) +
                             if (state.hasUnpricedLines) "+" else "",
@@ -96,8 +95,7 @@ fun CartScreen(
                 }
                 if (state.hasUnpricedLines) {
                     Text(
-                        // TODO(i18n): missing key cart.unpriced_hint
-                        text = "Some items show no price yet — the final total is confirmed at checkout.",
+                        text = stringResource(R.string.cart_unpriced_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -106,15 +104,13 @@ fun CartScreen(
                     onClick = onCheckout,
                     modifier = Modifier.fillMaxWidth().height(52.dp),
                 ) {
-                    // TODO(i18n): missing key cart.checkout_items (with %%1$d)
-                    Text("Checkout (${state.itemCount} items)")
+                    Text(stringResource(R.string.cart_checkout_items, state.itemCount))
                 }
                 OutlinedButton(
                     onClick = viewModel::clear,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    // TODO(i18n): missing key cart.clear
-                    Text("Clear cart")
+                    Text(stringResource(R.string.cart_clear))
                 }
             }
         }

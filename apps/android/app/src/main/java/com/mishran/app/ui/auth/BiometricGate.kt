@@ -169,8 +169,7 @@ private fun GateSplash(state: GateState) {
             when (state) {
                 GateState.Checking, GateState.Unlocking -> CircularProgressIndicator()
                 GateState.Prompt -> Text(
-                    // TODO(i18n): missing key auth.biometric_waiting
-                    text = "Waiting for biometric…",
+                    text = stringResource(R.string.auth_biometric_waiting),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

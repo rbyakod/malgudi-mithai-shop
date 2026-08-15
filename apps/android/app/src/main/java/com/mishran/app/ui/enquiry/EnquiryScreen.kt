@@ -240,14 +240,12 @@ private fun EnquirySuccess(
         )
         if (leadId.isNotBlank()) {
             Text(
-                // TODO(i18n): missing key enquiry.reference (with %%1$s)
-                text = "Reference: $leadId",
+                text = stringResource(R.string.enquiry_reference, leadId),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        // TODO(i18n): missing key enquiry.send_another
-        TextButton(onClick = onAnother) { Text("Send another enquiry") }
+        TextButton(onClick = onAnother) { Text(stringResource(R.string.enquiry_send_another)) }
     }
 }
 

@@ -132,8 +132,7 @@ private fun MerchDetailContent(
                     InfoChip(text = availability)
                 }
             }
-            // TODO(i18n): missing key vertical.description
-            DetailSection(label = "Description", body = merch.description)
+            DetailSection(label = stringResource(R.string.vertical_description), body = merch.description)
 
             Spacer(Modifier.height(8.dp))
             Button(onClick = onEnquire, modifier = Modifier.fillMaxWidth().height(52.dp)) {

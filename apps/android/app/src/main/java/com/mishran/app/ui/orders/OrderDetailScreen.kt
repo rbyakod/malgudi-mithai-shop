@@ -93,8 +93,7 @@ private fun OrderDetailContent(
                 modifier = Modifier.semantics { heading() },
             )
             Text(
-                // TODO(i18n): missing key order.placed_at (with %%1$s)
-                text = "Placed ${formatOrderDate(order.createdAt)}",
+                text = stringResource(R.string.order_placed_at, formatOrderDate(order.createdAt)),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -122,8 +121,7 @@ private fun OrderDetailContent(
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            // TODO(i18n): missing key order.items_title
-            Text("Items", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.order_items_title), style = MaterialTheme.typography.titleMedium)
             order.items.forEach { item ->
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.weight(1f)) {
@@ -143,14 +141,15 @@ private fun OrderDetailContent(
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            // TODO(i18n): missing key order.totals_title
-            Text("Totals", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.order_totals_title), style = MaterialTheme.typography.titleMedium)
             TotalRow(stringResource(R.string.cart_subtotal), order.totals.itemsTotalInPaise)
             TotalRow(stringResource(R.string.cart_delivery_fee), order.totals.deliveryFeeInPaise)
-            // TODO(i18n): missing key order.taxes
-            if (order.totals.taxesInPaise > 0) TotalRow("Taxes", order.totals.taxesInPaise)
-            // TODO(i18n): missing key order.discount
-            if (order.totals.discountInPaise > 0) TotalRow("Discount", -order.totals.discountInPaise)
+            if (order.totals.taxesInPaise > 0) {
+                TotalRow(stringResource(R.string.order_taxes), order.totals.taxesInPaise)
+            }
+            if (order.totals.discountInPaise > 0) {
+                TotalRow(stringResource(R.string.order_discount), -order.totals.discountInPaise)
+            }
             HorizontalDivider()
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
@@ -168,8 +167,7 @@ private fun OrderDetailContent(
         }
 
         TextButton(onClick = onCallSupport) {
-            // TODO(i18n): missing key order.help_call (order.help covers only part)
-            Text("Need help with this order? Call support")
+            Text(stringResource(R.string.order_help_call))
         }
     }
 }

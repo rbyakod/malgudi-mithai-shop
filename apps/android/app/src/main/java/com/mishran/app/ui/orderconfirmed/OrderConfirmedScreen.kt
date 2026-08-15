@@ -69,7 +69,8 @@ fun OrderConfirmedScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.height(24.dp))
-        val eta = etaLine(slotLabel) ?: shelfEtaLine(shelfSlaDays)
+        val eta = etaLine(slotLabel, stringResource(R.string.order_arriving_slot))
+            ?: shelfEtaLine(shelfSlaDays, stringResource(R.string.order_arriving_days))
         if (eta != null) {
             Text(
                 text = eta,
@@ -79,8 +80,7 @@ fun OrderConfirmedScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
         Text(
-            // TODO(i18n): missing key order.receipt_note
-            text = "A receipt is on its way by SMS. Payment is collected only for confirmed orders.",
+            text = stringResource(R.string.order_receipt_note),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -109,16 +109,22 @@ internal fun orderReferenceLabel(orderId: String): String {
     else "#" + trimmed.take(HEAD_CHARS) + "…" + trimmed.takeLast(TAIL_CHARS)
 }
 
-/** Fresh-tier ETA from the picked slot; null when no slot was chosen. */
-// TODO(i18n): missing keys order.arriving_slot / order.arriving_days
-internal fun etaLine(slotLabel: String?): String? =
-    slotLabel?.let { "Arriving $it" }
+/**
+ * Fresh-tier ETA from the picked slot; null when no slot was chosen.
+ * [arrivingSlotPattern] is the localized "Arriving %1$s" (order.arriving_slot)
+ * resolved by the caller via stringResource — the helper stays pure for JVM tests.
+ */
+internal fun etaLine(slotLabel: String?, arrivingSlotPattern: String): String? =
+    slotLabel?.let { arrivingSlotPattern.format(it) }
 
-/** Shelf-tier ETA from the SLA days; null when unknown. */
-internal fun shelfEtaLine(slaDays: Int?): String? = when {
+/**
+ * Shelf-tier ETA from the SLA days; null when unknown. [arrivingDaysPattern]
+ * is the localized "Arriving in %1$s–%2$s days" (order.arriving_days); the
+ * second arg is always slaDays + 1, matching the en copy's 1–2 day floor.
+ */
+internal fun shelfEtaLine(slaDays: Int?, arrivingDaysPattern: String): String? = when {
     slaDays == null -> null
-    slaDays <= 1 -> "Arriving in 1–2 days"
-    else -> "Arriving in $slaDays–${slaDays + 1} days"
+    else -> arrivingDaysPattern.format(slaDays, slaDays + 1)
 }
 
 private const val MAX_REFERENCE_CHARS = 16

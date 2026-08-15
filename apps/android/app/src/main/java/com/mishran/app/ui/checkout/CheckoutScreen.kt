@@ -63,6 +63,8 @@ fun CheckoutScreen(
     // in a coroutine, where stringResource() is not callable.
     val cartChangedMessage = stringResource(R.string.checkout_error_cart_changed)
     val paymentFailedMessage = stringResource(R.string.checkout_error_payment_failed)
+    val paymentSheetMessage = stringResource(R.string.checkout_error_payment_sheet)
+    val genericMessage = stringResource(R.string.checkout_error_generic)
 
     // One-shot events: open the sheet, navigate, or surface a failure message.
     LaunchedEffect(viewModel) {
@@ -81,8 +83,7 @@ fun CheckoutScreen(
                             viewModel::onRazorpayOutcome,
                         )
                     } else {
-                        // TODO(i18n): missing key checkout.error_payment_sheet
-                        snackbarHostState.showSnackbar("Couldn't open the payment sheet.")
+                        snackbarHostState.showSnackbar(paymentSheetMessage)
                     }
                 }
                 is CheckoutEvent.OrderPlaced -> onOrderPlaced(
@@ -97,8 +98,7 @@ fun CheckoutScreen(
                     event.message ?: paymentFailedMessage,
                 )
                 is CheckoutEvent.Failed -> snackbarHostState.showSnackbar(
-                    // TODO(i18n): missing key checkout.error_generic
-                    event.message ?: "Something went wrong — please try again.",
+                    event.message ?: genericMessage,
                 )
             }
         }
@@ -179,8 +179,7 @@ private fun CheckoutContent(
 
         if (state.serviceability is ServiceabilityState.NotServiceable) {
             Text(
-                // TODO(i18n): missing key checkout.payment_note
-                text = "Payment is collected only after the order is confirmed.",
+                text = stringResource(R.string.checkout_payment_note),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

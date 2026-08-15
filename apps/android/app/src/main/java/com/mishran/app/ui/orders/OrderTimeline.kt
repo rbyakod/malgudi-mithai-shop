@@ -47,10 +47,9 @@ fun statusLabel(status: Order.Status): String = when (status) {
 
 /**
  * @StringRes counterpart of [statusLabel] for Compose call sites (resolved
- * with stringResource). Returns null for the side states that have no
- * generated key yet — callers fall back to [statusLabel]'s English.
- * statusLabel itself stays the single source for the widget + push builders,
- * which render outside composition.
+ * with stringResource). Exhaustive; kept nullable so Compose callers keep
+ * their existing `?.let` shape. statusLabel itself stays the single source
+ * for the widget + push builders, which render outside composition.
  */
 fun statusLabelRes(status: Order.Status): Int? = when (status) {
     Order.Status.created -> R.string.orders_status_created
@@ -62,8 +61,9 @@ fun statusLabelRes(status: Order.Status): Int? = when (status) {
     Order.Status.delivered -> R.string.orders_status_delivered
     Order.Status.payment_failed -> R.string.orders_status_payment_failed
     Order.Status.cancelled -> R.string.orders_status_cancelled
-    // TODO(i18n): missing keys orders.status_returned/_failed_delivery/_abandoned
-    else -> null
+    Order.Status.returned -> R.string.orders_status_returned
+    Order.Status.failed_delivery -> R.string.orders_status_failed_delivery
+    Order.Status.abandoned -> R.string.orders_status_abandoned
 }
 
 /** Visual tone for status chips/banners. */
