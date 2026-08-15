@@ -26,6 +26,9 @@ object DataStoreKeys {
     /** Last catalog ETag, replayed as If-None-Match to short-circuit 304s. */
     val CATALOG_ETAG: Preferences.Key<String> = stringPreferencesKey("catalog_etag")
 
+    /** Last stories ETag — same conditional-GET contract, journal list. */
+    val STORIES_ETAG: Preferences.Key<String> = stringPreferencesKey("stories_etag")
+
     /**
      * Brand WhatsApp number (display form, e.g. "+91-98765-43210") cached
      * from GET /brand — fetched once per install, P1 parity support row.

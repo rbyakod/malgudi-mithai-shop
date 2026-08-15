@@ -60,6 +60,12 @@ import com.mishran.app.ui.orderconfirmed.OrderConfirmedScreen
 import com.mishran.app.ui.orders.OrderDetailScreen
 import com.mishran.app.ui.orders.OrderListScreen
 import com.mishran.app.ui.product.ProductDetailScreen
+import com.mishran.app.ui.stories.StoriesScreen
+import com.mishran.app.ui.stories.StoryReaderScreen
+import com.mishran.app.ui.enquiry.EnquiryScreen
+import com.mishran.app.ui.verticals.MerchDetailScreen
+import com.mishran.app.ui.verticals.QsrDetailScreen
+import com.mishran.app.ui.verticals.SnackDetailScreen
 
 /**
  * Root of the app UI. Wire this into [com.mishran.app.MainActivity]; it owns
@@ -195,20 +201,33 @@ fun MishranAppRoot() {
             }
             composable(Routes.HOME) {
                 // Real home since the placeholder era: greeting + featured rail
-                // off the cached catalog, CTAs into Catalog and Orders.
+                // off the cached catalog, CTAs into Catalog and Orders. P2
+                // net-new: the journal rail + vertical portals deep-link into
+                // the new surfaces.
                 HomeScreen(
                     onProductClick = { slug -> navController.navigate(Routes.product(slug)) },
                     onBrowseCatalog = { navController.navigate(Routes.catalog()) },
                     onFamilyClick = { family -> navController.navigate(Routes.catalog(family)) },
+                    onVerticalClick = { vertical ->
+                        navController.navigate(Routes.catalog(vertical = vertical))
+                    },
+                    onStoryClick = { slug -> navController.navigate(Routes.story(slug)) },
+                    onJournal = { navController.navigate(Routes.STORIES) },
                     onOrders = { navController.navigate(Routes.ORDERS) },
                 )
             }
             // Task 9.3: offline-first catalog browse (grid + search + filters).
-            // Optional ?family= arg seeds the family filter (Home's cards).
+            // Optional ?family= arg seeds the family filter (Home's cards);
+            // ?vertical= selects the tab (Home's portals, P2 net-new).
             composable(
                 route = Routes.CATALOG,
                 arguments = listOf(
                     navArgument("family") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                    navArgument("vertical") {
                         type = NavType.StringType
                         nullable = true
                         defaultValue = null
@@ -220,6 +239,9 @@ fun MishranAppRoot() {
                         navController.navigate(Routes.product(product.slug))
                     },
                     onCartClick = { navController.navigate(Routes.CART) },
+                    onSnackClick = { slug -> navController.navigate(Routes.snack(slug)) },
+                    onQsrClick = { slug -> navController.navigate(Routes.qsrItem(slug)) },
+                    onMerchClick = { slug -> navController.navigate(Routes.merchItem(slug)) },
                 )
             }
             composable(
@@ -336,6 +358,8 @@ fun MishranAppRoot() {
                 // digits until that lands — the ViewModel resolves which).
                 AccountScreen(
                     onOpenAddresses = { navController.navigate(Routes.ADDRESSES) },
+                    onOpenJournal = { navController.navigate(Routes.STORIES) },
+                    onOpenEnquiry = { navController.navigate(Routes.enquiry()) },
                     onWhatsApp = { digits ->
                         val chat = android.content.Intent(
                             android.content.Intent.ACTION_VIEW,
@@ -357,6 +381,75 @@ fun MishranAppRoot() {
                 // Saved delivery addresses (Account → Delivery addresses).
                 // Checkout's picker reads the same server-side list.
                 AddressesScreen(onBack = { navController.popBackStack() })
+            }
+            // ---- P2 net-new surfaces ------------------------------------------
+            composable(Routes.STORIES) {
+                // Journal list (Home rail / Account row). Newest-first with a
+                // hero card; pull-to-refresh forces a network pass.
+                StoriesScreen(
+                    onBack = { navController.popBackStack() },
+                    onStoryClick = { slug -> navController.navigate(Routes.story(slug)) },
+                )
+            }
+            composable(
+                route = Routes.STORY,
+                arguments = listOf(navArgument("slug") { type = NavType.StringType }),
+            ) {
+                // Reader: hero image + flattened paragraphs; network-first with
+                // the cached body as the offline fallback.
+                StoryReaderScreen(onBack = { navController.popBackStack() })
+            }
+            composable(
+                route = Routes.ENQUIRY,
+                arguments = listOf(
+                    navArgument("type") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                ),
+            ) {
+                // Wedding/corporate lead form; merch's Enquire CTA presets
+                // ?type=corporate.
+                EnquiryScreen(onBack = { navController.popBackStack() })
+            }
+            composable(
+                route = Routes.SNACK,
+                arguments = listOf(navArgument("slug") { type = NavType.StringType }),
+            ) {
+                // Retail snack: "Where to buy" rows open the retailer in the
+                // external browser (ACTION_VIEW — the installed Custom Tabs
+                // provider or plain browser), mirroring the WhatsApp row.
+                SnackDetailScreen(
+                    onBack = { navController.popBackStack() },
+                    onOpenRetailer = { url ->
+                        val open = android.content.Intent(
+                            android.content.Intent.ACTION_VIEW,
+                            android.net.Uri.parse(url),
+                        )
+                        context.startActivity(open)
+                    },
+                )
+            }
+            composable(
+                route = Routes.QSR_ITEM,
+                arguments = listOf(navArgument("slug") { type = NavType.StringType }),
+            ) {
+                // Walk-in counter item: veg/spice + store chips, no cart CTA.
+                QsrDetailScreen(onBack = { navController.popBackStack() })
+            }
+            composable(
+                route = Routes.MERCH_ITEM,
+                arguments = listOf(navArgument("slug") { type = NavType.StringType }),
+            ) {
+                // Enquiry-led merch: the CTA lands on the enquiry form with the
+                // type preset to corporate.
+                MerchDetailScreen(
+                    onBack = { navController.popBackStack() },
+                    onEnquire = {
+                        navController.navigate(Routes.enquiry(type = "corporate"))
+                    },
+                )
             }
         }
     }

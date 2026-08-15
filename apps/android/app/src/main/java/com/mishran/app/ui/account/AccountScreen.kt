@@ -1,10 +1,13 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/account/AccountScreen.kt — P1 parity.
+// apps/android/app/src/main/java/com/mishran/app/ui/account/AccountScreen.kt — P1 parity / P2 net-new.
 //
 // The Account tab: signed-in identity, delivery addresses, a support section
 // with the brand WhatsApp row (P1 parity — fetched from GET /brand,
-// placeholder until then), and sign-out. Addresses/biometric/loyalty arrive
-// with their real flows — nothing here links to a screen that doesn't exist
-// yet.
+// placeholder until then), the P2 journal + bulk-enquiry rows, and sign-out.
+// Nothing here links to a screen that doesn't exist.
+//
+// TODO(i18n): the P2 rows ("Journal", "Bulk & events") hardcode the English
+// copy from packages/i18n-strings/en.json (stories.title, enquiry.title) —
+// swap for R.string references in the i18n sweep.
 package com.mishran.app.ui.account
 
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material3.Card
@@ -36,6 +41,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun AccountScreen(
     onOpenAddresses: () -> Unit,
+    onOpenJournal: () -> Unit,
+    onOpenEnquiry: () -> Unit,
     onWhatsApp: (digits: String) -> Unit,
     onSignedOut: () -> Unit,
     viewModel: AccountViewModel = hiltViewModel(),
@@ -47,6 +54,7 @@ fun AccountScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp),
     ) {
         Spacer(Modifier.height(24.dp))
@@ -88,6 +96,63 @@ fun AccountScreen(
                     )
                     Text(
                         text = "Saved addresses for faster checkout",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Text(
+                    text = "›",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+        // P2 net-new: journal + bulk & events rows (same card-row idiom).
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onOpenJournal,
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = "Journal",
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = "Stories from the kitchen and the karigars",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Text(
+                    text = "›",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onOpenEnquiry,
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = "Bulk & events",
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = "Weddings, corporate gifting and wholesale",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

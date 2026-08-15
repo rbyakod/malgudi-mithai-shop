@@ -1,12 +1,17 @@
 // HomeView.swift — shell wiring owed since Task 16.3; restructured in P1 to
 // the Android HomeScreen shape: a photo hero (web hero's counterpart), a
-// best-sellers rail, shop-by-family chips that seed the catalog tab's
-// filter, and a "Your orders" affordance. The full catalog grid lives one
-// push away (Route.catalog) via the hero CTA / toolbar; offline-first
-// catalog rows back every section. The view model builds only once a
-// SwiftData container exists.
+// best-sellers rail, and a "Your orders" affordance. P2: the shop-by-family
+// chips grew into the "Shop by vertical" portals row (image cards that open
+// the catalog with the tab preselected — family filtering still lives in
+// the catalog's filter sheet), and the "From the journal" rail previews the
+// three newest stories. The full catalog grid lives one push away
+// (Route.catalog) via the hero CTA / toolbar; offline-first catalog rows
+// back every section. The view model builds only once a SwiftData container
+// exists.
 // Task 48.1: with no session the toolbar also offers the sign-in entry —
 // before this the auth flow was unreachable outside launch arguments.
+// TODO(i18n): section strings match packages/i18n-strings/en.json
+// (home.best_sellers / home.shop_by_vertical / home.journal / home.your_orders).
 import SwiftData
 import SwiftUI
 
@@ -42,7 +47,9 @@ struct HomeView: View {
             guard viewModel == nil, let container else { return }
             let cache = await CatalogCache(context: container.mainContext)
             let model = HomeViewModel(
-                repository: CatalogRepository(client: MishranAPIClient(), cache: cache)
+                repository: CatalogRepository(client: MishranAPIClient(), cache: cache),
+                storyRepository: StoryRepository(client: MishranAPIClient(), context: container.mainContext),
+                verticalsRepository: VerticalsRepository(client: MishranAPIClient())
             )
             viewModel = model
             await model.load()
@@ -53,7 +60,7 @@ struct HomeView: View {
     private var toolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .topBarLeading) {
             Button {
-                router.push(.catalog(family: nil))
+                router.push(.catalog(vertical: .mithai, family: nil))
             } label: {
                 Label("Sweets", systemImage: "square.grid.2x2")
             }
@@ -92,8 +99,13 @@ struct HomeView: View {
                 sectionHeader("Best sellers")
                 bestSellersRail(viewModel)
 
-                sectionHeader("Shop by family")
-                familyChipsRow(viewModel)
+                sectionHeader("Shop by vertical")
+                verticalPortalsRow(viewModel)
+
+                if !viewModel.latestStories.isEmpty {
+                    sectionHeader("From the journal")
+                    journalRail(viewModel)
+                }
 
                 Spacer(minLength: .mishranSpacingMd)
                 HStack {
@@ -145,7 +157,7 @@ struct HomeView: View {
                     .font(.mishranBodyLg)
                     .foregroundStyle(.white.opacity(0.85))
                 Button {
-                    router.push(.catalog(family: nil))
+                    router.push(.catalog(vertical: .mithai, family: nil))
                 } label: {
                     Text("Browse sweets")
                         .font(.mishranBodyMd.weight(.semibold))
@@ -186,30 +198,67 @@ struct HomeView: View {
         }
     }
 
-    /// Family chips seed the catalog tab's family filter (Android's
-    /// SavedStateHandle deep-link, iOS-style: the route carries the family).
-    private func familyChipsRow(_ viewModel: HomeViewModel) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: .mishranSpacingSm) {
-                ForEach(viewModel.familyChips) { chip in
+    /// Shop-by-vertical portals: image cards that open the catalog with the
+    /// tab preselected (Route.catalog carries the vertical — the family
+    /// seam's P2 extension). Placeholder portals keep the row's layout
+    /// stable until the vertical pages land.
+    private func verticalPortalsRow(_ viewModel: HomeViewModel) -> some View {
+        let portals = viewModel.portals.isEmpty ? Vertical.placeholderPortals : viewModel.portals
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: .mishranSpacingMd) {
+                ForEach(portals) { portal in
                     Button {
-                        router.push(.catalog(family: chip.family))
+                        router.push(.catalog(vertical: portal.vertical, family: nil))
                     } label: {
-                        Text(chip.label)
-                            .font(.mishranBodyMd)
-                            .foregroundStyle(Color.mishranBrandInk)
-                            .padding(.horizontal, .mishranSpacingMd)
-                            .frame(minHeight: 44)
-                            .background(
-                                Capsule().fill(Color.mishranBrandSurface)
-                            )
-                            .overlay(
-                                Capsule().strokeBorder(Color.mishranBrandAccent.opacity(0.4), lineWidth: 1)
-                            )
+                        VerticalPortalCard(portal: portal)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Shop \(chip.family.displayName)")
-                    .accessibilityHint(chip.count > 0 ? "Show \(chip.count) sweets" : "Show this family")
+                    .frame(width: 150)
+                    .accessibilityLabel("Shop \(portal.vertical.displayName)")
+                    .accessibilityHint(portal.count > 0 ? "Browse \(portal.count) items" : "Browse this vertical")
+                }
+            }
+            .padding(.horizontal, .mishranSpacingLg)
+            .padding(.vertical, .mishranSpacingXs)
+        }
+    }
+
+    /// "From the journal": the three newest stories, best-sellers-rail
+    /// idiom (horizontal cards; tap opens the reader).
+    private func journalRail(_ viewModel: HomeViewModel) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: .mishranSpacingMd) {
+                ForEach(viewModel.latestStories, id: \.id) { story in
+                    Button {
+                        router.push(.story(slug: story.slug))
+                    } label: {
+                        VStack(alignment: .leading, spacing: .mishranSpacingSm) {
+                            ProductRemoteImage(imageURL: story.heroImage)
+                                .frame(height: 110)
+                                .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
+                                .accessibilityHidden(true)
+                            Text(story.title)
+                                .font(.mishranBodyMd.weight(.semibold))
+                                .foregroundStyle(Color.mishranBrandInk)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(2)
+                            if let pillar = story.pillar {
+                                Text(pillar.capitalized)
+                                    .font(.mishranBodySm)
+                                    .foregroundStyle(Color.mishranBrandAccent)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .padding(.mishranSpacingSm)
+                        .frame(width: 190, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: .mishranRadiusMd)
+                                .fill(Color.mishranBrandSurface)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(story.title)
+                    .accessibilityHint("Read this story")
                 }
             }
             .padding(.horizontal, .mishranSpacingLg)
@@ -225,5 +274,34 @@ struct HomeView: View {
             .padding(.top, .mishranSpacingLg)
             .padding(.bottom, .mishranSpacingSm)
             .accessibilityAddTraits(.isHeader)
+    }
+}
+
+/// One Shop-by-vertical portal tile: lead imagery over the label + count
+/// (ProductCard's surface/border language at a shorter image).
+private struct VerticalPortalCard: View {
+    let portal: VerticalPortal
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: .mishranSpacingSm) {
+            ProductRemoteImage(imageURL: portal.imageURL)
+                .frame(height: 90)
+                .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
+                .accessibilityHidden(true)
+            Text(portal.label)
+                .font(.mishranBodyMd.weight(.semibold))
+                .foregroundStyle(Color.mishranBrandInk)
+                .lineLimit(1)
+        }
+        .padding(.mishranSpacingSm)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: .mishranRadiusMd)
+                .fill(Color.mishranBrandSurface)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: .mishranRadiusMd)
+                .strokeBorder(Color.mishranBrandAccent.opacity(0.15), lineWidth: 1)
+        )
     }
 }

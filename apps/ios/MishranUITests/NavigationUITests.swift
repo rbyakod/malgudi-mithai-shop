@@ -31,23 +31,23 @@ final class NavigationUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Order ord_ui_1"].waitForExistence(timeout: 5))
     }
 
-    /// P1: Shop-by-family chips seed the catalog tab's family filter (the
-    /// iOS stand-in for Android's SavedStateHandle deep link).
-    func testFamilyChipPushesFilteredCatalog() throws {
+    /// P2: the Shop-by-vertical portals open the catalog with the vertical's
+    /// tab preselected (the family-chip seam's successor — family filtering
+    /// still lives in the catalog's filter sheet, covered by unit tests).
+    func testVerticalPortalPushesCatalogTab() throws {
         let app = XCUIApplication()
         app.launchArguments = ["-resetStore", "-seedCatalog", "-signedInOnce", "false"]
         app.launch()
 
-        // Seed rows are "dryfruit" + "classic" — only the classic chip has
-        // a count; tapping it must land on a catalog filtered to that family.
-        let chip = app.buttons["Shop Classic"]
-        XCTAssertTrue(chip.waitForExistence(timeout: 5), "family chips should render on home")
-        chip.tap()
+        // The Mithai portal is deterministic offline: seeded catalog rows
+        // back its card, and the tab is the existing products grid.
+        let portal = app.buttons["Shop Mithai"]
+        XCTAssertTrue(portal.waitForExistence(timeout: 5), "vertical portals should render on home")
+        portal.tap()
 
         XCTAssertTrue(app.navigationBars["Sweets"].waitForExistence(timeout: 5))
-        // Kaju Katli (seeded "dryfruit") is filtered out; Motichoor Laddoo
-        // (the classic row) remains.
-        XCTAssertTrue(app.buttons["Motichoor Laddoo, ₹480/kg"].waitForExistence(timeout: 5))
-        XCTAssertFalse(app.buttons["Kaju Katli, ₹720/kg"].exists, "family filter must hide other families")
+        XCTAssertTrue(app.buttons["Kaju Katli, ₹720/kg"].waitForExistence(timeout: 5))
+        // The segmented vertical header rides above the grid.
+        XCTAssertTrue(app.buttons["Snacks"].exists, "catalog offers the vertical tabs")
     }
 }

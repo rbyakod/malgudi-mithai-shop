@@ -132,13 +132,26 @@ final class AuthViewModel {
     /// flag the launch gate reads (Task 20.5). When a refresh token later
     /// dies (server-side revocation or logout), flag-set + no-token is what
     /// routes the next launch to sign-in instead of silently continuing.
+    /// P2: the customer's phone (when the session has one) is cached for the
+    /// enquiry form's pre-fill — the only customer-shaped datum persisted.
     private func markSignedIn() {
         isSignedIn = true
         UserDefaults.standard.set(true, forKey: AuthViewModel.signedInOnceKey)
+        if let phone = signedInCustomer?.phone, !phone.isEmpty {
+            UserDefaults.standard.set(phone, forKey: AuthViewModel.sessionPhoneKey)
+        } else {
+            // Apple-only sessions have no phone — don't leak the previous
+            // customer's number into their form.
+            UserDefaults.standard.removeObject(forKey: AuthViewModel.sessionPhoneKey)
+        }
     }
 
     /// UserDefaults key: true once any sign-in has succeeded on this install.
     static let signedInOnceKey = "signedInOnce"
+
+    /// UserDefaults key: the signed-in customer's phone (enquiry pre-fill).
+    /// nonisolated: read from EnquiryView's nonisolated default argument.
+    nonisolated static let sessionPhoneKey = "sessionPhone"
 
     private func apply(_ error: APIError) {
         if case let .api(code, message, _, _) = error {

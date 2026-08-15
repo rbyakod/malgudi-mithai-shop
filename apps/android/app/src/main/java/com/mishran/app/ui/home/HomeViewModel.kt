@@ -1,4 +1,4 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/home/HomeViewModel.kt
+// apps/android/app/src/main/java/com/mishran/app/ui/home/HomeViewModel.kt — P1 parity / P2 net-new.
 //
 // Home-tab state off the offline-first catalog (cache emission renders
 // instantly; the network refresh may swap in newer rows). Reuses
@@ -11,12 +11,18 @@
 // catalog upsert) and falls back to the first eight of the catalog until
 // anything is flagged — so Home never renders an empty rail on a fresh
 // cache whose rows predate the featured column.
+//
+// P2 net-new: `journal` exposes the three newest stories for the
+// "From the journal" rail (reactive off the stories Room cache, so it fills
+// in whenever the journal syncs — Home does not fetch it itself).
 package com.mishran.app.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mishran.api.models.Product
+import com.mishran.api.models.Story
 import com.mishran.app.data.repository.CatalogRepository
+import com.mishran.app.data.repository.StoryRepository
 import com.mishran.app.domain.usecase.GetCatalogUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -30,6 +36,7 @@ import kotlinx.coroutines.flow.stateIn
 class HomeViewModel @Inject constructor(
     getCatalog: GetCatalogUseCase,
     catalogRepository: CatalogRepository,
+    storyRepository: StoryRepository,
 ) : ViewModel() {
 
     /** Whole cached catalog — the screen slices hero + family counts from it. */
@@ -57,10 +64,26 @@ class HomeViewModel @Inject constructor(
         emptyList(),
     )
 
+    /**
+     * The "From the journal" rail: the three newest stories, reactive off the
+     * Room cache (newest-first ordering lives in the DAO query). Empty until
+     * the journal syncs — the rail hides rather than placeholders.
+     */
+    val journal: StateFlow<List<Story>> = storyRepository.observeLatest(JOURNAL_RAIL_COUNT)
+        .catch { emit(emptyList()) }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            emptyList(),
+        )
+
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L
 
         /** Rail length when nothing is featured — matches the pre-parity rail. */
         const val FALLBACK_COUNT = 8
+
+        /** Story cards on the journal rail (spec: three latest). */
+        const val JOURNAL_RAIL_COUNT = 3
     }
 }

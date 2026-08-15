@@ -151,5 +151,6 @@ final class SwiftDataModelTests: XCTestCase {
         XCTAssertTrue(schema.entities.contains { $0.name == "CartItemEntity" })
         XCTAssertTrue(schema.entities.contains { $0.name == "AddressEntity" })
         XCTAssertTrue(schema.entities.contains { $0.name == "OrderEntity" })
+        XCTAssertTrue(schema.entities.contains { $0.name == "StoryEntity" })
     }
 }

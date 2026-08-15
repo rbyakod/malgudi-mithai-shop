@@ -1,4 +1,4 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/catalog/CatalogViewModel.kt — Task 9.3.
+// apps/android/app/src/main/java/com/mishran/app/ui/catalog/CatalogViewModel.kt — Task 9.3 / P2 net-new (verticals).
 //
 // Streams the offline-first catalog into UI state. The repo flow emits twice
 // (cache → network-refreshed); the first emission renders as Cached (usable
@@ -8,13 +8,25 @@
 // is shareable/bookmarkable later without reshaping. Filtering runs client-side
 // against the full cached list (the whole catalog is on disk; there is nothing
 // to gain from server-side filtering in v1).
+//
+// P2 net-new: the segmented vertical tabs (Mithai · Snacks · QSR · Merch).
+// The Mithai tab is exactly the pre-existing products flow; the other three
+// load their lists network-only through VerticalRepository with a plain
+// Loading / Content / Error lifecycle (retry = restart the flow). Search and
+// filters are Mithai-scoped — the vertical tabs carry no query params yet —
+// so the screen hides that row off the Mithai tab. Switching tabs restarts
+// the active vertical's flow (browse-y pages, no cache worth invalidating).
 package com.mishran.app.ui.catalog
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mishran.api.models.Merch
 import com.mishran.api.models.Product
+import com.mishran.api.models.QsrItem
+import com.mishran.api.models.Snack
 import com.mishran.app.domain.usecase.GetCatalogUseCase
+import com.mishran.app.data.repository.VerticalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +36,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -63,10 +77,65 @@ data class CatalogFilters(
     val isActive: Boolean get() = family != null || dietaryTags.isNotEmpty()
 }
 
+/**
+ * One catalog vertical tab. `wireValue` is the URL arg (Routes.catalog) so
+ * Home's portals deep-link straight to a tab; "Mithai" is the products flow.
+ */
+enum class CatalogVertical(val wireValue: String) {
+    MITHAI("mithai"),
+    SNACKS("snacks"),
+    QSR("qsr"),
+    MERCH("merch");
+
+    companion object {
+        /** Resolve the deep-link arg; null/unknown falls back to Mithai. */
+        fun fromWireValue(value: String?): CatalogVertical =
+            entries.firstOrNull { it.wireValue == value } ?: MITHAI
+    }
+}
+
+/**
+ * Contents of whichever vertical tab is active. Mithai is a marker — the
+ * screen renders the existing products flow (uiState/visibleProducts) — while
+ * the other three carry their typed list plus a Loading/Error lifecycle
+ * (`loading = true` with empty items = first load; `error != null` = retry
+ * state; a successful reload clears both).
+ */
+sealed interface VerticalListing {
+    data object Mithai : VerticalListing
+    data class Snacks(
+        val items: List<Snack> = emptyList(),
+        val loading: Boolean = false,
+        val error: String? = null,
+    ) : VerticalListing
+
+    data class Qsr(
+        val items: List<QsrItem> = emptyList(),
+        val loading: Boolean = false,
+        val error: String? = null,
+    ) : VerticalListing
+
+    data class Merch(
+        // Qualified: a bare `Merch` here would resolve to THIS class
+        // (innermost scope beats the api.models import) and recurse.
+        val items: List<com.mishran.api.models.Merch> = emptyList(),
+        val loading: Boolean = false,
+        val error: String? = null,
+    ) : VerticalListing
+}
+
+/** Generic loading/content/error page the vertical loaders emit before typing. */
+private data class VerticalPage<T>(
+    val items: List<T> = emptyList(),
+    val loading: Boolean = false,
+    val error: String? = null,
+)
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class CatalogViewModel @Inject constructor(
     private val getCatalog: GetCatalogUseCase,
+    private val verticalRepository: VerticalRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -152,10 +221,70 @@ class CatalogViewModel @Inject constructor(
         refreshTrigger.value += 1
     }
 
+    // ---- Vertical tabs (P2 net-new) --------------------------------------
+
+    /** Active tab; seeded from the optional ?vertical= deep-link arg. */
+    private val vertical = MutableStateFlow(
+        CatalogVertical.fromWireValue(savedStateHandle.get<String>("vertical")),
+    )
+    val activeVertical: StateFlow<CatalogVertical> = vertical.asStateFlow()
+
+    /** Bumped by retryVertical() — restarts the active vertical's loader. */
+    private val verticalRetry = MutableStateFlow(0)
+
+    /**
+     * The active tab's contents. combine (not flatMapLatest over vertical
+     * alone) so a retry can restart the loader without changing tabs; the
+     * Mithai tab short-circuits to its marker and never touches the network
+     * path (its data already streams through uiState above).
+     */
+    val verticalState: StateFlow<VerticalListing> = combine(vertical, verticalRetry) { v, _ -> v }
+        .flatMapLatest { current ->
+            when (current) {
+                CatalogVertical.MITHAI -> flowOf(VerticalListing.Mithai)
+                CatalogVertical.SNACKS -> pageFlow { verticalRepository.getSnacks() }
+                    .map { VerticalListing.Snacks(it.items, it.loading, it.error) }
+                CatalogVertical.QSR -> pageFlow { verticalRepository.getQsrItems() }
+                    .map { VerticalListing.Qsr(it.items, it.loading, it.error) }
+                CatalogVertical.MERCH -> pageFlow { verticalRepository.getMerch() }
+                    .map { VerticalListing.Merch(it.items, it.loading, it.error) }
+            }
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            VerticalListing.Mithai,
+        )
+
+    fun onVerticalChange(value: CatalogVertical) {
+        vertical.value = value
+    }
+
+    /** Error-state CTA: re-run the loader for whichever tab is showing. */
+    fun retryVertical() {
+        verticalRetry.value += 1
+    }
+
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L
     }
 }
+
+/**
+ * One Loading → Content/Error pass over a network-only vertical list. The
+ * failure message is generic on purpose — the screens offer a retry, not a
+ * diagnosis.
+ */
+private fun <T> pageFlow(loader: suspend () -> Result<List<T>>) = flow {
+    emit(VerticalPage<T>(loading = true))
+    loader().fold(
+        onSuccess = { items -> emit(VerticalPage(items = items)) },
+        onFailure = { emit(VerticalPage(error = VERTICAL_ERROR_MESSAGE)) },
+    )
+}
+
+private const val VERTICAL_ERROR_MESSAGE =
+    "Could not load this section. Check your connection and try again."
 
 /**
  * Pure client-side filter: family must match when set, every selected dietary

@@ -12,6 +12,10 @@ struct Endpoint: Sendable {
     }
 
     var path: String
+    /// Full URL override for routes OUTSIDE the mobile v1 base URL (the only
+    /// one today: the public POST /api/leads web route). Wins over `path`
+    /// when set; the route factories that need it derive it from the base.
+    var absoluteURL: URL? = nil
     var method: Method = .get
     var queryItems: [URLQueryItem] = []
     var body: Data? = nil
@@ -22,6 +26,7 @@ struct Endpoint: Sendable {
     var requiresAuth: Bool = true
 
     func url(base: URL) -> URL? {
+        if let absoluteURL { return absoluteURL }
         var components = URLComponents(url: base.appendingPathComponent(path), resolvingAgainstBaseURL: false)
         if !queryItems.isEmpty {
             components?.queryItems = queryItems
@@ -272,5 +277,105 @@ extension Endpoint {
     /// DELETE /addresses/{id} — 200 {data:{ok:true}}.
     static func addressDelete(id: String) -> Endpoint {
         Endpoint(path: "addresses/\(id)", method: .delete)
+    }
+
+    // MARK: Stories (P2 journal) — public, unauthenticated
+
+    /// GET /stories — published-stories page, newest first
+    /// ({data:{items:[…]}}). The optional pillar filter stays unused in v1
+    /// (no pillar-tab UI yet).
+    static func storiesList(page: Int = 1, pageSize: Int = 50) -> Endpoint {
+        Endpoint(
+            path: "stories",
+            queryItems: [
+                URLQueryItem(name: "page", value: String(page)),
+                URLQueryItem(name: "pageSize", value: String(pageSize)),
+            ],
+            requiresAuth: false
+        )
+    }
+
+    /// GET /stories/{slug} — reader detail ({data:{…story, body}}).
+    static func storyDetail(slug: String) -> Endpoint {
+        Endpoint(path: "stories/\(slug)", requiresAuth: false)
+    }
+
+    // MARK: Verticals (P2: snacks / QSR / merch) — public, unauthenticated
+
+    /// GET /catalog/snacks — retail snacks page ({data:{items:[…]}}).
+    static func snacksList(page: Int = 1, pageSize: Int = 50) -> Endpoint {
+        Endpoint(
+            path: "catalog/snacks",
+            queryItems: [
+                URLQueryItem(name: "page", value: String(page)),
+                URLQueryItem(name: "pageSize", value: String(pageSize)),
+            ],
+            requiresAuth: false
+        )
+    }
+
+    /// GET /catalog/snacks/{slug} — bare snack object in {data}.
+    static func snackDetail(slug: String) -> Endpoint {
+        Endpoint(path: "catalog/snacks/\(slug)", requiresAuth: false)
+    }
+
+    /// GET /catalog/qsr — counter-menu page ({data:{items:[…]}}).
+    static func qsrList(page: Int = 1, pageSize: Int = 50) -> Endpoint {
+        Endpoint(
+            path: "catalog/qsr",
+            queryItems: [
+                URLQueryItem(name: "page", value: String(page)),
+                URLQueryItem(name: "pageSize", value: String(pageSize)),
+            ],
+            requiresAuth: false
+        )
+    }
+
+    /// GET /catalog/qsr/{slug} — bare QSR item object in {data}.
+    static func qsrDetail(slug: String) -> Endpoint {
+        Endpoint(path: "catalog/qsr/\(slug)", requiresAuth: false)
+    }
+
+    /// GET /catalog/merch — merchandise page ({data:{items:[…]}}).
+    static func merchList(page: Int = 1, pageSize: Int = 50) -> Endpoint {
+        Endpoint(
+            path: "catalog/merch",
+            queryItems: [
+                URLQueryItem(name: "page", value: String(page)),
+                URLQueryItem(name: "pageSize", value: String(pageSize)),
+            ],
+            requiresAuth: false
+        )
+    }
+
+    /// GET /catalog/merch/{slug} — bare merch object in {data}.
+    static func merchDetail(slug: String) -> Endpoint {
+        Endpoint(path: "catalog/merch/\(slug)", requiresAuth: false)
+    }
+
+    // MARK: Leads (P2 enquiry)
+
+    /// POST /api/leads — the PUBLIC web lead route the Bulk & events form
+    /// targets. It lives OUTSIDE the mobile v1 base URL, so the absolute URL
+    /// is derived by dropping the base's last two path segments
+    /// (…/api/mobile/v1 → …/api): every supported base URL ends in
+    /// /api/mobile/v1 (defaultBaseURL + the -apiBaseURL override contract).
+    /// The response is BARE {leadId, message} — no {data} envelope — so the
+    /// client decodes it through submitLead, not request(_:).
+    static func leadCreate(_ input: LeadInputDTO, baseURL: URL) -> Endpoint {
+        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
+        var segments = components?.path.components(separatedBy: "/").filter { !$0.isEmpty } ?? []
+        if segments.count >= 2 {
+            segments.removeLast(2)
+        }
+        segments.append("leads")
+        components?.path = "/" + segments.joined(separator: "/")
+        return Endpoint(
+            path: "leads",
+            absoluteURL: components?.url,
+            method: .post,
+            body: try? JSONEncoder().encode(input),
+            requiresAuth: false
+        )
     }
 }

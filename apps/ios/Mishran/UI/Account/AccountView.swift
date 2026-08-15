@@ -79,6 +79,18 @@ struct AccountView: View {
                 }
                 .accessibilityLabel("Delivery addresses")
             }
+            // P2: journal + bulk/events entries (labels match en.json
+            // stories.title / enquiry.title).
+            Section("More") {
+                NavigationLink(value: Route.stories) {
+                    Label("Journal", systemImage: "book")
+                }
+                .accessibilityLabel("Journal")
+                NavigationLink(value: Route.enquiry(type: .wedding)) {
+                    Label("Bulk & events", systemImage: "person.2")
+                }
+                .accessibilityLabel("Bulk and events")
+            }
         }
         .navigationTitle("Account")
         .task {
@@ -105,6 +117,11 @@ struct AccountView: View {
         for address in (try? context.fetch(FetchDescriptor<AddressEntity>())) ?? [] {
             context.delete(address)
         }
+        for story in (try? context.fetch(FetchDescriptor<StoryEntity>())) ?? [] {
+            context.delete(story)
+        }
+        // P2: the enquiry pre-fill phone is customer-shaped — drop it too.
+        UserDefaults.standard.removeObject(forKey: AuthViewModel.sessionPhoneKey)
         try? context.save()
 
         router.popToRoot()

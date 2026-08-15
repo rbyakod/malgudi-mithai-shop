@@ -13,6 +13,7 @@ enum ModelContainerFactory {
             CartItemEntity.self,
             AddressEntity.self,
             OrderEntity.self,
+            StoryEntity.self,
         ])
     }
 

@@ -1,9 +1,10 @@
 // HomeViewModel.swift — P1 parity (Mishran Mobile Apps v1).
 // Home-tab state off the offline-first catalog (Android HomeViewModel
-// parity): the screen derives its hero image, best-seller rail, and family
-// counts from the one list — no dedicated home endpoint exists in the
-// mobile v1 contract. Derivations are nonisolated pure functions so the
-// featured/fallback rules are unit-testable without a repository.
+// parity): the screen derives its hero image, best-seller rail, and — since
+// P2 — the "Shop by vertical" portal row from the one list, with the story
+// repository feeding the "From the journal" rail. Derivations are
+// nonisolated pure functions so the featured/fallback and portal rules are
+// unit-testable without a repository.
 import Foundation
 import Observation
 
@@ -11,28 +12,54 @@ import Observation
 @Observable
 final class HomeViewModel {
     /// Best-sellers rail length when nothing is featured-flagged.
-    static let fallbackRailCount = 8
+    nonisolated static let fallbackRailCount = 8
+    /// "From the journal" rail length (en.json home.journal).
+    nonisolated static let journalRailCount = 3
 
     private let repository: CatalogRepository
+    /// P2 journal + verticals feeds — optional so tests (and a nil SwiftData
+    /// container) can build the model without them.
+    private let storyRepository: StoryRepository?
+    private let verticalsRepository: VerticalsRepository?
 
     private(set) var products: [ProductEntity] = []
+    private(set) var stories: [StoryEntity] = []
+    private(set) var portals: [VerticalPortal] = []
 
-    init(repository: CatalogRepository) {
+    init(
+        repository: CatalogRepository,
+        storyRepository: StoryRepository? = nil,
+        verticalsRepository: VerticalsRepository? = nil
+    ) {
         self.repository = repository
+        self.storyRepository = storyRepository
+        self.verticalsRepository = verticalsRepository
         products = repository.products
+        stories = storyRepository?.stories ?? []
     }
 
     func load() async {
         await repository.getCatalog()
         products = repository.products
+        if let storyRepository {
+            await storyRepository.getStories()
+            stories = storyRepository.stories
+        }
+        if let verticalsRepository {
+            let pages = await verticalsRepository.portalPages()
+            portals = Self.portals(
+                products: products, snacks: pages.snacks, qsr: pages.qsr, merch: pages.merch
+            )
+        }
     }
 
     var bestSellers: [ProductEntity] {
         Self.bestSellers(from: products)
     }
 
-    var familyChips: [FamilyChip] {
-        Self.familyChips(from: products)
+    /// Newest three stories for the home rail (empty hides the section).
+    var latestStories: [StoryEntity] {
+        Array(stories.prefix(Self.journalRailCount))
     }
 
     /// `featured == true` rows in server order; when nothing is flagged the
@@ -44,27 +71,37 @@ final class HomeViewModel {
         return Array(products.sorted { $0.name < $1.name }.prefix(fallbackRailCount))
     }
 
-    /// Every family with its catalog count (declared order, Android
-    /// FAMILY_LABELS parity) — chips seed the catalog tab's family filter.
-    nonisolated static func familyChips(from products: [ProductEntity]) -> [FamilyChip] {
-        ProductFamily.allCases.map { family in
-            FamilyChip(
-                family: family,
-                count: products.filter { $0.family == family.rawValue }.count
-            )
-        }
-    }
-}
-
-/// One Shop-by-family chip: family + how many catalog rows it would show.
-struct FamilyChip: Equatable, Identifiable {
-    let family: ProductFamily
-    let count: Int
-
-    var id: String { family.rawValue }
-
-    /// "Classic · 12" when stocked, bare label otherwise (Android parity).
-    var label: String {
-        count > 0 ? "\(family.displayName) · \(count)" : family.displayName
+    /// Shop-by-vertical portals: mithai derives off the offline catalog
+    /// (count + the hero image), the other three off their fetched first
+    /// pages — a failed vertical degrades to count 0 / placeholder tile,
+    /// never fails the row.
+    nonisolated static func portals(
+        products: [ProductEntity],
+        snacks: SnackPageDTO?,
+        qsr: QsrPageDTO?,
+        merch: MerchPageDTO?
+    ) -> [VerticalPortal] {
+        [
+            VerticalPortal(
+                vertical: .mithai,
+                count: products.count,
+                imageURL: bestSellers(from: products).first?.images?.first
+            ),
+            VerticalPortal(
+                vertical: .snacks,
+                count: snacks?.total ?? 0,
+                imageURL: snacks?.items.first?.images?.first
+            ),
+            VerticalPortal(
+                vertical: .qsr,
+                count: qsr?.total ?? 0,
+                imageURL: qsr?.items.first?.image
+            ),
+            VerticalPortal(
+                vertical: .merch,
+                count: merch?.total ?? 0,
+                imageURL: merch?.items.first?.images?.first
+            ),
+        ]
     }
 }

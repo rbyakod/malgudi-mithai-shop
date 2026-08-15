@@ -105,6 +105,19 @@ actor MishranAPIClient {
         try await send(endpoint, as: T.self)
     }
 
+    /// POST /api/leads (P2 enquiry) — the one route that answers BARE JSON
+    /// ({leadId, message}) instead of the {data} envelope, so it decodes
+    /// directly rather than through request(_:). Public: no auth header, no
+    /// refresh loop; same retry machinery as everything else.
+    func submitLead(_ input: LeadInputDTO) async throws -> LeadResponseDTO {
+        let (data, _) = try await send(Endpoint.leadCreate(input, baseURL: baseURL))
+        do {
+            return try decoder.decode(LeadResponseDTO.self, from: data)
+        } catch {
+            throw APIError.decoding(String(describing: LeadResponseDTO.self))
+        }
+    }
+
     func authOtpVerify(requestId: String, code: String) async throws -> OtpVerifyResponseDTO {
         let response = try await send(Endpoint.otpVerify(requestId: requestId, code: code), as: OtpVerifyResponseDTO.self)
         // Successful sign-in rotates tokens into the store.
