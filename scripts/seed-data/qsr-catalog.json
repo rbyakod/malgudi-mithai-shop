@@ -1,265 +1,421 @@
 {
-  "generated": "scraped from bikanervala.com + haldirams.com (test seed data)",
-  "products": [
-    {
-      "name": "Bikano Matar Paneer (300g, RTE)",
-      "category": "thaali",
-      "description": "Experience authentic North Indian flavours with Bikano Matar Paneer Ready-to-Eat Meal . Soft paneer cubes and fresh green peas are slow-cooked in a mildly spiced, creamy tomato gravy enriched with aromatic Indian herbs. Designed for convenience without compromising taste, this dish is perfect for travel, office meals, or quick dinners. Simply heat and enjoy restaurant-like taste in minutes.",
-      "veg": true,
-      "spiceLevel": "medium",
-      "price": "₹250",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-matar-paneer-ready-to-eat-punjabi-curry.jpg?v=1745407464"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikano-matar-paneer-300g-rte"
-    },
-    {
-      "name": "Bikano Rajma (300g, RTE)",
-      "category": "thaali",
-      "description": "Bring the taste of authentic Punjabi cuisine to your table with Bikano Rajma Ready-to-Eat . Made with tender red kidney beans cooked in a flavourful tomato and spice gravy, this dish offers a comforting and satisfying experience. Ideal for busy days, travel, office lunches, or quick dinners at home, it pairs perfectly with rice, roti, or naan. Simply heat and enjoy a wholesome, homestyle meal in minutes.",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹150",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-rajma-ready-to-eat-punjabi-kidney-beans-curry.jpg?v=1745407984"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/rajma-ready-to-eat"
-    },
-    {
-      "name": "Bikano Shahi Paneer (300 gm, Pack of 2)",
-      "category": "thaali",
-      "description": "Bikano Shahi Paneer – Ready to Eat Royal Indian Curry with Soft Paneer in Creamy, Rich Tomato-Cashew Gravy | A Regal Blend of Spices, Cream, and Cottage Cheese for an Authentic Mughlai Flavor | Ideal for Quick Meals, Special Occasions, or Everyday Indulgence",
-      "veg": true,
-      "spiceLevel": "medium",
-      "price": "₹300",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-shahi-paneer-ready-to-eat-creamy-mughlai-curry.jpg?v=1745408454"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/shahi-paneer-300-gm-pack-of-2"
-    },
-    {
-      "name": "Bikano Choley (300g, RTE)",
-      "category": "chole-bhature",
-      "description": "Bring home the authentic taste of North Indian cuisine with Bikano Choley Ready-to-Eat . Soft chickpeas are cooked to perfection in a rich, aromatic tomato gravy with a blend of traditional Indian spices. Perfect for a quick lunch, dinner, or a travel meal, this ready-to-eat curry saves time without compromising on flavour. Pair with steamed rice, naan, or roti for a complete and satisfying meal.",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹150",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-choley-ready-to-eat-punjabi-style.jpg?v=1745406071"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/punjabi-choley-ready-to-eat"
-    },
-    {
-      "name": "Bikano Sarso ka Saag (300g, RTE)",
-      "category": "thaali",
-      "description": "Bikano Sarson Ka Saag – Ready to Eat Traditional Punjabi Delicacy | Made with Fresh Mustard Greens and Authentic Spices | Rich in Flavor, Nutrition, and Heritage | Perfectly Pairs with Makki Ki Roti for a Classic North Indian Meal | Quick, Delicious, and Convenient",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹200",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-sarson-ka-saag-ready-to-eat-punjabi-mustard-greens.jpg?v=1745408228"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/sarso-da-saag"
-    },
-    {
-      "name": "Bikano Dal Makhni (300g, RTE)",
-      "category": "thaali",
-      "description": "Bikano Dal Makhani – Ready to Eat Creamy and Flavorful Dal | Made with Premium Lentils and Rich Indian Spices | Perfect for Quick Meals, Snacks, or Lunch/Dinner | Smooth, Creamy Texture with a Deliciously Bold Taste of Tradition",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹200",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-dal-makhani-ready-to-eat-creamy-lentils.jpg?v=1745406289"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikano-dal-makhni-300g-rte"
-    },
-    {
-      "name": "Bikano Dal Tadka (300g, RTE)",
-      "category": "thaali",
-      "description": "Bikano Dal Tadka – Ready to Eat Flavorful Dal | Made with Premium Lentils and Tempered with Traditional Indian Spices | Perfect for Quick Meals, Snacks, or Lunch/Dinner | Savory and Aromatic Tadka for a Delicious Experience",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹150",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-dal-tadka-ready-to-eat-yellow-lentils.jpg?v=1745406527"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikano-dal-tadka-300g-rte"
-    },
-    {
-      "name": "Bikano Kadi Pakoda (300g, RTE)",
-      "category": "thaali",
-      "description": "Bikano Kadi Pakoda – Ready to Eat Spicy, Tangy, and Flavorful Punjabi Kadi with Crispy Pakodas | Traditional Indian Dish Made with Premium Ingredients and Bold Spices | Ideal for Quick Meals, Lunch, or Dinner | Enjoy the Rich Taste of Authentic Punjabi Comfort Food",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹150",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-kadi-pakoda-ready-to-eat-punjabi-curry.jpg?v=1745407263"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikano-kadi-pakoda-300g-rte"
-    },
-    {
-      "name": "Bikano Palak Paneer (300g, RTE)",
-      "category": "thaali",
-      "description": "Bikano Palak Paneer – Ready to Eat Creamy Spinach Curry with Soft Paneer Cubes | Rich in Flavor and Nutrients | Authentic North Indian Recipe Made with Fresh Spinach and Traditional Spices | Perfect for Quick, Wholesome Vegetarian Meals",
-      "veg": true,
-      "spiceLevel": "medium",
-      "price": "₹250",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-palak-paneer-ready-to-eat-spinach-paneer-curry.jpg?v=1745407735"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikano-palak-paneer-300g-rte"
-    },
-    {
-      "name": "Bikano Plain Basmati Rice (250g, RTE)",
-      "category": "thaali",
-      "description": "Bikano Plain Basmati Rice Ready-to-Eat . Made with premium long-grain basmati, this rice cooks to perfectly fluffy grains infused with a natural aroma. Ready in minutes, it’s ideal for pairing with North Indian curries, dals, paneer, or vegetable gravies. Enjoy a wholesome, tasty meal without the hassle of traditional cooking—perfect for home, office, or travel.",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹150",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-plain-basmati-rice-ready-to-eat-aromatic.jpg?v=1745407021"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/plain-basmati-rice-250g-pack-of-2"
-    },
-    {
-      "name": "Bikano Jeera Basmati Rice (250g, RTE)",
-      "category": "thaali",
-      "description": "Bikano Jeera Basmati Rice – Ready to Eat Aromatic Basmati Rice with Cumin Flavor | Fragrant, Fluffy, and Perfectly Seasoned with Jeera for a Traditional Taste | Ideal for Quick Meals, Lunch/Dinner, or Pairing with Curries and Gravy Dishes",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹150",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-jeera-basmati-rice-ready-to-eat-aromatic.jpg?v=1745406824"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/bikano-jeera-basmati-rice-250g-rte"
-    },
-    {
-      "name": "Bikano Pao Bhaji (300 gm)",
-      "category": "thaali",
-      "description": "Relish the authentic taste of Bikano Pav Bhaji , a classic Indian street food favorite made with soft buns and a spicy, buttery vegetable bhaji. Each bite delivers a perfect blend of flavors, textures, and aromatic spices that bring the street food experience to your home.",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹200",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-pav-bhaji-ready-to-eat-mumbai-street-food.jpg?v=1745408872"
-      ],
-      "source": "bikanervala",
-      "sourceUrl": "https://bikanervala.com/products/pao-bhaji-ready-to-eat"
-    },
-    {
-      "name": "Choley Chawal 350g",
-      "category": "chole-bhature",
-      "description": "Choley Chawal by Haldiram's – spiced chickpea curry with rice, ready in minutes. Home-style comfort. Order this ready-to-eat meal online now.",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹ on request / pack",
-      "images": [
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Chole_Chawal_%28Indian_delicacy%29.jpg/960px-Chole_Chawal_%28Indian_delicacy%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
-      ],
-      "source": "wikimedia-commons",
-      "sourceUrl": "https://haldirams.com/product/sweets/choley-chawal"
-    },
-    {
-      "name": "Dal Makhani 300g",
-      "category": "thaali",
-      "description": "Dal Makhani by Haldiram's – creamy black lentils in buttery spices, ready in minutes. Home-style flavour. Order this ready-to-eat curry online now.",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹ on request / pack",
-      "images": [
-        "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_0944b230-2621-4a73-a421-19ef428499ba.avif?v=1782385788"
-      ],
-      "source": "haldirams",
-      "sourceUrl": "https://haldirams.com/product/sweets/dal-makhani"
-    },
-    {
-      "name": "Dal Palak 300g",
-      "category": "thaali",
-      "description": "Dal Palak by Haldiram's – nourishing lentils with spinach, ready in minutes. Home-style flavour. Order this ready-to-eat curry online now.",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹ on request / pack",
-      "images": [
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Dal_palak_casserole.jpg/960px-Dal_palak_casserole.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
-      ],
-      "source": "wikimedia-commons",
-      "sourceUrl": "https://haldirams.com/product/sweets/dal-palak"
-    },
-    {
-      "name": "Dal Tadka 300g",
-      "category": "thaali",
-      "description": "Dal Tadka by Haldiram's – comforting tempered lentils, ready in minutes. Home-style flavour. Order this ready-to-eat dal online now.",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹ on request / pack",
-      "images": [
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Dal_Tadka-Delhi.jpg/960px-Dal_Tadka-Delhi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
-      ],
-      "source": "wikimedia-commons",
-      "sourceUrl": "https://haldirams.com/product/sweets/dal-tadka"
-    },
-    {
-      "name": "Dal Tadka Jeera Rice 350g",
-      "category": "thaali",
-      "description": "Dal Tadka with Jeera Rice by Haldiram's – tempered lentils with cumin rice, ready in minutes. Order this ready-to-eat meal online today.",
-      "veg": true,
-      "spiceLevel": "mild",
-      "price": "₹ on request / pack",
-      "images": [
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Dal_Tadka-Delhi.jpg/960px-Dal_Tadka-Delhi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
-      ],
-      "source": "wikimedia-commons",
-      "sourceUrl": "https://haldirams.com/product/sweets/dal-tadka-with-jeera-rice"
-    },
-    {
-      "name": "Dum Biryani 200g",
-      "category": "thaali",
-      "description": "Dum Biryani by Haldiram's – fragrant, spiced dum biryani ready in minutes. Authentic and aromatic. Order this ready-to-eat meal online today.",
-      "veg": true,
-      "spiceLevel": "medium",
-      "price": "₹ on request / pack",
-      "images": [
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Veg_biryani.jpg/960px-Veg_biryani.jpg"
-      ],
-      "source": "wikimedia-commons",
-      "sourceUrl": "https://haldirams.com/product/sweets/dum-biryani"
-    },
-    {
-      "name": "Mutter Paneer 300g",
-      "category": "thaali",
-      "description": "Mutter Paneer by Haldiram's – soft paneer and peas in rich gravy, ready in minutes. Home-style flavour. Order this ready-to-eat curry online now.",
-      "veg": true,
-      "spiceLevel": "medium",
-      "price": "₹ on request / pack",
-      "images": [
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Matar-Paneer.JPG/960px-Matar-Paneer.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
-      ],
-      "source": "wikimedia-commons",
-      "sourceUrl": "https://haldirams.com/product/sweets/mutter-paneer"
-    },
-    {
-      "name": "Palak Paneer 300g",
-      "category": "thaali",
-      "description": "Palak Paneer by Haldiram's – soft paneer in creamy spinach gravy, ready in minutes. Home-style flavour. Order this ready-to-eat curry online today.",
-      "veg": true,
-      "spiceLevel": "medium",
-      "price": "₹ on request / pack",
-      "images": [
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Palakpaneer_Rayagada_Odisha_0009.jpg/960px-Palakpaneer_Rayagada_Odisha_0009.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
-      ],
-      "source": "wikimedia-commons",
-      "sourceUrl": "https://haldirams.com/product/sweets/palak-paneer"
-    }
-  ]
+ "generated": "scraped from bikanervala.com + haldirams.com (test seed data)",
+ "products": [
+  {
+   "name": "Bikano Choley (300g, RTE)",
+   "category": "chole-bhature",
+   "description": "Bring home the authentic taste of North Indian cuisine with Bikano Choley Ready-to-Eat . Soft chickpeas are cooked to perfection in a rich, aromatic tomato gravy with a blend of traditional Indian spices. Perfect for a quick lunch, dinner, or a travel meal, this ready-to-eat curry saves time without compromising on flavour. Pair with steamed rice, naan, or roti for a complete and satisfying meal.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹150",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-choley-ready-to-eat-punjabi-style.jpg?v=1745406071"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/punjabi-choley-ready-to-eat"
+  },
+  {
+   "name": "Bikano Dal Makhni (300g, RTE)",
+   "category": "thaali",
+   "description": "Bikano Dal Makhani – Ready to Eat Creamy and Flavorful Dal | Made with Premium Lentils and Rich Indian Spices | Perfect for Quick Meals, Snacks, or Lunch/Dinner | Smooth, Creamy Texture with a Deliciously Bold Taste of Tradition",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹200",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-dal-makhani-ready-to-eat-creamy-lentils.jpg?v=1745406289"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikano-dal-makhni-300g-rte"
+  },
+  {
+   "name": "Bikano Dal Tadka (300g, RTE)",
+   "category": "thaali",
+   "description": "Bikano Dal Tadka – Ready to Eat Flavorful Dal | Made with Premium Lentils and Tempered with Traditional Indian Spices | Perfect for Quick Meals, Snacks, or Lunch/Dinner | Savory and Aromatic Tadka for a Delicious Experience",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹150",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-dal-tadka-ready-to-eat-yellow-lentils.jpg?v=1745406527"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikano-dal-tadka-300g-rte"
+  },
+  {
+   "name": "Bikano Jeera Basmati Rice (250g, RTE)",
+   "category": "thaali",
+   "description": "Bikano Jeera Basmati Rice – Ready to Eat Aromatic Basmati Rice with Cumin Flavor | Fragrant, Fluffy, and Perfectly Seasoned with Jeera for a Traditional Taste | Ideal for Quick Meals, Lunch/Dinner, or Pairing with Curries and Gravy Dishes",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹150",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-jeera-basmati-rice-ready-to-eat-aromatic.jpg?v=1745406824"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikano-jeera-basmati-rice-250g-rte"
+  },
+  {
+   "name": "Bikano Kadi Pakoda (300g, RTE)",
+   "category": "thaali",
+   "description": "Bikano Kadi Pakoda – Ready to Eat Spicy, Tangy, and Flavorful Punjabi Kadi with Crispy Pakodas | Traditional Indian Dish Made with Premium Ingredients and Bold Spices | Ideal for Quick Meals, Lunch, or Dinner | Enjoy the Rich Taste of Authentic Punjabi Comfort Food",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹150",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-kadi-pakoda-ready-to-eat-punjabi-curry.jpg?v=1745407263"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikano-kadi-pakoda-300g-rte"
+  },
+  {
+   "name": "Bikano Matar Paneer (300g, RTE)",
+   "category": "thaali",
+   "description": "Experience authentic North Indian flavours with Bikano Matar Paneer Ready-to-Eat Meal . Soft paneer cubes and fresh green peas are slow-cooked in a mildly spiced, creamy tomato gravy enriched with aromatic Indian herbs. Designed for convenience without compromising taste, this dish is perfect for travel, office meals, or quick dinners. Simply heat and enjoy restaurant-like taste in minutes.",
+   "veg": true,
+   "spiceLevel": "medium",
+   "price": "₹250",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-matar-paneer-ready-to-eat-punjabi-curry.jpg?v=1745407464"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikano-matar-paneer-300g-rte"
+  },
+  {
+   "name": "Bikano Palak Paneer (300g, RTE)",
+   "category": "thaali",
+   "description": "Bikano Palak Paneer – Ready to Eat Creamy Spinach Curry with Soft Paneer Cubes | Rich in Flavor and Nutrients | Authentic North Indian Recipe Made with Fresh Spinach and Traditional Spices | Perfect for Quick, Wholesome Vegetarian Meals",
+   "veg": true,
+   "spiceLevel": "medium",
+   "price": "₹250",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-palak-paneer-ready-to-eat-spinach-paneer-curry.jpg?v=1745407735"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/bikano-palak-paneer-300g-rte"
+  },
+  {
+   "name": "Bikano Pao Bhaji (300 gm)",
+   "category": "thaali",
+   "description": "Relish the authentic taste of Bikano Pav Bhaji , a classic Indian street food favorite made with soft buns and a spicy, buttery vegetable bhaji. Each bite delivers a perfect blend of flavors, textures, and aromatic spices that bring the street food experience to your home.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹200",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-pav-bhaji-ready-to-eat-mumbai-street-food.jpg?v=1745408872"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/pao-bhaji-ready-to-eat"
+  },
+  {
+   "name": "Bikano Plain Basmati Rice (250g, RTE)",
+   "category": "thaali",
+   "description": "Bikano Plain Basmati Rice Ready-to-Eat . Made with premium long-grain basmati, this rice cooks to perfectly fluffy grains infused with a natural aroma. Ready in minutes, it’s ideal for pairing with North Indian curries, dals, paneer, or vegetable gravies. Enjoy a wholesome, tasty meal without the hassle of traditional cooking—perfect for home, office, or travel.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹150",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-plain-basmati-rice-ready-to-eat-aromatic.jpg?v=1745407021"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/plain-basmati-rice-250g-pack-of-2"
+  },
+  {
+   "name": "Bikano Rajma (300g, RTE)",
+   "category": "thaali",
+   "description": "Bring the taste of authentic Punjabi cuisine to your table with Bikano Rajma Ready-to-Eat . Made with tender red kidney beans cooked in a flavourful tomato and spice gravy, this dish offers a comforting and satisfying experience. Ideal for busy days, travel, office lunches, or quick dinners at home, it pairs perfectly with rice, roti, or naan. Simply heat and enjoy a wholesome, homestyle meal in minutes.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹150",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-rajma-ready-to-eat-punjabi-kidney-beans-curry.jpg?v=1745407984"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/rajma-ready-to-eat"
+  },
+  {
+   "name": "Bikano Sarso ka Saag (300g, RTE)",
+   "category": "thaali",
+   "description": "Bikano Sarson Ka Saag – Ready to Eat Traditional Punjabi Delicacy | Made with Fresh Mustard Greens and Authentic Spices | Rich in Flavor, Nutrition, and Heritage | Perfectly Pairs with Makki Ki Roti for a Classic North Indian Meal | Quick, Delicious, and Convenient",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹200",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-sarson-ka-saag-ready-to-eat-punjabi-mustard-greens.jpg?v=1745408228"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/sarso-da-saag"
+  },
+  {
+   "name": "Bikano Shahi Paneer (300 gm, Pack of 2)",
+   "category": "thaali",
+   "description": "Bikano Shahi Paneer – Ready to Eat Royal Indian Curry with Soft Paneer in Creamy, Rich Tomato-Cashew Gravy | A Regal Blend of Spices, Cream, and Cottage Cheese for an Authentic Mughlai Flavor | Ideal for Quick Meals, Special Occasions, or Everyday Indulgence",
+   "veg": true,
+   "spiceLevel": "medium",
+   "price": "₹300",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0774/9769/6567/files/bikano-shahi-paneer-ready-to-eat-creamy-mughlai-curry.jpg?v=1745408454"
+   ],
+   "source": "bikanervala",
+   "sourceUrl": "https://bikanervala.com/products/shahi-paneer-300-gm-pack-of-2"
+  },
+  {
+   "name": "Choley Chawal 350g",
+   "category": "chole-bhature",
+   "description": "Choley Chawal by Haldiram's – spiced chickpea curry with rice, ready in minutes. Home-style comfort. Order this ready-to-eat meal online now.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹ on request / pack",
+   "images": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Chole_Chawal_%28Indian_delicacy%29.jpg/960px-Chole_Chawal_%28Indian_delicacy%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+   ],
+   "source": "wikimedia-commons",
+   "sourceUrl": "https://haldirams.com/product/sweets/choley-chawal"
+  },
+  {
+   "name": "Dal Makhani",
+   "category": "thaali",
+   "description": "Dal Makhani by Haldiram's – creamy black lentils in buttery spices, ready in minutes. Home-style flavour. Order this ready-to-eat curry online now.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹122",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_0944b230-2621-4a73-a421-19ef428499ba.avif?v=1782385788"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/dal-makhani"
+  },
+  {
+   "name": "Dal Makhani 300g",
+   "category": "thaali",
+   "description": "Dal Makhani by Haldiram's – creamy black lentils in buttery spices, ready in minutes. Home-style flavour. Order this ready-to-eat curry online now.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹ on request / pack",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_0944b230-2621-4a73-a421-19ef428499ba.avif?v=1782385788"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://haldirams.com/product/sweets/dal-makhani"
+  },
+  {
+   "name": "Dal Palak",
+   "category": "thaali",
+   "description": "Dal Palak by Haldiram's – nourishing lentils with spinach, ready in minutes. Home-style flavour. Order this ready-to-eat curry online now.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹93",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_027b39af-1233-4e87-945a-6b6e7c656fee.avif?v=1782385885"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/dal-palak"
+  },
+  {
+   "name": "Dal Palak 300g",
+   "category": "thaali",
+   "description": "Dal Palak by Haldiram's – nourishing lentils with spinach, ready in minutes. Home-style flavour. Order this ready-to-eat curry online now.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹ on request / pack",
+   "images": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Dal_palak_casserole.jpg/960px-Dal_palak_casserole.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+   ],
+   "source": "wikimedia-commons",
+   "sourceUrl": "https://haldirams.com/product/sweets/dal-palak"
+  },
+  {
+   "name": "Dal Tadka",
+   "category": "thaali",
+   "description": "Dal Tadka by Haldiram's – comforting tempered lentils, ready in minutes. Home-style flavour. Order this ready-to-eat dal online now.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹106",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_8c6cce92-6df9-404e-af95-e1f06d9c0515.avif?v=1782385927"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/dal-tadka"
+  },
+  {
+   "name": "Dal Tadka 300g",
+   "category": "thaali",
+   "description": "Dal Tadka by Haldiram's – comforting tempered lentils, ready in minutes. Home-style flavour. Order this ready-to-eat dal online now.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹ on request / pack",
+   "images": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Dal_Tadka-Delhi.jpg/960px-Dal_Tadka-Delhi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+   ],
+   "source": "wikimedia-commons",
+   "sourceUrl": "https://haldirams.com/product/sweets/dal-tadka"
+  },
+  {
+   "name": "Dal Tadka Jeera Rice 350g",
+   "category": "thaali",
+   "description": "Dal Tadka with Jeera Rice by Haldiram's – tempered lentils with cumin rice, ready in minutes. Order this ready-to-eat meal online today.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹ on request / pack",
+   "images": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Dal_Tadka-Delhi.jpg/960px-Dal_Tadka-Delhi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+   ],
+   "source": "wikimedia-commons",
+   "sourceUrl": "https://haldirams.com/product/sweets/dal-tadka-with-jeera-rice"
+  },
+  {
+   "name": "Dum Biryani",
+   "category": "thaali",
+   "description": "Dum Biryani by Haldiram's – fragrant, spiced dum biryani ready in minutes. Authentic and aromatic. Order this ready-to-eat meal online today.",
+   "veg": true,
+   "spiceLevel": "medium",
+   "price": "₹106",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_4ca7c369-8c29-42b5-8f71-7ccddf7bbe97.avif?v=1782385870"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/dum-biryani"
+  },
+  {
+   "name": "Dum Biryani 200g",
+   "category": "thaali",
+   "description": "Dum Biryani by Haldiram's – fragrant, spiced dum biryani ready in minutes. Authentic and aromatic. Order this ready-to-eat meal online today.",
+   "veg": true,
+   "spiceLevel": "medium",
+   "price": "₹ on request / pack",
+   "images": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Veg_biryani.jpg/960px-Veg_biryani.jpg"
+   ],
+   "source": "wikimedia-commons",
+   "sourceUrl": "https://haldirams.com/product/sweets/dum-biryani"
+  },
+  {
+   "name": "Mutter Paneer",
+   "category": "thaali",
+   "description": "Mutter Paneer by Haldiram's – soft paneer and peas in rich gravy, ready in minutes. Home-style flavour. Order this ready-to-eat curry online now.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹120",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_215fff23-938e-419f-a4b8-cc8e985c9d6f.avif?v=1782385721"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/mutter-paneer"
+  },
+  {
+   "name": "Mutter Paneer 300g",
+   "category": "thaali",
+   "description": "Mutter Paneer by Haldiram's – soft paneer and peas in rich gravy, ready in minutes. Home-style flavour. Order this ready-to-eat curry online now.",
+   "veg": true,
+   "spiceLevel": "medium",
+   "price": "₹ on request / pack",
+   "images": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Matar-Paneer.JPG/960px-Matar-Paneer.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+   ],
+   "source": "wikimedia-commons",
+   "sourceUrl": "https://haldirams.com/product/sweets/mutter-paneer"
+  },
+  {
+   "name": "Palak Paneer",
+   "category": "thaali",
+   "description": "Palak Paneer by Haldiram's – soft paneer in creamy spinach gravy, ready in minutes. Home-style flavour. Order this ready-to-eat curry online today.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹120",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_d9e82f0b-427a-4edb-a0a0-bbc5e1ef52c9.avif?v=1782385737"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/palak-paneer"
+  },
+  {
+   "name": "Palak Paneer 300g",
+   "category": "thaali",
+   "description": "Palak Paneer by Haldiram's – soft paneer in creamy spinach gravy, ready in minutes. Home-style flavour. Order this ready-to-eat curry online today.",
+   "veg": true,
+   "spiceLevel": "medium",
+   "price": "₹ on request / pack",
+   "images": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Palakpaneer_Rayagada_Odisha_0009.jpg/960px-Palakpaneer_Rayagada_Odisha_0009.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+   ],
+   "source": "wikimedia-commons",
+   "sourceUrl": "https://haldirams.com/product/sweets/palak-paneer"
+  },
+  {
+   "name": "Paneer Makhani",
+   "category": "thaali",
+   "description": "Paneer Makhani by Haldiram's – soft paneer in buttery tomato gravy, ready in minutes. Restaurant-style. Order this ready-to-eat curry online today.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹138",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_203cdb90-becd-4040-be19-b3417f94823e.avif?v=1782385773"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/paneer-makhani"
+  },
+  {
+   "name": "Paneer Tikka Masala",
+   "category": "thaali",
+   "description": "Paneer Tikka Masala by Haldiram's – grilled paneer in rich tomato gravy, ready in minutes. Order this ready-to-eat curry online now.",
+   "veg": true,
+   "spiceLevel": "hot",
+   "price": "₹120",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_15.avif?v=1783506849"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/paneer-tikka-masala"
+  },
+  {
+   "name": "Pav Bhaji",
+   "category": "chaat",
+   "description": "Pav Bhaji by Haldiram's – Mumbai's spiced vegetable mash, ready in minutes. Authentic street-style. Order this ready-to-eat pav bhaji online today.",
+   "veg": true,
+   "spiceLevel": "mild",
+   "price": "₹112",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_db8fcba8-584a-4277-80f8-7a507e112c6d.avif?v=1782385854"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/pav-bhaji"
+  },
+  {
+   "name": "Punjabi Choley",
+   "category": "thaali",
+   "description": "Punjabi Choley by Haldiram's – spiced chickpeas in rich, tangy gravy, ready in minutes. Home-style flavour. Order this ready-to-eat curry online today.",
+   "veg": true,
+   "spiceLevel": "medium",
+   "price": "₹112",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_16.avif?v=1783506964"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/punjabi-choley"
+  },
+  {
+   "name": "Punjabi Kadhi Pakoda",
+   "category": "thaali",
+   "description": "Punjabi Kadhi Pakoda by Haldiram's – soft fritters in tangy yogurt curry, ready in minutes. Order this ready-to-eat kadhi online today.",
+   "veg": true,
+   "spiceLevel": "medium",
+   "price": "₹88",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_be2ba665-0d51-4190-8516-835e267f7cf9.avif?v=1782385901"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/punjabi-kadhi-pakoda"
+  },
+  {
+   "name": "Rajma Raseela",
+   "category": "thaali",
+   "description": "Rajma Raseela by Haldiram's – hearty kidney beans in rich gravy, ready in minutes. Home-style flavour. Order this ready-to-eat curry online now.",
+   "veg": true,
+   "spiceLevel": "medium",
+   "price": "₹112",
+   "images": [
+    "https://cdn.shopify.com/s/files/1/0691/0948/1549/files/1_f28aff6e-d89f-484b-bc5b-4a3133e3ed79.avif?v=1782385838"
+   ],
+   "source": "haldirams",
+   "sourceUrl": "https://www.haldirams.com/product/curries/rajma-raseela"
+  }
+ ]
 }
