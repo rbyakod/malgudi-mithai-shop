@@ -94,6 +94,7 @@
 		DE6CFFC3FBB0F7A9A76B567C /* CatalogScrollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB32F50AA876A5639C2ED46B /* CatalogScrollTests.swift */; };
 		DFC97BC9292838CD64A337E2 /* QuantitySelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E74593A6376B6833A2DEDF /* QuantitySelector.swift */; };
 		E14B6A24E318771875AD4B37 /* AccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88C81BF2201A0146A1CC9A6 /* AccountViewModel.swift */; };
+		EE3E7CB2E1AB91D3CDD65EEE /* LiveApiUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE113EDA45F1736AC9CFC9C /* LiveApiUITests.swift */; };
 		EE7F140846CF5EB22A6CFF6C /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74A4A9D1DB2500B7A437F297 /* KeychainHelper.swift */; };
 		F04D40EE38856295308A145D /* AppleSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008BA765E8DCAF04F9892DD /* AppleSignInCoordinator.swift */; };
 		F2BD4A59463083692303DBE5 /* ProductCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B64F03123BBD6412145B49 /* ProductCard.swift */; };
@@ -243,6 +244,7 @@
 		F731821077C0CABDF68A8AB7 /* OrderStatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderStatusBadge.swift; sourceTree = "<group>"; };
 		FB32F50AA876A5639C2ED46B /* CatalogScrollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogScrollTests.swift; sourceTree = "<group>"; };
 		FB4B0CA54764C50EF5E7288E /* AppleSignInTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInTests.swift; sourceTree = "<group>"; };
+		FDE113EDA45F1736AC9CFC9C /* LiveApiUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveApiUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -386,6 +388,7 @@
 			children = (
 				A6575E90C61D6190AA687E88 /* AccessibilityTests.swift */,
 				CBCD922D98E4F596E91C2BB3 /* AuthUITests.swift */,
+				FDE113EDA45F1736AC9CFC9C /* LiveApiUITests.swift */,
 				E8AD84061607513B2822EFFA /* MishranUITests.swift */,
 				64620CDA70359F2FAF3E0AC9 /* NavigationUITests.swift */,
 				C59BEECC5B82F1F33C74B8B9 /* RevocationFlowUITest.swift */,
@@ -750,6 +753,7 @@
 			files = (
 				D1A709FD27EB85DD3CA54052 /* AccessibilityTests.swift in Sources */,
 				9F0470D37E60CB3A0B5F97A1 /* AuthUITests.swift in Sources */,
+				EE3E7CB2E1AB91D3CDD65EEE /* LiveApiUITests.swift in Sources */,
 				BD20E249EB84D2D509889488 /* MishranUITests.swift in Sources */,
 				01426908FD705FCA1750E7E6 /* NavigationUITests.swift in Sources */,
 				274321063DC6FE5E8BCE2D14 /* RevocationFlowUITest.swift in Sources */,

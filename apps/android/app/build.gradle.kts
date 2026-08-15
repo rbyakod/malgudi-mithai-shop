@@ -35,6 +35,14 @@ if (googleServicesFile.exists()) {
     apply(plugin = "com.google.firebase.crashlytics")
 }
 
+// Runtime-target override for live-API testing without touching the
+// committed per-buildType defaults:
+//   ./gradlew assembleDebug -PapiBaseUrl=https://mishran.pranavb.com/api/mobile/v1/
+// Takes precedence over every build type's base URL (must end in "/").
+val apiBaseUrlOverride = (findProperty("apiBaseUrl") as String?)?.let {
+    if (it.endsWith("/")) it else "$it/"
+}
+
 android {
     namespace = "com.mishran.app"
     compileSdk = 35
@@ -53,7 +61,7 @@ android {
         buildConfigField(
             "String",
             "API_BASE_URL",
-            "\"https://api.mishran.app/api/mobile/v1/\"",
+            "\"${apiBaseUrlOverride ?: "https://api.mishran.app/api/mobile/v1/"}\"",
         )
     }
 
@@ -79,11 +87,12 @@ android {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
-            // 10.0.2.2 is the emulator's alias for the host machine's localhost.
+            // 10.0.2.2 is the emulator's alias for the host machine's localhost
+            // — unless -PapiBaseUrl points elsewhere (live-API smoke runs).
             buildConfigField(
                 "String",
                 "API_BASE_URL",
-                "\"http://10.0.2.2:3000/api/mobile/v1/\"",
+                "\"${apiBaseUrlOverride ?: "http://10.0.2.2:3000/api/mobile/v1/"}\"",
             )
         }
         release {
