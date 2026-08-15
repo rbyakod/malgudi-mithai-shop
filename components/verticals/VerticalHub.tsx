@@ -16,7 +16,9 @@
 
 import {getPayload} from "@/lib/payload-client";
 import {getTranslations} from "next-intl/server";
-import {MediaCard} from "@/components/ui/MediaCard";
+import {CatalogBrowser, type CatalogItem} from "@/components/verticals/CatalogBrowser";
+import {isFullWidthLayout} from "@/lib/storefront-layout";
+import {readStorefrontLayoutMode} from "@/lib/storefront-layout-server";
 
 type CollectionSlug =
   | "mithai-products"
@@ -46,6 +48,31 @@ const VERTICAL_PATH: Record<CollectionSlug, string> = {
   "qsr-menu-items": "qsr",
   "snack-products": "snacks",
   "merch-products": "merch",
+};
+
+const VERTICAL_FALLBACK_IMAGE: Record<VerticalKey, string | null> = {
+  mithai: "/images/kaju-katli-box.jpg",
+  qsr: "/images/gulab-jamun.jpg",
+  snacks: "/images/besan-laddoo.jpg",
+  merch: null,
+};
+
+const FALLBACK_IMAGE_BY_SLUG: Record<string, string> = {
+  "assorted-box": "/images/assorted-box.jpg",
+  "badam-barfi": "/images/badam-barfi.jpg",
+  "badam-burfi": "/images/badam-barfi.jpg",
+  "besan-laddoo": "/images/besan-laddoo.jpg",
+  "besan-laddu": "/images/besan-laddoo.jpg",
+  "gulab-jamun": "/images/gulab-jamun.jpg",
+  "ista-roll": "/images/ista-roll.jpg",
+  "kaju-katli": "/images/kaju-katli.jpg",
+  "kaju-katli-box": "/images/kaju-katli-box.jpg",
+  "mango-peda": "/images/mango-peda.jpg",
+  "motichoor-laddoo": "/images/motichoor-laddoo.jpg",
+  "motichur-laddoo": "/images/motichoor-laddoo.jpg",
+  "rasgulla": "/images/rasgulla.jpg",
+  "rasmalai": "/images/rasmalai.jpg",
+  "sugarfree-kaju": "/images/sugarfree-kaju.jpg",
 };
 
 // Slugify a doc name for the URL — only used for the slugless collections
@@ -81,12 +108,31 @@ function firstImage(
   collection: CollectionSlug,
 ): string | null {
   if (collection === "qsr-menu-items") {
-    const img = doc.image as {url?: string} | null | undefined;
-    return img?.url ?? null;
+    const img = doc.image;
+    if (img && typeof img === "object" && "url" in img) {
+      return (img as {url?: string}).url ?? null;
+    }
+    return null;
   }
-  const images = doc.images as Array<{image?: {url?: string}} | null> | null;
-  const url = images?.[0]?.image?.url;
-  return url ?? null;
+  const images = doc.images as Array<{image?: unknown} | null> | null;
+  const image = images?.[0]?.image;
+  if (image && typeof image === "object" && "url" in image) {
+    return (image as {url?: string}).url ?? null;
+  }
+  return null;
+}
+
+function fallbackImage(
+  doc: Record<string, unknown>,
+  vertical: VerticalKey,
+): string | null {
+  const name =
+    (doc.slug as string | undefined) ??
+    (doc.name as string | undefined) ??
+    (doc.title as string | undefined) ??
+    "";
+  const slug = slugifyName(name);
+  return FALLBACK_IMAGE_BY_SLUG[slug] ?? VERTICAL_FALLBACK_IMAGE[vertical];
 }
 
 export async function VerticalHub({collection, vertical}: Props) {
@@ -94,6 +140,8 @@ export async function VerticalHub({collection, vertical}: Props) {
   const tShared = await getTranslations("Verticals");
   const title = t("title");
   const blurb = t("blurb");
+  const layoutMode = await readStorefrontLayoutMode();
+  const isFullWidth = isFullWidthLayout(layoutMode);
 
   // Read up to 100 docs (the seeded mithai catalog alone is 91 — the old
   // limit of 24 hid two-thirds of it). Same ceiling the PDP lookup uses;
@@ -116,12 +164,46 @@ export async function VerticalHub({collection, vertical}: Props) {
   // while some seeded docs still lack artwork. Stable, so within each group
   // the collection's natural order (newest-first) is preserved.
   docs = [...docs].sort(
-    (a, b) => Number(Boolean(firstImage(b, collection))) - Number(Boolean(firstImage(a, collection))),
+    (a, b) =>
+      Number(Boolean(firstImage(b, collection) ?? fallbackImage(b, vertical))) -
+      Number(Boolean(firstImage(a, collection) ?? fallbackImage(a, vertical))),
   );
+
+  const items: CatalogItem[] = docs.map((doc) => {
+    const name =
+      (doc.name as string | undefined) ??
+      (doc.title as string | undefined) ??
+      "Untitled";
+    const priceLabel =
+      (doc.displayPrice as string | undefined) ??
+      (doc.msrp as string | undefined) ??
+      (doc.price as string | undefined) ??
+      "";
+    const description =
+      (doc.description as string | undefined) ??
+      (doc.ingredients as string | undefined) ??
+      "";
+    const freshness =
+      (doc.freshnessStatus as string | undefined) ??
+      (doc.leadTime as string | undefined) ??
+      (doc.availability as string | undefined) ??
+      "";
+    return {
+      id: String(doc.id ?? name),
+      title: name,
+      href: pdpHref(doc, collection),
+      image: firstImage(doc, collection) ?? fallbackImage(doc, vertical),
+      tag: (doc[tagField] as string | null | undefined) ?? null,
+      priceLabel,
+      description,
+      freshness,
+      dietaryTags: (doc.dietaryTags as string[] | null | undefined) ?? [],
+    };
+  });
 
   return (
     <section aria-labelledby="vertical-hub-heading" className="pb-20 pt-10">
-      <div className="mx-auto max-w-6xl px-1 sm:px-2 lg:px-3">
+      <div className={["mx-auto px-1 sm:px-2 lg:px-3", isFullWidth ? "max-w-none" : "max-w-6xl"].join(" ")}>
         {/* Header — left rail + blurb column */}
         <div className="grid gap-6 border-b border-border-card pb-10 lg:grid-cols-[0.45fr_0.55fr] lg:items-end">
           <div>
@@ -140,32 +222,11 @@ export async function VerticalHub({collection, vertical}: Props) {
           </p>
         </div>
 
-        {/* Grid — or empty state */}
-        {itemCount === 0 ? (
-          <p className="mt-16 max-w-md text-sm italic leading-relaxed text-text-muted">
-            {tShared("empty")}
-          </p>
-        ) : (
-          <ul className="mt-12 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {docs.map((doc) => {
-              const name =
-                (doc.name as string | undefined) ??
-                (doc.title as string | undefined) ??
-                "Untitled";
-              const tag = (doc[tagField] as string | null | undefined) ?? null;
-              return (
-                <li key={String(doc.id ?? name)}>
-                  <MediaCard
-                    title={name}
-                    href={pdpHref(doc, collection)}
-                    image={firstImage(doc, collection)}
-                    tag={tag}
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        )}
+        <CatalogBrowser
+          items={items}
+          emptyLabel={tShared("empty")}
+          layoutMode={layoutMode}
+        />
       </div>
     </section>
   );

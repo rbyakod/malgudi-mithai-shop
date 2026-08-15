@@ -1,11 +1,15 @@
 "use client";
 
 import {useEffect, useState} from "react";
-import {fetchRecentLeads, type LeadRow, type LeadStatus} from "@/components/payload-admin/lib/dashboard-queries";
+import Link from "next/link";
+import {
+  fetchRecentLeads,
+  updateLeadStatus,
+  type LeadRow,
+  type LeadStatus,
+} from "@/components/payload-admin/lib/dashboard-queries";
+import {toWaDigits} from "@/lib/whatsapp";
 
-// Tone mapping for lead status pills. Uses tones that exist in custom.scss
-// (muted/primary/gold/success/info). `qualified` maps to `info` to distinguish
-// it from `lost` (which is `muted`).
 const STATUS_TONE: Record<LeadStatus, "muted" | "primary" | "success" | "gold" | "info"> = {
   new: "gold",
   contacted: "primary",
@@ -13,6 +17,8 @@ const STATUS_TONE: Record<LeadStatus, "muted" | "primary" | "success" | "gold" |
   won: "success",
   lost: "muted",
 };
+
+const ACTIONS: LeadStatus[] = ["contacted", "qualified", "won", "lost"];
 
 type RecentLeadsState =
   | {kind: "loading"}
@@ -22,6 +28,7 @@ type RecentLeadsState =
 
 export function RecentLeads() {
   const [state, setState] = useState<RecentLeadsState>({kind: "loading"});
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -38,6 +45,24 @@ export function RecentLeads() {
       cancelled = true;
     };
   }, []);
+
+  async function changeStatus(id: string, status: LeadStatus) {
+    if (state.kind !== "ready") return;
+    const previous = state.rows;
+    setUpdatingId(id);
+    setState({
+      kind: "ready",
+      rows: previous.map((row) => row.id === id ? {...row, status} : row),
+    });
+    try {
+      await updateLeadStatus(id, status);
+    } catch (error) {
+      setState({kind: "ready", rows: previous});
+      console.error("[RecentLeads] update failed", error);
+    } finally {
+      setUpdatingId(null);
+    }
+  }
 
   if (state.kind === "loading") {
     return (
@@ -64,12 +89,12 @@ export function RecentLeads() {
           Recent leads
         </h3>
         <p style={{fontSize: "0.8125rem", color: "var(--t-text-muted)"}}>No leads yet.</p>
-        <a
+        <Link
           href="/admin/collections/leads/create"
           style={{fontSize: "0.75rem", color: "var(--t-primary)"}}
         >
           Create the first →
-        </a>
+        </Link>
       </div>
     );
   }
@@ -99,42 +124,69 @@ export function RecentLeads() {
           margin: 0,
           display: "flex",
           flexDirection: "column",
-          gap: "0.5rem",
+          gap: "0.75rem",
         }}
       >
-        {state.rows.map(lead => (
-          <li key={lead.id}>
-            <a
-              href={`/admin/collections/leads/${lead.id}`}
+        {state.rows.map(lead => {
+          const digits = toWaDigits(lead.phone ?? "");
+          const waHref = digits
+            ? `https://wa.me/${digits}?text=${encodeURIComponent(`Hi ${lead.name}, this is Mishran following up on your enquiry.`)}`
+            : null;
+          return (
+            <li
+              key={lead.id}
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: "0.75rem",
-                textDecoration: "none",
-                color: "var(--t-text)",
+                border: "1px solid var(--t-border-card)",
+                borderRadius: "0.75rem",
+                padding: "0.75rem",
               }}
             >
-              <span>
-                <span style={{display: "block", fontSize: "0.8125rem", fontWeight: 500}}>
-                  {lead.name}
-                </span>
-                {lead.email && (
-                  <span
-                    style={{display: "block", fontSize: "0.6875rem", color: "var(--t-text-muted)"}}
-                  >
-                    {lead.email}
+              <div style={{display: "flex", justifyContent: "space-between", gap: "0.75rem"}}>
+                <Link
+                  href={`/admin/collections/leads/${lead.id}`}
+                  style={{textDecoration: "none", color: "var(--t-text)"}}
+                >
+                  <span style={{display: "block", fontSize: "0.8125rem", fontWeight: 500}}>
+                    {lead.name || "Unnamed lead"}
                   </span>
-                )}
-              </span>
-              {lead.status && (
-                <span className={`mishran-pill mishran-pill--${STATUS_TONE[lead.status]}`}>
-                  {lead.status}
-                </span>
-              )}
-            </a>
-          </li>
-        ))}
+                  <span style={{display: "block", fontSize: "0.6875rem", color: "var(--t-text-muted)"}}>
+                    {lead.email ?? lead.phone ?? "No contact"}
+                  </span>
+                </Link>
+                {lead.status ? (
+                  <span className={`mishran-pill mishran-pill--${STATUS_TONE[lead.status]}`}>
+                    {lead.status}
+                  </span>
+                ) : null}
+              </div>
+              <div style={{display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.65rem"}}>
+                {waHref ? (
+                  <a
+                    href={waHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mishran-pill mishran-pill--primary"
+                    style={{textDecoration: "none"}}
+                  >
+                    WhatsApp
+                  </a>
+                ) : null}
+                {ACTIONS.map((status) => (
+                  <button
+                    key={status}
+                    type="button"
+                    disabled={updatingId === lead.id || lead.status === status}
+                    onClick={() => void changeStatus(lead.id, status)}
+                    className={`mishran-pill mishran-pill--${STATUS_TONE[status]}`}
+                    style={{border: 0, cursor: "pointer", opacity: lead.status === status ? 0.55 : 1}}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

@@ -4,6 +4,7 @@
 import {describe, it, expect, vi, beforeEach, afterEach} from "vitest";
 import {
   fetchRecentLeads,
+  updateLeadStatus,
   fetchMithaiByFreshness,
   fetchPendingStories,
   fetchCatalogCounts,
@@ -58,7 +59,7 @@ describe("dashboard-queries", () => {
       const docs = [
         {
           id: "lead-1",
-          contact: {name: "Ravi", email: "r@x.com"},
+          contact: {name: "Ravi", email: "r@x.com", phone: "+919999999999"},
           status: "new",
           createdAt: "2026-08-10T00:00:00Z",
         },
@@ -72,6 +73,7 @@ describe("dashboard-queries", () => {
         id: "lead-1",
         name: "Ravi",
         email: "r@x.com",
+        phone: "+919999999999",
         status: "new",
         createdAt: "2026-08-10T00:00:00Z",
       });
@@ -110,6 +112,18 @@ describe("dashboard-queries", () => {
     it("throws on non-ok response", async () => {
       fetchSpy.mockResolvedValueOnce(mockResponse({}, false, 500));
       await expect(fetchRecentLeads()).rejects.toThrow(/500/);
+    });
+
+    it("patches lead status", async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({id: "lead-1", status: "won"}));
+      await updateLeadStatus("lead-1", "won");
+      const [url, init] = fetchSpy.mock.calls[0];
+      expect(url).toBe("/api/leads/lead-1");
+      expect(init).toMatchObject({
+        method: "PATCH",
+        credentials: "same-origin",
+      });
+      expect(JSON.parse(String((init as RequestInit).body))).toEqual({status: "won"});
     });
   });
 

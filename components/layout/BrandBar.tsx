@@ -7,6 +7,7 @@
 // unavailable (e.g. during build without DB) so the layout never throws.
 
 import {getPayload} from "@/lib/payload-client";
+import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
 import {FALLBACK_WHATSAPP, toWaDigits} from "@/lib/whatsapp";
 
 // Build a wa.me link from a +<digits> string.
@@ -30,9 +31,17 @@ async function readWhatsappNumber(): Promise<string | null> {
   }
 }
 
-export async function BrandBar() {
+type Props = {
+  layoutMode?: StorefrontLayoutMode;
+};
+
+export async function BrandBar({layoutMode = "fixed"}: Props) {
   const whatsapp = (await readWhatsappNumber()) ?? FALLBACK_WHATSAPP;
   const waHref = toWaLink(whatsapp);
+  const railClassName = [
+    "mx-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-1.5 text-[11px] sm:px-6",
+    isFullWidthLayout(layoutMode) ? "max-w-none lg:px-10 2xl:px-14" : "max-w-6xl lg:px-8",
+  ].join(" ");
 
   return (
     <div
@@ -40,7 +49,7 @@ export async function BrandBar() {
       role="complementary"
       aria-label="Brand announcements"
     >
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-1.5 text-[11px] sm:px-6 lg:px-8">
+      <div className={railClassName}>
         <p className="brand-bar__promise font-medium tracking-wide text-gold">
           Handcrafted daily · Delivered fresh across Bengaluru
         </p>

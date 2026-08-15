@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { normalizeTheme, DEFAULT_THEME, VALID_THEMES } from "@/lib/themes";
 
 describe("themes", () => {
-  it("defaults to mishran-default", () => {
-    expect(DEFAULT_THEME).toBe("mishran-default");
+  it("defaults to Malgudi Blue v2", () => {
+    expect(DEFAULT_THEME).toBe("mblue2");
   });
 
   it("exposes 4 house themes + 4 extra palette themes", () => {

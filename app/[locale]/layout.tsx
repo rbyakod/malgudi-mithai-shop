@@ -9,6 +9,8 @@ import {buildAlternates} from "@/lib/seo";
 import {BrandBar} from "@/components/layout/BrandBar";
 import {SiteHeader} from "@/components/layout/SiteHeader";
 import {SiteFooter} from "@/components/layout/SiteFooter";
+import {isFullWidthLayout} from "@/lib/storefront-layout";
+import {readStorefrontLayoutMode} from "@/lib/storefront-layout-server";
 
 // Static rendering: enumerate the locales so every [locale] route below can
 // be prerendered. Without this, dynamic child segments (e.g. mithai/[slug])
@@ -54,18 +56,23 @@ export default async function LocaleLayout({children, params}: Props) {
   setRequestLocale(locale);
 
   const messages = (await import(`../../messages/${locale}.json`)).default;
+  const layoutMode = await readStorefrontLayoutMode();
+  const mainClassName = [
+    "mx-auto w-full flex-1 px-4 pb-16 pt-4 sm:px-6",
+    isFullWidthLayout(layoutMode) ? "max-w-none lg:px-10 2xl:px-14" : "max-w-6xl lg:px-8",
+  ].join(" ");
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       {/* Layout shell — BrandBar (server, reads Payload) + SiteHeader (client,
           owns theme/locale/cart UI) + main content + SiteFooter (server). */}
       <div className="relative z-10 flex min-h-screen flex-col text-text-primary">
-        <BrandBar />
-        <SiteHeader />
-        <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-4 sm:px-6 lg:px-8">
+        <BrandBar layoutMode={layoutMode} />
+        <SiteHeader layoutMode={layoutMode} />
+        <main id="main-content" className={mainClassName}>
           {children}
         </main>
-        <SiteFooter />
+        <SiteFooter layoutMode={layoutMode} />
       </div>
     </NextIntlClientProvider>
   );

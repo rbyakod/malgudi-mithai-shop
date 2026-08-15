@@ -21,11 +21,12 @@ type StubNamespace = "cart" | "checkout" | "account" | "trackOrder" | "buildAGif
 type Props = {
   namespace: StubNamespace;
   children?: ReactNode;
+  hideDefaultCtas?: boolean;
 };
 
 // Best-effort Payload read. Returns null on any error so the page never
 // throws during build, migrations, or DB outages.
-async function readWhatsappNumber(): Promise<string | null> {
+export async function readWhatsappNumber(): Promise<string | null> {
   try {
     const payload = await getPayload();
     const global = await payload.findGlobal({slug: "analytics-settings"});
@@ -38,7 +39,7 @@ async function readWhatsappNumber(): Promise<string | null> {
   }
 }
 
-export async function CommerceStub({namespace, children}: Props) {
+export async function CommerceStub({namespace, children, hideDefaultCtas = false}: Props) {
   const t = await getTranslations(`Commerce.stubs.${namespace}`);
   const tCommon = await getTranslations("Commerce.common");
 
@@ -79,34 +80,35 @@ export async function CommerceStub({namespace, children}: Props) {
       {/* Optional children — /cart renders the read-only cart list here. */}
       {children ? <div className="mt-10">{children}</div> : null}
 
-      {/* CTA rail — WhatsApp primary, weddings lead secondary */}
-      <div className="mt-12 grid gap-6 sm:grid-cols-2">
-        <WhatsAppLink
-          href={waLink}
-          whatsapp={whatsapp}
-          ctaLabel={tCommon("whatsappCta")}
-        />
-        <Link
-          href="/weddings"
-          className="group flex flex-col justify-between gap-3 rounded-2xl border border-border-card bg-bg-card p-6 transition-colors hover:border-primary"
-        >
-          <div className="flex items-center gap-2">
-            <span
-              aria-hidden="true"
-              className="inline-block h-1.5 w-1.5 rounded-full bg-primary"
-            />
-            <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-text-muted">
-              {tCommon("leadEyebrow")}
-            </span>
-          </div>
-          <p className="text-base font-medium text-text-heading">
-            {tCommon("leadCta")}
-          </p>
-          <p className="text-xs leading-relaxed text-text-muted">
-            {tCommon("leadHint")}
-          </p>
-        </Link>
-      </div>
+      {hideDefaultCtas ? null : (
+        <div className="mt-12 grid gap-6 sm:grid-cols-2">
+          <WhatsAppLink
+            href={waLink}
+            whatsapp={whatsapp}
+            ctaLabel={tCommon("whatsappCta")}
+          />
+          <Link
+            href="/weddings"
+            className="group flex flex-col justify-between gap-3 rounded-2xl border border-border-card bg-bg-card p-6 transition-colors hover:border-primary"
+          >
+            <div className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="inline-block h-1.5 w-1.5 rounded-full bg-primary"
+              />
+              <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-text-muted">
+                {tCommon("leadEyebrow")}
+              </span>
+            </div>
+            <p className="text-base font-medium text-text-heading">
+              {tCommon("leadCta")}
+            </p>
+            <p className="text-xs leading-relaxed text-text-muted">
+              {tCommon("leadHint")}
+            </p>
+          </Link>
+        </div>
+      )}
     </section>
   );
 }

@@ -26,7 +26,7 @@ export type ThemeDefinition = {
   };
 };
 
-export const DEFAULT_THEME: Theme = "mishran-default";
+export const DEFAULT_THEME: Theme = "mblue2";
 
 export const THEMES: ThemeDefinition[] = [
   {

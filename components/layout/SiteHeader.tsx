@@ -16,6 +16,7 @@ import {useTheme} from "@/context/ThemeContext";
 import {ThemeSwitcher} from "@/components/ThemeSwitcher";
 import {NAV_LINKS} from "@/components/layout/nav-links";
 import {track} from "@/lib/analytics";
+import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
 
 // Re-export so callers (and tests) can import NAV_LINKS from the spec-mandated
 // path `@/components/layout/SiteHeader`. The constant itself lives in a pure
@@ -163,7 +164,11 @@ function isActiveLink(
 
 /* ---- Component ---- */
 
-export function SiteHeader() {
+type Props = {
+  layoutMode?: StorefrontLayoutMode;
+};
+
+export function SiteHeader({layoutMode = "fixed"}: Props) {
   const {count} = useCart();
   const {theme} = useTheme();
   const t = useTranslations("Header");
@@ -176,6 +181,10 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const activeSection = useActiveSection(pathname);
   const isHeritage2 = theme === "wedding-heritage";
+  const railClassName = [
+    "mx-auto px-4 sm:px-6",
+    isFullWidthLayout(layoutMode) ? "max-w-none lg:px-10 2xl:px-14" : "max-w-6xl lg:px-8",
+  ].join(" ");
 
   useEffect(() => {
     const threshold = 40;
@@ -224,16 +233,16 @@ export function SiteHeader() {
       data-scrolled={scrolled || undefined}
       className={["nav-header", isHeritage2 ? "nav-header--heritage2" : ""].join(" ").trim()}
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className={railClassName}>
         {/* Top bar — always visible */}
         <div className="nav-top-bar">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="nav-logo-mark nav-logo-mark--image">
               <Image
-                src="/images/mishran-logo.png"
+                src="/images/mishran-logo-mark.png"
                 alt="Mishran sun mark"
-                width={36}
-                height={36}
+                width={56}
+                height={56}
                 className="h-full w-full object-contain"
                 priority
               />

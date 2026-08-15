@@ -21,11 +21,7 @@ const ThemeContext = createContext<{
   setTheme: (t: Theme) => void;
 } | undefined>(undefined);
 
-function getInitialTheme(): Theme {
-  if (typeof window === "undefined") {
-    return DEFAULT_THEME;
-  }
-
+function readClientTheme(): Theme {
   try {
     const domTheme = normalizeTheme(
       document.documentElement.getAttribute("data-theme")
@@ -46,7 +42,18 @@ function getInitialTheme(): Theme {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+  const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
+
+  useEffect(() => {
+    // First client render must match SSR. Adopt the boot-script/localStorage
+    // theme only after hydration to avoid ThemeSwitcher text mismatches.
+    const clientTheme = readClientTheme();
+    if (clientTheme !== theme) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot hydration sync after matching SSR
+      setThemeState(clientTheme);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- one-shot hydration sync
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);

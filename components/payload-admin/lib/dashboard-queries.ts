@@ -14,6 +14,7 @@ export type LeadRow = {
   id: string;
   name: string;
   email?: string;
+  phone?: string;
   status?: LeadStatus;
   createdAt: string;
 };
@@ -59,9 +60,22 @@ async function apiGet<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+async function apiPatch<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "PATCH",
+    credentials: "same-origin",
+    headers: {Accept: "application/json", "Content-Type": "application/json"},
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new Error(`${res.status} ${res.statusText} on ${path}`);
+  }
+  return res.json() as Promise<T>;
+}
+
 type LeadDoc = {
   id: string;
-  contact?: {name?: string; email?: string};
+  contact?: {name?: string; email?: string; phone?: string};
   status: LeadStatus;
   createdAt: string;
 };
@@ -79,9 +93,14 @@ export async function fetchRecentLeads(limit = 5): Promise<LeadRow[]> {
     id: doc.id,
     name: doc.contact?.name ?? "",
     email: doc.contact?.email,
+    phone: doc.contact?.phone,
     status: doc.status,
     createdAt: doc.createdAt,
   }));
+}
+
+export async function updateLeadStatus(id: string, status: LeadStatus): Promise<void> {
+  await apiPatch(`/leads/${id}`, {status});
 }
 
 type MithaiResponse = {

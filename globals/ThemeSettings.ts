@@ -10,6 +10,26 @@ export const ThemeSettings: GlobalConfig = {
   },
   fields: [
     {
+      name: "storefrontLayoutMode",
+      type: "select",
+      label: "Storefront width",
+      defaultValue: "fixed",
+      admin: {
+        description:
+          "Choose Fixed for the earlier centered layout, or Full width for wider catalog pages.",
+      },
+      options: [
+        {
+          label: "Fixed width",
+          value: "fixed",
+        },
+        {
+          label: "Full width",
+          value: "full",
+        },
+      ],
+    },
+    {
       name: "themes",
       type: "array",
       fields: [

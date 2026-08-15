@@ -27,6 +27,10 @@ import {getTranslations} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
 import {BuyModule} from "@/components/mithai/BuyModule";
 import {derivePackSizes} from "@/lib/mithai/packSizes";
+import {isFullWidthLayout} from "@/lib/storefront-layout";
+import {readStorefrontLayoutMode} from "@/lib/storefront-layout-server";
+import {readWhatsappNumber} from "@/components/commerce/CommerceStub";
+import {FALLBACK_WHATSAPP} from "@/lib/whatsapp";
 
 type Props = {
   slug: string;
@@ -45,6 +49,9 @@ export async function MithaiPDP({slug, locale}: Props) {
   const t = await getTranslations("Pdp.mithai");
   const tNav = await getTranslations("Nav");
   const tShared = await getTranslations("Pdp");
+  const whatsapp = (await readWhatsappNumber()) ?? FALLBACK_WHATSAPP;
+  const layoutMode = await readStorefrontLayoutMode();
+  const isFullWidth = isFullWidthLayout(layoutMode);
 
   const payload = await getPayload();
   const r = await payload.find({
@@ -103,7 +110,7 @@ export async function MithaiPDP({slug, locale}: Props) {
 
   return (
     <article className="pb-24 pt-8">
-      <div className="mx-auto max-w-6xl px-1 sm:px-2 lg:px-3">
+      <div className={["mx-auto px-1 sm:px-2 lg:px-3", isFullWidth ? "max-w-none" : "max-w-6xl"].join(" ")}>
         {/* Breadcrumb */}
         <nav
           aria-label="breadcrumb"
@@ -170,6 +177,8 @@ export async function MithaiPDP({slug, locale}: Props) {
               image={primaryImage ?? ""}
               displayPrice={doc!.displayPrice ?? ""}
               packSizes={packSizes}
+              whatsapp={whatsapp}
+              layoutMode={layoutMode}
             />
 
             {/* Trust strip — real fields only, quiet uppercase microcopy */}

@@ -11,6 +11,7 @@
 
 import {Link} from "@/i18n/navigation";
 import {getPayload} from "@/lib/payload-client";
+import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
 import {FALLBACK_WHATSAPP, toWaDigits} from "@/lib/whatsapp";
 
 // IA link map. Each column groups related routes per the new information
@@ -75,17 +76,25 @@ function toWaLink(raw: string): string {
   return digits ? `https://wa.me/${digits}` : "#";
 }
 
-export async function SiteFooter() {
+type Props = {
+  layoutMode?: StorefrontLayoutMode;
+};
+
+export async function SiteFooter({layoutMode = "fixed"}: Props) {
   const whatsapp = await readWhatsappNumber();
   const waHref = toWaLink(whatsapp);
   const year = new Date().getFullYear();
+  const railClassName = [
+    "mx-auto px-4 sm:px-6",
+    isFullWidthLayout(layoutMode) ? "max-w-none lg:px-10 2xl:px-14" : "max-w-6xl lg:px-8",
+  ].join(" ");
 
   return (
     <footer
       className="site-footer mt-12 w-full border-t border-border-card bg-bg-darker text-text-light"
       aria-label="Site footer"
     >
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+      <div className={`${railClassName} grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4`}>
         {/* Brand column */}
         <div className="space-y-3">
           <p className="text-sm font-semibold tracking-wide text-gold">
@@ -132,7 +141,7 @@ export async function SiteFooter() {
 
       {/* Legal strip */}
       <div className="border-t border-text-heading/40">
-        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-2 px-4 py-4 text-[11px] text-text-light-muted sm:flex-row sm:items-center sm:px-6 lg:px-8">
+        <div className={`${railClassName} flex flex-col items-start justify-between gap-2 py-4 text-[11px] text-text-light-muted sm:flex-row sm:items-center`}>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <span>© {year} Mishran. All rights reserved.</span>
             {/* FSSAI placeholder — replace once the licence number is final. */}

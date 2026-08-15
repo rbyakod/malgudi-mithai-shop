@@ -501,9 +501,9 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.5rem;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 999px;
   background: var(--t-primary);
   color: var(--t-text-light);
   font-size: 0.75rem;
@@ -517,13 +517,14 @@ p {
 /* Image variant — sun mark logo instead of the text monogram. */
 .nav-logo-mark--image {
   background: transparent;
-  overflow: hidden;
+  overflow: visible;
+  flex: 0 0 auto;
 }
 
 .nav-header[data-scrolled] .nav-logo-mark {
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 0.375rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
   font-size: 0.625rem;
 }
 

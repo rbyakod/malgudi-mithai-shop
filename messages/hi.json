@@ -260,7 +260,14 @@
       "leadHint": "अपने कार्यक्रम के बारे में बताएं →",
       "empty": "आपका कार्ट खाली है।",
       "emptyCta": "मिठाई देखें",
-      "itemsReadonlyNote": "हमारा कॉमर्स अनुभव पूरा होने तक मात्राएँ केवल पढ़ने योग्य हैं।"
+      "itemsReadonlyNote": "हमारा कॉमर्स अनुभव पूरा होने तक मात्राएँ केवल पढ़ने योग्य हैं।",
+      "itemsEditableNote": "मात्राएँ बदलें, फिर यह ड्राफ्ट WhatsApp पर Mishran को भेजें।",
+      "orderDraftTitle": "Order draft",
+      "remove": "Remove",
+      "decrease": "Decrease quantity",
+      "increase": "Increase quantity",
+      "clear": "Clear cart",
+      "sendOrder": "Send order"
     },
     "stubs": {
       "cart": {

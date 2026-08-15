@@ -260,7 +260,14 @@
       "leadHint": "Tell us about your event →",
       "empty": "Your cart is empty.",
       "emptyCta": "Browse mithai",
-      "itemsReadonlyNote": "Quantities are read-only while we finish our commerce experience."
+      "itemsReadonlyNote": "Quantities are read-only while we finish our commerce experience.",
+      "itemsEditableNote": "Adjust quantities, then send this draft to Mishran on WhatsApp.",
+      "orderDraftTitle": "Order draft",
+      "remove": "Remove",
+      "decrease": "Decrease quantity",
+      "increase": "Increase quantity",
+      "clear": "Clear cart",
+      "sendOrder": "Send order"
     },
     "stubs": {
       "cart": {

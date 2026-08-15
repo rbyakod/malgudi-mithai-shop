@@ -20,6 +20,8 @@ import {useCart} from "@/context/CartContext";
 import {track} from "@/lib/analytics";
 import type {PackSize} from "@/lib/mithai/packSizes";
 import {PincodeCheck} from "@/components/mithai/PincodeCheck";
+import {toWaDigits} from "@/lib/whatsapp";
+import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
 
 type Props = {
   productId: string;
@@ -27,6 +29,8 @@ type Props = {
   image: string;
   displayPrice: string;
   packSizes: PackSize[];
+  whatsapp: string;
+  layoutMode?: StorefrontLayoutMode;
 };
 
 export function BuyModule({
@@ -35,6 +39,8 @@ export function BuyModule({
   image,
   displayPrice,
   packSizes,
+  whatsapp,
+  layoutMode = "fixed",
 }: Props) {
   const t = useTranslations("Pdp.mithai");
   const {addItem} = useCart();
@@ -58,10 +64,26 @@ export function BuyModule({
     selected && selected.label !== baseLabel
       ? `${productId}:${selected.label}`
       : productId;
+  const cartImage = image || "/images/kaju-katli-box.jpg";
+  const digits = toWaDigits(whatsapp);
+  const stickyRailClassName = [
+    "mx-auto flex items-center gap-3",
+    isFullWidthLayout(layoutMode) ? "max-w-none px-4 sm:px-6 lg:px-10 2xl:px-14" : "max-w-6xl px-4 sm:px-6 lg:px-8",
+  ].join(" ");
+  const waText = encodeURIComponent(
+    [
+      "Hi Mishran, I need help placing this order.",
+      `Product: ${name}`,
+      selected?.label ? `Pack: ${selected.label}` : "",
+      priceLabel ? `Price: ${priceLabel}` : "",
+      `Qty: ${qty}`,
+    ].filter(Boolean).join("\n"),
+  );
+  const waHref = digits ? `https://wa.me/${digits}?text=${waText}` : "#";
 
   function addToCart() {
     startTransition(() => {
-      addItem({id: cartId, name, priceLabel, image}, qty);
+      addItem({id: cartId, name, priceLabel, image: cartImage}, qty);
       setAdded(true);
       track("add_to_cart", {id: cartId, name, quantity: qty});
     });
@@ -69,7 +91,7 @@ export function BuyModule({
 
   function buyNow() {
     startTransition(() => {
-      addItem({id: cartId, name, priceLabel, image}, qty);
+      addItem({id: cartId, name, priceLabel, image: cartImage}, qty);
       track("buy_now", {id: cartId, name, quantity: qty});
       router.push("/cart");
     });
@@ -185,6 +207,33 @@ export function BuyModule({
             <span className="ml-2 normal-case tracking-normal text-text-muted">
               {priceLabel}
             </span>
+          </button>
+
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track("whatsapp_clicked", {source: "pdp", id: cartId})}
+            className="border-y border-border-card px-6 py-3 font-display text-sm font-medium uppercase tracking-[0.18em] text-text-secondary transition-colors hover:border-gold/60 hover:text-primary"
+          >
+            WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border-card bg-bg-card/95 px-4 py-3 shadow-[0_-12px_40px_rgba(0,0,0,0.18)] backdrop-blur md:hidden">
+        <div className={stickyRailClassName}>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-semibold text-text-heading">{name}</p>
+            <p className="text-[11px] text-text-muted">{qty} x {priceLabel}</p>
+          </div>
+          <button
+            type="button"
+            onClick={addToCart}
+            disabled={pending}
+            className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-text-light transition-colors hover:bg-primary-hover disabled:opacity-70"
+          >
+            {added ? t("added") : t("addToCart")}
           </button>
         </div>
       </div>

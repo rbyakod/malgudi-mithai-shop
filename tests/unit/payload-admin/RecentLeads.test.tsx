@@ -5,7 +5,7 @@ import {RecentLeads} from "@/components/payload-admin/dashboard/RecentLeads";
 // Mocks the raw Payload `/leads` response (LeadDoc shape: contact sub-object).
 // fetchRecentLeads maps doc.contact.name/email onto LeadRow.
 const mockLeads = [
-  {id: "1", contact: {name: "Ria Sharma", email: "ria@x.com"}, status: "new", createdAt: "2026-08-11T10:00:00Z"},
+  {id: "1", contact: {name: "Ria Sharma", email: "ria@x.com", phone: "+919999999999"}, status: "new", createdAt: "2026-08-11T10:00:00Z"},
   {id: "2", contact: {name: "Arjun Patel", email: "arjun@y.com"}, status: "won", createdAt: "2026-08-10T10:00:00Z"},
 ];
 
@@ -44,8 +44,8 @@ describe("RecentLeads", () => {
     } as Response);
     render(<RecentLeads />);
     await waitFor(() => {
-      expect(screen.getByText("new")).toBeInTheDocument();
-      expect(screen.getByText("won")).toBeInTheDocument();
+      expect(screen.getAllByText("new").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("won").length).toBeGreaterThan(0);
     });
   });
 

@@ -5,8 +5,9 @@
 // WhatsApp + weddings CTAs route customers to the events team in the
 // meantime.
 
-import {CommerceStub} from "@/components/commerce/CommerceStub";
+import {CommerceStub, readWhatsappNumber} from "@/components/commerce/CommerceStub";
 import {CartItems} from "@/components/commerce/CartItems";
+import {FALLBACK_WHATSAPP} from "@/lib/whatsapp";
 
 type Props = {
   params: Promise<{locale: string}>;
@@ -15,9 +16,10 @@ type Props = {
 export default async function CartPage({params}: Props) {
   // Touch params so the page renders dynamically per locale.
   await params;
+  const whatsapp = (await readWhatsappNumber()) ?? FALLBACK_WHATSAPP;
   return (
-    <CommerceStub namespace="cart">
-      <CartItems />
+    <CommerceStub namespace="cart" hideDefaultCtas>
+      <CartItems whatsapp={whatsapp} />
     </CommerceStub>
   );
 }

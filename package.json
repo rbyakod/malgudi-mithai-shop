@@ -29,6 +29,7 @@
     "seed:branding": "node --env-file=.env --import tsx scripts/seed-branding.ts",
     "seed:staging": "node --env-file=.env --import tsx scripts/seed-staging.ts",
     "seed:pincodes": "node --env-file=.env --import tsx scripts/seed-pincodes.ts",
+    "media:health": "node scripts/check-media-health.mjs",
     "regen:importmap": "node --import tsx scripts/regen-importmap.mjs",
     "ios:xcodegen": "xcodegen --spec apps/ios/project.yml",
     "ios:build": "xcodebuild -project apps/ios/Mishran.xcodeproj -scheme Mishran -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=17.2' build",
