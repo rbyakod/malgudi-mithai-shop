@@ -74,6 +74,13 @@ extension Endpoint {
         )
     }
 
+    /// GET /brand — public support contact for the apps' help surfaces
+    /// ({data:{whatsappNumber,whatsappDigits}}). No ETag — single tiny doc,
+    /// cached client-side (P1 parity).
+    static var brand: Endpoint {
+        Endpoint(path: "brand", requiresAuth: false)
+    }
+
     /// GET /orders — customer-scoped (JWT), newest first, paginated.
     static func orders(page: Int = 1, pageSize: Int = 20) -> Endpoint {
         Endpoint(

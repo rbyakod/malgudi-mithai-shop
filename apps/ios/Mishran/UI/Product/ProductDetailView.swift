@@ -1,14 +1,23 @@
-// ProductDetailView.swift — Task 16.4 (Mishran Mobile Apps v1).
+// ProductDetailView.swift — Task 16.4 / P1 parity (Mishran Mobile Apps v1).
 import SwiftData
 import SwiftUI
 
 struct ProductDetailView: View {
     @State private var viewModel: ProductDetailViewModel
     var onAddedToCart: (() -> Void)? = nil
+    /// P1: Buy now adds the selected pack and jumps straight to checkout.
+    var onBuyNow: (() -> Void)? = nil
 
-    init(slug: String, client: MishranAPIClient, context: ModelContext, onAddedToCart: (() -> Void)? = nil) {
+    init(
+        slug: String,
+        client: MishranAPIClient,
+        context: ModelContext,
+        onAddedToCart: (() -> Void)? = nil,
+        onBuyNow: (() -> Void)? = nil
+    ) {
         _viewModel = State(initialValue: ProductDetailViewModel(slug: slug, client: client, context: context))
         self.onAddedToCart = onAddedToCart
+        self.onBuyNow = onBuyNow
     }
 
     var body: some View {
@@ -25,7 +34,8 @@ struct ProductDetailView: View {
                         Text(product.name)
                             .font(.mishranDisplay.weight(.semibold))
                         HStack(spacing: .mishranSpacingSm) {
-                            if let price = product.displayPrice {
+                            // Selected pack swaps the price line (P1).
+                            if let price = viewModel.priceLine {
                                 Text(price)
                                     .font(.mishranBodyXl)
                             }
@@ -38,6 +48,15 @@ struct ProductDetailView: View {
                             }
                         }
                         .foregroundStyle(Color.mishranBrandInk)
+                    }
+
+                    if !viewModel.packSizes.isEmpty {
+                        PackSizePicker(options: viewModel.packSizes, selection: packSelection)
+                        // Display-only estimates (commerce is deferred
+                        // server-side; cart/validate prices the base pack).
+                        Text("Prices for other sizes are estimates — checkout uses the listed price.")
+                            .font(.mishranBodySm)
+                            .foregroundStyle(.secondary)
                     }
 
                     if let tags = product.dietaryTags, !tags.isEmpty {
@@ -57,13 +76,19 @@ struct ProductDetailView: View {
 
                     QuantitySelector(quantity: $viewModel.quantity)
 
-                    AddToCartButton(
-                        action: {
+                    HStack(spacing: .mishranSpacingSm) {
+                        AddToCartButton(
+                            action: {
+                                viewModel.addToCart()
+                                onAddedToCart?()
+                            },
+                            isAdded: viewModel.addedToCart
+                        )
+                        BuyNowButton {
                             viewModel.addToCart()
-                            onAddedToCart?()
-                        },
-                        isAdded: viewModel.addedToCart
-                    )
+                            onBuyNow?()
+                        }
+                    }
 
                     ForEach(detailRows(for: product), id: \.label) { row in
                         VStack(alignment: .leading, spacing: 4) {
@@ -101,6 +126,15 @@ struct ProductDetailView: View {
                 await viewModel.load()
             }
         }
+    }
+
+    /// Selection routes through selectPack (guards against ids outside the
+    /// derived chips); clearing is not an option in the UI.
+    private var packSelection: Binding<PackSize?> {
+        Binding(
+            get: { viewModel.selectedPack },
+            set: { if let pack = $0 { viewModel.selectPack(pack) } }
+        )
     }
 
     private struct DetailRow {

@@ -51,8 +51,10 @@ struct MishranApp: App {
         // schedule the first run. Same container the environment gets.
         if let container = try? ModelContainerFactory.makeContainer() {
             _modelContainer = State(initialValue: container)
-            // UI-test seam: seed a small catalog so headless flows can drive
-            // the grid + detail without a backend (same idea as -authScreen).
+            // UI-test seams: wipe persisted state on demand, then seed a
+            // small catalog so headless flows can drive the grid + detail
+            // without a backend (same idea as -authScreen).
+            SeedData.resetStoreIfNeeded(context: container.mainContext)
             if arguments.contains(SeedData.seedCatalogArgument) {
                 SeedData.seedCatalogIfNeeded(context: container.mainContext)
             }
@@ -179,7 +181,14 @@ struct DestinationView: View {
     var body: some View {
         switch route {
         case let .productDetail(slug):
-            ProductDetailView(slug: slug, client: MishranAPIClient(), context: context)
+            ProductDetailView(
+                slug: slug,
+                client: MishranAPIClient(),
+                context: context,
+                onBuyNow: { router.push(.checkout) }
+            )
+        case let .catalog(family):
+            CatalogDestination(router: router, context: context, family: family)
         case .cart:
             CartView(onCheckout: { router.push(.checkout) })
         case .checkout:
@@ -198,6 +207,39 @@ struct DestinationView: View {
             AccountView(router: router, onSignedOut: onSignedOut)
         case .addresses:
             AddressesView()
+        }
+    }
+}
+
+/// Catalog grid pushed from Home (hero CTA / toolbar / family chip). Same
+/// view model construction Home used pre-restructure: cache + repository
+/// off the ambient model context; the route's family seeds the filter.
+private struct CatalogDestination: View {
+    let router: Router
+    let context: ModelContext
+    let family: ProductFamily?
+    @State private var viewModel: CatalogViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CatalogView(viewModel: viewModel) { product in
+                    router.push(.productDetail(slug: product.slug))
+                }
+            } else {
+                ProgressView()
+            }
+        }
+        .task {
+            guard viewModel == nil else { return }
+            let cache = await CatalogCache(context: context)
+            let viewModel = CatalogViewModel(
+                repository: CatalogRepository(client: MishranAPIClient(), cache: cache)
+            )
+            if let family {
+                viewModel.filters.family = family
+            }
+            self.viewModel = viewModel
         }
     }
 }

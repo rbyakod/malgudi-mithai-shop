@@ -9,7 +9,9 @@ import XCTest
 final class AccessibilityTests: XCTestCase {
     private func launchSeeded(sizeCategory: String? = nil) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-seedCatalog", "-signedInOnce", "false"]
+        // -resetStore keeps the audit hermetic: a live-API run earlier in
+        // the suite would otherwise swap the seeded rows out from under us.
+        app.launchArguments = ["-resetStore", "-seedCatalog", "-signedInOnce", "false"]
         if let sizeCategory {
             // Classic launch-argument override of the content size category.
             app.launchArguments += ["-UIPreferredContentSizeCategoryName", sizeCategory]
@@ -53,6 +55,10 @@ final class AccessibilityTests: XCTestCase {
 
     func testCatalogButtonsLabeledWithMinimumTapTargets() {
         let app = launchSeeded()
+        XCTAssertTrue(app.buttons["Browse sweets"].waitForExistence(timeout: 5))
+        auditButtons(app, context: "home")
+        // P1: the grid lives behind the hero CTA now — audit it too.
+        app.buttons["Browse sweets"].tap()
         XCTAssertTrue(app.navigationBars["Sweets"].waitForExistence(timeout: 5))
         auditButtons(app, context: "catalog")
     }
@@ -88,8 +94,8 @@ final class AccessibilityTests: XCTestCase {
         auditButtons(app, context: "cart")
     }
 
-    /// AX1–AX5 (accessibilityM…accessibilityXXXL): the core catalog actions
-    /// must survive every accessibility size.
+    /// AX1–AX5 (accessibilityM…accessibilityXXXL): the core home + rail
+    /// actions must survive every accessibility size.
     func testCatalogRendersAcrossDynamicTypeAccessibilitySizes() {
         for size in [
             "UICTContentSizeCategoryAccessibilityM",
@@ -97,14 +103,18 @@ final class AccessibilityTests: XCTestCase {
             "UICTContentSizeCategoryAccessibilityXXXL",
         ] {
             let app = launchSeeded(sizeCategory: size)
-            let bar = app.navigationBars["Sweets"]
             XCTAssertTrue(
-                bar.waitForExistence(timeout: 5),
-                "catalog should render at \(size)"
+                app.buttons["Browse sweets"].waitForExistence(timeout: 5),
+                "home should render at \(size)"
             )
             XCTAssertTrue(
                 app.buttons["Kaju Katli, ₹720/kg"].exists,
-                "product action should exist at \(size)"
+                "best-sellers rail action should exist at \(size)"
+            )
+            app.buttons["Browse sweets"].tap()
+            XCTAssertTrue(
+                app.navigationBars["Sweets"].waitForExistence(timeout: 5),
+                "catalog should render at \(size)"
             )
             app.terminate()
         }

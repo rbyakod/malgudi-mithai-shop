@@ -31,11 +31,15 @@ final class LiveApiUITests: XCTestCase {
     func testCatalogSearchDetailAndCartAgainstLiveApi() throws {
         let app = launchApp()
 
-        // 1. Catalog boots and loads the LIVE catalog (91 seeded products —
-        //    far more than one screen, so search must work to reach a known
-        //    product deterministically).
+        // 1. Home boots (P1 hero + rail), then the CTA pushes the catalog
+        //    tab which loads the LIVE catalog (91 seeded products — far more
+        //    than one screen, so search must work to reach a known product
+        //    deterministically).
+        let browse = app.buttons["Browse sweets"]
+        XCTAssertTrue(browse.waitForExistence(timeout: 10), "App should boot to the home hero")
+        browse.tap()
         let navBar = app.navigationBars["Sweets"]
-        XCTAssertTrue(navBar.waitForExistence(timeout: 10), "App should boot to the catalog")
+        XCTAssertTrue(navBar.waitForExistence(timeout: 10), "Hero CTA should push the catalog")
 
         // 2. Search narrows to a known live product (Gond laddu, scraped
         //    catalog). The saved-catalog error message must never appear.

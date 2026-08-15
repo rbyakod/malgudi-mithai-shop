@@ -176,6 +176,11 @@ struct ProductDTO: Decodable, Equatable, Identifiable, Hashable {
     let name: String
     let family: ProductFamily
     let displayPrice: String?
+    /// Net pack weight as display text, e.g. "250 g", "1 kg" — drives the
+    /// pack-size chip fallback (P1 parity; see UI/Product/PackSizes.swift).
+    let weight: String?
+    /// Flags the product for the apps' Best sellers rail (absent = unflagged).
+    let featured: Bool?
     let freshnessStatus: String?
     let dietaryTags: [String]?
     let allergens: [String]?
@@ -195,8 +200,17 @@ enum ProductFamily: String, Decodable, CaseIterable, Hashable {
 
 extension ProductDTO {
     /// Test/convenience initializer — optional fields default to nil.
-    init(id: String, slug: String, name: String, family: ProductFamily, displayPrice: String? = nil) {
+    init(
+        id: String,
+        slug: String,
+        name: String,
+        family: ProductFamily,
+        displayPrice: String? = nil,
+        weight: String? = nil,
+        featured: Bool? = nil
+    ) {
         self.init(id: id, slug: slug, name: name, family: family, displayPrice: displayPrice,
+                  weight: weight, featured: featured,
                   freshnessStatus: nil, dietaryTags: nil, allergens: nil, ingredients: nil,
                   shelfLife: nil, storage: nil, images: nil, story: nil, updatedAt: nil)
     }
@@ -215,6 +229,20 @@ struct ProductPageDTO: Decodable, Equatable {
 enum CatalogResult: Equatable {
     case fresh(ProductPageDTO, etag: String?)
     case notModified
+}
+
+// MARK: - Brand (P1 parity: WhatsApp support)
+
+/// GET /brand — public support contact ({data:{whatsappNumber,whatsappDigits}}).
+/// Only the WhatsApp fields of the analytics-settings global are exposed;
+/// analytics IDs deliberately never appear on this endpoint. Both fields are
+/// contract-required, so decoding failures fall to the repository's
+/// hardcoded fallback number.
+struct BrandDTO: Codable, Equatable {
+    /// Display form, e.g. "+91-98765-43210".
+    let whatsappNumber: String
+    /// Digits only, for wa.me deep links.
+    let whatsappDigits: String
 }
 
 // MARK: - Cart snapshot + Razorpay payments (Task 17.3)

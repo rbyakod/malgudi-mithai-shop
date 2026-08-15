@@ -157,4 +157,33 @@ final class CheckoutViewModelTests: XCTestCase {
         vm.paymentMethod = .razorpay
         XCTAssertTrue(vm.canPlaceOrder)
     }
+
+    // MARK: P1 pack sizes — place-order collapse by BASE productId
+
+    func testCollapsedCartItemsSumsPackLinesByBaseProductId() {
+        let cart = ProductDetailViewModel.findOrCreateCart(in: context)
+        let lines = [
+            CartItemEntity(productId: "p1:250g", name: "Kaju Katli", slug: "kaju-katli", packLabel: "250g", unitPricePaise: 46000, quantity: 2),
+            CartItemEntity(productId: "p2", name: "Laddoo", slug: "laddoo", unitPricePaise: 30000, quantity: 3),
+            CartItemEntity(productId: "p1:1 kg", name: "Kaju Katli", slug: "kaju-katli", packLabel: "1 kg", unitPricePaise: 184000, quantity: 1),
+        ]
+        for line in lines {
+            context.insert(line)
+            line.cart = cart
+        }
+
+        let items = CheckoutViewModel.collapsedCartItems(lines)
+
+        // Server CartItem has no variant field: two pack lines of p1 become
+        // ONE row summed by base id; untouched base lines pass through.
+        XCTAssertEqual(items, [
+            CartValidateItemDTO(productId: "p1", quantity: 3),
+            CartValidateItemDTO(productId: "p2", quantity: 3),
+        ], "first-seen order preserved")
+    }
+
+    func testBaseProductIdStripsOnlyThePackSuffix() {
+        XCTAssertEqual(CartItemEntity(productId: "p1:500g", name: "n", slug: "s", unitPricePaise: 0, quantity: 1).baseProductId, "p1")
+        XCTAssertEqual(CartItemEntity(productId: "p1", name: "n", slug: "s", unitPricePaise: 0, quantity: 1).baseProductId, "p1", "base lines have no suffix to strip")
+    }
 }
