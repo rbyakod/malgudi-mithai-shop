@@ -125,6 +125,24 @@ the same Payload global + env-var fallback chain. (If the implementation
 diverges from this paragraph, update it here — keep this as the single source
 of truth.)
 
+### Auth & SMS (OTP sign-in)
+
+Phone+OTP sign-in works without any SMS provider, but until MSG91 keys are
+configured no real text messages are sent. Currently a **test-login seam is
+enabled on the VPS** (see section 10 before launch).
+
+| Key | Required in prod | Example | Notes |
+|---|---|---|---|
+| `OTP_PROVIDER` | optional | `msg91` | `fake` (in-memory, no SMS) or `msg91`. Defaults to `msg91` outside test. |
+| `MSG91_AUTH_KEY` | for real SMS | key from MSG91 | MSG91 console → Settings → API. |
+| `MSG91_SENDER_ID` | for real SMS | `MISHRN` | 6-char sender approved in the MSG91 DLT profile. |
+| `MSG91_TEMPLATE_OTP` | for real SMS | template id | MSG91 OTP template (DLT-approved) — the code is interpolated into it. |
+| `OTP_BYPASS_PHONE` | **remove at launch** | `+918088983014` | Test seam: this one number verifies with the fixed code below. |
+| `OTP_BYPASS_CODE` | **remove at launch** | `424242` | Test seam code. Both vars unset (or absent) = seam fully disabled. |
+
+On the VPS these live in `/opt/mithai-shop/.env`; after editing, run
+`systemctl restart mithai-shop`.
+
 ---
 
 ## 4. First deploy
@@ -241,6 +259,94 @@ Performance is below target, check:
 
 ---
 
+## 9. Storefront admin how-tos (themes, home hero)
+
+All of these are Payload globals under **Admin → 04 Storefront** — changes
+apply on save (public read, no rebuild, no deploy).
+
+### 9.1 Home hero slides (`/admin/globals/home-hero`)
+
+The rotating hero on the web homepage **and** in both mobile apps comes from
+this single global.
+
+1. Open **Admin → 04 Storefront → Home Hero**.
+2. **Add slide** → pick a *product* (any of the five collections: mithai,
+   snacks, QSR menu, merch, gift boxes). The slide's image/name/price come
+   from the product — you are not uploading images here.
+3. Optional **caption override** to replace the product name on the slide.
+4. **Autoplay (ms)**: time per slide, clamped to 3000–15000; default 5000.
+5. Save. Reorder by dragging slide rows.
+
+Rules the resolvers enforce (slides that can't render are silently dropped):
+draft products, products without a lead image, products without a slug.
+Gift-box slides appear on the web (they link into Build-a-Gift) but are
+skipped by the mobile apps, which have no gift-box surface yet.
+
+If the global is empty, every surface falls back to its static hero (first
+featured product on the apps; the fixed marketing hero on the web) — the page
+never goes blank. Mobile apps fetch `GET /api/mobile/v1/hero` (ETag-cached).
+
+### 9.2 Themes (`/admin/globals/theme-settings`)
+
+Two different things share this global — don't confuse them:
+
+- **Store-level settings** (fields on the global itself):
+  - *Storefront width* — `Fixed` (centered) or `Full width` (wider catalog
+    pages).
+  - *Catalog items per page* — 12–120, default 100.
+  - *Show Theme Studio in storefront header* — checkbox, **default off**;
+    keep off for launch. (Equivalent env override:
+    `NEXT_PUBLIC_ENABLE_THEME_SWITCHER=true`.)
+- **Theme Studio** (the header palette switcher): what your shoppers would
+  use to try alternate color sets. The palettes themselves — *Mishran
+  Default, Diwali Saffron, Wedding Heritage, Everyday Sage, Evening Navy*,
+  plus design-system variants — are **defined in code** in
+  `lib/themes.ts`, not in the admin. Adding or changing a palette is a code
+  change (edit `THEMES`, deploy); the admin only controls whether the
+  switcher is visible.
+
+To preview themes internally: tick *Show Theme Studio…*, save, use the
+palette picker in the site header, then untick when done.
+
+---
+
+## 10. Going live with real SMS OTP (removing the test login)
+
+The VPS currently runs a **permanent test login**: phone `+918088983014`
+verifies with code `424242` — no SMS needed. It exists so testers can sign
+in while no SMS provider is configured. Anyone who knows that number+code
+can sign in as that test customer, so switch to real SMS before launch.
+
+**One-time MSG91 setup (outside this repo):**
+
+1. Create an account at msg91.com and add balance.
+2. Complete the DLT registration (mandatory in India) with your business
+   details; approve a 6-character **sender ID**.
+3. Create an **OTP template** in MSG91 (must be DLT-approved). Note its
+   template id, the auth key (Settings → API), and the sender id.
+
+**Server switchover (VPS):**
+
+1. Edit `/opt/mithai-shop/.env` and set:
+   - `MSG91_AUTH_KEY=…`
+   - `MSG91_SENDER_ID=…`
+   - `MSG91_TEMPLATE_OTP=…`
+2. **Delete the two test-seam lines** (`OTP_BYPASS_PHONE`, `OTP_BYPASS_CODE`).
+3. `systemctl restart mithai-shop` (as root over ssh).
+4. Verify end-to-end: request a code for a real phone in the app, receive
+   the SMS, sign in. Check `journalctl -u mithai-shop -f` if it fails —
+   provider errors surface there as `OTP send failed` (the client only sees
+   a retryable "SMS provider unavailable").
+
+Optional later: order-status SMS templates
+(`MSG91_TEMPLATE_SMS_{CONFIRMED,DISPATCHED,OUT_FOR_DELIVERY,DELIVERED}`).
+
+Behavior worth knowing: codes are 6 digits, expire after 5 minutes, max 5
+verify attempts per request; sends are rate-limited to 5/hour and 10/day per
+phone. Codes are stored argon2-hashed and are **never logged in production**.
+
+---
+
 ## Appendix: file map
 
 | File | Purpose |
@@ -252,3 +358,7 @@ Performance is below target, check:
 | `app/api/{leads,drafts,search,revalidate}/route.ts` | API routes pinned to 30s `maxDuration` in `vercel.ts`. |
 | `lib/leads-api.ts` | Reads `LEADS_INBOX` (line 21). |
 | `lib/revalidate-api.ts` | Reads `REVALIDATE_SECRET`. |
+| `globals/HomeHero.ts` | Home-hero slides global (see 9.1). |
+| `globals/ThemeSettings.ts` | Storefront width / page size / Theme Studio visibility (see 9.2). |
+| `lib/themes.ts` | Theme Studio palettes (code-defined). |
+| `lib/security/rateLimiter.ts` | OTP send rate limits (5/hour, 10/day per phone). |
