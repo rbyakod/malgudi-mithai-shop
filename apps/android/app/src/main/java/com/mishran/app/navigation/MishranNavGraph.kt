@@ -47,7 +47,9 @@ import com.mishran.app.ui.auth.PhoneEntryScreen
 import com.mishran.app.data.sync.PushRegistrationScheduler
 import com.mishran.app.push.PushEventBusEntryPoint
 import com.mishran.app.push.notificationBody
+import com.mishran.app.ui.account.AccountScreen
 import com.mishran.app.ui.cart.CartScreen
+import com.mishran.app.ui.home.HomeScreen
 import com.mishran.app.ui.catalog.CatalogScreen
 import com.mishran.app.ui.checkout.CheckoutScreen
 import com.mishran.app.ui.orderconfirmed.OrderConfirmedScreen
@@ -156,7 +158,15 @@ fun MishranAppRoot() {
                     onResend = { navController.popBackStack(Routes.AUTH_PHONE, inclusive = false) },
                 )
             }
-            composable(Routes.HOME) { PlaceholderScreen("Home") }
+            composable(Routes.HOME) {
+                // Real home since the placeholder era: greeting + featured rail
+                // off the cached catalog, CTAs into Catalog and Orders.
+                HomeScreen(
+                    onProductClick = { slug -> navController.navigate(Routes.product(slug)) },
+                    onBrowseCatalog = { navController.navigate(Routes.CATALOG) },
+                    onOrders = { navController.navigate(Routes.ORDERS) },
+                )
+            }
             // Task 9.3: offline-first catalog browse (grid + search + filters).
             composable(Routes.CATALOG) {
                 CatalogScreen(
@@ -261,7 +271,20 @@ fun MishranAppRoot() {
                     },
                 )
             }
-            composable(Routes.ACCOUNT) { PlaceholderScreen("Account") }
+            composable(Routes.ACCOUNT) {
+                // Signed-in identity + sign-out. Clearing the whole stack back
+                // to AUTH_PHONE keeps Back from resurrecting the dead session.
+                AccountScreen(
+                    onSignedOut = {
+                        navController.navigate(Routes.AUTH_PHONE) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    },
+                )
+            }
             composable(Routes.ADDRESSES) { PlaceholderScreen("Addresses") }
         }
     }

@@ -22,6 +22,7 @@ import com.mishran.app.data.local.DataStoreKeys
 import com.mishran.app.data.local.dao.ProductDao
 import com.mishran.app.data.local.entity.ProductEntity
 import com.mishran.app.data.remote.api.MishranApi
+import com.mishran.app.data.remote.resolveMediaUrl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -117,7 +118,9 @@ internal fun Product.toEntity(staleAt: Long): ProductEntity = ProductEntity(
     ingredients = ingredients,
     shelfLife = shelfLife,
     storage = storage,
-    images = images.orEmpty(),
+    // Relative media paths ("/api/media/file/…") become absolute URLs so
+    // Coil can load them; toDomain() re-resolves for rows cached before this.
+    images = images.orEmpty().map(::resolveMediaUrl),
     story = story,
     karigar = karigar,
     updatedAt = updatedAt,
@@ -143,7 +146,7 @@ internal fun ProductEntity.toDomain(): Product {
         ingredients = ingredients,
         shelfLife = shelfLife,
         storage = storage,
-        images = images.takeIf { it.isNotEmpty() },
+        images = images.takeIf { it.isNotEmpty() }?.map(::resolveMediaUrl),
         story = story,
         karigar = karigar,
         updatedAt = updatedAt,

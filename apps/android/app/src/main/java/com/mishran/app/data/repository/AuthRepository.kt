@@ -20,7 +20,9 @@ import com.mishran.app.data.local.MishranDatabase
 import com.mishran.app.data.local.SecureTokenStore
 import com.mishran.app.data.remote.api.MishranApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import javax.inject.Inject
@@ -54,6 +56,7 @@ class AuthRepository @Inject constructor(
             it[DataStoreKeys.ACCESS_TOKEN] = data.accessToken
             it[DataStoreKeys.REFRESH_TOKEN] = data.refreshToken
             it[DataStoreKeys.CUSTOMER_ID] = data.customer.id
+            data.customer.phone?.let { phone -> it[DataStoreKeys.CUSTOMER_PHONE] = phone }
         }
         return data
     }
@@ -61,6 +64,27 @@ class AuthRepository @Inject constructor(
     /** True when a session exists (an access token is persisted). */
     suspend fun isLoggedIn(): Boolean =
         dataStore.data.first()[DataStoreKeys.ACCESS_TOKEN] != null
+
+    /** Signed-in phone (E.164), or null when no session / pre-phone-key session. */
+    fun sessionPhone(): Flow<String?> =
+        dataStore.data.map { it[DataStoreKeys.CUSTOMER_PHONE] }
+
+    /**
+     * Full sign-out: revoke the refresh token server-side (best effort — a
+     * network failure must not trap the user in the session), then drop the
+     * local session + caches via [clearSession].
+     */
+    suspend fun signOut() {
+        val refresh = dataStore.data.first()[DataStoreKeys.REFRESH_TOKEN]
+        if (refresh != null) {
+            try {
+                api.logout(refreshBearer = "Bearer $refresh")
+            } catch (_: Exception) {
+                // Offline / 5xx — proceed with the local sign-out regardless.
+            }
+        }
+        clearSession()
+    }
 
     /**
      * Sign out completely (Task 12.5 audit): drop the persisted session
