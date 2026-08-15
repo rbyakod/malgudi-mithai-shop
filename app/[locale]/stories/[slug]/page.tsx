@@ -12,7 +12,8 @@ import {notFound} from "next/navigation";
 import {RichText} from "@payloadcms/richtext-lexical/react";
 import type {SerializedEditorState} from "lexical";
 import {getPayload} from "@/lib/payload-client";
-import {getTranslations} from "next-intl/server";
+import {getTranslations, setRequestLocale} from "next-intl/server";
+import {routing} from "@/i18n/routing";
 import {Link} from "@/i18n/navigation";
 import {StoryHero} from "@/components/stories/StoryHero";
 
@@ -39,9 +40,13 @@ export async function generateStaticParams() {
     where: {_status: {equals: "published"}},
     limit: 100,
   });
-  return r.docs
-    .map((d) => ({slug: String((d as {slug?: string}).slug ?? "")}))
-    .filter((p) => p.slug.length > 0);
+  const slugs = r.docs
+    .map((d) => String((d as {slug?: string}).slug ?? ""))
+    .filter((s) => s.length > 0);
+  // Cross-product with locales — see layout generateStaticParams.
+  return routing.locales.flatMap((locale) =>
+    slugs.map((slug) => ({locale, slug})),
+  );
 }
 
 export async function generateMetadata({
@@ -62,6 +67,7 @@ export async function generateMetadata({
 
 export default async function StoryPage({params}: Context) {
   const {locale, slug} = await params;
+  setRequestLocale(locale);
   const t = await getTranslations("Stories");
 
   const payload = await getPayload();
