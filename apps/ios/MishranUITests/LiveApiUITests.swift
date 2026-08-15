@@ -34,12 +34,20 @@ final class LiveApiUITests: XCTestCase {
     func testCatalogSearchDetailAndCartAgainstLiveApi() throws {
         let app = launchApp()
 
-        // 1. Home boots (P1 hero + rail), then the CTA pushes the catalog
-        //    tab which loads the LIVE catalog (91 seeded products — far more
-        //    than one screen, so search must work to reach a known product
-        //    deterministically).
-        let browse = app.buttons["Browse sweets"]
-        XCTAssertTrue(browse.waitForExistence(timeout: 10), "App should boot to the home hero")
+        // 1. Home boots, then the toolbar entry pushes the catalog tab which
+        //    loads the LIVE catalog (91 seeded products — far more than one
+        //    screen, so search must work to reach a known product
+        //    deterministically). NOTE: this used to tap the static hero's
+        //    "Browse sweets" CTA, but the admin-curated carousel replaces the
+        //    static hero whenever the live home-hero global has slides (it
+        //    has since 2026-08-15) — the toolbar button exists in both
+        //    modes, and "Best sellers" boots in both too.
+        XCTAssertTrue(
+            app.staticTexts["Best sellers"].waitForExistence(timeout: 10),
+            "Home should boot with hero + best sellers"
+        )
+        let browse = app.buttons["Browse all sweets"]
+        XCTAssertTrue(browse.waitForExistence(timeout: 5), "Toolbar catalog entry should exist")
         browse.tap()
         let navBar = app.navigationBars["Sweets"]
         XCTAssertTrue(navBar.waitForExistence(timeout: 10), "Hero CTA should push the catalog")
