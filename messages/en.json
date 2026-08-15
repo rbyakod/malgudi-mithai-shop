@@ -167,13 +167,23 @@
       "category": "Category",
       "spiceLevel": "Spice",
       "veg": "Vegetarian",
-      "available": "Available at"
+      "available": "Available at",
+      "vegYes": "Vegetarian",
+      "vegNo": "Non-vegetarian",
+      "spiceMild": "Mild spice",
+      "spiceMedium": "Medium spice",
+      "spiceHot": "Hot spice",
+      "counterMenu": "See the counter menu",
+      "availabilityNote": "Available at our counters — ask at the store."
     },
     "snacks": {
       "category": "Category",
       "weight": "Weight",
       "msrp": "MRP",
-      "buyAt": "Buy at"
+      "buyAt": "Buy at",
+      "taxNote": "MRP · inclusive of all taxes",
+      "packSize": "Pack size",
+      "partnerNote": "Fulfilled by our retail partners · Pan India"
     },
     "merch": {
       "type": "Type",

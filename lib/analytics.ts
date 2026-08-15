@@ -25,6 +25,7 @@ export type EventName =
   | "gift_builder_completed"
   | "add_to_cart"
   | "buy_now"
+  | "external_retailer_clicked"
   | "hero_slide_view"
   | "hero_add_to_cart"
   | "lead_submitted"
