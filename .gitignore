@@ -61,3 +61,7 @@ playwright-report/
 test-results/
 
 .env
+
+# iOS build products (IPAs + archives) — never commit; the stop hook
+# would otherwise auto-commit ~3 MB per archive run.
+apps/ios/build/
