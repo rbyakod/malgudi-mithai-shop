@@ -23,7 +23,7 @@ import { createHash } from 'node:crypto';
 // 5 ../ to repo root from app/api/mobile/v1/hero/
 import config from '../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../lib/api/response';
-import { absoluteMediaURL } from '../../../../../lib/api/catalogSerializers';
+import { absoluteMediaURL, slugify } from '../../../../../lib/api/catalogSerializers';
 
 /** App vertical for each hero-eligible collection. Gift boxes: see header. */
 const VERTICAL_BY_COLLECTION: Record<string, string> = {
@@ -81,7 +81,11 @@ export async function GET(req: NextRequest) {
           } catch {
             return null;
           }
-          if (!doc || doc._status === 'draft' || !doc.slug) return null;
+          // Only mithai-products carries a `slug` field; snacks/qsr/merch
+          // derive theirs from the name (catalogSerializers' rule). Without
+          // the derivation, any non-mithai slide was silently dropped.
+          const slug = doc?.slug || (doc?.name ? slugify(String(doc.name)) : '');
+          if (!doc || doc._status === 'draft' || !slug) return null;
 
           // Image field shape differs per collection (see lib/home-hero.ts).
           const media =
@@ -102,7 +106,7 @@ export async function GET(req: NextRequest) {
           const slide: HeroSlide = {
             id: String(doc.id ?? id),
             vertical,
-            slug: String(doc.slug),
+            slug: String(slug),
             name: String(row.captionOverride?.trim() || doc.name || ''),
             priceLabel,
             // Apps' image loaders need absolute URLs (relative /api/media
