@@ -12,7 +12,7 @@ struct FilterSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Category") {
+                Section(L("catalog.filter.category")) {
                     Picker("Category", selection: $filters.family) {
                         Text("All").tag(ProductFamily?.none)
                         ForEach(ProductFamily.allCases, id: \.self) { family in
@@ -24,7 +24,7 @@ struct FilterSheet: View {
                     .accessibilityLabel("Category filter")
                 }
 
-                Section("Dietary") {
+                Section(L("catalog.filter.dietary")) {
                     ForEach(dietaryOptions, id: \.self) { tag in
                         Toggle(isOn: binding(for: tag)) {
                             Text(tag.capitalized)
@@ -40,7 +40,7 @@ struct FilterSheet: View {
                     .accessibilityLabel("Regional specials filter")
                 }
             }
-            .navigationTitle("Filters")
+            .navigationTitle(L("catalog.filter.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

@@ -18,16 +18,16 @@ struct OrderListView: View {
                     }
             }
         }
-        .navigationTitle("Your orders")
+        .navigationTitle(L("orders.title"))
     }
 
     @ViewBuilder
     private func content(_ viewModel: OrdersViewModel) -> some View {
         if viewModel.orders.isEmpty, !viewModel.isLoading {
             ContentUnavailableView(
-                "No orders yet",
+                L("orders.empty"),
                 systemImage: "shippingbox",
-                description: Text("Your sweet orders will appear here.")
+                description: Text(L("orders.empty_hint"))
             )
         } else {
             List {
@@ -49,7 +49,7 @@ struct OrderListView: View {
     private func row(_ order: OrderDTO) -> some View {
         VStack(alignment: .leading, spacing: .mishranSpacingSm) {
             HStack {
-                Text("Order \(order.id)")
+                Text(L("order.reference", order.id))
                     .font(.mishranBodyMd.weight(.semibold))
                 Spacer()
                 OrderStatusBadge(status: order.status)

@@ -27,11 +27,11 @@ struct AddressPicker: View {
                 Button {
                     onAddAddress?()
                 } label: {
-                    Label("Add delivery address", systemImage: "plus.circle")
+                    Label(L("checkout.address.add_new"), systemImage: "plus.circle")
                 }
-                .accessibilityLabel("Add delivery address")
+                .accessibilityLabel(L("checkout.address.add_new"))
             } else {
-                Picker("Address", selection: idSelection) {
+                Picker(L("checkout.address.title"), selection: idSelection) {
                     Text("Choose…").tag("")
                     ForEach(sortedAddresses, id: \.id) { address in
                         VStack(alignment: .leading) {

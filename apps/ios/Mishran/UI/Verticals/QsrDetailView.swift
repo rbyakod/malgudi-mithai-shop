@@ -2,8 +2,8 @@
 // QSR counter-menu item detail: hero, name, veg/spice badges, description,
 // and the stores the item is available at. Deliberately NO cart CTA — the
 // vertical is walk-in only (no price ships on the contract either). Labels
-// match packages/i18n-strings/en.json (vertical.qsr.*) — TODO(i18n):
-// hardcode sweep wires String(localized:) later.
+// resolve from packages/i18n-strings (vertical.qsr.*) via the L() helper —
+// Task 20.3 wiring.
 import SwiftUI
 
 struct QsrDetailView: View {
@@ -18,16 +18,16 @@ struct QsrDetailView: View {
             if let item {
                 content(item)
             } else if isLoading {
-                ProgressView("Loading…")
+                ProgressView(L("common.loading"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.top, .mishranSpacingXl)
             } else {
                 ContentUnavailableView {
-                    Label("Couldn't load this item", systemImage: "exclamationmark.triangle")
+                    Label(L("common.load_error"), systemImage: "exclamationmark.triangle")
                 } description: {
                     Text(errorMessage ?? "")
                 } actions: {
-                    Button("Try again") {
+                    Button(L("common.retry")) {
                         Task { await load() }
                     }
                 }
@@ -67,7 +67,7 @@ struct QsrDetailView: View {
 
             if let stores = item.availableAtStores, !stores.isEmpty {
                 VStack(alignment: .leading, spacing: .mishranSpacingSm) {
-                    Text("Available at")
+                    Text(L("vertical.qsr.available_at"))
                         .font(.mishranBodyLg.weight(.semibold))
                     ForEach(stores, id: \.self) { store in
                         HStack(spacing: .mishranSpacingSm) {
@@ -95,7 +95,7 @@ struct QsrDetailView: View {
                     Circle()
                         .fill(Color.mishranStateSuccess)
                         .frame(width: 8, height: 8)
-                    Text("Vegetarian")
+                    Text(L("vertical.qsr.veg"))
                         .font(.mishranBodySm)
                 }
                 .padding(.horizontal, .mishranSpacingSm)
@@ -104,7 +104,7 @@ struct QsrDetailView: View {
                 .accessibilityElement(children: .combine)
             }
             if let spice = item.spiceLevel, !spice.isEmpty {
-                Text("Spice · \(spice)")
+                Text("\(L("vertical.qsr.spice")) · \(spice)")
                     .font(.mishranBodySm)
                     .padding(.horizontal, .mishranSpacingSm)
                     .padding(.vertical, 4)
@@ -123,7 +123,7 @@ struct QsrDetailView: View {
         } catch let error as APIError {
             errorMessage = Self.message(for: error)
         } catch {
-            errorMessage = "Couldn't load this item. Try again."
+            errorMessage = L("common.load_error")
         }
     }
 
@@ -131,6 +131,6 @@ struct QsrDetailView: View {
         if case let .api(_, message, _, _) = error {
             return message
         }
-        return "Couldn't load this item. Try again."
+        return L("common.load_error")
     }
 }

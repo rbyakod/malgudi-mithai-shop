@@ -16,8 +16,8 @@ enum EnquiryType: String, CaseIterable, Identifiable, Hashable {
 
     var displayName: String {
         switch self {
-        case .wedding: "Wedding"
-        case .corporate: "Corporate"
+        case .wedding: L("enquiry.type.wedding")
+        case .corporate: L("enquiry.type.corporate")
         }
     }
 }

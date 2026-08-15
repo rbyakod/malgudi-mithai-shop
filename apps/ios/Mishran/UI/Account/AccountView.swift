@@ -19,6 +19,8 @@ struct AccountView: View {
     /// Best-effort client for the sign-out call — separate from the view
     /// model's so the loyalty state stays untouched.
     @State private var signOutClient = MishranAPIClient()
+    /// Task 20.3: in-app language override (UserDefaults "AppleLanguages").
+    @State private var showingLanguagePicker = false
 
     /// Cheap keychain probe: a refresh token means a live session. Nothing
     /// customer-shaped persists locally yet (signedInCustomer lives only in
@@ -37,7 +39,7 @@ struct AccountView: View {
                             .font(.mishranDisplay)
                             .foregroundStyle(Color.mishranBrandAccent)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Signed in")
+                            Text(L("account.signed_in"))
                                 .font(.mishranBodyLg.weight(.semibold))
                             Text("Phone-verified Mishran account")
                                 .font(.mishranBodySm)
@@ -53,13 +55,13 @@ struct AccountView: View {
                             if isSigningOut {
                                 ProgressView()
                             } else {
-                                Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
+                                Label(L("account.logout"), systemImage: "rectangle.portrait.and.arrow.right")
                             }
                         }
                         .frame(minHeight: 44)
                     }
                     .disabled(isSigningOut)
-                    .accessibilityLabel("Sign out")
+                    .accessibilityLabel(L("account.logout"))
                 }
             }
 
@@ -68,31 +70,44 @@ struct AccountView: View {
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
             }
-            Section("Orders") {
+            Section(L("nav.orders")) {
                 NavigationLink(value: Route.orders) {
                     Label("Order history", systemImage: "clock.arrow.circlepath")
                 }
             }
             Section("Delivery") {
                 NavigationLink(value: Route.addresses) {
-                    Label("Delivery addresses", systemImage: "mappin.and.ellipse")
+                    Label(L("account.addresses"), systemImage: "mappin.and.ellipse")
                 }
-                .accessibilityLabel("Delivery addresses")
+                .accessibilityLabel(L("account.addresses"))
             }
-            // P2: journal + bulk/events entries (labels match en.json
-            // stories.title / enquiry.title).
+            // Task 20.3: in-app language override (persists to AppleLanguages;
+            // applies on next launch — the sheet's footnote says so).
+            Section("Preferences") {
+                Button {
+                    showingLanguagePicker = true
+                } label: {
+                    Label(L("account.language"), systemImage: "globe")
+                }
+                .accessibilityLabel(L("account.language"))
+                .accessibilityHint("Choose the app language")
+            }
+            // P2: journal + bulk/events entries (stories.title / enquiry.title).
             Section("More") {
                 NavigationLink(value: Route.stories) {
-                    Label("Journal", systemImage: "book")
+                    Label(L("stories.title"), systemImage: "book")
                 }
-                .accessibilityLabel("Journal")
+                .accessibilityLabel(L("stories.title"))
                 NavigationLink(value: Route.enquiry(type: .wedding)) {
-                    Label("Bulk & events", systemImage: "person.2")
+                    Label(L("enquiry.title"), systemImage: "person.2")
                 }
                 .accessibilityLabel("Bulk and events")
             }
         }
-        .navigationTitle("Account")
+        .navigationTitle(L("account.title"))
+        .sheet(isPresented: $showingLanguagePicker) {
+            LanguagePickerSheet()
+        }
         .task {
             await viewModel.loadLoyaltyPass()
         }
@@ -126,5 +141,56 @@ struct AccountView: View {
 
         router.popToRoot()
         onSignedOut?()
+    }
+}
+
+/// Task 20.3: the 9 supported locales, each shown in its own script
+/// (account.locale.*). Selection persists to UserDefaults "AppleLanguages"
+/// — iOS applies the override on the NEXT launch, hence the footnote.
+/// Without an override the app simply follows the system language.
+private struct LanguagePickerSheet: View {
+    /// en first (development language), then the rollout order.
+    private let locales = ["en", "hi", "kn", "ta", "te", "mr", "gu", "bn", "pa"]
+    @Environment(\.dismiss) private var dismiss
+
+    /// The override iOS is currently using (first AppleLanguages entry),
+    /// or the resolved bundle language when the user never picked one.
+    private var current: String {
+        let preferred = Locale.preferredLanguages.first ?? "en"
+        return locales.first { preferred.hasPrefix($0) } ?? "en"
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(locales, id: \.self) { tag in
+                    Button {
+                        UserDefaults.standard.set([tag], forKey: "AppleLanguages")
+                        dismiss()
+                    } label: {
+                        HStack {
+                            Text(L("account.locale.\(tag)"))
+                                .foregroundStyle(Color.mishranBrandInk)
+                            Spacer()
+                            if tag == current {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(Color.mishranBrandAccent)
+                            }
+                        }
+                        .frame(minHeight: 44)
+                    }
+                    .accessibilityLabel(L("account.locale.\(tag)"))
+                    .accessibilityAddTraits(tag == current ? .isSelected : [])
+                }
+
+                Section {
+                    Text(L("account.language_relaunch"))
+                        .font(.mishranBodySm)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .navigationTitle(L("account.language"))
+            .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }

@@ -152,3 +152,14 @@
 "vertical.qsr.available_at" = "ઉપલબ્ધ";
 "vertical.qsr.veg" = "શાકાહારી";
 "vertical.qsr.spice" = "ખારાશ";
+"home.shop_by_vertical" = "શ્રેણી પ્રમાણે ખરીદો";
+"home.browse" = "મઠાઈ જુઓ";
+"product.added_to_cart" = "કાર્ટમાં ઉમેર્યું";
+"catalog.empty_hint" = "અલગ શોધ અજમાવો અથવા ફિલ્ટર દૂર કરો.";
+"cart.empty_hint" = "ભરવા માટે મઠાઈની યાદી જુઓ.";
+"orders.empty_hint" = "તમારા મઠાઈ ઓર્ડર અહીં દેખાશે.";
+"common.load_error" = "લોડ થઈ શક્યું નહીં. ફરી પ્રયત્ન કરો.";
+"order.reference" = "ઓર્ડર {id}";
+"order.confirmed" = "ઓર્ડરની પુષ્ટિ થઈ";
+"order.continue_shopping" = "ખરીદી ચાલુ રાખો";
+"account.language_relaunch" = "આગલી વાર એપ ખોલતાં લાગુ થશે.";

@@ -27,7 +27,17 @@
   <string name="catalog_filter_title">ফিল্টার</string>
   <string name="catalog_filter_category">শ্রেণি</string>
   <string name="catalog_filter_dietary">খাদ্য পছন্দ</string>
+  <string name="catalog_family_all">সব শ্রেণি</string>
+  <string name="catalog_family_classic">ক্লাসিক</string>
+  <string name="catalog_family_originals">হাউস অরিজিনালস</string>
+  <string name="catalog_family_sugar_free">চিনিমুক্ত</string>
+  <string name="catalog_family_regional">আঞ্চলিক</string>
+  <string name="catalog_family_seasonal">মৌসুমি</string>
   <string name="catalog_empty">আপনার ফিল্টারের সাথে মেলা মিষ্টি নেই।</string>
+  <string name="catalog_empty_sync">সিঙ্ক হলে তালিকা এখানে দেখা যাবে।</string>
+  <string name="catalog_empty_snacks">এখনও কোনো স্ন্যাকস নেই।</string>
+  <string name="catalog_empty_qsr">কাউন্টার মেনু শীঘ্রই আসছে।</string>
+  <string name="catalog_empty_merch">এখনও কোনো মার্চ নেই।</string>
   <string name="catalog_stale_banner">%1$s মিনিট আগে আপডেট হয়েছে</string>
   <string name="product_add_to_cart">কার্টে যোগ করুন</string>
   <string name="product_quantity">পরিমাণ</string>
@@ -62,6 +72,10 @@
   <string name="checkout_payment_netbanking">নেট ব্যাঙ্কিং</string>
   <string name="checkout_payment_wallet">ওয়ালেট</string>
   <string name="checkout_pay">%1$s পেমেন্ট করুন</string>
+  <string name="checkout_cta_place_order">অর্ডার করুন</string>
+  <string name="checkout_cta_select_address">ডেলিভারি ঠিকানা নির্বাচন করুন</string>
+  <string name="checkout_cta_checking">ডেলিভারি পরীক্ষা করা হচ্ছে…</string>
+  <string name="checkout_cta_pick_slot">ডেলিভারি সময় বেছে নিন</string>
   <string name="checkout_error_pincode_not_serviceable">%1$s এ এখনও ডেলিভারি নেই।</string>
   <string name="checkout_error_cart_changed">কিছু জিনিস বদলে গেছে। দেখে আবার চেষ্টা করুন।</string>
   <string name="checkout_error_stock_insufficient">%1$s মাত্র %2$s বাকি।</string>
@@ -96,6 +110,10 @@
   <string name="account_locale_gu">ગુજરાતી</string>
   <string name="account_locale_bn">বাংলা</string>
   <string name="account_locale_pa">ਪੰਜਾਬੀ</string>
+  <string name="common_back">ফিরে যান</string>
+  <string name="common_try_again">আবার চেষ্টা করুন</string>
+  <string name="common_see_all">সব দেখুন</string>
+  <string name="common_clear_all">সব মুছে ফেলুন</string>
   <string name="common_retry">আবার চেষ্টা করুন</string>
   <string name="common_cancel">বাতিল করুন</string>
   <string name="common_confirm">নিশ্চিত করুন</string>
@@ -119,6 +137,7 @@
   <string name="product_buy_now">এখনই কিনুন</string>
   <string name="product_bestseller">বেস্টসেলার</string>
   <string name="home_sign_in">সাইন ইন করুন</string>
+  <string name="home_hero_tagline">প্রতিদিন তাজা তৈরি মিষ্টি.</string>
   <string name="home_best_sellers">বেস্ট সেলার</string>
   <string name="home_shop_by_family">বিভাগ অনুযায়ী কিনুন</string>
   <string name="home_your_orders">আপনার অর্ডার</string>
@@ -153,4 +172,19 @@
   <string name="vertical_qsr_available_at">পাওয়া যায়</string>
   <string name="vertical_qsr_veg">নিরামিষ</string>
   <string name="vertical_qsr_spice">ঝাল</string>
+  <string name="vertical_qsr_menu">কাউন্টার মেনু</string>
+  <string name="vertical_qsr_nonveg">নন-ভেজ</string>
+  <string name="home_shop_by_vertical">বিভাগ অনুযায়ী কিনুন</string>
+  <string name="home_browse">মিষ্টি দেখুন</string>
+  <string name="home_portal_mithai">প্রতিদিন তৈরি হয়</string>
+  <string name="home_portal_snacks">রিটেইল প্যাক</string>
+  <string name="product_added_to_cart">কার্টে যোগ করা হয়েছে</string>
+  <string name="catalog_empty_hint">অন্য একটি সার্চ করুন বা ফিল্টার সরান।</string>
+  <string name="cart_empty_hint">ভরতে মিষ্টির তালিকা দেখুন।</string>
+  <string name="orders_empty_hint">আপনার মিষ্টির অর্ডারগুলি এখানে দেখা যাবে।</string>
+  <string name="common_load_error">লোড করা যায়নি। আবার চেষ্টা করুন।</string>
+  <string name="order_reference">অর্ডার %1$s</string>
+  <string name="order_confirmed">অর্ডার নিশ্চিত হয়েছে</string>
+  <string name="order_continue_shopping">শপিং চালিয়ে যান</string>
+  <string name="account_language_relaunch">পরের বার অ্যাপ খুললে প্রযোজ্য হবে।</string>
 </resources>

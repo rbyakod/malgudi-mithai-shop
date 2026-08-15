@@ -7,14 +7,14 @@ struct SlotPicker: View {
     @Binding var selection: DeliverySlot?
 
     var body: some View {
-        Picker("Delivery slot", selection: $selection) {
+        Picker(L("checkout.slot.title"), selection: $selection) {
             ForEach(options) { slot in
                 Text(slot.label).tag(DeliverySlot?.some(slot))
             }
         }
         .pickerStyle(.inline)
         .labelsHidden()
-        .accessibilityLabel("Delivery slot")
+        .accessibilityLabel(L("checkout.slot.title"))
         .accessibilityHint("Choose a delivery window")
     }
 }

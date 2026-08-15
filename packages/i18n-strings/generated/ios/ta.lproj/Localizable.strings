@@ -152,3 +152,14 @@
 "vertical.qsr.available_at" = "கிடைக்கும் இடம்";
 "vertical.qsr.veg" = "சைவம்";
 "vertical.qsr.spice" = "காரம்";
+"home.shop_by_vertical" = "வகைப்படி வாங்குங்கள்";
+"home.browse" = "இனிப்புகளைப் பார்க்கவும்";
+"product.added_to_cart" = "கார்ட்டில் சேர்க்கப்பட்டது";
+"catalog.empty_hint" = "வேறு தேடலை முயற்சிக்கவும் அல்லது வடிகட்டிகளை அழிக்கவும்.";
+"cart.empty_hint" = "நிரப்ப இனிப்பு பட்டியலைப் பாருங்கள்.";
+"orders.empty_hint" = "உங்கள் இனிப்பு ஆர்டர்கள் இங்கே தோன்றும்.";
+"common.load_error" = "ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்.";
+"order.reference" = "ஆர்டர் {id}";
+"order.confirmed" = "ஆர்டர் உறுதி செய்யப்பட்டது";
+"order.continue_shopping" = "ஷாப்பிங்கைத் தொடரவும்";
+"account.language_relaunch" = "அடுத்த முறை ஆப்பைத் திறக்கும்போது பொருந்தும்.";

@@ -18,12 +18,13 @@ struct AddressesView: View {
                     if viewModel.isLoading && viewModel.addresses.isEmpty {
                         HStack {
                             ProgressView()
-                            Text("Loading addresses…")
+                            Text(L("common.loading"))
                                 .font(.mishranBodyMd)
                                 .foregroundStyle(.secondary)
                         }
                         .accessibilityElement(children: .combine)
                     }
+
 
                     if !viewModel.isLoading, viewModel.addresses.isEmpty {
                         Text("No saved addresses yet — add one for faster checkout.")
@@ -49,11 +50,11 @@ struct AddressesView: View {
                         Button {
                             showingForm = true
                         } label: {
-                            Label("Add address", systemImage: "plus.circle")
+                            Label(L("checkout.address.add_new"), systemImage: "plus.circle")
                                 .font(.mishranBodyLg.weight(.semibold))
                                 .frame(maxWidth: .infinity, minHeight: 44)
                         }
-                        .accessibilityLabel("Add address")
+                        .accessibilityLabel(L("checkout.address.add_new"))
                     }
 
                     if let message = viewModel.message {
@@ -66,7 +67,7 @@ struct AddressesView: View {
                 ProgressView()
             }
         }
-        .navigationTitle("Delivery addresses")
+        .navigationTitle(L("account.addresses"))
         .task {
             guard viewModel == nil else { return }
             viewModel = AddressesViewModel(

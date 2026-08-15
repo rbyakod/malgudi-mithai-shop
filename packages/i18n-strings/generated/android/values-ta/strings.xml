@@ -27,7 +27,17 @@
   <string name="catalog_filter_title">வடிகட்டி</string>
   <string name="catalog_filter_category">வகை</string>
   <string name="catalog_filter_dietary">உணவு விருப்பம்</string>
+  <string name="catalog_family_all">அனைத்து வகைகள்</string>
+  <string name="catalog_family_classic">கிளாசிக்</string>
+  <string name="catalog_family_originals">ஹவுஸ் ஒரிஜினல்ஸ்</string>
+  <string name="catalog_family_sugar_free">சர்க்கரை இல்லாத</string>
+  <string name="catalog_family_regional">பிராந்திய</string>
+  <string name="catalog_family_seasonal">பருவகால</string>
   <string name="catalog_empty">உங்கள் வடிகட்டிகளுக்குப் பொருந்தும் இனிப்புகள் இல்லை.</string>
+  <string name="catalog_empty_sync">ஒத்திசைவு முடிந்ததும் பட்டியல் இங்கே தோன்றும்.</string>
+  <string name="catalog_empty_snacks">இன்னும் தின்பண்டங்கள் இல்லை.</string>
+  <string name="catalog_empty_qsr">கவுண்டர் மெனு விரைவில் வரும்.</string>
+  <string name="catalog_empty_merch">இன்னும் மெர்ச் இல்லை.</string>
   <string name="catalog_stale_banner">%1$s நிமிடங்களுக்கு முன் புதுப்பிக்கப்பட்டது</string>
   <string name="product_add_to_cart">கூடையில் சேர்</string>
   <string name="product_quantity">அளவு</string>
@@ -62,6 +72,10 @@
   <string name="checkout_payment_netbanking">நெட் பேங்கிங்</string>
   <string name="checkout_payment_wallet">வாலட்</string>
   <string name="checkout_pay">%1$s செலுத்து</string>
+  <string name="checkout_cta_place_order">ஆர்டர் செய்யுங்கள்</string>
+  <string name="checkout_cta_select_address">விநியோக முகவரியைத் தேர்ந்தெடுக்கவும்</string>
+  <string name="checkout_cta_checking">விநியோகம் சரிபார்க்கப்படுகிறது…</string>
+  <string name="checkout_cta_pick_slot">விநியோக நேரத்தைத் தேர்ந்தெடுக்கவும்</string>
   <string name="checkout_error_pincode_not_serviceable">%1$s க்கு இன்னும் விநியோகம் இல்லை.</string>
   <string name="checkout_error_cart_changed">சில பொருட்கள் மாறியுள்ளன. சரிபார்த்து மீண்டும் முயற்சிக்கவுங்கள்.</string>
   <string name="checkout_error_stock_insufficient">%1$s வெறும் %2$s மட்டுமே உள்ளன.</string>
@@ -96,6 +110,10 @@
   <string name="account_locale_gu">ગુજરાતી</string>
   <string name="account_locale_bn">বাংলা</string>
   <string name="account_locale_pa">ਪੰਜਾਬੀ</string>
+  <string name="common_back">பின்செல்</string>
+  <string name="common_try_again">மீண்டும் முயற்சிக்கவும்</string>
+  <string name="common_see_all">அனைத்தையும் காண்க</string>
+  <string name="common_clear_all">அனைத்தையும் நீக்கவும்</string>
   <string name="common_retry">மீண்டும் முயற்சி</string>
   <string name="common_cancel">ரத்து செய்</string>
   <string name="common_confirm">உறுதிசெய்</string>
@@ -119,6 +137,7 @@
   <string name="product_buy_now">இப்போது வாங்கு</string>
   <string name="product_bestseller">பிரபலம்</string>
   <string name="home_sign_in">உள்நுழைக</string>
+  <string name="home_hero_tagline">தினமும் புதிதாகத் தயாரிக்கப்படும் இனிப்புகள்.</string>
   <string name="home_best_sellers">சிறந்த விற்பனை</string>
   <string name="home_shop_by_family">வகைப்படி வாங்க</string>
   <string name="home_your_orders">உங்கள் ஆர்டர்கள்</string>
@@ -153,4 +172,19 @@
   <string name="vertical_qsr_available_at">கிடைக்கும் இடம்</string>
   <string name="vertical_qsr_veg">சைவம்</string>
   <string name="vertical_qsr_spice">காரம்</string>
+  <string name="vertical_qsr_menu">கவுண்டர் மெனு</string>
+  <string name="vertical_qsr_nonveg">அசைவம்</string>
+  <string name="home_shop_by_vertical">வகைப்படி வாங்குங்கள்</string>
+  <string name="home_browse">இனிப்புகளைப் பார்க்கவும்</string>
+  <string name="home_portal_mithai">தினமும் தயாரிக்கப்படுகிறது</string>
+  <string name="home_portal_snacks">சில்லறை பேக்குகள்</string>
+  <string name="product_added_to_cart">கார்ட்டில் சேர்க்கப்பட்டது</string>
+  <string name="catalog_empty_hint">வேறு தேடலை முயற்சிக்கவும் அல்லது வடிகட்டிகளை அழிக்கவும்.</string>
+  <string name="cart_empty_hint">நிரப்ப இனிப்பு பட்டியலைப் பாருங்கள்.</string>
+  <string name="orders_empty_hint">உங்கள் இனிப்பு ஆர்டர்கள் இங்கே தோன்றும்.</string>
+  <string name="common_load_error">ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்.</string>
+  <string name="order_reference">ஆர்டர் %1$s</string>
+  <string name="order_confirmed">ஆர்டர் உறுதி செய்யப்பட்டது</string>
+  <string name="order_continue_shopping">ஷாப்பிங்கைத் தொடரவும்</string>
+  <string name="account_language_relaunch">அடுத்த முறை ஆப்பைத் திறக்கும்போது பொருந்தும்.</string>
 </resources>

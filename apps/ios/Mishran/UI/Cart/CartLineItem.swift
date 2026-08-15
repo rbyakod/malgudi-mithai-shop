@@ -38,7 +38,7 @@ struct CartLineItem: View {
             Button(role: .destructive) {
                 onRemove()
             } label: {
-                Label("Remove", systemImage: "trash")
+                Label(L("cart.remove"), systemImage: "trash")
             }
             .accessibilityLabel("Remove \(line.name) from cart")
         }

@@ -3,8 +3,8 @@
 // contact fields + type-specific extras, submit gated on EnquiryForm's pure
 // validation, success panel showing the leadId reference. Entry points:
 // merch detail's "Enquire" (corporate pre-set) and Account's row (wedding).
-// Labels match packages/i18n-strings/en.json (enquiry.*) — TODO(i18n):
-// hardcode sweep wires String(localized:) later.
+// Labels resolve from packages/i18n-strings (enquiry.*) via the L()
+// helper — Task 20.3 wiring.
 import SwiftUI
 
 struct EnquiryView: View {
@@ -31,7 +31,7 @@ struct EnquiryView: View {
                 formBody
             }
         }
-        .navigationTitle("Bulk & events")
+        .navigationTitle(L("enquiry.title"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -50,17 +50,17 @@ struct EnquiryView: View {
             }
 
             Section("Contact") {
-                TextField("Name", text: $viewModel.form.name)
+                TextField(L("enquiry.field.name"), text: $viewModel.form.name)
                     .accessibilityLabel("Your name")
-                TextField("Phone", text: $viewModel.form.phone)
+                TextField(L("enquiry.field.phone"), text: $viewModel.form.phone)
                     .keyboardType(.phonePad)
                     .accessibilityLabel("Phone number")
-                TextField("Email", text: $viewModel.form.email)
+                TextField(L("enquiry.field.email"), text: $viewModel.form.email)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .accessibilityLabel("Email address")
-                TextField("Message", text: $viewModel.form.message, axis: .vertical)
+                TextField(L("enquiry.field.message"), text: $viewModel.form.message, axis: .vertical)
                     .lineLimit(3...6)
                     .accessibilityLabel("Message")
             }
@@ -68,23 +68,23 @@ struct EnquiryView: View {
             switch viewModel.form.type {
             case .wedding:
                 Section("Wedding details") {
-                    DatePicker("Event date", selection: $viewModel.form.eventDate, displayedComponents: .date)
+                    DatePicker(L("enquiry.field.date"), selection: $viewModel.form.eventDate, displayedComponents: .date)
                         .accessibilityLabel("Event date")
-                    TextField("City", text: $viewModel.form.city)
+                    TextField(L("enquiry.field.city"), text: $viewModel.form.city)
                         .accessibilityLabel("City")
-                    TextField("Guests", text: $viewModel.form.guests)
+                    TextField(L("enquiry.field.guests"), text: $viewModel.form.guests)
                         .keyboardType(.numberPad)
                         .accessibilityLabel("Number of guests")
                 }
             case .corporate:
                 Section("Corporate details") {
-                    TextField("Company", text: $viewModel.form.company)
+                    TextField(L("enquiry.field.company"), text: $viewModel.form.company)
                         .textInputAutocapitalization(.words)
                         .accessibilityLabel("Company name")
-                    TextField("Quantity", text: $viewModel.form.quantity)
+                    TextField(L("enquiry.field.quantity"), text: $viewModel.form.quantity)
                         .keyboardType(.numberPad)
                         .accessibilityLabel("Quantity")
-                    DatePicker("Needed by", selection: $viewModel.form.neededBy, displayedComponents: .date)
+                    DatePicker(L("enquiry.field.deadline"), selection: $viewModel.form.neededBy, displayedComponents: .date)
                         .accessibilityLabel("Needed by date")
                 }
             }
@@ -97,7 +97,7 @@ struct EnquiryView: View {
                         if viewModel.isSubmitting {
                             ProgressView()
                         } else {
-                            Text("Submit")
+                            Text(L("enquiry.submit"))
                                 .font(.mishranBodyLg.weight(.semibold))
                         }
                     }
@@ -133,7 +133,7 @@ struct EnquiryView: View {
             Text("Reference: \(lead.leadId)")
                 .font(.mishranBodySm)
                 .foregroundStyle(.secondary)
-            Text("Thank you. Our events team will be in touch within one business day.")
+            Text(L("enquiry.success"))
                 .font(.mishranBodyMd)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

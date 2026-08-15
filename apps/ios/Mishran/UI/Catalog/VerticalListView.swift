@@ -1,9 +1,8 @@
 // VerticalListView.swift — P2 (Mishran Mobile Apps v1).
 // Grid for the catalog's non-mithai tabs: 2-column VerticalCards with the
 // shared image + name + one-line discriminator shape, plus the
-// loading/error-retry/empty states the mithai grid carries. Label strings
-// match packages/i18n-strings/en.json — TODO(i18n): hardcode sweep wires
-// String(localized:) later.
+// loading/error-retry/empty states the mithai grid carries. Labels
+// resolve from packages/i18n-strings via the L() helper — Task 20.3.
 import SwiftUI
 
 struct VerticalListView: View {
@@ -30,9 +29,9 @@ struct VerticalListView: View {
             if viewModel.cards.isEmpty && !viewModel.isLoading {
                 if viewModel.errorMessage != nil {
                     ContentUnavailableView {
-                        Label("Couldn't load this tab", systemImage: "exclamationmark.triangle")
+                        Label(L("common.load_error"), systemImage: "exclamationmark.triangle")
                     } actions: {
-                        Button("Try again") {
+                        Button(L("common.retry")) {
                             Task { await viewModel.reload() }
                         }
                     }
@@ -47,7 +46,7 @@ struct VerticalListView: View {
         }
         .overlay {
             if viewModel.isLoading && viewModel.cards.isEmpty {
-                ProgressView("Loading…")
+                ProgressView(L("common.loading"))
             }
         }
         .refreshable {

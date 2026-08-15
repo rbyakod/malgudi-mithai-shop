@@ -152,3 +152,14 @@
 "vertical.qsr.available_at" = "ਉਪਲਬਧ";
 "vertical.qsr.veg" = "ਸ਼ਾਕਾਹਾਰੀ";
 "vertical.qsr.spice" = "ਤੀਖਾਪਨ";
+"home.shop_by_vertical" = "ਵਰਗ ਅਨੁਸਾਰ ਖਰੀਦੋ";
+"home.browse" = "ਮਿਠਾਈ ਵੇਖੋ";
+"product.added_to_cart" = "ਕਾਰਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ";
+"catalog.empty_hint" = "ਹੋਰ ਖੋਜ ਅਜ਼ਮਾਓ ਜਾਂ ਫਿਲਟਰ ਹਟਾਓ।";
+"cart.empty_hint" = "ਭਰਨ ਲਈ ਮਿਠਾਈਆਂ ਦੀ ਸੂਚੀ ਵੇਖੋ।";
+"orders.empty_hint" = "ਤੁਹਾਡੇ ਮਿਠਾਈ ਆਰਡਰ ਇੱਥੇ ਦਿਖਣਗੇ।";
+"common.load_error" = "ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।";
+"order.reference" = "ਆਰਡਰ {id}";
+"order.confirmed" = "ਆਰਡਰ ਦੀ ਪੁਸ਼ਟੀ ਹੋ ਗਈ";
+"order.continue_shopping" = "ਖਰੀਦਦਾਰੀ ਜਾਰੀ ਰੱਖੋ";
+"account.language_relaunch" = "ਅਗਲੀ ਵਾਰ ਐਪ ਖੋਲ੍ਹਣ 'ਤੇ ਲਾਗੂ ਹੋਵੇਗਾ।";

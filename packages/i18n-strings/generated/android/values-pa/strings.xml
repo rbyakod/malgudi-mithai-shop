@@ -27,7 +27,17 @@
   <string name="catalog_filter_title">ਫਿਲਟਰ</string>
   <string name="catalog_filter_category">ਸ਼੍ਰੇਣੀ</string>
   <string name="catalog_filter_dietary">ਖੁਰਾਕ ਤਰਜੀਹ</string>
+  <string name="catalog_family_all">ਸਭ ਸ਼੍ਰੇਣੀਆਂ</string>
+  <string name="catalog_family_classic">ਕਲਾਸਿਕ</string>
+  <string name="catalog_family_originals">ਹਾਊਸ ਓਰਿਜਿਨਲਸ</string>
+  <string name="catalog_family_sugar_free">ਖੰਡ ਰਹਿਤ</string>
+  <string name="catalog_family_regional">ਖੇਤਰੀ</string>
+  <string name="catalog_family_seasonal">ਮੌਸਮੀ</string>
   <string name="catalog_empty">ਤੁਹਾਡੇ ਫਿਲਟਰਾਂ ਨਾਲ ਮੇਲ ਖਾਂਦੀ ਮਿਠਾਈ ਨਹੀਂ।</string>
+  <string name="catalog_empty_sync">ਸਿੰਕ ਹੋਣ ਉਪਰੰਤ ਸੂਚੀ ਇੱਥੇ ਦਿਖੇਗੀ।</string>
+  <string name="catalog_empty_snacks">ਹਾਲੇ ਕੋਈ ਸਨੈਕਸ ਨਹੀਂ ਹਨ।</string>
+  <string name="catalog_empty_qsr">ਕਾਊਂਟਰ ਮੀਨੂ ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ।</string>
+  <string name="catalog_empty_merch">ਹਾਲੇ ਕੋਈ ਮਰਚ ਨਹੀਂ ਹੈ।</string>
   <string name="catalog_stale_banner">%1$s ਮਿੰਟ ਪਹਿਲਾਂ ਅੱਪਡੇਟ ਕੀਤਾ</string>
   <string name="product_add_to_cart">ਕਾਰਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</string>
   <string name="product_quantity">ਮਾਤਰਾ</string>
@@ -62,6 +72,10 @@
   <string name="checkout_payment_netbanking">ਨੈੱਟ ਬੈਂਕਿੰਗ</string>
   <string name="checkout_payment_wallet">ਵਾਲਿਟ</string>
   <string name="checkout_pay">%1$s ਭੁਗਤਾਨ ਕਰੋ</string>
+  <string name="checkout_cta_place_order">ਆਰਡਰ ਕਰੋ</string>
+  <string name="checkout_cta_select_address">ਡਿਲੀਵਰੀ ਪਤਾ ਚੁਣੋ</string>
+  <string name="checkout_cta_checking">ਡਿਲੀਵਰੀ ਦੀ ਜਾਂਚ ਹੋ ਰਹੀ ਹੈ…</string>
+  <string name="checkout_cta_pick_slot">ਡਿਲੀਵਰੀ ਸਮਾਂ ਚੁਣੋ</string>
   <string name="checkout_error_pincode_not_serviceable">%1$s ਲਈ ਹਾਲੇ ਡਿਲੀਵਰੀ ਨਹੀਂ।</string>
   <string name="checkout_error_cart_changed">ਕੁਝ ਚੀਜ਼ਾਂ ਬਦਲ ਗਈਆਂ ਹਨ। ਜਾਂਚ ਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
   <string name="checkout_error_stock_insufficient">%1$s ਸਿਰਫ਼ %2$s ਬਾਕੀ।</string>
@@ -96,6 +110,10 @@
   <string name="account_locale_gu">ગુજરાતી</string>
   <string name="account_locale_bn">বাংলা</string>
   <string name="account_locale_pa">ਪੰਜਾਬੀ</string>
+  <string name="common_back">ਵਾਪਸ</string>
+  <string name="common_try_again">ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ</string>
+  <string name="common_see_all">ਸਭ ਵੇਖੋ</string>
+  <string name="common_clear_all">ਸਭ ਸਾਫ਼ ਕਰੋ</string>
   <string name="common_retry">ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ</string>
   <string name="common_cancel">ਰੱਦ ਕਰੋ</string>
   <string name="common_confirm">ਤਸਦੀਕ ਕਰੋ</string>
@@ -119,6 +137,7 @@
   <string name="product_buy_now">ਹੁਣੇ ਖਰੀਦੋ</string>
   <string name="product_bestseller">ਬੈਸਟਸੈਲਰ</string>
   <string name="home_sign_in">ਸਾਈਨ ਇਨ</string>
+  <string name="home_hero_tagline">ਰੋਜ਼ ਤਾਜ਼ਾ ਬਣਦੀ ਮਿਠਾਈ.</string>
   <string name="home_best_sellers">ਬੈਸਟ ਸੈਲਰ</string>
   <string name="home_shop_by_family">ਸ਼੍ਰੇਣੀ ਅਨੁਸਾਰ ਖਰੀਦੋ</string>
   <string name="home_your_orders">ਤੁਹਾਡੇ ਆਰਡਰ</string>
@@ -153,4 +172,19 @@
   <string name="vertical_qsr_available_at">ਉਪਲਬਧ</string>
   <string name="vertical_qsr_veg">ਸ਼ਾਕਾਹਾਰੀ</string>
   <string name="vertical_qsr_spice">ਤੀਖਾਪਨ</string>
+  <string name="vertical_qsr_menu">ਕਾਊਂਟਰ ਮੀਨੂ</string>
+  <string name="vertical_qsr_nonveg">ਨਾਨ-ਵੈਜ</string>
+  <string name="home_shop_by_vertical">ਵਰਗ ਅਨੁਸਾਰ ਖਰੀਦੋ</string>
+  <string name="home_browse">ਮਿਠਾਈ ਵੇਖੋ</string>
+  <string name="home_portal_mithai">ਰੋਜ਼ ਬਣਦੀ ਹੈ</string>
+  <string name="home_portal_snacks">ਰੀਟੇਲ ਪੈਕ</string>
+  <string name="product_added_to_cart">ਕਾਰਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ</string>
+  <string name="catalog_empty_hint">ਹੋਰ ਖੋਜ ਅਜ਼ਮਾਓ ਜਾਂ ਫਿਲਟਰ ਹਟਾਓ।</string>
+  <string name="cart_empty_hint">ਭਰਨ ਲਈ ਮਿਠਾਈਆਂ ਦੀ ਸੂਚੀ ਵੇਖੋ।</string>
+  <string name="orders_empty_hint">ਤੁਹਾਡੇ ਮਿਠਾਈ ਆਰਡਰ ਇੱਥੇ ਦਿਖਣਗੇ।</string>
+  <string name="common_load_error">ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
+  <string name="order_reference">ਆਰਡਰ %1$s</string>
+  <string name="order_confirmed">ਆਰਡਰ ਦੀ ਪੁਸ਼ਟੀ ਹੋ ਗਈ</string>
+  <string name="order_continue_shopping">ਖਰੀਦਦਾਰੀ ਜਾਰੀ ਰੱਖੋ</string>
+  <string name="account_language_relaunch">ਅਗਲੀ ਵਾਰ ਐਪ ਖੋਲ੍ਹਣ \'ਤੇ ਲਾਗੂ ਹੋਵੇਗਾ।</string>
 </resources>

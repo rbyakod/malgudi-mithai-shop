@@ -152,3 +152,14 @@
 "vertical.qsr.available_at" = "Available at";
 "vertical.qsr.veg" = "Vegetarian";
 "vertical.qsr.spice" = "Spice";
+"home.shop_by_vertical" = "Shop by vertical";
+"home.browse" = "Browse sweets";
+"product.added_to_cart" = "Added to cart";
+"catalog.empty_hint" = "Try a different search or clear filters.";
+"cart.empty_hint" = "Browse the sweets catalog to fill it.";
+"orders.empty_hint" = "Your sweet orders will appear here.";
+"common.load_error" = "Couldn't load this. Try again.";
+"order.reference" = "Order {id}";
+"order.confirmed" = "Order confirmed";
+"order.continue_shopping" = "Continue shopping";
+"account.language_relaunch" = "Applies the next time you open the app.";

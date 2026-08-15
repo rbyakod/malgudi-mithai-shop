@@ -27,7 +27,17 @@
   <string name="catalog_filter_title">फिल्टर</string>
   <string name="catalog_filter_category">प्रवर्ग</string>
   <string name="catalog_filter_dietary">आहार प्राधान्य</string>
+  <string name="catalog_family_all">सर्व प्रवर्ग</string>
+  <string name="catalog_family_classic">क्लासिक</string>
+  <string name="catalog_family_originals">हाउस ओरिजिनल्स</string>
+  <string name="catalog_family_sugar_free">साखरमुक्त</string>
+  <string name="catalog_family_regional">प्रादेशिक</string>
+  <string name="catalog_family_seasonal">हंगामी</string>
   <string name="catalog_empty">तुमच्या फिल्टरशी जुळणारी मिठाई नाही.</string>
+  <string name="catalog_empty_sync">सिंक झाल्यावर यादी इथे दिसेल.</string>
+  <string name="catalog_empty_snacks">अजून स्नॅक्स नाहीत.</string>
+  <string name="catalog_empty_qsr">काउंटर मेनू लवकर येत आहे.</string>
+  <string name="catalog_empty_merch">अजून मर्च नाही.</string>
   <string name="catalog_stale_banner">%1$s मिनिटांपूर्वी अद्ययावत केले</string>
   <string name="product_add_to_cart">कार्टमध्ये टाका</string>
   <string name="product_quantity">प्रमाण</string>
@@ -62,6 +72,10 @@
   <string name="checkout_payment_netbanking">नेट बँकिंग</string>
   <string name="checkout_payment_wallet">वॉलेट</string>
   <string name="checkout_pay">%1$s पेमेंट करा</string>
+  <string name="checkout_cta_place_order">ऑर्डर द्या</string>
+  <string name="checkout_cta_select_address">डिलिव्हरी पत्ता निवडा</string>
+  <string name="checkout_cta_checking">डिलिव्हरी तपासली जात आहे…</string>
+  <string name="checkout_cta_pick_slot">डिलिव्हरी वेळ निवडा</string>
   <string name="checkout_error_pincode_not_serviceable">%1$s साठी अजून डिलिव्हरी नाही.</string>
   <string name="checkout_error_cart_changed">काही वस्तू बदलल्या आहेत. तपासा आणि पुन्हा प्रयत्न करा.</string>
   <string name="checkout_error_stock_insufficient">%1$s फक्त %2$s शिल्लक.</string>
@@ -96,6 +110,10 @@
   <string name="account_locale_gu">ગુજરાતી</string>
   <string name="account_locale_bn">বাংলা</string>
   <string name="account_locale_pa">ਪੰਜਾਬੀ</string>
+  <string name="common_back">मागे</string>
+  <string name="common_try_again">पुन्हा प्रयत्न करा</string>
+  <string name="common_see_all">सर्व पहा</string>
+  <string name="common_clear_all">सर्व साफ करा</string>
   <string name="common_retry">पुन्हा प्रयत्न करा</string>
   <string name="common_cancel">रद्द करा</string>
   <string name="common_confirm">पुष्टी करा</string>
@@ -119,6 +137,7 @@
   <string name="product_buy_now">आता खरेदी करा</string>
   <string name="product_bestseller">बेस्टसेलर</string>
   <string name="home_sign_in">साइन इन करा</string>
+  <string name="home_hero_tagline">रोज ताजी बनवलेली मिठाई.</string>
   <string name="home_best_sellers">बेस्ट सेलर्स</string>
   <string name="home_shop_by_family">श्रेणीनुसार खरेदी करा</string>
   <string name="home_your_orders">तुमचे ऑर्डर</string>
@@ -153,4 +172,19 @@
   <string name="vertical_qsr_available_at">उपलब्ध</string>
   <string name="vertical_qsr_veg">शाकाहारी</string>
   <string name="vertical_qsr_spice">तिखटपणा</string>
+  <string name="vertical_qsr_menu">काउंटर मेनू</string>
+  <string name="vertical_qsr_nonveg">नॉन-व्हेज</string>
+  <string name="home_shop_by_vertical">श्रेणीनुसार खरेदी करा</string>
+  <string name="home_browse">मिठाई पहा</string>
+  <string name="home_portal_mithai">रोज बनते</string>
+  <string name="home_portal_snacks">रिटेल पॅक</string>
+  <string name="product_added_to_cart">कार्टमध्ये जोडले</string>
+  <string name="catalog_empty_hint">वेगळा शोध वापरा किंवा फिल्टर काढा.</string>
+  <string name="cart_empty_hint">भरण्यासाठी मिठाईची यादी पहा.</string>
+  <string name="orders_empty_hint">तुमचे मिठाई ऑर्डर येथे दिसतील.</string>
+  <string name="common_load_error">लोड करता आले नाही. पुन्हा प्रयत्न करा.</string>
+  <string name="order_reference">ऑर्डर %1$s</string>
+  <string name="order_confirmed">ऑर्डरची पुष्टी झाली</string>
+  <string name="order_continue_shopping">खरेदी सुरू ठेवा</string>
+  <string name="account_language_relaunch">पुढच्या वेळी अ‍ॅप उघडल्यावर लागू होईल.</string>
 </resources>

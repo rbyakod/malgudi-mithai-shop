@@ -17,13 +17,13 @@ struct BiometricGateView: View {
             Image(systemName: viewModel.isEvaluating ? "lock.fill" : "faceid")
                 .font(.system(size: 48))
                 .foregroundStyle(Color.mishranBrandAccent)
-            Text("Mishran is locked")
+            Text(L("auth.biometric.title"))
                 .font(.mishranDisplay.weight(.semibold))
-            Text("Confirm it's you to continue.")
+            Text(L("auth.biometric.prompt"))
                 .font(.mishranBodyMd)
                 .foregroundStyle(.secondary)
 
-            Button("Try again") {
+            Button(L("common.retry")) {
                 Task { await runGate() }
             }
             .font(.mishranBodyLg.weight(.semibold))

@@ -15,10 +15,10 @@ struct OrderConfirmedView: View {
                 .foregroundStyle(Color.mishranStateSuccess)
                 .accessibilityHidden(true)
 
-            Text("Order confirmed")
+            Text(L("order.confirmed"))
                 .font(.mishranDisplay.weight(.semibold))
 
-            Text("Order \(orderId)")
+            Text(L("order.reference", orderId))
                 .font(.mishranBodyMd)
                 .foregroundStyle(.secondary)
 
@@ -29,13 +29,13 @@ struct OrderConfirmedView: View {
 
             VStack(spacing: .mishranSpacingSm) {
                 Button(action: onTrackOrder) {
-                    Label("Track order", systemImage: "shippingbox")
+                    Label(L("orders.track"), systemImage: "shippingbox")
                         .font(.mishranBodyMd.weight(.semibold))
                         .frame(maxWidth: .infinity, minHeight: 44)
                 }
                 .buttonStyle(.borderedProminent)
 
-                Button("Continue shopping", action: onContinueShopping)
+                Button(L("order.continue_shopping"), action: onContinueShopping)
                     .font(.mishranBodyMd)
                     .frame(minHeight: 44)
             }

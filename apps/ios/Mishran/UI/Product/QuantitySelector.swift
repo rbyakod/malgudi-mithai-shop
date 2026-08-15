@@ -16,7 +16,7 @@ struct QuantitySelector: View {
             }
             .disabled(quantity <= bounds.lowerBound)
             .mishranIconAction(
-                label: "Decrease quantity",
+                label: L("cart.qty_decrease"),
                 hint: quantity <= bounds.lowerBound ? nil : "Current quantity \(quantity)"
             )
 
@@ -24,7 +24,7 @@ struct QuantitySelector: View {
                 .font(.mishranBodyXxl.weight(.semibold))
                 .monospacedDigit()
                 .frame(minWidth: 44)
-                .accessibilityLabel("Quantity")
+                .accessibilityLabel(L("product.quantity"))
                 .accessibilityValue("\(quantity)")
 
             Button {
@@ -36,7 +36,7 @@ struct QuantitySelector: View {
             }
             .disabled(quantity >= bounds.upperBound)
             .mishranIconAction(
-                label: "Increase quantity",
+                label: L("cart.qty_increase"),
                 hint: quantity >= bounds.upperBound ? nil : "Current quantity \(quantity)"
             )
         }

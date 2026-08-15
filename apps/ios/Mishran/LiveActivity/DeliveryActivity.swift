@@ -20,7 +20,7 @@ struct DeliveryActivity: Widget {
                     .font(.mishranBodyLg)
                     .foregroundStyle(DeliveryAttributes.stageTint(for: context.state.status))
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Mishran order \(context.attributes.orderId)")
+                    Text("\(L("widget.order_status.title")) \(context.attributes.orderId)")
                         .font(.mishranBodySm.weight(.semibold))
                         .foregroundStyle(Color.mishranBrandInk)
                     Text(Self.stageLabel(context.state.status))
@@ -37,7 +37,7 @@ struct DeliveryActivity: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Label("Mishran", systemImage: "shippingbox.fill")
+                    Label(L("app.name"), systemImage: "shippingbox.fill")
                         .font(.mishranBodySm)
                         .foregroundStyle(DeliveryAttributes.stageTint(for: context.state.status))
                 }
@@ -81,14 +81,16 @@ struct DeliveryActivity: Widget {
     }
 
     /// Friendly copy for the lock-screen line (extension-local; the app's
-    /// OrderTimeline handles in-app rendering).
+    /// OrderTimeline handles in-app rendering). The five happy-path stages
+    /// resolve from the shared i18n tables (orders.status.*); the fallback
+    /// stays English until a key exists for it.
     nonisolated static func stageLabel(_ status: String) -> String {
         switch status {
-        case "confirmed": "Confirmed"
-        case "packed": "Packed"
-        case "dispatched": "Dispatched"
-        case "out_for_delivery": "Out for delivery"
-        case "delivered": "Delivered"
+        case "confirmed": L("orders.status.confirmed")
+        case "packed": L("orders.status.packed")
+        case "dispatched": L("orders.status.dispatched")
+        case "out_for_delivery": L("orders.status.out_for_delivery")
+        case "delivered": L("orders.status.delivered")
         default: "On its way"
         }
     }

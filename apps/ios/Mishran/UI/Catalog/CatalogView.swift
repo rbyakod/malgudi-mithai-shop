@@ -47,9 +47,9 @@ struct CatalogView: View {
 
                 if viewModel.filteredProducts.isEmpty && !viewModel.isLoading {
                     ContentUnavailableView(
-                        "No sweets found",
+                        L("catalog.empty"),
                         systemImage: "magnifyingglass",
-                        description: Text("Try a different search or clear filters.")
+                        description: Text(L("catalog.empty_hint"))
                     )
                 }
             }
@@ -59,14 +59,14 @@ struct CatalogView: View {
         }
         .overlay {
             if viewModel.isLoading && viewModel.products.isEmpty {
-                ProgressView("Loading sweets…")
+                ProgressView(L("common.loading"))
             }
         }
         .sheet(isPresented: $isShowingFilters) {
             FilterSheet(filters: $viewModel.filters)
                 .presentationDetents([.medium])
         }
-        .navigationTitle("Sweets")
+        .navigationTitle(L("nav.catalog"))
         .task {
             if viewModel.products.isEmpty {
                 await viewModel.load()

@@ -18,7 +18,7 @@ struct CheckoutView: View {
 
     var body: some View {
         Form {
-            Section("Delivery address") {
+            Section(L("checkout.address.title")) {
                 AddressPicker(
                     selection: $viewModel.address,
                     onAddAddress: { showingAddressForm = true }
@@ -27,7 +27,7 @@ struct CheckoutView: View {
 
             Section {
                 HStack {
-                    TextField("Pincode", text: $pincodeField)
+                    TextField(L("checkout.address.pincode"), text: $pincodeField)
                         .font(.mishranBodyLg)
                         .keyboardType(.numberPad)
                         .onChange(of: pincodeField) { _, newValue in
@@ -53,7 +53,7 @@ struct CheckoutView: View {
                     .font(.mishranBodyMd)
                     .accessibilityLabel("Serviceable, \(tier) tier, \(city)")
                 case .blocked(let reason):
-                    Label(blockingText(reason), systemImage: "xmark.octagon.fill")
+                    Label(blockingText(reason, pincode: pincodeField), systemImage: "xmark.octagon.fill")
                         .foregroundStyle(Color.mishranStateError)
                         .font(.mishranBodyMd)
                         .accessibilityLabel("Not serviceable")
@@ -65,12 +65,12 @@ struct CheckoutView: View {
             }
 
             if viewModel.isFreshTier, !viewModel.slotOptions.isEmpty {
-                Section("Delivery slot") {
+                Section(L("checkout.slot.title")) {
                     SlotPicker(options: viewModel.slotOptions, selection: $viewModel.selectedSlot)
                 }
             }
 
-            Section("Payment") {
+            Section(L("checkout.payment.title")) {
                 PaymentMethodPicker(selection: $viewModel.paymentMethod)
             }
 
@@ -78,7 +78,7 @@ struct CheckoutView: View {
                 Button {
                     Task { await viewModel.placeOrder() }
                 } label: {
-                    Text("Place order")
+                    Text(L("checkout.pay", CartView.rupees(viewModel.cartTotalPaise)))
                         .font(.mishranBodyLg.weight(.semibold))
                         .frame(maxWidth: .infinity)
                 }
@@ -88,7 +88,7 @@ struct CheckoutView: View {
                 .controlSize(.large)
                 .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
                 .disabled(!viewModel.canPlaceOrder || viewModel.isPlacingOrder)
-                .accessibilityLabel("Place order")
+                .accessibilityLabel(L("checkout.pay", CartView.rupees(viewModel.cartTotalPaise)))
 
                 if viewModel.isPlacingOrder {
                     HStack {
@@ -110,10 +110,10 @@ struct CheckoutView: View {
             // the confirmation surface.
             switch viewModel.paymentState {
             case .confirmed(let orderId):
-                Label("Order confirmed — \(orderId)", systemImage: "checkmark.seal.fill")
+                Label("\(L("order.confirmed")) — \(orderId)", systemImage: "checkmark.seal.fill")
                     .font(.mishranBodyLg.weight(.semibold))
                     .foregroundStyle(Color.mishranBrandAccent)
-                    .accessibilityLabel("Order confirmed")
+                    .accessibilityLabel(L("order.confirmed"))
             case .abandoned:
                 Label("Payment cancelled — your cart is saved.", systemImage: "arrow.uturn.backward")
                     .font(.mishranBodyMd)
@@ -121,7 +121,7 @@ struct CheckoutView: View {
                 EmptyView()
             }
         }
-        .navigationTitle("Checkout")
+        .navigationTitle(L("checkout.title"))
         // Confirmed hands off to the shell (thank-you screen); the parent
         // decides the navigation move.
         .onChange(of: viewModel.paymentState) { _, state in
@@ -160,10 +160,10 @@ struct CheckoutView: View {
         return true
     }
 
-    private func blockingText(_ reason: CheckoutViewModel.BlockingReason) -> String {
+    private func blockingText(_ reason: CheckoutViewModel.BlockingReason, pincode: String) -> String {
         switch reason {
         case .notServiceable:
-            "We don't deliver to this pincode yet."
+            L("checkout.error.pincode_not_serviceable", pincode)
         case .freshItemOutsideFreshTier:
             "Fresh sweets ship same-day in Delhi NCR only. Swap them for shelf-stable sweets, or use a Delhi address."
         case .network:

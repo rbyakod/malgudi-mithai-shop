@@ -2,9 +2,9 @@
 // Journal list: hero card for the newest story + rows for the rest, all off
 // the cached StoryEntity rows (offline-first — pull-to-refresh swaps the
 // set). The view model is the StoryRepository itself (CatalogRepository
-// idiom: it owns the rows + loading/error state). Labels match
-// packages/i18n-strings/en.json (stories.title/empty) — TODO(i18n):
-// hardcode sweep wires String(localized:) later.
+// idiom: it owns the rows + loading/error state). Labels resolve from
+// packages/i18n-strings (stories.title/empty) via the L() helper —
+// Task 20.3 wiring.
 import SwiftData
 import SwiftUI
 
@@ -20,7 +20,7 @@ struct StoriesView: View {
                 ProgressView()
             }
         }
-        .navigationTitle("Journal")
+        .navigationTitle(L("stories.title"))
         .task {
             guard repository == nil else { return }
             repository = StoryRepository(client: MishranAPIClient(), context: context)
@@ -32,21 +32,21 @@ struct StoriesView: View {
     private func content(_ repository: StoryRepository) -> some View {
         let stories = repository.stories
         if repository.isLoading && stories.isEmpty {
-            ProgressView("Loading…")
+            ProgressView(L("common.loading"))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if stories.isEmpty, repository.errorMessage != nil {
             ContentUnavailableView {
-                Label("Couldn't load the journal", systemImage: "exclamationmark.triangle")
+                Label(L("common.load_error"), systemImage: "exclamationmark.triangle")
             } description: {
                 Text(repository.errorMessage ?? "")
             } actions: {
-                Button("Try again") {
+                Button(L("common.retry")) {
                     Task { await repository.getStories() }
                 }
             }
         } else if stories.isEmpty {
             ContentUnavailableView(
-                "Stories are coming soon",
+                L("stories.empty"),
                 systemImage: "book",
                 description: Text("Notes from the kitchen, karigars, and the shop floor.")
             )

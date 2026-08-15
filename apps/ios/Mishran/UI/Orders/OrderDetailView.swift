@@ -24,7 +24,7 @@ struct OrderDetailView: View {
                     }
             }
         }
-        .navigationTitle("Order \(orderId)")
+        .navigationTitle(L("order.reference", orderId))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -72,7 +72,7 @@ struct OrderDetailView: View {
                 Section("Totals") {
                     totalRow("Items", order.totals.itemsTotalInPaise)
                     if order.totals.deliveryFeeInPaise > 0 {
-                        totalRow("Delivery", order.totals.deliveryFeeInPaise)
+                        totalRow(L("cart.delivery_fee"), order.totals.deliveryFeeInPaise)
                     }
                     if order.totals.taxesInPaise > 0 {
                         totalRow("Taxes", order.totals.taxesInPaise)
@@ -81,7 +81,7 @@ struct OrderDetailView: View {
                         totalRow("Discount", -order.totals.discountInPaise)
                     }
                     HStack {
-                        Text("Total")
+                        Text(L("cart.total"))
                             .font(.mishranBodyLg.weight(.semibold))
                         Spacer()
                         Text(CartView.rupees(order.totals.totalInPaise))
@@ -93,11 +93,11 @@ struct OrderDetailView: View {
                     Button {
                         if let helpURL { openURL(helpURL) }
                     } label: {
-                        Label("Need help? WhatsApp us", systemImage: "message.circle.fill")
+                        Label(L("order.help"), systemImage: "message.circle.fill")
                             .frame(maxWidth: .infinity)
                     }
                     .disabled(helpURL == nil)
-                    .accessibilityLabel("Need help? WhatsApp us")
+                    .accessibilityLabel(L("order.help"))
                     .accessibilityHint("Opens WhatsApp chat with Mishran support")
                 }
             }
@@ -114,9 +114,9 @@ struct OrderDetailView: View {
             ProgressView()
         } else {
             ContentUnavailableView(
-                "Couldn't load order",
+                L("common.load_error"),
                 systemImage: "exclamationmark.triangle",
-                description: Text(viewModel.errorMessage ?? "Try again.")
+                description: Text(viewModel.errorMessage ?? L("common.retry"))
             )
         }
     }

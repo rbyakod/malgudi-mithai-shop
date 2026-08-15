@@ -124,8 +124,11 @@ final class OrdersViewModelTests: XCTestCase {
     }
 
     func testStatusLabels() {
+        // Task 20.3: labels resolve from the generated i18n tables —
+        // en copy per packages/i18n-strings/en.json (orders.status.*);
+        // failed_delivery has no key and stays hardcoded English.
         XCTAssertEqual(OrderTimeline.label(for: .outForDelivery), "Out for delivery")
-        XCTAssertEqual(OrderTimeline.label(for: .pendingPayment), "Payment pending")
+        XCTAssertEqual(OrderTimeline.label(for: .pendingPayment), "Awaiting payment")
         XCTAssertEqual(OrderTimeline.label(for: .failedDelivery), "Delivery failed")
     }
 

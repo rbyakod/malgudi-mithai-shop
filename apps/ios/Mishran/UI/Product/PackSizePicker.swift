@@ -19,8 +19,8 @@ struct PackSizePicker: View {
                 }
             }
             .accessibilityElement(children: .contain)
-            .accessibilityLabel("Pack size")
-            .accessibilityHint("Prices for other sizes are estimates")
+            .accessibilityLabel(L("product.pack_size"))
+            .accessibilityHint(L("product.pack_estimate"))
         } else if let only = options.first {
             // Single informational chip (off-ladder base / per-pack pricing) —
             // nothing to choose, so it renders inert like the dietary tags.
@@ -29,7 +29,7 @@ struct PackSizePicker: View {
                 .padding(.horizontal, .mishranSpacingSm)
                 .padding(.vertical, 4)
                 .background(Capsule().strokeBorder(Color.mishranBrandAccent.opacity(0.4)))
-                .accessibilityLabel("Pack size: \(only.label)")
+                .accessibilityLabel("\(L("product.pack_size")): \(only.label)")
         }
     }
 
@@ -54,7 +54,7 @@ struct PackSizePicker: View {
                 )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Pack size \(option.label)")
+        .accessibilityLabel("\(L("product.pack_size")) \(option.label)")
         .accessibilityValue(option.priceLabel)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }

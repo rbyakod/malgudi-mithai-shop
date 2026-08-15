@@ -9,13 +9,13 @@ struct OTPView: View {
     var body: some View {
         VStack(spacing: .mishranSpacingLg) {
             Spacer()
-            Text("Enter the 6-digit code")
+            Text(L("auth.otp.title"))
                 .font(.mishranBodyXxl.weight(.semibold))
-            Text("Sent to \(viewModel.phone)")
+            Text(L("auth.otp.subtitle", viewModel.phone))
                 .font(.mishranBodyMd)
                 .foregroundStyle(.secondary)
 
-            TextField("6-digit code", text: $viewModel.code)
+            TextField(L("auth.otp.placeholder"), text: $viewModel.code)
                 .font(.mishranDisplay.weight(.semibold))
                 .keyboardType(.numberPad)
                 .multilineTextAlignment(.center)
@@ -54,7 +54,7 @@ struct OTPView: View {
                         .tint(Color.mishranBrandCanvas)
                         .frame(maxWidth: .infinity)
                 } else {
-                    Text("Verify")
+                    Text(L("auth.otp.cta"))
                         .font(.mishranBodyLg.weight(.semibold))
                         .frame(maxWidth: .infinity)
                 }
@@ -65,7 +65,7 @@ struct OTPView: View {
             .controlSize(.large)
             .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
             .disabled(!viewModel.canSubmit)
-            .accessibilityLabel("Verify code")
+            .accessibilityLabel(L("auth.otp.cta"))
 
             Button("Wrong number? Start over") {
                 viewModel.restart()

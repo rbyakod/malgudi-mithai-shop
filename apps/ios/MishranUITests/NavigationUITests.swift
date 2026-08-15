@@ -7,8 +7,12 @@ final class NavigationUITests: XCTestCase {
         let app = XCUIApplication()
         // Seed the SwiftData catalog so the rail renders without a backend;
         // reset first so an earlier live-API run can't leak its rows in
-        // (argument strings mirror the SeedData constants).
-        app.launchArguments = ["-resetStore", "-seedCatalog", "-signedInOnce", "false"]
+        // (argument strings mirror the SeedData constants). -AppleLanguages
+        // pins the English labels these assertions expect (Task 20.3 i18n).
+        app.launchArguments = [
+            "-resetStore", "-seedCatalog", "-signedInOnce", "false",
+            "-AppleLanguages", "(en)",
+        ]
         app.launch()
         // ProductCard surfaces "name, price" as the button's accessibility
         // label (not a static text), so query buttons.
@@ -24,7 +28,7 @@ final class NavigationUITests: XCTestCase {
     func testOrderDeepLinkOpensOrderDetail() throws {
         let app = XCUIApplication()
         // Same argument-domain override as the other home-expecting tests.
-        app.launchArguments = ["-signedInOnce", "false"]
+        app.launchArguments = ["-signedInOnce", "false", "-AppleLanguages", "(en)"]
         app.launch()
         let url = try XCTUnwrap(URL(string: "mishran://order/ord_ui_1"))
         app.open(url)
@@ -36,7 +40,10 @@ final class NavigationUITests: XCTestCase {
     /// still lives in the catalog's filter sheet, covered by unit tests).
     func testVerticalPortalPushesCatalogTab() throws {
         let app = XCUIApplication()
-        app.launchArguments = ["-resetStore", "-seedCatalog", "-signedInOnce", "false"]
+        app.launchArguments = [
+            "-resetStore", "-seedCatalog", "-signedInOnce", "false",
+            "-AppleLanguages", "(en)",
+        ]
         app.launch()
 
         // The Mithai portal is deterministic offline: seeded catalog rows

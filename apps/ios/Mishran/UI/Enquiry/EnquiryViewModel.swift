@@ -33,7 +33,7 @@ final class EnquiryViewModel {
         if let response = await repository.submit(form.input) {
             lead = response
         } else {
-            errorMessage = "Something went wrong. Please try again."
+            errorMessage = L("enquiry.error")
         }
     }
 }

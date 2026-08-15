@@ -1,9 +1,9 @@
 // MerchDetailView.swift — P2 (Mishran Mobile Apps v1).
 // Merch detail: hero, name, price + availability chips, description, and
 // the "Enquire" CTA — merch is enquiry-led (no cart), so the button pushes
-// the enquiry screen with the type pre-set to corporate. Label matches
-// packages/i18n-strings/en.json (merch.enquire) — TODO(i18n): hardcode
-// sweep wires String(localized:) later.
+// the enquiry screen with the type pre-set to corporate. Label resolves
+// from packages/i18n-strings (merch.enquire) via the L() helper —
+// Task 20.3 wiring.
 import SwiftUI
 
 struct MerchDetailView: View {
@@ -19,16 +19,16 @@ struct MerchDetailView: View {
             if let merch {
                 content(merch)
             } else if isLoading {
-                ProgressView("Loading…")
+                ProgressView(L("common.loading"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.top, .mishranSpacingXl)
             } else {
                 ContentUnavailableView {
-                    Label("Couldn't load this item", systemImage: "exclamationmark.triangle")
+                    Label(L("common.load_error"), systemImage: "exclamationmark.triangle")
                 } description: {
                     Text(errorMessage ?? "")
                 } actions: {
-                    Button("Try again") {
+                    Button(L("common.retry")) {
                         Task { await load() }
                     }
                 }
@@ -77,7 +77,7 @@ struct MerchDetailView: View {
             Button {
                 router.push(.enquiry(type: .corporate))
             } label: {
-                Label("Enquire", systemImage: "ellipsis.bubble")
+                Label(L("merch.enquire"), systemImage: "ellipsis.bubble")
                     .font(.mishranBodyLg.weight(.semibold))
                     .frame(maxWidth: .infinity, minHeight: 44)
             }
@@ -103,7 +103,7 @@ struct MerchDetailView: View {
         } catch let error as APIError {
             errorMessage = Self.message(for: error)
         } catch {
-            errorMessage = "Couldn't load this item. Try again."
+            errorMessage = L("common.load_error")
         }
     }
 
@@ -111,6 +111,6 @@ struct MerchDetailView: View {
         if case let .api(_, message, _, _) = error {
             return message
         }
-        return "Couldn't load this item. Try again."
+        return L("common.load_error")
     }
 }

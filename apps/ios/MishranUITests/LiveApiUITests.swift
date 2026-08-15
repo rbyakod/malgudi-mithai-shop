@@ -23,6 +23,9 @@ final class LiveApiUITests: XCTestCase {
             "-apiBaseURL", Self.liveBaseURL,
             "-pushPermissionRequested", "true",
             "-signedInOnce", "false",
+            // Pin the English copy the label assertions expect (Task 20.3
+            // wired the search placeholder to catalog.search.placeholder).
+            "-AppleLanguages", "(en)",
         ]
         app.launch()
         return app
@@ -43,7 +46,11 @@ final class LiveApiUITests: XCTestCase {
 
         // 2. Search narrows to a known live product (Gond laddu, scraped
         //    catalog). The saved-catalog error message must never appear.
-        let searchField = app.textFields["Search sweets"]
+        // The query matches on the placeholder prefix so wording tweaks to
+        // catalog.search.placeholder can't break the lookup.
+        let searchField = app.textFields.matching(
+            NSPredicate(format: "label BEGINSWITH %@", "Search sweets")
+        ).firstMatch
         XCTAssertTrue(searchField.waitForExistence(timeout: 5), "Search bar should exist")
         searchField.tap()
         searchField.typeText("Gond")

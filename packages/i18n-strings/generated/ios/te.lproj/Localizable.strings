@@ -152,3 +152,14 @@
 "vertical.qsr.available_at" = "అందుబాటులో";
 "vertical.qsr.veg" = "శాఖాహారం";
 "vertical.qsr.spice" = "కారం";
+"home.shop_by_vertical" = "విభాగం వారీగా కొనండి";
+"home.browse" = "స్వీట్లు చూడండి";
+"product.added_to_cart" = "కార్టులో చేర్చబడింది";
+"catalog.empty_hint" = "వేరే శోధన ప్రయత్నించండి లేదా ఫిల్టర్‌లను తీసివేయండి.";
+"cart.empty_hint" = "నింపడానికి స్వీట్ల జాబితా చూడండి.";
+"orders.empty_hint" = "మీ స్వీట్స్ ఆర్డర్‌లు ఇక్కడ కనిపిస్తాయి.";
+"common.load_error" = "లోడ్ కాలేదు. మళ్లీ ప్రయత్నించండి.";
+"order.reference" = "ఆర్డర్ {id}";
+"order.confirmed" = "ఆర్డర్ నిర్ధారించబడింది";
+"order.continue_shopping" = "షాపింగ్ కొనసాగించండి";
+"account.language_relaunch" = "తర్వాతిసారి యాప్ తెరిచినప్పుడు వర్తిస్తుంది.";

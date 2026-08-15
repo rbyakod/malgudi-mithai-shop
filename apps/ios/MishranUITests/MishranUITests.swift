@@ -9,8 +9,9 @@ final class MishranUITests: XCTestCase {
         // Argument-domain override: even if a leftover persistent
         // "signed in once" flag exists, this launch must land on the home
         // surface (the Task 20.5 sign-in gate must only trip when a session
-        // really died, never on a pristine boot).
-        app.launchArguments = ["-signedInOnce", "false"]
+        // really died, never on a pristine boot). -AppleLanguages pins the
+        // English copy these label assertions expect (Task 20.3 i18n).
+        app.launchArguments = ["-signedInOnce", "false", "-AppleLanguages", "(en)"]
         app.launch()
         // P1: home restructured to the Android shape (hero + best-sellers
         // rail + family chips); the catalog grid is one push away.

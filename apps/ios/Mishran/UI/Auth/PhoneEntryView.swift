@@ -15,13 +15,15 @@ struct PhoneEntryView: View {
             Image(systemName: "circle.hexagongrid.fill")
                 .font(.system(size: 48))
                 .foregroundStyle(Color.mishranBrandAccent)
-            Text("Mishran")
+            Text(L("app.name"))
                 .font(.mishranDisplay.weight(.bold))
-            Text("Sign in to order fresh mithai.")
+            Text(L("auth.phone.title"))
+                .font(.mishranBodyLg.weight(.semibold))
+            Text(L("auth.phone.subtitle"))
                 .font(.mishranBodyLg)
                 .foregroundStyle(.secondary)
 
-            TextField("Phone number", text: $viewModel.phone)
+            TextField(L("auth.phone.placeholder"), text: $viewModel.phone)
                 .font(.mishranBodyXl)
                 .keyboardType(.phonePad)
                 .textInputAutocapitalization(.never)
@@ -55,7 +57,7 @@ struct PhoneEntryView: View {
                         .tint(Color.mishranBrandCanvas)
                         .frame(maxWidth: .infinity)
                 } else {
-                    Text("Send code")
+                    Text(L("auth.phone.cta"))
                         .font(.mishranBodyLg.weight(.semibold))
                         .frame(maxWidth: .infinity)
                 }
@@ -66,7 +68,7 @@ struct PhoneEntryView: View {
             .controlSize(.large)
             .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
             .disabled(!viewModel.canSubmit)
-            .accessibilityLabel("Send code")
+            .accessibilityLabel(L("auth.phone.cta"))
 
             // Task 15.2: Sign in with Apple sits below the phone path.
             Text("or")
