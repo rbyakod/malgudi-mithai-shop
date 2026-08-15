@@ -58,10 +58,14 @@ android {
         // Production base URL (mobile v1 contract). Must end in "/". Overridden
         // to the emulator host-loopback in the debug build type so a local
         // `npm run dev` on :3000 is reachable from the Android emulator.
+        // NOTE: api.mishran.app was a placeholder for a domain we don't own
+        // (NXDOMAIN) — release builds had no working backend. The storefront's
+        // own domain serves the API; swap here if a dedicated api domain is
+        // ever registered.
         buildConfigField(
             "String",
             "API_BASE_URL",
-            "\"${apiBaseUrlOverride ?: "https://api.mishran.app/api/mobile/v1/"}\"",
+            "\"${apiBaseUrlOverride ?: "https://mishran.pranavb.com/api/mobile/v1/"}\"",
         )
     }
 

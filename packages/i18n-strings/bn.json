@@ -141,6 +141,8 @@
   "home.shop_by_family": "বিভাগ অনুযায়ী কিনুন",
   "home.your_orders": "আপনার অর্ডার",
   "home.journal": "গল্প থেকে",
+  "home.load_error": "দোকান লোড করা যায়নি। সংযোগ দেখে আবার চেষ্টা করুন।",
+  "home.retry": "আবার চেষ্টা করুন",
   "account.signed_in": "সাইন ইন আছেন",
   "account.whatsapp": "হোয়াটসঅ্যাপ করুন",
   "order.help": "এই অর্ডার নিয়ে সাহায্য দরকার?",

@@ -141,6 +141,8 @@
   "home.shop_by_family": "Shop by family",
   "home.your_orders": "Your orders",
   "home.journal": "From the journal",
+  "home.load_error": "Couldn't load the shop. Check your connection and try again.",
+  "home.retry": "Try again",
   "account.signed_in": "Signed in",
   "account.whatsapp": "WhatsApp us",
   "order.help": "Need help with this order?",

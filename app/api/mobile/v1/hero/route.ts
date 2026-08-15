@@ -23,6 +23,7 @@ import { createHash } from 'node:crypto';
 // 5 ../ to repo root from app/api/mobile/v1/hero/
 import config from '../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../lib/api/response';
+import { absoluteMediaURL } from '../../../../../lib/api/catalogSerializers';
 
 /** App vertical for each hero-eligible collection. Gift boxes: see header. */
 const VERTICAL_BY_COLLECTION: Record<string, string> = {
@@ -63,7 +64,14 @@ export async function GET(req: NextRequest) {
       await Promise.all(
         rows.map(async (row) => {
           const collection = row?.product?.relationTo;
-          const id = row?.product?.value;
+          // findGlobal populates polymorphic relationships — value arrives
+          // as the FULL product doc, not the bare id (verified live: REST
+          // /api/globals/home-hero returns a dict at default depth). Passing
+          // the doc to findByID throws and every slide silently dropped —
+          // the carousel never rendered on any surface. Normalize both
+          // shapes before the draft:false re-read.
+          const rawValue = row?.product?.value;
+          const id = rawValue && typeof rawValue === 'object' ? rawValue.id : rawValue;
           const vertical = VERTICAL_BY_COLLECTION[collection ?? ''];
           if (!collection || !id || !vertical) return null;
 
@@ -97,7 +105,9 @@ export async function GET(req: NextRequest) {
             slug: String(doc.slug),
             name: String(row.captionOverride?.trim() || doc.name || ''),
             priceLabel,
-            imageURL: String(media.url),
+            // Apps' image loaders need absolute URLs (relative /api/media
+            // paths resolve only in a browser) — catalogSerializers' rule.
+            imageURL: absoluteMediaURL(String(media.url)),
             imageAlt: String(media.alt || doc.name || ''),
           };
           return slide;

@@ -11,10 +11,9 @@ info:
 servers:
   - url: http://localhost:3000/api/mobile/v1
     description: Local dev
-  - url: https://staging-api.mishran.app/api/mobile/v1
-    description: Staging
-  - url: https://api.mishran.app/api/mobile/v1
-    description: Production
+  - url: https://mishran.pranavb.com/api/mobile/v1
+    description: Production (the storefront domain serves the API; a dedicated
+      api domain was never registered — api.mishran.app is NXDOMAIN)
 
 components:
   securitySchemes:

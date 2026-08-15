@@ -39,6 +39,39 @@ describe("resolveHomeHeroSlides", () => {
     expect(result).toEqual(EMPTY);
   });
 
+  // Regression: the real Local API populates polymorphic relationships to
+  // depth 2, so findGlobal hands back the FULL product doc as `value`, not
+  // the bare id. Passing the doc to findByID threw and the slide silently
+  // dropped — the carousel never rendered despite a curated global.
+  it("extracts the id when findGlobal populates the product relationship", async () => {
+    const doc = {
+      id: "m1",
+      name: "Kaju Katli",
+      slug: "kaju-katli",
+      images: [{ image: { url: "u", alt: "alt" } }],
+      _status: "published",
+    };
+    (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockPayload({
+        findGlobal: vi.fn().mockResolvedValue({
+          slides: [
+            { product: { relationTo: "mithai-products", value: doc } },
+          ],
+        }),
+        findByID: vi.fn().mockResolvedValue(doc),
+      })
+    );
+    const result = await resolveHomeHeroSlides();
+    expect(result.slides).toHaveLength(1);
+    expect(result.slides[0].id).toBe("m1");
+    const payload = await (getPayload as ReturnType<typeof vi.fn>).mock
+      .results[0].value;
+    expect(payload.findByID).toHaveBeenCalledWith({
+      collection: "mithai-products",
+      id: "m1",
+    });
+  });
+
   it("returns empty result when global has no slides field", async () => {
     (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockPayload({

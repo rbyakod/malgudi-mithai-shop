@@ -142,6 +142,8 @@
   <string name="home_shop_by_family">श्रेणी के अनुसार खरीदें</string>
   <string name="home_your_orders">आपके ऑर्डर</string>
   <string name="home_journal">कहानियों से</string>
+  <string name="home_load_error">दुकान लोड नहीं हो सका। कनेक्शन जाँचकर फिर से कोशिश करें।</string>
+  <string name="home_retry">फिर से कोशिश करें</string>
   <string name="account_signed_in">साइन इन हैं</string>
   <string name="account_whatsapp">व्हाट्सऐप पर संपर्क करें</string>
   <string name="order_help">इस ऑर्डर में मदद चाहिए?</string>

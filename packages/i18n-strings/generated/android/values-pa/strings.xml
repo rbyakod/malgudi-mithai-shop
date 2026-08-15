@@ -142,6 +142,8 @@
   <string name="home_shop_by_family">ਸ਼੍ਰੇਣੀ ਅਨੁਸਾਰ ਖਰੀਦੋ</string>
   <string name="home_your_orders">ਤੁਹਾਡੇ ਆਰਡਰ</string>
   <string name="home_journal">ਕਹਾਣੀਆਂ ਤੋਂ</string>
+  <string name="home_load_error">ਦੁਕਾਨ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀ। ਕਨੈਕਸ਼ਨ ਜਾਂਚ ਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
+  <string name="home_retry">ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ</string>
   <string name="account_signed_in">ਸਾਈਨ ਇਨ ਹੋ</string>
   <string name="account_whatsapp">ਵਾਟਸਐਪ ਕਰੋ</string>
   <string name="order_help">ਇਸ ਆਰਡਰ ਬਾਰੇ ਮਦਦ ਚਾਹੀਦੀ ਹੈ?</string>
