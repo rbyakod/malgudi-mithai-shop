@@ -11,10 +11,33 @@ export class RateLimiter {
     const now = new Date();
     const windowStart = new Date(now.getTime() - windowSeconds * 1000);
 
-    // Atomic upsert + increment
+    // Atomic upsert + increment with an in-pipeline window reset. The filter
+    // matches on _id ALONE — deliberately not on windowStart: a stale bucket
+    // from an earlier window must reset the counter, not let the upsert try a
+    // second insert with the same _id (E11000, which surfaced as a bare 500
+    // for every phone returning after an idle window).
     const result = await col.findOneAndUpdate(
-      { _id: key, windowStart: { $gte: windowStart } },
-      { $inc: { count: 1 }, $setOnInsert: { windowStart: now } },
+      { _id: key },
+      [
+        {
+          $set: {
+            count: {
+              $cond: [
+                { $gte: ['$windowStart', windowStart] },
+                { $add: ['$count', 1] },
+                1,
+              ],
+            },
+            windowStart: {
+              $cond: [
+                { $gte: ['$windowStart', windowStart] },
+                '$windowStart',
+                now,
+              ],
+            },
+          },
+        },
+      ],
       { upsert: true, returnDocument: 'after' },
     );
 

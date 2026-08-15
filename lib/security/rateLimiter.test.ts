@@ -33,4 +33,20 @@ describe('RateLimiter', () => {
     await limiter.check('phone:A', 2, 3600);
     await expect(limiter.check('phone:B', 2, 3600)).resolves.toBeUndefined();
   });
+
+  it('resets an expired window instead of colliding on _id', async () => {
+    // A bucket left over from an earlier window used to make the upsert
+    // attempt a second insert with the same _id (E11000 → bare 500).
+    type Bucket = { _id: string; count: number; windowStart: Date };
+    const buckets = client.db().collection<Bucket>('rateBuckets');
+    await buckets.insertOne({
+      _id: 'phone:stale',
+      count: 5,
+      windowStart: new Date(Date.now() - 2 * 3600 * 1000),
+    });
+    await expect(limiter.check('phone:stale', 5, 3600)).resolves.toBeUndefined();
+    const doc = await buckets.findOne({ _id: 'phone:stale' });
+    expect(doc?.count).toBe(1);
+    expect(doc?.windowStart).toBeInstanceOf(Date);
+  });
 });
