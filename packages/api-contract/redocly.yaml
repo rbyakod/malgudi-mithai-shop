@@ -1,0 +1,13 @@
+# redocly.yaml — lint config for openapi.yaml.
+#
+# The spec's established style documents every operation via `description`
+# blocks rather than one-line `summary` fields, and deliberately omits
+# `operationId` (both app codebases consume the generated *schemas*, not
+# generated API-method names — minting ids now would churn the generated
+# Kotlin/Swift clients for zero consumer value). Downgrade those two
+# recommended rules so lint gates on structure, not prose style.
+extends:
+  - recommended
+rules:
+  operation-summary: off
+  operation-operationId: off

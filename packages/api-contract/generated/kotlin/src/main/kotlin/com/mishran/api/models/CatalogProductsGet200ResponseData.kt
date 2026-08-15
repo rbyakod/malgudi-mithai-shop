@@ -27,7 +27,6 @@ import com.mishran.api.models.Product
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -53,10 +52,7 @@ data class CatalogProductsGet200ResponseData (
     @Json(name = "pageSize")
     val pageSize: kotlin.Int
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

@@ -44,7 +44,12 @@ import com.mishran.app.util.RazorpaySdkLauncher
 
 @Composable
 fun CheckoutScreen(
-    onOrderPlaced: (orderId: String) -> Unit,
+    /**
+     * Order placed + verified. Carries the ETA extras (Task 10.4) so the
+     * NavGraph can hand them to the confirmation screen: the picked slot's
+     * label (fresh tier) or the SLA in days (shelf tier, no slot).
+     */
+    onOrderPlaced: (orderId: String, slotLabel: String?, shelfSlaDays: Int?) -> Unit,
     viewModel: CheckoutViewModel = hiltViewModel(),
     razorpayLauncher: RazorpayLauncher = RazorpaySdkLauncher(),
 ) {
@@ -72,7 +77,11 @@ fun CheckoutScreen(
                         snackbarHostState.showSnackbar("Couldn't open the payment sheet.")
                     }
                 }
-                is CheckoutEvent.OrderPlaced -> onOrderPlaced(event.orderId)
+                is CheckoutEvent.OrderPlaced -> onOrderPlaced(
+                    event.orderId,
+                    event.slotLabel,
+                    event.shelfSlaDays,
+                )
                 is CheckoutEvent.CartChanged -> snackbarHostState.showSnackbar(
                     event.message ?: "Your cart changed — please review it and try again.",
                 )

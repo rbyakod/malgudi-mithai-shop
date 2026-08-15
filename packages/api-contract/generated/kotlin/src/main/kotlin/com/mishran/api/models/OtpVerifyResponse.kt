@@ -27,7 +27,6 @@ import com.mishran.api.models.Customer
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -49,10 +48,7 @@ data class OtpVerifyResponse (
     @Json(name = "customer")
     val customer: Customer
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

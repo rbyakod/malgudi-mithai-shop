@@ -28,7 +28,6 @@ import com.mishran.api.models.OrderTotals
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -63,10 +62,7 @@ data class CartSnapshot (
     @Json(name = "expiresAt")
     val expiresAt: kotlin.String
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

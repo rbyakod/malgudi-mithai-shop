@@ -26,7 +26,6 @@ package com.mishran.api.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * Order totals in paise (INR). All zero today; real pricing lands in Phase 8 alongside the commerce schema on MithaiProducts. 
@@ -56,10 +55,7 @@ data class OrderTotals (
     @Json(name = "totalInPaise")
     val totalInPaise: kotlin.Int
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

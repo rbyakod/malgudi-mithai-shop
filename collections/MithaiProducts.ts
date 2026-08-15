@@ -92,6 +92,14 @@ export const MithaiProducts: CollectionConfig = {
       },
     },
     {
+      name: "featured",
+      type: "checkbox",
+      admin: {
+        description:
+          "Flags the product for the apps' Best sellers rail. Keep the set small (~8–12), one per major family where possible.",
+      },
+    },
+    {
       name: "weight",
       type: "text",
       admin: {

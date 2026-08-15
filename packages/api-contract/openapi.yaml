@@ -44,6 +44,9 @@ components:
                 - PAYMENT_ABANDONED
                 - ORDER_NOT_FOUND
                 - SNAPSHOT_NOT_FOUND
+                - PRODUCT_NOT_FOUND
+                - STORY_NOT_FOUND
+                - NOT_FOUND
                 - INVALID_STATE_TRANSITION
                 - TOKEN_EXPIRED
                 - TOKEN_REVOKED
@@ -151,6 +154,12 @@ components:
         displayPrice:
           type: [string, 'null']
           description: Display-only. Commerce deferred to Phase 8.
+        weight:
+          type: [string, 'null']
+          description: 'Net pack weight as display text, e.g. "250 g", "1 kg". Drives the pack-size chip.'
+        featured:
+          type: boolean
+          description: Flags the product for the apps' Best sellers rail.
         freshnessStatus:
           type: [string, 'null']
           enum: [made-daily, made-to-order, batch-frozen, null]
@@ -177,6 +186,142 @@ components:
         updatedAt:
           type: [string, 'null']
           format: date-time
+    Story:
+      type: object
+      required: [id, slug, title, pillar]
+      description: |
+        Published journal story. Mirrors collections/Stories.ts;
+        `_status: draft` docs are excluded server-side.
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        title: { type: string }
+        pillar:
+          type: string
+          enum: [farm, milk, karigar, karigari, packaging, festival, regional, recipe, journal]
+        excerpt:
+          type: [string, 'null']
+        heroImage:
+          type: [string, 'null']
+          description: Resolved hero image URL (Payload upload flattened).
+        publishedAt:
+          type: [string, 'null']
+          format: date-time
+        updatedAt:
+          type: [string, 'null']
+          format: date-time
+    StoryDetail:
+      type: object
+      description: Story plus flattened body text. /stories/{slug} response.
+      allOf:
+        - $ref: '#/components/schemas/Story'
+        - type: object
+          properties:
+            body:
+              type: [string, 'null']
+              description: Lexical rich text flattened to paragraphs joined by newlines.
+    QsrItem:
+      type: object
+      required: [id, slug, name]
+      description: |
+        QSR counter-menu item. Mirrors collections/QsrMenuItems.ts.
+        Walk-in vertical — no price, no cart. `slug` is server-computed
+        via slugify(name); the collection has no slug field.
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        category:
+          type: [string, 'null']
+        description:
+          type: [string, 'null']
+        image:
+          type: [string, 'null']
+          description: Resolved image URL (singular upload field).
+        veg:
+          type: [boolean, 'null']
+        spiceLevel:
+          type: [integer, 'null']
+        availableAtStores:
+          type: array
+          items: { type: string }
+        updatedAt:
+          type: [string, 'null']
+          format: date-time
+    SnackRetailer:
+      type: object
+      required: [label, url]
+      properties:
+        label: { type: string }
+        url: { type: string }
+    Snack:
+      type: object
+      required: [id, slug, name]
+      description: |
+        Retail snack product. Mirrors collections/SnackProducts.ts.
+        Retail-only vertical — MSRP is display; purchase CTAs route to
+        external retailers. `slug` is server-computed via slugify(name).
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        category:
+          type: [string, 'null']
+        description:
+          type: [string, 'null']
+        images:
+          type: array
+          items: { type: string }
+        weight:
+          type: [string, 'null']
+        msrp:
+          type: [string, 'null']
+        retailers:
+          type: array
+          items: { $ref: '#/components/schemas/SnackRetailer' }
+        updatedAt:
+          type: [string, 'null']
+          format: date-time
+    Merch:
+      type: object
+      required: [id, slug, name]
+      description: |
+        Merchandise product. Mirrors collections/MerchProducts.ts.
+        Enquiry-led vertical — `availability: enquiry-only` routes the
+        app UI to the leads form. `slug` is server-computed via slugify(name).
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        type:
+          type: [string, 'null']
+        description:
+          type: [string, 'null']
+        images:
+          type: array
+          items: { type: string }
+        price:
+          type: [string, 'null']
+        availability:
+          type: [string, 'null']
+        updatedAt:
+          type: [string, 'null']
+          format: date-time
+    Brand:
+      type: object
+      required: [whatsappNumber, whatsappDigits]
+      description: |
+        Brand support contact for the apps' help surfaces. Only WhatsApp
+        fields from the analytics-settings global are exposed — analytics
+        IDs (GA4/Pixel/Hotjar) deliberately do NOT appear on this public
+        endpoint. Falls back to the shared placeholder number when unset.
+      properties:
+        whatsappNumber:
+          type: string
+          description: Display form, e.g. +91-98765-43210.
+        whatsappDigits:
+          type: string
+          description: Digits only, for wa.me deep links.
     CartItem:
       type: object
       required: [productId, quantity]
@@ -466,6 +611,49 @@ paths:
                 type: object
                 properties:
                   data: { $ref: '#/components/schemas/LogoutResponse' }
+  /auth/apple:
+    post:
+      tags: [auth]
+      security: []
+      description: |
+        Sign in with Apple. The iOS client obtains an identityToken (RS256
+        JWT) from ASAuthorizationAppleIDCredential and POSTs it here.
+        Server verifies the token against Apple JWks, rejects replay
+        (same identityToken twice → 409), upserts a customer keyed by the
+        Apple `sub`, and returns the same JWT pair + customer shape as
+        /auth/otp/verify so the client's post-login flow is identical.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identityToken]
+              properties:
+                identityToken: { type: string }
+                name:
+                  type: string
+                  description: Optional display name passed on first authorization.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/OtpVerifyResponse' }
+        '401':
+          description: Token invalid or revoked
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '409':
+          description: identityToken replay detected
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
   /catalog/products:
     get:
       tags: [catalog]
@@ -560,6 +748,210 @@ paths:
                 required: [error]
                 properties:
                   error: { $ref: '#/components/schemas/Error' }
+  /catalog/qsr:
+    get:
+      tags: [catalog]
+      security: []
+      description: QSR counter-menu list. Walk-in vertical — no price, no cart.
+      parameters:
+        - in: header
+          name: If-None-Match
+          schema: { type: string }
+        - in: query
+          name: category
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1, minimum: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, default: 50, minimum: 1, maximum: 100 }
+      responses:
+        '200':
+          description: OK
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Paginated'
+                      - type: object
+                        properties:
+                          items:
+                            type: array
+                            items: { $ref: '#/components/schemas/QsrItem' }
+        '304':
+          description: Not Modified
+          headers:
+            ETag:
+              schema: { type: string }
+  /catalog/qsr/{slug}:
+    get:
+      tags: [catalog]
+      security: []
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+          description: slugify(name) — server-computed; the collection has no slug field.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/QsrItem' }
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /catalog/snacks:
+    get:
+      tags: [catalog]
+      security: []
+      description: Retail snacks list. MSRP display-only; CTAs route to external retailers.
+      parameters:
+        - in: header
+          name: If-None-Match
+          schema: { type: string }
+        - in: query
+          name: category
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1, minimum: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, default: 50, minimum: 1, maximum: 100 }
+      responses:
+        '200':
+          description: OK
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Paginated'
+                      - type: object
+                        properties:
+                          items:
+                            type: array
+                            items: { $ref: '#/components/schemas/Snack' }
+        '304':
+          description: Not Modified
+          headers:
+            ETag:
+              schema: { type: string }
+  /catalog/snacks/{slug}:
+    get:
+      tags: [catalog]
+      security: []
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+          description: slugify(name) — server-computed.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Snack' }
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /catalog/merch:
+    get:
+      tags: [catalog]
+      security: []
+      description: Merchandise list. Enquiry-led; availability routes the app to the leads form.
+      parameters:
+        - in: header
+          name: If-None-Match
+          schema: { type: string }
+        - in: query
+          name: type
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1, minimum: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, default: 50, minimum: 1, maximum: 100 }
+      responses:
+        '200':
+          description: OK
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Paginated'
+                      - type: object
+                        properties:
+                          items:
+                            type: array
+                            items: { $ref: '#/components/schemas/Merch' }
+        '304':
+          description: Not Modified
+          headers:
+            ETag:
+              schema: { type: string }
+  /catalog/merch/{slug}:
+    get:
+      tags: [catalog]
+      security: []
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+          description: slugify(name) — server-computed.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Merch' }
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
   /catalog/serviceable:
     get:
       tags: [catalog]
@@ -1046,4 +1438,91 @@ paths:
                   data: { type: object, required: [ok], properties: { ok: { type: boolean } } }
         '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
         '422': { description: Unprocessable Entity — invalid body., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  /stories:
+    get:
+      tags: [stories]
+      security: []
+      description: Published-stories list, newest first. Drafts excluded server-side.
+      parameters:
+        - in: header
+          name: If-None-Match
+          schema: { type: string }
+        - in: query
+          name: pillar
+          schema:
+            type: string
+            enum: [farm, milk, karigar, karigari, packaging, festival, regional, recipe, journal]
+        - in: query
+          name: page
+          schema: { type: integer, default: 1, minimum: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, default: 50, minimum: 1, maximum: 100 }
+      responses:
+        '200':
+          description: OK
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Paginated'
+                      - type: object
+                        properties:
+                          items:
+                            type: array
+                            items: { $ref: '#/components/schemas/Story' }
+        '304':
+          description: Not Modified
+          headers:
+            ETag:
+              schema: { type: string }
+  /stories/{slug}:
+    get:
+      tags: [stories]
+      security: []
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+          description: Unique story slug (collections/Stories.slug).
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/StoryDetail' }
+        '404':
+          description: Not Found — no published story matches the slug.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /brand:
+    get:
+      tags: [brand]
+      security: []
+      description: |
+        Brand support contact for the apps' help surfaces. No ETag — single
+        tiny doc, cached client-side.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Brand' }
 

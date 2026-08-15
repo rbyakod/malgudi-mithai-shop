@@ -40,6 +40,21 @@ type CatalogProduct = {
   sourceUrl: string;
 };
 
+// Best-sellers set for the apps' featured rail — one coherent boutique
+// pick across families, all with hero images. NOTE: re-running the seed
+// resets admin overrides of `featured`; adjust here and re-seed to change
+// the canonical set.
+const FEATURED_SLUGS = new Set([
+  "kaju-katli",
+  "motichoor-laddu",
+  "milk-cake",
+  "besan-burfi",
+  "mysore-pak",
+  "rasgulla",
+  "soan-papdi-desi-ghee",
+  "kaju-kalash",
+]);
+
 // Fold the scrape's mixed weight spellings ("1 kg" / "1 Kg" / "1kg" / "1Kg",
 // "480 gm") into one canonical form: "<n> g" under 1 kg, "<n> kg" at and
 // above, non-weights ("1 pack") passed through untouched.
@@ -322,6 +337,7 @@ async function main() {
       storage: p.storage,
       freshnessStatus: p.freshnessStatus,
       displayPrice: p.displayPrice,
+      featured: FEATURED_SLUGS.has(p.slug),
       weight: normalizeWeight(p.weight),
       images: imageIds.map((id) => ({ image: id })),
       story: lexicalParagraph(p.description || `${p.name} — a Mishran house specialty.`),

@@ -205,6 +205,77 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/apple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Sign in with Apple. The iOS client obtains an identityToken (RS256
+         *     JWT) from ASAuthorizationAppleIDCredential and POSTs it here.
+         *     Server verifies the token against Apple JWks, rejects replay
+         *     (same identityToken twice → 409), upserts a customer keyed by the
+         *     Apple `sub`, and returns the same JWT pair + customer shape as
+         *     /auth/otp/verify so the client's post-login flow is identical.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        identityToken: string;
+                        /** @description Optional display name passed on first authorization. */
+                        name?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["OtpVerifyResponse"];
+                        };
+                    };
+                };
+                /** @description Token invalid or revoked */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description identityToken replay detected */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/catalog/products": {
         parameters: {
             query?: never;
@@ -302,6 +373,318 @@ export interface paths {
                         "application/json": {
                             error: components["schemas"]["Error"];
                         };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/qsr": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description QSR counter-menu list. Walk-in vertical — no price, no cart. */
+        get: {
+            parameters: {
+                query?: {
+                    category?: string;
+                    page?: number;
+                    pageSize?: number;
+                };
+                header?: {
+                    "If-None-Match"?: string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        ETag?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Paginated"] & {
+                                items?: components["schemas"]["QsrItem"][];
+                            };
+                        };
+                    };
+                };
+                /** @description Not Modified */
+                304: {
+                    headers: {
+                        ETag?: string;
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/qsr/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description slugify(name) — server-computed; the collection has no slug field. */
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["QsrItem"];
+                        };
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/snacks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Retail snacks list. MSRP display-only; CTAs route to external retailers. */
+        get: {
+            parameters: {
+                query?: {
+                    category?: string;
+                    page?: number;
+                    pageSize?: number;
+                };
+                header?: {
+                    "If-None-Match"?: string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        ETag?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Paginated"] & {
+                                items?: components["schemas"]["Snack"][];
+                            };
+                        };
+                    };
+                };
+                /** @description Not Modified */
+                304: {
+                    headers: {
+                        ETag?: string;
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/snacks/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description slugify(name) — server-computed. */
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Snack"];
+                        };
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/merch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Merchandise list. Enquiry-led; availability routes the app to the leads form. */
+        get: {
+            parameters: {
+                query?: {
+                    type?: string;
+                    page?: number;
+                    pageSize?: number;
+                };
+                header?: {
+                    "If-None-Match"?: string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        ETag?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Paginated"] & {
+                                items?: components["schemas"]["Merch"][];
+                            };
+                        };
+                    };
+                };
+                /** @description Not Modified */
+                304: {
+                    headers: {
+                        ETag?: string;
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/merch/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description slugify(name) — server-computed. */
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Merch"];
+                        };
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
                     };
                 };
             };
@@ -1280,6 +1663,151 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/stories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Published-stories list, newest first. Drafts excluded server-side. */
+        get: {
+            parameters: {
+                query?: {
+                    pillar?: "farm" | "milk" | "karigar" | "karigari" | "packaging" | "festival" | "regional" | "recipe" | "journal";
+                    page?: number;
+                    pageSize?: number;
+                };
+                header?: {
+                    "If-None-Match"?: string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        ETag?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Paginated"] & {
+                                items?: components["schemas"]["Story"][];
+                            };
+                        };
+                    };
+                };
+                /** @description Not Modified */
+                304: {
+                    headers: {
+                        ETag?: string;
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stories/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Unique story slug (collections/Stories.slug). */
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["StoryDetail"];
+                        };
+                    };
+                };
+                /** @description Not Found — no published story matches the slug. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/brand": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Brand support contact for the apps' help surfaces. No ETag — single
+         *     tiny doc, cached client-side.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Brand"];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1287,7 +1815,7 @@ export interface components {
         Error: {
             error: {
                 /** @enum {string} */
-                code: "RATE_LIMITED" | "OTP_INVALID" | "OTP_EXPIRED" | "PINCODE_NOT_SERVICEABLE" | "CART_CHANGED" | "STOCK_INSUFFICIENT" | "PAYMENT_FAILED" | "PAYMENT_ABANDONED" | "ORDER_NOT_FOUND" | "SNAPSHOT_NOT_FOUND" | "INVALID_STATE_TRANSITION" | "TOKEN_EXPIRED" | "TOKEN_REVOKED" | "CONFLICT" | "VALIDATION" | "INTERNAL" | "OTP_PROVIDER_DOWN";
+                code: "RATE_LIMITED" | "OTP_INVALID" | "OTP_EXPIRED" | "PINCODE_NOT_SERVICEABLE" | "CART_CHANGED" | "STOCK_INSUFFICIENT" | "PAYMENT_FAILED" | "PAYMENT_ABANDONED" | "ORDER_NOT_FOUND" | "SNAPSHOT_NOT_FOUND" | "PRODUCT_NOT_FOUND" | "STORY_NOT_FOUND" | "NOT_FOUND" | "INVALID_STATE_TRANSITION" | "TOKEN_EXPIRED" | "TOKEN_REVOKED" | "CONFLICT" | "VALIDATION" | "INTERNAL" | "OTP_PROVIDER_DOWN";
                 message: string;
                 fieldErrors?: {
                     [key: string]: string;
@@ -1360,6 +1888,10 @@ export interface components {
             family: "classic" | "original" | "sugar-free" | "regional" | "seasonal";
             /** @description Display-only. Commerce deferred to Phase 8. */
             displayPrice?: string | null;
+            /** @description Net pack weight as display text, e.g. "250 g", "1 kg". Drives the pack-size chip. */
+            weight?: string | null;
+            /** @description Flags the product for the apps' Best sellers rail. */
+            featured?: boolean;
             /** @enum {string|null} */
             freshnessStatus?: "made-daily" | "made-to-order" | "batch-frozen" | null;
             dietaryTags?: string[];
@@ -1373,6 +1905,99 @@ export interface components {
             karigar?: string | null;
             /** Format: date-time */
             updatedAt?: string | null;
+        };
+        /**
+         * @description Published journal story. Mirrors collections/Stories.ts;
+         *     `_status: draft` docs are excluded server-side.
+         */
+        Story: {
+            id: string;
+            slug: string;
+            title: string;
+            /** @enum {string} */
+            pillar: "farm" | "milk" | "karigar" | "karigari" | "packaging" | "festival" | "regional" | "recipe" | "journal";
+            excerpt?: string | null;
+            /** @description Resolved hero image URL (Payload upload flattened). */
+            heroImage?: string | null;
+            /** Format: date-time */
+            publishedAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        /** @description Story plus flattened body text. /stories/{slug} response. */
+        StoryDetail: components["schemas"]["Story"] & {
+            /** @description Lexical rich text flattened to paragraphs joined by newlines. */
+            body?: string | null;
+        };
+        /**
+         * @description QSR counter-menu item. Mirrors collections/QsrMenuItems.ts.
+         *     Walk-in vertical — no price, no cart. `slug` is server-computed
+         *     via slugify(name); the collection has no slug field.
+         */
+        QsrItem: {
+            id: string;
+            slug: string;
+            name: string;
+            category?: string | null;
+            description?: string | null;
+            /** @description Resolved image URL (singular upload field). */
+            image?: string | null;
+            veg?: boolean | null;
+            spiceLevel?: number | null;
+            availableAtStores?: string[];
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        SnackRetailer: {
+            label: string;
+            url: string;
+        };
+        /**
+         * @description Retail snack product. Mirrors collections/SnackProducts.ts.
+         *     Retail-only vertical — MSRP is display; purchase CTAs route to
+         *     external retailers. `slug` is server-computed via slugify(name).
+         */
+        Snack: {
+            id: string;
+            slug: string;
+            name: string;
+            category?: string | null;
+            description?: string | null;
+            images?: string[];
+            weight?: string | null;
+            msrp?: string | null;
+            retailers?: components["schemas"]["SnackRetailer"][];
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        /**
+         * @description Merchandise product. Mirrors collections/MerchProducts.ts.
+         *     Enquiry-led vertical — `availability: enquiry-only` routes the
+         *     app UI to the leads form. `slug` is server-computed via slugify(name).
+         */
+        Merch: {
+            id: string;
+            slug: string;
+            name: string;
+            type?: string | null;
+            description?: string | null;
+            images?: string[];
+            price?: string | null;
+            availability?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        /**
+         * @description Brand support contact for the apps' help surfaces. Only WhatsApp
+         *     fields from the analytics-settings global are exposed — analytics
+         *     IDs (GA4/Pixel/Hotjar) deliberately do NOT appear on this public
+         *     endpoint. Falls back to the shared placeholder number when unset.
+         */
+        Brand: {
+            /** @description Display form, e.g. +91-98765-43210. */
+            whatsappNumber: string;
+            /** @description Digits only, for wa.me deep links. */
+            whatsappDigits: string;
         };
         CartItem: {
             productId: string;

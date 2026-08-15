@@ -26,7 +26,6 @@ package com.mishran.api.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -46,10 +45,7 @@ data class RazorpayCreateOrderRequest (
     @Json(name = "deliveryAddressId")
     val deliveryAddressId: kotlin.String
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

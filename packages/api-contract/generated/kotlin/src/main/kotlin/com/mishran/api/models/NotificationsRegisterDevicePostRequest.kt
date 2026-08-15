@@ -26,13 +26,13 @@ package com.mishran.api.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
  *
  * @param platform 
  * @param pushToken 
+ * @param liveActivityToken ActivityKit push token while a delivery Live Activity is in flight (iOS).
  * @param appVersion 
  * @param deviceModel 
  * @param osVersion 
@@ -48,6 +48,10 @@ data class NotificationsRegisterDevicePostRequest (
     @Json(name = "pushToken")
     val pushToken: kotlin.String,
 
+    /* ActivityKit push token while a delivery Live Activity is in flight (iOS). */
+    @Json(name = "liveActivityToken")
+    val liveActivityToken: kotlin.String? = null,
+
     @Json(name = "appVersion")
     val appVersion: kotlin.String? = null,
 
@@ -60,10 +64,7 @@ data class NotificationsRegisterDevicePostRequest (
     @Json(name = "locale")
     val locale: kotlin.String? = null
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
     /**
      * 

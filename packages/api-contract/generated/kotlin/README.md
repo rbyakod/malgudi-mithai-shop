@@ -53,20 +53,30 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
 | *AddressesApi* | [**addressesIdGet**](docs/AddressesApi.md#addressesidget) | **GET** /addresses/{id} | Get one address (owner-scoped; 404 if owned by another) |
 | *AddressesApi* | [**addressesIdPatch**](docs/AddressesApi.md#addressesidpatch) | **PATCH** /addresses/{id} | Update an address (owner-scoped) |
 | *AddressesApi* | [**addressesPost**](docs/AddressesApi.md#addressespost) | **POST** /addresses | Create a new address |
+| *AuthApi* | [**authApplePost**](docs/AuthApi.md#authapplepost) | **POST** /auth/apple |  |
 | *AuthApi* | [**authLogoutPost**](docs/AuthApi.md#authlogoutpost) | **POST** /auth/logout |  |
 | *AuthApi* | [**authOtpSendPost**](docs/AuthApi.md#authotpsendpost) | **POST** /auth/otp/send |  |
 | *AuthApi* | [**authOtpVerifyPost**](docs/AuthApi.md#authotpverifypost) | **POST** /auth/otp/verify |  |
 | *AuthApi* | [**authRefreshPost**](docs/AuthApi.md#authrefreshpost) | **POST** /auth/refresh |  |
+| *BrandApi* | [**brandGet**](docs/BrandApi.md#brandget) | **GET** /brand |  |
 | *CartApi* | [**cartValidatePost**](docs/CartApi.md#cartvalidatepost) | **POST** /cart/validate |  |
+| *CatalogApi* | [**catalogMerchGet**](docs/CatalogApi.md#catalogmerchget) | **GET** /catalog/merch |  |
+| *CatalogApi* | [**catalogMerchSlugGet**](docs/CatalogApi.md#catalogmerchslugget) | **GET** /catalog/merch/{slug} |  |
 | *CatalogApi* | [**catalogProductsGet**](docs/CatalogApi.md#catalogproductsget) | **GET** /catalog/products |  |
 | *CatalogApi* | [**catalogProductsSlugGet**](docs/CatalogApi.md#catalogproductsslugget) | **GET** /catalog/products/{slug} |  |
+| *CatalogApi* | [**catalogQsrGet**](docs/CatalogApi.md#catalogqsrget) | **GET** /catalog/qsr |  |
+| *CatalogApi* | [**catalogQsrSlugGet**](docs/CatalogApi.md#catalogqsrslugget) | **GET** /catalog/qsr/{slug} |  |
 | *CatalogApi* | [**catalogServiceableGet**](docs/CatalogApi.md#catalogserviceableget) | **GET** /catalog/serviceable |  |
+| *CatalogApi* | [**catalogSnacksGet**](docs/CatalogApi.md#catalogsnacksget) | **GET** /catalog/snacks |  |
+| *CatalogApi* | [**catalogSnacksSlugGet**](docs/CatalogApi.md#catalogsnacksslugget) | **GET** /catalog/snacks/{slug} |  |
 | *LoyaltyApi* | [**accountLoyaltyPassGet**](docs/LoyaltyApi.md#accountloyaltypassget) | **GET** /account/loyalty-pass | Generate / refresh the customer's Apple Wallet loyalty pass (signed URL) |
 | *NotificationsApi* | [**notificationsRegisterDevicePost**](docs/NotificationsApi.md#notificationsregisterdevicepost) | **POST** /notifications/register-device | Register / refresh a push token (idempotent upsert) |
 | *OrdersApi* | [**ordersGet**](docs/OrdersApi.md#ordersget) | **GET** /orders |  |
 | *OrdersApi* | [**ordersIdGet**](docs/OrdersApi.md#ordersidget) | **GET** /orders/{id} |  |
 | *PaymentsApi* | [**paymentsRazorpayCreateOrderPost**](docs/PaymentsApi.md#paymentsrazorpaycreateorderpost) | **POST** /payments/razorpay/create-order |  |
 | *PaymentsApi* | [**paymentsRazorpayVerifyPost**](docs/PaymentsApi.md#paymentsrazorpayverifypost) | **POST** /payments/razorpay/verify |  |
+| *StoriesApi* | [**storiesGet**](docs/StoriesApi.md#storiesget) | **GET** /stories |  |
+| *StoriesApi* | [**storiesSlugGet**](docs/StoriesApi.md#storiesslugget) | **GET** /stories/{slug} |  |
 | *WalletApi* | [**walletRegisterPassDevicePost**](docs/WalletApi.md#walletregisterpassdevicepost) | **POST** /wallet/register-pass-device | Register a device token for Apple Wallet .pass updates (idempotent) |
 | *WalletApi* | [**walletUnregisterPassDeviceDelete**](docs/WalletApi.md#walletunregisterpassdevicedelete) | **DELETE** /wallet/unregister-pass-device | Remove a device token from Apple Wallet .pass updates (idempotent) |
 
@@ -82,25 +92,39 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
  - [com.mishran.api.models.AddressesGet200ResponseData](docs/AddressesGet200ResponseData.md)
  - [com.mishran.api.models.AddressesPost201Response](docs/AddressesPost201Response.md)
  - [com.mishran.api.models.AddressesPost201ResponseData](docs/AddressesPost201ResponseData.md)
+ - [com.mishran.api.models.AuthApplePost200Response](docs/AuthApplePost200Response.md)
+ - [com.mishran.api.models.AuthApplePostRequest](docs/AuthApplePostRequest.md)
  - [com.mishran.api.models.AuthLogoutPost200Response](docs/AuthLogoutPost200Response.md)
  - [com.mishran.api.models.AuthOtpSendPost200Response](docs/AuthOtpSendPost200Response.md)
  - [com.mishran.api.models.AuthOtpVerifyPost200Response](docs/AuthOtpVerifyPost200Response.md)
  - [com.mishran.api.models.AuthRefreshPost200Response](docs/AuthRefreshPost200Response.md)
+ - [com.mishran.api.models.Brand](docs/Brand.md)
+ - [com.mishran.api.models.BrandGet200Response](docs/BrandGet200Response.md)
  - [com.mishran.api.models.CartItem](docs/CartItem.md)
  - [com.mishran.api.models.CartSnapshot](docs/CartSnapshot.md)
  - [com.mishran.api.models.CartSnapshotItem](docs/CartSnapshotItem.md)
  - [com.mishran.api.models.CartValidatePost200Response](docs/CartValidatePost200Response.md)
  - [com.mishran.api.models.CartValidateRequest](docs/CartValidateRequest.md)
  - [com.mishran.api.models.CartValidateRequestSlot](docs/CartValidateRequestSlot.md)
+ - [com.mishran.api.models.CatalogMerchGet200Response](docs/CatalogMerchGet200Response.md)
+ - [com.mishran.api.models.CatalogMerchGet200ResponseData](docs/CatalogMerchGet200ResponseData.md)
+ - [com.mishran.api.models.CatalogMerchSlugGet200Response](docs/CatalogMerchSlugGet200Response.md)
  - [com.mishran.api.models.CatalogProductsGet200Response](docs/CatalogProductsGet200Response.md)
  - [com.mishran.api.models.CatalogProductsGet200ResponseData](docs/CatalogProductsGet200ResponseData.md)
  - [com.mishran.api.models.CatalogProductsSlugGet200Response](docs/CatalogProductsSlugGet200Response.md)
  - [com.mishran.api.models.CatalogProductsSlugGet404Response](docs/CatalogProductsSlugGet404Response.md)
+ - [com.mishran.api.models.CatalogQsrGet200Response](docs/CatalogQsrGet200Response.md)
+ - [com.mishran.api.models.CatalogQsrGet200ResponseData](docs/CatalogQsrGet200ResponseData.md)
+ - [com.mishran.api.models.CatalogQsrSlugGet200Response](docs/CatalogQsrSlugGet200Response.md)
  - [com.mishran.api.models.CatalogServiceableGet200Response](docs/CatalogServiceableGet200Response.md)
+ - [com.mishran.api.models.CatalogSnacksGet200Response](docs/CatalogSnacksGet200Response.md)
+ - [com.mishran.api.models.CatalogSnacksGet200ResponseData](docs/CatalogSnacksGet200ResponseData.md)
+ - [com.mishran.api.models.CatalogSnacksSlugGet200Response](docs/CatalogSnacksSlugGet200Response.md)
  - [com.mishran.api.models.Customer](docs/Customer.md)
  - [com.mishran.api.models.Error](docs/Error.md)
  - [com.mishran.api.models.ErrorError](docs/ErrorError.md)
  - [com.mishran.api.models.LogoutResponse](docs/LogoutResponse.md)
+ - [com.mishran.api.models.Merch](docs/Merch.md)
  - [com.mishran.api.models.NotificationsRegisterDevicePost200Response](docs/NotificationsRegisterDevicePost200Response.md)
  - [com.mishran.api.models.NotificationsRegisterDevicePost200ResponseData](docs/NotificationsRegisterDevicePost200ResponseData.md)
  - [com.mishran.api.models.NotificationsRegisterDevicePostRequest](docs/NotificationsRegisterDevicePostRequest.md)
@@ -120,12 +144,20 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
  - [com.mishran.api.models.PaymentsRazorpayCreateOrderPost200Response](docs/PaymentsRazorpayCreateOrderPost200Response.md)
  - [com.mishran.api.models.PaymentsRazorpayVerifyPost200Response](docs/PaymentsRazorpayVerifyPost200Response.md)
  - [com.mishran.api.models.Product](docs/Product.md)
+ - [com.mishran.api.models.QsrItem](docs/QsrItem.md)
  - [com.mishran.api.models.RazorpayCreateOrderRequest](docs/RazorpayCreateOrderRequest.md)
  - [com.mishran.api.models.RazorpayCreateOrderResponse](docs/RazorpayCreateOrderResponse.md)
  - [com.mishran.api.models.RazorpayVerifyRequest](docs/RazorpayVerifyRequest.md)
  - [com.mishran.api.models.RazorpayVerifyResponse](docs/RazorpayVerifyResponse.md)
  - [com.mishran.api.models.RefreshResponse](docs/RefreshResponse.md)
  - [com.mishran.api.models.ServiceableResponse](docs/ServiceableResponse.md)
+ - [com.mishran.api.models.Snack](docs/Snack.md)
+ - [com.mishran.api.models.SnackRetailer](docs/SnackRetailer.md)
+ - [com.mishran.api.models.StoriesGet200Response](docs/StoriesGet200Response.md)
+ - [com.mishran.api.models.StoriesGet200ResponseData](docs/StoriesGet200ResponseData.md)
+ - [com.mishran.api.models.StoriesSlugGet200Response](docs/StoriesSlugGet200Response.md)
+ - [com.mishran.api.models.Story](docs/Story.md)
+ - [com.mishran.api.models.StoryDetail](docs/StoryDetail.md)
 
 
 <a id="documentation-for-authorization"></a>

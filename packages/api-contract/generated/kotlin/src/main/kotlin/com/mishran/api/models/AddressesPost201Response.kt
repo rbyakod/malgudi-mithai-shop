@@ -27,7 +27,6 @@ import com.mishran.api.models.AddressesPost201ResponseData
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -41,10 +40,7 @@ data class AddressesPost201Response (
     @Json(name = "data")
     val `data`: AddressesPost201ResponseData
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

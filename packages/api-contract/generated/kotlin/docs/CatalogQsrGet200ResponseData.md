@@ -1,0 +1,13 @@
+
+# CatalogQsrGet200ResponseData
+
+## Properties
+| Name | Type | Description | Notes |
+| ------------ | ------------- | ------------- | ------------- |
+| **items** | [**kotlin.collections.List&lt;QsrItem&gt;**](QsrItem.md) |  |  |
+| **total** | **kotlin.Int** |  |  |
+| **page** | **kotlin.Int** |  |  |
+| **pageSize** | **kotlin.Int** |  |  |
+
+
+

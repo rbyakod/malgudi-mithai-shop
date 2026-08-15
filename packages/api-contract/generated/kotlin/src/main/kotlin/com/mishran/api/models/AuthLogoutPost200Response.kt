@@ -27,7 +27,6 @@ import com.mishran.api.models.LogoutResponse
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -41,10 +40,7 @@ data class AuthLogoutPost200Response (
     @Json(name = "data")
     val `data`: LogoutResponse? = null
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

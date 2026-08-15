@@ -28,7 +28,6 @@ import com.mishran.api.models.CartValidateRequestSlot
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 /**
  * 
@@ -50,10 +49,7 @@ data class CartValidateRequest (
     @Json(name = "slot")
     val slot: CartValidateRequestSlot? = null
 
-) : Serializable {
-    companion object {
-        private const val serialVersionUID: Long = 123
-    }
+) {
 
 
 }

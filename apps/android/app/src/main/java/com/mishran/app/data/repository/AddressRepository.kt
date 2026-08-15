@@ -39,6 +39,13 @@ class AddressRepository @Inject constructor(
         null
     }
 
+    /** Owner-scoped delete; false on any failure (offline / 404 collapses). */
+    suspend fun deleteAddress(id: String): Boolean = try {
+        api.deleteAddress(id).data?.ok == true
+    } catch (e: Exception) {
+        false
+    }
+
     /**
      * Pincode serviceability + tier. Hits the catalog route but is checkout's
      * concern: the resolved tier (fresh = Delhi NCR same-day network,

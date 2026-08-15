@@ -15,7 +15,7 @@ import { getPayload } from 'payload';
 import config from '../../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../../lib/api/errors';
-import { flattenLexical } from '../../../../../../../lib/api/richText';
+import { serializeProduct } from '../../../../../../../lib/api/catalogSerializers';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
@@ -39,29 +39,4 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
   } catch (err) {
     return errorResponse(err, traceId);
   }
-}
-
-// Same shape as Task 3.1's serializeProduct — keep them in sync.
-// `images` is `{ image: upload-ref }[]` in Payload; `image.url` is set
-// when media is populated, otherwise fall back to the ref id / bare string.
-function serializeProduct(p: any) {
-  return {
-    id: p.id,
-    slug: p.slug,
-    name: p.name,
-    family: p.family,
-    displayPrice: p.displayPrice ?? null,
-    freshnessStatus: p.freshnessStatus ?? null,
-    dietaryTags: p.dietaryTags ?? [],
-    allergens: p.allergens ?? [],
-    ingredients: p.ingredients ?? null,
-    shelfLife: p.shelfLife ?? null,
-    storage: p.storage ?? null,
-    images: (p.images ?? [])
-      .map((i: any) => i?.image?.url ?? i?.image ?? i?.url ?? i)
-      .filter((u: unknown): u is string => typeof u === 'string'),
-    story: flattenLexical(p.story),
-    karigar: typeof p.karigar === 'object' ? p.karigar?.id ?? null : p.karigar ?? null,
-    updatedAt: p.updatedAt ?? null,
-  };
 }

@@ -2,9 +2,9 @@
 //
 // Thin seam over the Razorpay Checkout SDK. The interface keeps ViewModels
 // and the use case free of SDK types (and unit-testable); the real adapter
-// opens the sheet and routes the Activity's PaymentResultListener callbacks
-// back to the caller. MainActivity forwards results into the singleton —
-// Razorpay only supports the listener-on-activity delivery model.
+// opens the sheet and routes the Activity's PaymentResultWithDataListener
+// callbacks back to the caller. MainActivity forwards results into the
+// singleton — Razorpay only supports the listener-on-activity delivery model.
 package com.mishran.app.util
 
 import android.app.Activity
@@ -69,13 +69,13 @@ class RazorpaySdkLauncher @Inject constructor() : RazorpayLauncher {
         checkout.open(activity, payload)
     }
 
-    /** Called by MainActivity's PaymentResultListener — routes to the caller. */
+    /** Called by MainActivity's with-data listener — routes to the caller. */
     fun onPaymentResultSuccess(razorpayPaymentId: String) {
         val signature = PaymentResultSignatureHolder.pop()
         dispatch(RazorpayOutcome.Success(razorpayPaymentId, signature))
     }
 
-    /** Called by MainActivity's PaymentResultListener on error/cancel. */
+    /** Called by MainActivity's with-data listener on error/cancel. */
     fun onPaymentResultError(code: Int, response: String?) {
         // Code 0 = user dismissed the sheet.
         val outcome = if (code == DISMISSED_CODE) RazorpayOutcome.Dismissed
@@ -93,16 +93,23 @@ class RazorpaySdkLauncher @Inject constructor() : RazorpayLauncher {
     }
 }
 
-/** One pending callback — only one sheet can be open at a time. */
-private object Pending {
+/**
+ * One pending callback — only one sheet can be open at a time. Internal (not
+ * file-private) so the JVM tests can seed it and assert what dispatch
+ * delivers; production only writes it from [RazorpaySdkLauncher.launch].
+ */
+internal object Pending {
     @Volatile
     var callback: ((RazorpayOutcome) -> Unit)? = null
 }
 
 /**
- * Razorpay's success callback carries only the payment id — the signature
- * arrives in the activity's onActivityResult data extras. MainActivity parks
- * it here when it sees the Checkout contract's request code.
+ * Razorpay's plain success callback carries only the payment id; the HMAC
+ * signature the server verifies against arrives solely in the with-data
+ * variant, on the [com.razorpay.PaymentData] handed to
+ * [com.razorpay.PaymentResultWithDataListener.onPaymentSuccess]. MainActivity
+ * parks it here before forwarding, and [RazorpaySdkLauncher] pops it while
+ * building the Success outcome.
  */
 object PaymentResultSignatureHolder {
     @Volatile

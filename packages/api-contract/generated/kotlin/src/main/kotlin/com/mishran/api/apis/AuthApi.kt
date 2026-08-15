@@ -27,6 +27,8 @@ import java.io.IOException
 import okhttp3.Call
 import okhttp3.HttpUrl
 
+import com.mishran.api.models.AuthApplePost200Response
+import com.mishran.api.models.AuthApplePostRequest
 import com.mishran.api.models.AuthLogoutPost200Response
 import com.mishran.api.models.AuthOtpSendPost200Response
 import com.mishran.api.models.AuthOtpVerifyPost200Response
@@ -57,6 +59,80 @@ open class AuthApi(basePath: kotlin.String = defaultBasePath, client: Call.Facto
         val defaultBasePath: String by lazy {
             System.getProperties().getProperty(ApiClient.BASE_URL_KEY, "http://localhost:3000/api/mobile/v1")
         }
+    }
+
+    /**
+     * POST /auth/apple
+     * 
+     * Sign in with Apple. The iOS client obtains an identityToken (RS256 JWT) from ASAuthorizationAppleIDCredential and POSTs it here. Server verifies the token against Apple JWks, rejects replay (same identityToken twice → 409), upserts a customer keyed by the Apple &#x60;sub&#x60;, and returns the same JWT pair + customer shape as /auth/otp/verify so the client&#39;s post-login flow is identical. 
+     * @param authApplePostRequest 
+     * @return AuthApplePost200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun authApplePost(authApplePostRequest: AuthApplePostRequest) : AuthApplePost200Response {
+        val localVarResponse = authApplePostWithHttpInfo(authApplePostRequest = authApplePostRequest)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as AuthApplePost200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * POST /auth/apple
+     * 
+     * Sign in with Apple. The iOS client obtains an identityToken (RS256 JWT) from ASAuthorizationAppleIDCredential and POSTs it here. Server verifies the token against Apple JWks, rejects replay (same identityToken twice → 409), upserts a customer keyed by the Apple &#x60;sub&#x60;, and returns the same JWT pair + customer shape as /auth/otp/verify so the client&#39;s post-login flow is identical. 
+     * @param authApplePostRequest 
+     * @return ApiResponse<AuthApplePost200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun authApplePostWithHttpInfo(authApplePostRequest: AuthApplePostRequest) : ApiResponse<AuthApplePost200Response?> {
+        val localVariableConfig = authApplePostRequestConfig(authApplePostRequest = authApplePostRequest)
+
+        return request<AuthApplePostRequest, AuthApplePost200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation authApplePost
+     *
+     * @param authApplePostRequest 
+     * @return RequestConfig
+     */
+    fun authApplePostRequestConfig(authApplePostRequest: AuthApplePostRequest) : RequestConfig<AuthApplePostRequest> {
+        val localVariableBody = authApplePostRequest
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/auth/apple",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
     }
 
     /**
