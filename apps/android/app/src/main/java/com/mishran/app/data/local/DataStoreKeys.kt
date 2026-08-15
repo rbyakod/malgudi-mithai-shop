@@ -7,6 +7,7 @@
 package com.mishran.app.data.local
 
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object DataStoreKeys {
@@ -27,4 +28,11 @@ object DataStoreKeys {
 
     /** Persisted locale tag (en, hi, kn, …) chosen by the user, if any. */
     val LOCALE: Preferences.Key<String> = stringPreferencesKey("locale")
+
+    /**
+     * True once POST_NOTIFICATIONS has been runtime-requested (Task 13.1).
+     * "Denied" counts as asked — the app never re-prompts.
+     */
+    val NOTIFICATION_PERMISSION_ASKED: Preferences.Key<Boolean> =
+        booleanPreferencesKey("notification_permission_asked")
 }

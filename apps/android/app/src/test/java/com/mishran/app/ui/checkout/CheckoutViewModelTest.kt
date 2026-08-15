@@ -289,11 +289,47 @@ class CheckoutViewModelTest {
         vm.onRazorpayOutcome(RazorpayOutcome.Success("pay_1", "sig_1"))
         advanceUntilIdle()
 
+        // Shelf tier (readyViewModel): no slot, so the ETA falls back to the
+        // serviceability SLA days.
         assertEquals(
-            listOf(CheckoutEvent.OpenPayment(request), CheckoutEvent.OrderPlaced("order-1")),
+            listOf(
+                CheckoutEvent.OpenPayment(request),
+                CheckoutEvent.OrderPlaced("order-1", slotLabel = null, shelfSlaDays = 1),
+            ),
             events.toList(),
         )
         coVerify(exactly = 1) { cartRepository.clear() }
+    }
+
+    @Test
+    fun `fresh tier order carries the picked slot label for the ETA`() = runTest(dispatcher) {
+        coEvery { repository.listAddresses() } returns listOf(freshAddress)
+        coEvery { repository.checkServiceability("110001") } returns serviceable("fresh")
+        val vm = CheckoutViewModel(repository, cartRepository, placeOrder)
+        advanceUntilIdle()
+        vm.selectSlot(vm.state.value.slotOptions.first())
+        val events = recordEvents(vm)
+        val request = paymentRequest()
+        coEvery {
+            placeOrder.createPaymentRequest(any(), any(), any(), any())
+        } returns CreateOrderResult.NeedsPayment(request)
+        coEvery {
+            placeOrder.verifyPayment(request, "pay_1", "sig_1")
+        } returns PlaceOrderResult.Success("order-1")
+
+        vm.placeOrder()
+        advanceUntilIdle()
+        vm.onRazorpayOutcome(RazorpayOutcome.Success("pay_1", "sig_1"))
+        advanceUntilIdle()
+
+        assertEquals(
+            CheckoutEvent.OrderPlaced(
+                "order-1",
+                slotLabel = vm.state.value.selectedSlot?.label,
+                shelfSlaDays = 1,
+            ),
+            events.last(),
+        )
     }
 
     @Test

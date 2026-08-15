@@ -1,9 +1,10 @@
 // apps/android/app/src/main/java/com/mishran/app/ui/addresses/AddressesScreen.kt
 //
-// Account → Delivery addresses: saved-address list with set-default, plus an
-// add-address form dialog (line1/line2/city/state/pincode/tag/default).
-// Checkout's AddressPicker reads the same server-side list. Replaces the
-// Phase 7 placeholder on Routes.ADDRESSES.
+// Account → Delivery addresses: saved-address list with set-default and a
+// confirm-then-delete action, plus an add-address form dialog
+// (line1/line2/city/state/pincode/tag/default). Checkout's AddressPicker
+// reads the same server-side list. Replaces the Phase 7 placeholder on
+// Routes.ADDRESSES.
 package com.mishran.app.ui.addresses
 
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -61,6 +64,8 @@ fun AddressesScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var showForm by remember { mutableStateOf(false) }
+    // Address awaiting the delete confirmation dialog's Delete tap.
+    var addressPendingDelete by remember { mutableStateOf<Address?>(null) }
 
     LaunchedEffect(state.message) {
         state.message?.let {
@@ -99,6 +104,7 @@ fun AddressesScreen(
                     AddressRow(
                         address = state.addresses[index],
                         onSetDefault = { viewModel.setDefault(state.addresses[index]) },
+                        onDelete = { addressPendingDelete = state.addresses[index] },
                     )
                 }
                 if (state.addresses.isEmpty()) {
@@ -128,10 +134,33 @@ fun AddressesScreen(
             },
         )
     }
+
+    // Delete is destructive and server-side — confirm before calling the VM.
+    addressPendingDelete?.let { address ->
+        AlertDialog(
+            onDismissRequest = { addressPendingDelete = null },
+            title = { Text("Delete this address?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteAddress(address)
+                        addressPendingDelete = null
+                    },
+                ) { Text("Delete") }
+            },
+            dismissButton = {
+                TextButton(onClick = { addressPendingDelete = null }) { Text("Cancel") }
+            },
+        )
+    }
 }
 
 @Composable
-private fun AddressRow(address: Address, onSetDefault: () -> Unit) {
+private fun AddressRow(
+    address: Address,
+    onSetDefault: () -> Unit,
+    onDelete: () -> Unit,
+) {
     val isDefault = address.isDefault == true
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -167,6 +196,9 @@ private fun AddressRow(address: Address, onSetDefault: () -> Unit) {
                     ).joinToString("\n"),
                     style = MaterialTheme.typography.bodyMedium,
                 )
+            }
+            IconButton(onClick = onDelete) {
+                Icon(Icons.Outlined.Delete, contentDescription = "Delete address")
             }
         }
     }

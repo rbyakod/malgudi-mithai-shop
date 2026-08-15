@@ -1,8 +1,8 @@
 // apps/android/app/src/main/java/com/mishran/app/ui/addresses/AddressesViewModel.kt
 //
-// Account → Delivery addresses: list, add, and set-default over the
-// addresses routes (GET/POST/PATCH — the contract has no DELETE). Errors
-// surface as a one-line message instead of a dead screen.
+// Account → Delivery addresses: list, add, set-default, and delete over the
+// addresses routes (GET/POST/PATCH/DELETE). Errors surface as a one-line
+// message instead of a dead screen.
 package com.mishran.app.ui.addresses
 
 import androidx.lifecycle.ViewModel
@@ -65,6 +65,19 @@ class AddressesViewModel @Inject constructor(
             )
             if (updated == null) {
                 _state.update { it.copy(message = "Could not set the default. Try again.") }
+            } else {
+                _state.update { it.copy(message = null) }
+                refresh()
+            }
+        }
+    }
+
+    /** DELETE the address (owner-scoped); refreshes the list or reports the failure. */
+    fun deleteAddress(address: Address) {
+        viewModelScope.launch {
+            val deleted = repository.deleteAddress(address.id.orEmpty())
+            if (!deleted) {
+                _state.update { it.copy(message = "Could not delete the address. Try again.") }
             } else {
                 _state.update { it.copy(message = null) }
                 refresh()

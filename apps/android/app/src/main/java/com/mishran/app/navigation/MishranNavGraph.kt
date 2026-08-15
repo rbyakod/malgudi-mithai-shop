@@ -7,16 +7,18 @@
 // `mishran://order/{id}` deep link so a push-notification / Wallet tap can
 // re-enter the app straight onto an order.
 //
-// Every destination is a placeholder for now (Phase 7 deliverable = the graph
-// + navigation wiring); Phases 8–12 swap in the real screens behind the same
-// routes, so this file changes in composition only, not in route shape.
+// The Phase 7 graph shipped with placeholder screens; Phases 8–12 replaced
+// every one of them with the real compositions behind the same routes, so the
+// route shape is the surviving contract of this file.
 package com.mishran.app.navigation
 
-import androidx.compose.foundation.layout.Box
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -26,11 +28,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -44,6 +46,7 @@ import dagger.hilt.android.EntryPointAccessors
 import com.mishran.app.ui.auth.BiometricGate
 import com.mishran.app.ui.auth.OtpScreen
 import com.mishran.app.ui.auth.PhoneEntryScreen
+import com.mishran.app.data.repository.SettingsRepositoryEntryPoint
 import com.mishran.app.data.sync.PushRegistrationScheduler
 import com.mishran.app.push.PushEventBusEntryPoint
 import com.mishran.app.push.notificationBody
@@ -82,6 +85,37 @@ fun MishranAppRoot() {
             snackbarHostState.showSnackbar(notificationBody(event.stage))
         }
     }
+
+    // Task 13.1: runtime POST_NOTIFICATIONS request (Android 13+). Fired once,
+    // on the user's first arrival at HOME — the one destination both the
+    // OTP-fresh and biometric-returning paths land on. The result is unused
+    // (denied is a valid state — ordering never depends on it), the asked flag
+    // is persisted before the dialog opens so the app never re-prompts, and
+    // navigation is never blocked on the outcome.
+    val settingsRepository = remember {
+        EntryPointAccessors.fromApplication<SettingsRepositoryEntryPoint>(
+            context.applicationContext,
+        ).settingsRepository()
+    }
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { /* Result unused: granted or denied, the flag below stops a re-ask. */ }
+    LaunchedEffect(currentRoute) {
+        if (currentRoute == Routes.HOME &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            !settingsRepository.isNotificationPermissionAsked()
+        ) {
+            settingsRepository.markNotificationPermissionAsked()
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    // Task 10.4: ETA extras for the confirmation screen. They ride a
+    // composition-level holder instead of the route string (the slot label
+    // carries spaces/punctuation not worth URL-encoding) and are rewritten on
+    // every checkout success, so a stale ETA can never leak forward.
+    var confirmedOrderSlotLabel by remember { mutableStateOf<String?>(null) }
+    var confirmedOrderSlaDays by remember { mutableStateOf<Int?>(null) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -214,9 +248,12 @@ fun MishranAppRoot() {
             composable(Routes.CHECKOUT) {
                 // Task 10.3: validate → create-order → Razorpay → verify.
                 // Task 10.4: success lands on the confirmation screen, not the
-                // order list; back from there returns Home (cart is gone).
+                // order list; back from there returns Home (cart is gone). The
+                // slot label / shelf SLA ride along for the ETA line.
                 CheckoutScreen(
-                    onOrderPlaced = { orderId ->
+                    onOrderPlaced = { orderId, slotLabel, shelfSlaDays ->
+                        confirmedOrderSlotLabel = slotLabel
+                        confirmedOrderSlaDays = shelfSlaDays
                         navController.navigate(Routes.orderConfirmed(orderId)) {
                             popUpTo(Routes.HOME) { inclusive = false }
                         }
@@ -248,6 +285,8 @@ fun MishranAppRoot() {
                 val orderId = entry.arguments?.getString("id").orEmpty()
                 OrderConfirmedScreen(
                     orderId = orderId,
+                    slotLabel = confirmedOrderSlotLabel,
+                    shelfSlaDays = confirmedOrderSlaDays,
                     onTrackOrder = { id ->
                         navController.navigate(Routes.orderDetail(id)) {
                             launchSingleTop = true
@@ -304,7 +343,6 @@ fun MishranAppRoot() {
                 // Checkout's picker reads the same server-side list.
                 AddressesScreen(onBack = { navController.popBackStack() })
             }
-            composable(Routes.ADDRESSES) { PlaceholderScreen("Addresses") }
         }
     }
 }
@@ -323,17 +361,5 @@ private fun MishranBottomBar(
                 label = { Text(destination.label) },
             )
         }
-    }
-}
-
-/** Themed placeholder; replaced by real screens in Phases 8–12. */
-@Composable
-private fun PlaceholderScreen(title: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center,
-        )
     }
 }

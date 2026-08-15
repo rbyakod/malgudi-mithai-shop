@@ -5,10 +5,14 @@
 // MishranTheme (Task 7.2). Deep links (mishran://order/{id}) are declared in
 // the AndroidManifest intent-filter and resolved inside the NavHost.
 //
-// Task 10.3: the activity is also Razorpay's PaymentResultListener — the SDK
-// only delivers results to the launching activity, so it forwards them into
-// the injected RazorpaySdkLauncher singleton (which routes to the caller that
-// opened the sheet).
+// Task 10.3: the activity is also Razorpay's PaymentResultWithDataListener —
+// the SDK only delivers results to the launching activity, so it forwards them
+// into the injected RazorpaySdkLauncher singleton (which routes to the caller
+// that opened the sheet). The with-data variant (not the plain
+// PaymentResultListener) because only PaymentData carries the HMAC signature
+// the server needs to verify the payment; the SDK checks for the plain
+// listener FIRST, so implementing both would mean the with-data callbacks
+// never fire.
 package com.mishran.app
 
 import android.os.Bundle
@@ -17,8 +21,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.fragment.app.FragmentActivity
 import com.mishran.app.navigation.MishranAppRoot
 import com.mishran.app.ui.theme.MishranTheme
+import com.mishran.app.util.PaymentResultSignatureHolder
 import com.mishran.app.util.RazorpaySdkLauncher
-import com.razorpay.PaymentResultListener
+import com.razorpay.PaymentData
+import com.razorpay.PaymentResultWithDataListener
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -27,7 +33,7 @@ import javax.inject.Inject
 // host. FragmentActivity still extends ComponentActivity, so enableEdgeToEdge()
 // + setContent() compose-hosting both keep working.
 @AndroidEntryPoint
-class MainActivity : FragmentActivity(), PaymentResultListener {
+class MainActivity : FragmentActivity(), PaymentResultWithDataListener {
 
     @Inject lateinit var razorpayLauncher: RazorpaySdkLauncher
 
@@ -41,11 +47,14 @@ class MainActivity : FragmentActivity(), PaymentResultListener {
         }
     }
 
-    override fun onPaymentSuccess(razorpayPaymentId: String?) {
+    override fun onPaymentSuccess(razorpayPaymentId: String?, paymentData: PaymentData) {
+        // Park the signature BEFORE handing off: the launcher pops it while
+        // building the Success outcome, so it must already be in the holder.
+        PaymentResultSignatureHolder.park(paymentData.signature)
         if (razorpayPaymentId != null) razorpayLauncher.onPaymentResultSuccess(razorpayPaymentId)
     }
 
-    override fun onPaymentError(code: Int, response: String?) {
+    override fun onPaymentError(code: Int, response: String?, paymentData: PaymentData?) {
         razorpayLauncher.onPaymentResultError(code, response)
     }
 }

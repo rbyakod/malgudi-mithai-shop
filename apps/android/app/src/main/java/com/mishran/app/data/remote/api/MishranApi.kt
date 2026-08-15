@@ -37,6 +37,7 @@ import com.mishran.api.models.RazorpayCreateOrderRequest
 import com.mishran.api.models.RazorpayVerifyRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -144,6 +145,14 @@ interface MishranApi {
         @Body body: AddressInput,
     ): AddressesPost201Response
 
+    /**
+     * Owner-scoped delete; 200 body is `{ "data": { "ok": true } }`.
+     * Return type is the app-local [DeleteResponse] — the generated contract
+     * models only named schemas, and the delete envelope is anonymous inline.
+     */
+    @DELETE("addresses/{id}")
+    suspend fun deleteAddress(@Path("id") id: String): DeleteResponse
+
     // ---- Push device registration --------------------------------------
 
     /** Idempotent upsert of the FCM push token for this device. */
@@ -151,4 +160,17 @@ interface MishranApi {
     suspend fun registerDevice(
         @Body body: NotificationsRegisterDevicePostRequest,
     ): NotificationsRegisterDevicePost200Response
+}
+
+/**
+ * `{ "data": { "ok": boolean } }` — the success envelope of the owner-scoped
+ * DELETE /addresses/{id} (mirrors logout's `{ "data": { "ok" } }` shape).
+ * App-local because the OpenAPI generator only emits models for named
+ * schemas and this response is an anonymous inline object; the reflective
+ * Moshi setup decodes it without adapters.
+ */
+data class DeleteResponse(
+    val data: Data? = null,
+) {
+    data class Data(val ok: Boolean? = null)
 }

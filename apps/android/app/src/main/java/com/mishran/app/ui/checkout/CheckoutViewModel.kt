@@ -80,7 +80,17 @@ sealed interface CheckoutEvent {
     /** Open the Razorpay sheet for this request. */
     data class OpenPayment(val request: PaymentRequest) : CheckoutEvent
 
-    data class OrderPlaced(val orderId: String) : CheckoutEvent
+    /**
+     * Order verified + placed. The ETA extras ride along (Task 10.4): the
+     * picked slot's label on the fresh tier, or the serviceability SLA in
+     * days for shelf-tier orders where no slot exists. The confirmation
+     * screen prefers the slot label and falls back to the SLA.
+     */
+    data class OrderPlaced(
+        val orderId: String,
+        val slotLabel: String? = null,
+        val shelfSlaDays: Int? = null,
+    ) : CheckoutEvent
 
     data class CartChanged(val message: String?) : CheckoutEvent
 
@@ -198,7 +208,17 @@ class CheckoutViewModel @Inject constructor(
                     is PlaceOrderResult.Success -> {
                         pendingRequest = null
                         cartRepository.clear()
-                        _events.emit(CheckoutEvent.OrderPlaced(result.orderId))
+                        // Snapshot the ETA inputs at place time — fresh tier
+                        // carries the picked slot, shelf only the SLA days.
+                        val current = _state.value
+                        _events.emit(
+                            CheckoutEvent.OrderPlaced(
+                                orderId = result.orderId,
+                                slotLabel = current.selectedSlot?.label,
+                                shelfSlaDays = (current.serviceability
+                                    as? ServiceabilityState.Serviceable)?.slaDays,
+                            ),
+                        )
                     }
                     is PlaceOrderResult.PaymentFailed ->
                         _events.emit(CheckoutEvent.PaymentFailed(result.message))
