@@ -52,18 +52,27 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    try {
-      const send = await container.otpService.send(parsed.data.phone, code);
-      await payload.update({
-        collection: 'otpRequests',
-        id: (created as any).id, // eslint-disable-line @typescript-eslint/no-explicit-any
-        data: { messageId: send.messageId },
-      });
-    } catch (e) {
-      logger.error({ traceId, err: e }, 'OTP send failed');
-      throw new ApiError(ErrorCode.OTP_PROVIDER_DOWN, 'SMS provider unavailable', {
-        retryable: true,
-      });
+    // Test login seam (temporary): when OTP_BYPASS_PHONE is set, that single
+    // number skips the SMS provider entirely — testers still get a real
+    // request record (hash, expiry, attempts) and verify with the fixed
+    // OTP_BYPASS_CODE in the verify route. Needed because this VPS has no
+    // MSG91 keys: without it send dies OTP_PROVIDER_DOWN before the client
+    // ever receives a requestId. Unset the env vars to delete the seam.
+    const bypassPhone = process.env.OTP_BYPASS_PHONE;
+    if (!(bypassPhone && parsed.data.phone === bypassPhone)) {
+      try {
+        const send = await container.otpService.send(parsed.data.phone, code);
+        await payload.update({
+          collection: 'otpRequests',
+          id: (created as any).id, // eslint-disable-line @typescript-eslint/no-explicit-any
+          data: { messageId: send.messageId },
+        });
+      } catch (e) {
+        logger.error({ traceId, err: e }, 'OTP send failed');
+        throw new ApiError(ErrorCode.OTP_PROVIDER_DOWN, 'SMS provider unavailable', {
+          retryable: true,
+        });
+      }
     }
 
     return jsonResponse(
