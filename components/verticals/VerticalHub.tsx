@@ -95,12 +95,14 @@ export async function VerticalHub({collection, vertical}: Props) {
   const title = t("title");
   const blurb = t("blurb");
 
-  // Read up to 24 docs. Failures (DB down, collection gone) degrade to an
-  // empty state — the hub still renders its chrome.
+  // Read up to 100 docs (the seeded mithai catalog alone is 91 — the old
+  // limit of 24 hid two-thirds of it). Same ceiling the PDP lookup uses;
+  // paginate properly if a collection outgrows it. Failures (DB down,
+  // collection gone) degrade to an empty state — the hub still renders.
   let docs: Array<Record<string, unknown>> = [];
   try {
     const payload = await getPayload();
-    const r = await payload.find({collection, limit: 24});
+    const r = await payload.find({collection, limit: 100});
     docs = r.docs as Array<Record<string, unknown>>;
   } catch {
     docs = [];

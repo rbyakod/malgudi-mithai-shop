@@ -14,6 +14,7 @@ import {getTranslations, setRequestLocale} from "next-intl/server";
 import {routing} from "@/i18n/routing";
 import {Link} from "@/i18n/navigation";
 import {slugify} from "@/lib/slugify";
+import {RetailerLink} from "@/components/snacks/RetailerLink";
 
 export const revalidate = 60;
 
@@ -104,29 +105,11 @@ export default async function Page({params}: Context) {
           <span className="text-text-muted">{doc.name}</span>
         </nav>
 
-        {/* Header */}
+        {/* Header — buy column | image panel (image leads on mobile,
+            lg:order-first restores text-left / image-right on desktop).
+            Mirrors the mithai PDP buy module: price up top, pack chip,
+            retailer CTAs — editorial-styled, no boxed cards. */}
         <div className="mt-10 grid gap-10 border-b border-border-card pb-12 lg:grid-cols-[0.55fr_0.45fr]">
-          <div className="flex flex-col justify-end">
-            {doc.category ? (
-              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-                {doc.category}
-              </p>
-            ) : null}
-            <h1 className="mt-3 font-display text-4xl font-light leading-[1.05] tracking-tight text-text-heading sm:text-5xl">
-              {doc.name}
-            </h1>
-            {doc.msrp ? (
-              <p className="mt-6 font-display text-2xl font-medium text-text-heading">
-                {doc.msrp}
-              </p>
-            ) : null}
-            {doc.description ? (
-              <p className="mt-6 max-w-md text-sm leading-relaxed text-text-muted">
-                {doc.description}
-              </p>
-            ) : null}
-          </div>
-
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm border border-border-image bg-bg-accent">
             {imageUrl ? (
               <Image
@@ -148,61 +131,95 @@ export default async function Page({params}: Context) {
               </div>
             )}
           </div>
+
+          <div className="flex flex-col lg:order-first">
+            {doc.category ? (
+              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
+                {doc.category}
+              </p>
+            ) : null}
+            <h1 className="mt-3 font-display text-4xl font-light leading-[1.05] tracking-tight text-text-heading sm:text-5xl">
+              {doc.name}
+            </h1>
+
+            {/* Price block */}
+            {doc.msrp ? (
+              <div className="mt-6">
+                <p className="font-display text-2xl font-medium text-text-heading">
+                  <span data-testid="display-price">{doc.msrp}</span>
+                </p>
+                <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.18em] text-text-muted">
+                  {t("taxNote")}
+                </p>
+              </div>
+            ) : null}
+
+            {doc.description ? (
+              <p className="mt-6 max-w-md text-sm leading-relaxed text-text-muted">
+                {doc.description}
+              </p>
+            ) : null}
+
+            {/* Pack size chip — single informational chip (snacks are sold
+                as one pack per SKU; no derived sizes). */}
+            {doc.weight ? (
+              <div className="mt-6 border-t border-border-card pt-6">
+                <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
+                  {t("packSize")}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <span className="border border-gold bg-bg-accent px-4 py-2 font-display text-sm text-primary">
+                    {doc.weight}
+                  </span>
+                </div>
+              </div>
+            ) : null}
+
+            {/* Retailer CTAs — snacks sell through external partners, so
+                the "buy" affordance is the retailer link, not a cart. */}
+            {retailers.length > 0 ? (
+              <div className="mt-6 border-t border-border-card pt-6">
+                <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
+                  {t("buyAt")}
+                </p>
+                <ul className="mt-3 flex flex-wrap gap-3">
+                  {retailers.map((r) => (
+                    <li key={r.url}>
+                      <RetailerLink label={r.label} url={r.url} />
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-xs italic text-text-muted">
+                  {t("partnerNote")}
+                </p>
+              </div>
+            ) : null}
+          </div>
         </div>
 
-        {/* Spec + retailers strip */}
-        <section className="mt-12 grid gap-10 lg:grid-cols-[0.6fr_0.4fr] lg:gap-16">
-          <dl className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-            {doc.weight ? (
-              <div>
-                <dt className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
-                  {t("weight")}
-                </dt>
-                <dd className="mt-2 font-display text-lg text-text-heading">
-                  {doc.weight}
-                </dd>
-              </div>
-            ) : null}
-            {doc.category ? (
-              <div>
-                <dt className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
-                  {t("category")}
-                </dt>
-                <dd className="mt-2 font-display text-lg capitalize text-text-heading">
-                  {doc.category}
-                </dd>
-              </div>
-            ) : null}
-          </dl>
-
-          {retailers.length > 0 ? (
-            <aside className="border-l border-border-card pl-6 lg:pl-10">
-              <h2 className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-                {t("buyAt")}
-              </h2>
-              <ul className="mt-4 space-y-3">
-                {retailers.map((r) => (
-                  <li key={r.url}>
-                    <a
-                      href={r.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group inline-flex items-center gap-2 font-display text-base text-text-heading transition-colors hover:text-primary"
-                    >
-                      <span>{r.label}</span>
-                      <span
-                        aria-hidden="true"
-                        className="text-[11px] uppercase tracking-[0.18em] text-gold opacity-70 transition-opacity group-hover:opacity-100"
-                      >
-                        &rarr;
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </aside>
+        {/* Spec strip */}
+        <dl className="mt-10 grid gap-x-8 gap-y-6 border-b border-border-card pb-12 sm:grid-cols-2">
+          {doc.weight ? (
+            <div className="sm:border-r sm:border-border-card sm:pr-8">
+              <dt className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
+                {t("weight")}
+              </dt>
+              <dd className="mt-2 font-display text-lg text-text-heading">
+                {doc.weight}
+              </dd>
+            </div>
           ) : null}
-        </section>
+          {doc.category ? (
+            <div>
+              <dt className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
+                {t("category")}
+              </dt>
+              <dd className="mt-2 font-display text-lg capitalize text-text-heading">
+                {doc.category}
+              </dd>
+            </div>
+          ) : null}
+        </dl>
       </div>
     </article>
   );

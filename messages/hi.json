@@ -167,13 +167,23 @@
       "category": "श्रेणी",
       "spiceLevel": "मिर्च",
       "veg": "शाकाहारी",
-      "available": "उपलब्ध"
+      "available": "उपलब्ध",
+      "vegYes": "शाकाहारी",
+      "vegNo": "मांसाहारी",
+      "spiceMild": "हल्की मिर्च",
+      "spiceMedium": "मध्यम मिर्च",
+      "spiceHot": "तीखी मिर्च",
+      "counterMenu": "काउंटर मेन्यू देखें",
+      "availabilityNote": "हमारे काउंटरों पर उपलब्ध — स्टोर पर पूछें।"
     },
     "snacks": {
       "category": "श्रेणी",
       "weight": "वज़न",
       "msrp": "एमआरपी",
-      "buyAt": "खरीदें"
+      "buyAt": "खरीदें",
+      "taxNote": "एमआरपी · सभी कर सहित",
+      "packSize": "पैक साइज़",
+      "partnerNote": "हमारे रिटेल पार्टनर्स द्वारा · पूरे भारत में"
     },
     "merch": {
       "type": "प्रकार",
