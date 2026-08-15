@@ -9,12 +9,32 @@
 import Foundation
 
 actor MishranAPIClient {
-    #if DEBUG
-    /// Simulator hits the host's dev server directly.
-    static let defaultBaseURL = URL(string: "http://localhost:3000/api/mobile/v1")!
-    #else
-    static let defaultBaseURL = URL(string: "https://api.mishran.app/api/mobile/v1")!
-    #endif
+    /// Base URL for every default-constructed client.
+    ///
+    /// Overridable WITHOUT a rebuild so a debug build can target any
+    /// deployment (local dev server, staging, or the live VPS):
+    ///
+    ///   xcrun simctl launch <udid> com.mishran.app -apiBaseURL <url>
+    ///   (or set the MISHRAN_API_BASE_URL environment variable in the scheme)
+    ///
+    /// Defaults: simulator → the host's dev server; device/release → prod.
+    static let defaultBaseURL: URL = {
+        let env = ProcessInfo.processInfo.environment["MISHRAN_API_BASE_URL"]
+        let args = ProcessInfo.processInfo.arguments
+        if let flag = args.firstIndex(of: "-apiBaseURL"),
+           args.indices.contains(flag + 1),
+           let url = URL(string: args[flag + 1]) {
+            return url
+        }
+        if let env, let url = URL(string: env) {
+            return url
+        }
+        #if DEBUG
+        return URL(string: "http://localhost:3000/api/mobile/v1")!
+        #else
+        return URL(string: "https://api.mishran.app/api/mobile/v1")!
+        #endif
+    }()
 
     private let session: URLSession
     private let baseURL: URL

@@ -12,6 +12,7 @@ import { createHash } from 'node:crypto';
 // 6 ../ to repo root from app/api/mobile/v1/catalog/products/
 import config from '../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../lib/api/response';
+import { flattenLexical } from '../../../../../../lib/api/richText';
 
 export async function GET(req: NextRequest) {
   const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
@@ -65,7 +66,9 @@ export async function GET(req: NextRequest) {
 // Shape mirrors collections/MithaiProducts.ts. `images` is an array of
 // `{ image: upload-ref }` in Payload; `image.url` is populated when the
 // referenced media doc is populated, otherwise we fall back to the ref id.
-// Bare-string fallback guards against seed/fixture shapes.
+// Bare-string fallback guards against seed/fixture shapes. `story` is a
+// Lexical rich-text object on Payload lexical fields (scraped-catalog seed)
+// or a plain string (old fixtures) — flattened for the mobile contract.
 function serializeProduct(p: any) {
   return {
     id: p.id,
@@ -82,7 +85,7 @@ function serializeProduct(p: any) {
     images: (p.images ?? [])
       .map((i: any) => i?.image?.url ?? i?.image ?? i?.url ?? i)
       .filter((u: unknown): u is string => typeof u === 'string'),
-    story: p.story ?? null,
+    story: flattenLexical(p.story),
     karigar: typeof p.karigar === 'object' ? p.karigar?.id ?? null : p.karigar ?? null,
     updatedAt: p.updatedAt ?? null,
   };

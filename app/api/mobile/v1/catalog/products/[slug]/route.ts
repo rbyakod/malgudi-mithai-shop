@@ -15,6 +15,7 @@ import { getPayload } from 'payload';
 import config from '../../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../../lib/api/errors';
+import { flattenLexical } from '../../../../../../../lib/api/richText';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
@@ -59,7 +60,7 @@ function serializeProduct(p: any) {
     images: (p.images ?? [])
       .map((i: any) => i?.image?.url ?? i?.image ?? i?.url ?? i)
       .filter((u: unknown): u is string => typeof u === 'string'),
-    story: p.story ?? null,
+    story: flattenLexical(p.story),
     karigar: typeof p.karigar === 'object' ? p.karigar?.id ?? null : p.karigar ?? null,
     updatedAt: p.updatedAt ?? null,
   };
