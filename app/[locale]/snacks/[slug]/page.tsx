@@ -10,7 +10,8 @@ import type {Metadata} from "next";
 import Image from "next/image";
 import {notFound} from "next/navigation";
 import {getPayload} from "@/lib/payload-client";
-import {getTranslations} from "next-intl/server";
+import {getTranslations, setRequestLocale} from "next-intl/server";
+import {routing} from "@/i18n/routing";
 import {Link} from "@/i18n/navigation";
 import {slugify} from "@/lib/slugify";
 
@@ -47,9 +48,13 @@ async function findDoc(
 export async function generateStaticParams() {
   const payload = await getPayload();
   const r = await payload.find({collection: "snack-products", limit: 100});
-  return (r.docs as SnackDoc[])
-    .map((d) => (d.name ? {slug: slugify(d.name)} : null))
-    .filter((x): x is {slug: string} => x !== null);
+  const slugs = (r.docs as SnackDoc[])
+    .map((d) => (d.name ? slugify(d.name) : null))
+    .filter((s): s is string => s !== null);
+  // Cross-product with locales — see layout generateStaticParams.
+  return routing.locales.flatMap((locale) =>
+    slugs.map((slug) => ({locale, slug})),
+  );
 }
 
 export async function generateMetadata({
@@ -63,6 +68,7 @@ export async function generateMetadata({
 
 export default async function Page({params}: Context) {
   const {locale, slug} = await params;
+  setRequestLocale(locale);
   const doc = await findDoc(slug, locale);
   if (!doc) notFound();
 

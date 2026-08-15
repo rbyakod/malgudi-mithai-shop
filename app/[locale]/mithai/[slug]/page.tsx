@@ -13,6 +13,8 @@
 // a minute without a full rebuild.
 
 import type {Metadata} from "next";
+import {setRequestLocale} from "next-intl/server";
+import {routing} from "@/i18n/routing";
 import {getPayload} from "@/lib/payload-client";
 import {MithaiPDP} from "@/components/mithai/MithaiPDP";
 import {ProductViewed} from "@/components/mithai/ProductViewed";
@@ -36,7 +38,12 @@ type Doc = {
 export async function generateStaticParams() {
   const payload = await getPayload();
   const r = await payload.find({collection: "mithai-products", limit: 100});
-  return r.docs.map((d) => ({slug: String((d as {slug?: string}).slug)}));
+  const slugs = r.docs.map((d) => String((d as {slug?: string}).slug));
+  // Cross-product with locales — a param missing `locale` can't resolve a
+  // full path under the [locale] segment (see layout generateStaticParams).
+  return routing.locales.flatMap((locale) =>
+    slugs.map((slug) => ({locale, slug})),
+  );
 }
 
 export async function generateMetadata({
@@ -59,6 +66,7 @@ export async function generateMetadata({
 
 export default async function Page({params}: Context) {
   const {slug, locale} = await params;
+  setRequestLocale(locale);
 
   // Fetch doc for JSON-LD. Best-effort — if the lookup fails the page still
   // renders via <MithaiPDP> (which 404s on missing doc itself).
