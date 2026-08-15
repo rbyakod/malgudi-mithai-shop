@@ -51,6 +51,14 @@ if command -v xcodegen >/dev/null 2>&1; then
   xcodegen --spec project.yml
 fi
 
+# ASC rejects a re-upload of the same version+build pair — project.yml pins
+# CFBundleVersion to "1", so without this every archive would collide with
+# the first upload. Stamp BOTH plists (app + widget extension must match)
+# AFTER xcodegen, which would otherwise rewrite them from project.yml.
+for PLIST in Mishran/Info.plist MishranWidgets/Info.plist; do
+  /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD" "$PLIST"
+done
+
 xcodebuild archive \
   -project Mishran.xcodeproj \
   -scheme Mishran \
