@@ -14,7 +14,11 @@ import {Link, usePathname, useRouter} from "@/i18n/navigation";
 import {useCart} from "@/context/CartContext";
 import {useTheme} from "@/context/ThemeContext";
 import {ThemeSwitcher} from "@/components/ThemeSwitcher";
-import {NAV_LINKS} from "@/components/layout/nav-links";
+import {
+  NAV_LINKS,
+  SHOP_NAV_LINKS,
+  STORY_NAV_LINKS,
+} from "@/components/layout/nav-links";
 import {track} from "@/lib/analytics";
 import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
 
@@ -166,9 +170,13 @@ function isActiveLink(
 
 type Props = {
   layoutMode?: StorefrontLayoutMode;
+  showThemeSwitcher?: boolean;
 };
 
-export function SiteHeader({layoutMode = "fixed"}: Props) {
+export function SiteHeader({
+  layoutMode = "fixed",
+  showThemeSwitcher = false,
+}: Props) {
   const {count} = useCart();
   const {theme} = useTheme();
   const t = useTranslations("Header");
@@ -259,7 +267,7 @@ export function SiteHeader({layoutMode = "fixed"}: Props) {
 
           {/* Desktop right section */}
           <div className="hidden items-center gap-2.5 md:flex">
-            <ThemeSwitcher />
+            {showThemeSwitcher ? <ThemeSwitcher /> : null}
 
             <Link
               href="/cart"
@@ -326,11 +334,11 @@ export function SiteHeader({layoutMode = "fixed"}: Props) {
 
         {/* Desktop nav row */}
         <nav
-          className="nav-desktop-row hidden items-center justify-between md:flex"
+          className="nav-desktop-row hidden items-center justify-between gap-4 md:flex"
           aria-label="Main navigation"
         >
           <ul className="flex flex-wrap items-center gap-1">
-            {NAV_LINKS.map((link) => {
+            {SHOP_NAV_LINKS.map((link) => {
               const active = isActiveLink(link.href, pathname, activeSection);
               // nav keys are namespaced (e.g. "nav.mithai"); useTranslations
               // takes a namespace, so strip the prefix.
@@ -355,6 +363,32 @@ export function SiteHeader({layoutMode = "fixed"}: Props) {
               );
             })}
           </ul>
+          <div className="hidden items-center gap-2 border-l border-border-card pl-4 lg:flex">
+            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-text-muted">
+              {navT("learn")}
+            </span>
+            <ul className="flex flex-wrap items-center gap-1">
+              {STORY_NAV_LINKS.map((link) => {
+                const active = isActiveLink(link.href, pathname, activeSection);
+                const label = navT(link.key.replace(/^nav\./, ""));
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={[
+                        "nav-link relative rounded-full px-2.5 py-1.5 text-xs font-medium transition-colors",
+                        active
+                          ? "text-primary"
+                          : "text-text-muted hover:text-primary",
+                      ].join(" ")}
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </nav>
       </div>
 
@@ -367,7 +401,10 @@ export function SiteHeader({layoutMode = "fixed"}: Props) {
         aria-hidden={!menuOpen}
       >
         <nav className="flex flex-col gap-1 px-4 pb-6 pt-2" aria-label="Mobile navigation">
-          {NAV_LINKS.map((link) => {
+          <p className="px-4 pb-1 pt-2 text-[10px] font-medium uppercase tracking-[0.2em] text-text-muted">
+            {navT("shop")}
+          </p>
+          {SHOP_NAV_LINKS.map((link) => {
             const active = isActiveLink(link.href, pathname, activeSection);
             const label = navT(link.key.replace(/^nav\./, ""));
             return (
@@ -390,8 +427,31 @@ export function SiteHeader({layoutMode = "fixed"}: Props) {
             );
           })}
 
+          <p className="mt-4 px-4 pb-1 pt-2 text-[10px] font-medium uppercase tracking-[0.2em] text-text-muted">
+            {navT("learn")}
+          </p>
+          {STORY_NAV_LINKS.map((link) => {
+            const active = isActiveLink(link.href, pathname, activeSection);
+            const label = navT(link.key.replace(/^nav\./, ""));
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={[
+                  "nav-mobile-link rounded-xl px-4 py-2.5 text-sm font-medium transition-colors",
+                  active
+                    ? "nav-mobile-link--active bg-primary/10 text-primary"
+                    : "text-text-secondary hover:bg-bg-accent/60 hover:text-primary",
+                ].join(" ")}
+              >
+                {label}
+              </Link>
+            );
+          })}
+
           <div className="mt-4 flex items-center gap-2">
-            <ThemeSwitcher className="flex-1" />
+            {showThemeSwitcher ? <ThemeSwitcher className="flex-1" /> : null}
             <select
               className="nav-locale-select flex-1 rounded-xl border border-border-input bg-bg-card px-3 py-2.5 text-xs text-text-secondary"
               value={locale}

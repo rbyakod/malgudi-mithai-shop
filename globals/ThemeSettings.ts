@@ -30,6 +30,16 @@ export const ThemeSettings: GlobalConfig = {
       ],
     },
     {
+      name: "showThemeSwitcher",
+      type: "checkbox",
+      label: "Show Theme Studio in storefront header",
+      defaultValue: false,
+      admin: {
+        description:
+          "Keep off for launch. Enable only during preview or internal design review.",
+      },
+    },
+    {
       name: "themes",
       type: "array",
       fields: [
