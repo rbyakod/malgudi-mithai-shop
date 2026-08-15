@@ -5,6 +5,8 @@
 // ("__swift5_entry section is missing" on the appex). WidgetKit also
 // needs the bundle to discover the ActivityConfiguration at runtime —
 // this is what makes the Live Activity render on device, not just build.
+import ActivityKit
+import SwiftUI
 import WidgetKit
 
 @main
