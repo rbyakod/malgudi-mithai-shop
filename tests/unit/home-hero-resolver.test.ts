@@ -187,6 +187,30 @@ describe("resolveHomeHeroSlides", () => {
     expect(result.slides[0].name).toBe("Hero Copy");
   });
 
+  it("derives the href slug for slugless collections (snacks/qsr/merch)", async () => {
+    // snack-products has no `slug` field — the web PDP URL derives from the
+    // name. Before the derivation, every non-mithai slide silently dropped.
+    const snackDoc = {
+      id: "s1",
+      name: "Aloo Bhujia (Standy)",
+      images: [{ image: { url: "https://cdn.test/bhujia.jpg", alt: "Bhujia" } }],
+      _status: "published",
+    };
+    (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockPayload({
+        findGlobal: vi.fn().mockResolvedValue({
+          slides: [
+            { product: { relationTo: "snack-products", value: "s1" } },
+          ],
+        }),
+        findByID: vi.fn().mockResolvedValue(snackDoc),
+      })
+    );
+    const result = await resolveHomeHeroSlides();
+    expect(result.slides).toHaveLength(1);
+    expect(result.slides[0].href).toBe("/snacks/aloo-bhujia-standy");
+  });
+
   it("skips slides when product fetch throws", async () => {
     (getPayload as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockPayload({

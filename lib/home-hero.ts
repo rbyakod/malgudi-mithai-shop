@@ -29,6 +29,7 @@
 //
 // Any error → empty result. BrandHero falls back to static layout.
 import { getPayload } from "@/lib/payload-client";
+import { slugify } from "@/lib/api/catalogSerializers";
 
 export type Slide = {
   id: string;
@@ -153,7 +154,11 @@ async function resolveOne(
   if (!media) return null;
 
   const prefix = HREF_PREFIX[collection];
-  if (!prefix || !doc.slug) return null;
+  // Only mithai-products carries a `slug` field; the other hero collections
+  // derive theirs from the name (the catalog serializers' rule). Without the
+  // derivation, any non-mithai slide was silently dropped.
+  const slug = doc.slug || slugify(String(doc.name ?? ""));
+  if (!prefix || !slug) return null;
 
   return {
     id: String(doc.id ?? id),
@@ -162,7 +167,7 @@ async function resolveOne(
     priceLabel: readPriceLabel(doc, collection),
     image: media.url,
     imageAlt: media.alt,
-    href: `${prefix}/${doc.slug}`,
+    href: `${prefix}/${slug}`,
   };
 }
 
