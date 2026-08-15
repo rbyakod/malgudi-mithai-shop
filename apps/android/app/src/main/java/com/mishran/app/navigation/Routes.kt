@@ -19,8 +19,8 @@ object Routes {
     const val AUTH_PHONE = "auth/phone"
     const val AUTH_OTP = "auth/otp/{requestId}"
     const val HOME = "home"
-    /** Pattern with an optional family filter arg (Home's family cards). */
-    const val CATALOG = "catalog?family={family}"
+    /** Pattern with optional family filter + vertical tab args (Home deep links). */
+    const val CATALOG = "catalog?family={family}&vertical={vertical}"
     const val PRODUCT = "product/{slug}"
     const val CART = "cart"
     const val CHECKOUT = "checkout"
@@ -29,15 +29,40 @@ object Routes {
     const val ORDER_DETAIL = "order/{id}"
     const val ACCOUNT = "account"
     const val ADDRESSES = "addresses"
+    // P2 net-new surfaces.
+    const val STORIES = "stories"
+    const val STORY = "story/{slug}"
+    const val ENQUIRY = "enquiry?type={type}"
+    const val SNACK = "snack/{slug}"
+    const val QSR_ITEM = "qsr/{slug}"
+    const val MERCH_ITEM = "merch/{slug}"
 
     /** Deep-link URI pattern — must stay in lockstep with the manifest intent-filter. */
     const val ORDER_DEEPLINK_PATTERN = "mishran://order/{id}"
 
     fun authOtp(requestId: String): String = "auth/otp/$requestId"
-    /** Built CATALOG route: bare "catalog" (all families) or filtered. */
-    fun catalog(family: String? = null): String =
-        if (family == null) "catalog" else "catalog?family=$family"
+
+    /**
+     * Built CATALOG route: bare "catalog" (all families, Mithai tab) or with
+     * whichever optional args are set. Values are plain tokens (family enum
+     * values, vertical wire names) — no URL-encoding needed today.
+     */
+    fun catalog(family: String? = null, vertical: String? = null): String {
+        val args = listOfNotNull(
+            family?.let { "family=$it" },
+            vertical?.let { "vertical=$it" },
+        )
+        return if (args.isEmpty()) "catalog" else "catalog?${args.joinToString("&")}"
+    }
     fun product(slug: String): String = "product/$slug"
+    fun story(slug: String): String = "story/$slug"
+
+    /** Enquiry route; `type` presets the form (merch passes "corporate"). */
+    fun enquiry(type: String? = null): String =
+        if (type == null) "enquiry" else "enquiry?type=$type"
+    fun snack(slug: String): String = "snack/$slug"
+    fun qsrItem(slug: String): String = "qsr/$slug"
+    fun merchItem(slug: String): String = "merch/$slug"
     fun orderConfirmed(id: String): String = "order-confirmed/$id"
     fun orderDetail(id: String): String = "order/$id"
 

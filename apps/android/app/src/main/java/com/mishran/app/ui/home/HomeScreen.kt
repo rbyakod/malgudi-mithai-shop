@@ -1,13 +1,20 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/home/HomeScreen.kt
+// apps/android/app/src/main/java/com/mishran/app/ui/home/HomeScreen.kt — P1 parity / P2 net-new.
 //
 // The Home tab, structured like the web storefront home but app-paced:
-// a photo hero (web hero's counterpart), a best-sellers rail, and a
+// a photo hero (web hero's counterpart), a best-sellers rail, a
 // shop-by-family section that deep-links into the filtered catalog
-// (the app's stand-in for the web's occasion sections). Replaces the
-// Phase 7 placeholder.
+// (the app's stand-in for the web's occasion sections), and — since P2 —
+// a shop-by-vertical portals row (deep-links into the catalog's tabbed
+// surfaces) plus the "From the journal" rail over the three newest stories.
+// Replaces the Phase 7 placeholder.
+//
+// TODO(i18n): "From the journal" and the portal labels hardcode the English
+// copy from packages/i18n-strings/en.json (home.journal, vertical.mithai/
+// snacks/qsr/merch) — swap for R.string references in the i18n sweep.
 package com.mishran.app.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,12 +32,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -44,6 +54,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.mishran.api.models.Product
+import com.mishran.api.models.Story
 import com.mishran.app.ui.catalog.components.ProductCard
 
 private val FAMILY_LABELS = linkedMapOf(
@@ -54,11 +65,22 @@ private val FAMILY_LABELS = linkedMapOf(
     Product.Family.seasonal to "Seasonal",
 )
 
+/** Portal tiles for "Shop by vertical" — wire names match Routes.catalog args. */
+private val VERTICAL_PORTALS = listOf(
+    Triple("Mithai", "Made every day", "mithai"),
+    Triple("Snacks", "Retail packs", "snacks"),
+    Triple("QSR", "Counter menu", "qsr"),
+    Triple("Merch", "Enquire", "merch"),
+)
+
 @Composable
 fun HomeScreen(
     onProductClick: (slug: String) -> Unit,
     onBrowseCatalog: () -> Unit,
     onFamilyClick: (familyValue: String) -> Unit,
+    onVerticalClick: (verticalValue: String) -> Unit,
+    onStoryClick: (slug: String) -> Unit,
+    onJournal: () -> Unit,
     onOrders: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -66,6 +88,8 @@ fun HomeScreen(
     // Real best sellers since P1 parity: the featured rows (fallback: first
     // eight of the catalog) — see HomeViewModel.
     val bestSellers by viewModel.bestSellers.collectAsStateWithLifecycle()
+    // P2 net-new: three newest journal stories; empty until the journal syncs.
+    val journal by viewModel.journal.collectAsStateWithLifecycle()
     val heroImage = bestSellers.firstOrNull()?.images?.firstOrNull()
 
     Column(
@@ -175,6 +199,50 @@ fun HomeScreen(
             }
         }
 
+        // Shop by vertical (P2) — portals into the catalog's tabbed surfaces.
+        SectionHeader("Shop by vertical")
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 4.dp),
+        ) {
+            items(VERTICAL_PORTALS.size) { index ->
+                val (label, tagline, wireValue) = VERTICAL_PORTALS[index]
+                VerticalPortalCard(
+                    label = label,
+                    tagline = tagline,
+                    containerColor = when (index) {
+                        0 -> MaterialTheme.colorScheme.primaryContainer
+                        1 -> MaterialTheme.colorScheme.secondaryContainer
+                        2 -> MaterialTheme.colorScheme.tertiaryContainer
+                        else -> MaterialTheme.colorScheme.surfaceVariant
+                    },
+                    contentColor = when (index) {
+                        0 -> MaterialTheme.colorScheme.onPrimaryContainer
+                        1 -> MaterialTheme.colorScheme.onSecondaryContainer
+                        2 -> MaterialTheme.colorScheme.onTertiaryContainer
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    onClick = { onVerticalClick(wireValue) },
+                )
+            }
+        }
+
+        // From the journal (P2) — three newest stories; hidden until synced.
+        if (journal.isNotEmpty()) {
+            SectionHeader(title = "From the journal", actionLabel = "See all", onAction = onJournal)
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 4.dp),
+            ) {
+                items(journal.size, key = { journal[it].id }) { index ->
+                    JournalRailCard(
+                        story = journal[index],
+                        onClick = { onStoryClick(journal[index].slug) },
+                    )
+                }
+            }
+        }
+
         Spacer(Modifier.height(12.dp))
         Row(
             modifier = Modifier
@@ -188,11 +256,112 @@ fun HomeScreen(
     }
 }
 
+/**
+ * One vertical portal tile. A themed container instead of a photo on purpose:
+ * Home has no imagery for the non-mithai verticals, and container/on-container
+ * pairs keep text contrast guaranteed (Task 12.4's rule) where a photo would
+ * need a scrim.
+ */
 @Composable
-private fun SectionHeader(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(start = 20.dp, top = 24.dp, bottom = 12.dp),
-    )
+private fun VerticalPortalCard(
+    label: String,
+    tagline: String,
+    containerColor: Color,
+    contentColor: Color,
+    onClick: () -> Unit,
+) {
+    Card(
+        modifier = Modifier.width(150.dp).height(92.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+        ),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(onClick = onClick)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                text = tagline,
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+    }
+}
+
+/** Journal rail card — photo when the story has one, title + pillar below. */
+@Composable
+private fun JournalRailCard(story: Story, onClick: () -> Unit) {
+    Card(modifier = Modifier.width(200.dp).clickable(onClick = onClick)) {
+        Column {
+            Box(
+                modifier = Modifier.fillMaxWidth().height(110.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                val image = story.heroImage
+                if (image == null) {
+                    Text(
+                        text = story.title.take(1),
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                } else {
+                    AsyncImage(
+                        model = image,
+                        contentDescription = story.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxWidth().height(110.dp),
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier.padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = story.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 2,
+                )
+                Text(
+                    text = story.pillar.value,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionHeader(
+    title: String,
+    actionLabel: String? = null,
+    onAction: () -> Unit = {},
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 8.dp, top = 24.dp, bottom = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.weight(1f),
+        )
+        if (actionLabel != null) {
+            TextButton(onClick = onAction) { Text(actionLabel) }
+        }
+    }
 }
