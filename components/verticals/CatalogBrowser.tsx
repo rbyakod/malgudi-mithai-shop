@@ -45,7 +45,10 @@ export function CatalogBrowser({
   const [sort, setSort] = useState<SortKey>("featured");
   const [page, setPage] = useState(1);
   const [addedItemId, setAddedItemId] = useState<string | null>(null);
-  const addedTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null);
+  // Plain number, matching window.setTimeout's DOM return type —
+  // ReturnType<typeof window.setTimeout> resolves differently under
+  // server-side lib resolution and fails the VPS build's type check.
+  const addedTimerRef = useRef<number | null>(null);
   const isFullWidth = isFullWidthLayout(layoutMode);
   const normalizedPageSize = normalizeCatalogPageSize(pageSize);
   const gridClassName = [
