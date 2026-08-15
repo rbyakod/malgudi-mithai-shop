@@ -48,6 +48,7 @@ import com.mishran.app.data.sync.PushRegistrationScheduler
 import com.mishran.app.push.PushEventBusEntryPoint
 import com.mishran.app.push.notificationBody
 import com.mishran.app.ui.account.AccountScreen
+import com.mishran.app.ui.addresses.AddressesScreen
 import com.mishran.app.ui.cart.CartScreen
 import com.mishran.app.ui.home.HomeScreen
 import com.mishran.app.ui.catalog.CatalogScreen
@@ -89,7 +90,7 @@ fun MishranAppRoot() {
                 MishranBottomBar(
                     currentRoute = currentRoute,
                     onNavigate = { destination ->
-                        navController.navigate(destination.route) {
+                        navController.navigate(destination.navRoute) {
                             // Pop up to the start destination, saving state so
                             // each tab's back stack is preserved, and avoid
                             // re-creating the same destination on repeated taps.
@@ -163,12 +164,23 @@ fun MishranAppRoot() {
                 // off the cached catalog, CTAs into Catalog and Orders.
                 HomeScreen(
                     onProductClick = { slug -> navController.navigate(Routes.product(slug)) },
-                    onBrowseCatalog = { navController.navigate(Routes.CATALOG) },
+                    onBrowseCatalog = { navController.navigate(Routes.catalog()) },
+                    onFamilyClick = { family -> navController.navigate(Routes.catalog(family)) },
                     onOrders = { navController.navigate(Routes.ORDERS) },
                 )
             }
             // Task 9.3: offline-first catalog browse (grid + search + filters).
-            composable(Routes.CATALOG) {
+            // Optional ?family= arg seeds the family filter (Home's cards).
+            composable(
+                route = Routes.CATALOG,
+                arguments = listOf(
+                    navArgument("family") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                ),
+            ) {
                 CatalogScreen(
                     onProductClick = { product ->
                         navController.navigate(Routes.product(product.slug))
@@ -189,7 +201,7 @@ fun MishranAppRoot() {
                 CartScreen(
                     onCheckout = { navController.navigate(Routes.CHECKOUT) },
                     onBrowse = {
-                        navController.navigate(Routes.CATALOG) {
+                        navController.navigate(Routes.catalog()) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -217,8 +229,9 @@ fun MishranAppRoot() {
                     onOrderClick = { orderId ->
                         navController.navigate(Routes.orderDetail(orderId))
                     },
+                    onOpenCart = { navController.navigate(Routes.CART) },
                     onBrowse = {
-                        navController.navigate(Routes.CATALOG) {
+                        navController.navigate(Routes.catalog()) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -241,7 +254,7 @@ fun MishranAppRoot() {
                         }
                     },
                     onContinueShopping = {
-                        navController.navigate(Routes.CATALOG) {
+                        navController.navigate(Routes.catalog()) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -275,6 +288,7 @@ fun MishranAppRoot() {
                 // Signed-in identity + sign-out. Clearing the whole stack back
                 // to AUTH_PHONE keeps Back from resurrecting the dead session.
                 AccountScreen(
+                    onOpenAddresses = { navController.navigate(Routes.ADDRESSES) },
                     onSignedOut = {
                         navController.navigate(Routes.AUTH_PHONE) {
                             popUpTo(navController.graph.findStartDestination().id) {
@@ -284,6 +298,11 @@ fun MishranAppRoot() {
                         }
                     },
                 )
+            }
+            composable(Routes.ADDRESSES) {
+                // Saved delivery addresses (Account → Delivery addresses).
+                // Checkout's picker reads the same server-side list.
+                AddressesScreen(onBack = { navController.popBackStack() })
             }
             composable(Routes.ADDRESSES) { PlaceholderScreen("Addresses") }
         }

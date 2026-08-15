@@ -19,7 +19,8 @@ object Routes {
     const val AUTH_PHONE = "auth/phone"
     const val AUTH_OTP = "auth/otp/{requestId}"
     const val HOME = "home"
-    const val CATALOG = "catalog"
+    /** Pattern with an optional family filter arg (Home's family cards). */
+    const val CATALOG = "catalog?family={family}"
     const val PRODUCT = "product/{slug}"
     const val CART = "cart"
     const val CHECKOUT = "checkout"
@@ -33,6 +34,9 @@ object Routes {
     const val ORDER_DEEPLINK_PATTERN = "mishran://order/{id}"
 
     fun authOtp(requestId: String): String = "auth/otp/$requestId"
+    /** Built CATALOG route: bare "catalog" (all families) or filtered. */
+    fun catalog(family: String? = null): String =
+        if (family == null) "catalog" else "catalog?family=$family"
     fun product(slug: String): String = "product/$slug"
     fun orderConfirmed(id: String): String = "order-confirmed/$id"
     fun orderDetail(id: String): String = "order/$id"
@@ -44,14 +48,19 @@ object Routes {
 /**
  * A bottom-navigation destination. Labels are plain English for now; once the
  * i18n layer is wired (Phase 12), these become string-resource references.
+ *
+ * `route` is the NavHost pattern (used for selected-state matching); `navRoute`
+ * is what tab taps actually navigate to — they differ only for CATALOG, whose
+ * pattern carries an optional `{family}` arg that must be absent when built.
  */
 enum class BottomDestination(
     val route: String,
     val label: String,
     val icon: ImageVector,
+    val navRoute: String = route,
 ) {
     HOME(Routes.HOME, "Home", Icons.Filled.Home),
-    CATALOG(Routes.CATALOG, "Catalog", Icons.Filled.MenuBook),
+    CATALOG(Routes.CATALOG, "Catalog", Icons.Filled.MenuBook, navRoute = Routes.catalog()),
     ORDERS(Routes.ORDERS, "Orders", Icons.Filled.ReceiptLong),
     ACCOUNT(Routes.ACCOUNT, "Account", Icons.Filled.Person),
 }

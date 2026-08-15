@@ -32,6 +32,13 @@ class AddressRepository @Inject constructor(
         null
     }
 
+    /** Full replace (contract has no PATCH-partial); callers rebuild from the model. */
+    suspend fun updateAddress(id: String, input: AddressInput): Address? = try {
+        api.updateAddress(id, input).data.address
+    } catch (e: Exception) {
+        null
+    }
+
     /**
      * Pincode serviceability + tier. Hits the catalog route but is checkout's
      * concern: the resolved tier (fresh = Delhi NCR same-day network,

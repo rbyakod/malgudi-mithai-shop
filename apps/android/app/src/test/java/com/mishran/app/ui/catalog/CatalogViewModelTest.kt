@@ -5,6 +5,7 @@
 // repository's two-emit contract. NOTE: source-complete (no SDK).
 package com.mishran.app.ui.catalog
 
+import androidx.lifecycle.SavedStateHandle
 import com.mishran.api.models.Product
 import com.mishran.app.domain.usecase.GetCatalogUseCase
 import io.mockk.every
@@ -47,7 +48,7 @@ class CatalogViewModelTest {
     fun `first emission renders as Cached, second as Fresh`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(cachedList, freshList)
 
-        val vm = CatalogViewModel(getCatalog)
+        val vm = CatalogViewModel(getCatalog, SavedStateHandle())
         vm.uiState.collectInTest(this)
         advanceUntilIdle()
 
@@ -59,7 +60,7 @@ class CatalogViewModelTest {
     fun `visible products track the latest emission`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(cachedList, freshList)
 
-        val vm = CatalogViewModel(getCatalog)
+        val vm = CatalogViewModel(getCatalog, SavedStateHandle())
         vm.visibleProducts.collectInTest(this)
         advanceUntilIdle()
 
@@ -70,7 +71,7 @@ class CatalogViewModelTest {
     fun `search query filters visible products by name case-insensitively`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog)
+        val vm = CatalogViewModel(getCatalog, SavedStateHandle())
         vm.visibleProducts.collectInTest(this)
         advanceUntilIdle()
 
@@ -83,7 +84,7 @@ class CatalogViewModelTest {
     fun `clearing search restores the full list`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog)
+        val vm = CatalogViewModel(getCatalog, SavedStateHandle())
         vm.visibleProducts.collectInTest(this)
         advanceUntilIdle()
 
@@ -97,7 +98,7 @@ class CatalogViewModelTest {
     fun `family filter narrows to that family`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog)
+        val vm = CatalogViewModel(getCatalog, SavedStateHandle())
         vm.visibleProducts.collectInTest(this)
         advanceUntilIdle()
 
@@ -114,7 +115,7 @@ class CatalogViewModelTest {
         )
         every { getCatalog(any()) } returns flowOf(both)
 
-        val vm = CatalogViewModel(getCatalog)
+        val vm = CatalogViewModel(getCatalog, SavedStateHandle())
         vm.visibleProducts.collectInTest(this)
         advanceUntilIdle()
 
@@ -127,7 +128,7 @@ class CatalogViewModelTest {
     fun `clearFilters resets family and tags`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog)
+        val vm = CatalogViewModel(getCatalog, SavedStateHandle())
         vm.activeFilters.collectInTest(this)
         advanceUntilIdle()
 
@@ -142,7 +143,7 @@ class CatalogViewModelTest {
     fun `available dietary tags are the distinct union across products`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog)
+        val vm = CatalogViewModel(getCatalog, SavedStateHandle())
         vm.availableDietaryTags.collectInTest(this)
         advanceUntilIdle()
 
@@ -153,7 +154,7 @@ class CatalogViewModelTest {
     fun `refresh re-invokes the use case with force`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog)
+        val vm = CatalogViewModel(getCatalog, SavedStateHandle())
         vm.uiState.collectInTest(this)
         advanceUntilIdle()
 
@@ -167,7 +168,7 @@ class CatalogViewModelTest {
     fun `initial load is not forced`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(cachedList)
 
-        val vm = CatalogViewModel(getCatalog)
+        val vm = CatalogViewModel(getCatalog, SavedStateHandle())
         vm.uiState.collectInTest(this)
         advanceUntilIdle()
 
