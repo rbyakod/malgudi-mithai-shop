@@ -21,9 +21,13 @@
 //   - home: 1.0
 //   - vertical hubs (/mithai, /qsr, /snacks, /merch): 0.9
 //   - vertical PDPs (/mithai/X, /qsr/X, /snacks/X, /merch/X): 0.8
-//   - /stories hub: 0.7, story detail: 0.6
-//   - lead pages (/weddings, /corporate): 0.5
-//   - commerce stubs (/cart, /checkout, /account, /track-order): 0.3
+//   - /stories hub: 0.7; story pillars + details: 0.6
+//   - /build-a-gift: 0.6
+//   - lead pages (/weddings, /corporate, /about): 0.5
+//   - help pages (/help/shipping, /help/returns, /help/contact): 0.4
+//   - legal (/privacy, /terms, /accessibility): 0.3
+//   - /cart: 0.3. /checkout, /account and /track-order are noindex
+//     (auth-gated/personal) and are intentionally NOT listed.
 //   - changeFrequency: weekly everywhere.
 //
 // ISR: Next.js re-evaluates sitemap.ts on the same revalidate schedule as
@@ -59,16 +63,47 @@ const VERTICAL_HUBS: Hub[] = [
   {path: "stories", priority: 0.7},
 ];
 
+// Story pillar hubs under the (pillar) route group — URLs are plain
+// /stories/<pillar>.
+const STORY_PILLARS: Hub[] = [
+  {path: "stories/farms", priority: 0.6},
+  {path: "stories/journal", priority: 0.6},
+  {path: "stories/karigari", priority: 0.6},
+  {path: "stories/karigars", priority: 0.6},
+];
+
+const SHOP_PAGES: Hub[] = [{path: "build-a-gift", priority: 0.6}];
+
 const LEAD_PAGES: Hub[] = [
   {path: "weddings", priority: 0.5},
   {path: "corporate", priority: 0.5},
+  {path: "about", priority: 0.5},
 ];
 
-const COMMERCE_STUBS: Hub[] = [
-  {path: "cart", priority: 0.3},
-  {path: "checkout", priority: 0.3},
-  {path: "account", priority: 0.3},
-  {path: "track-order", priority: 0.3},
+const HELP_PAGES: Hub[] = [
+  {path: "help/shipping", priority: 0.4},
+  {path: "help/returns", priority: 0.4},
+  {path: "help/contact", priority: 0.4},
+];
+
+const LEGAL_PAGES: Hub[] = [
+  {path: "privacy", priority: 0.3},
+  {path: "terms", priority: 0.3},
+  {path: "accessibility", priority: 0.3},
+];
+
+// Only /cart is listed: /checkout, /account and /track-order are noindex
+// (auth-gated or personal), and a sitemap URL contradicts robots noindex.
+const COMMERCE_STUBS: Hub[] = [{path: "cart", priority: 0.3}];
+
+const STATIC_HUBS: Hub[] = [
+  ...VERTICAL_HUBS,
+  ...STORY_PILLARS,
+  ...SHOP_PAGES,
+  ...LEAD_PAGES,
+  ...HELP_PAGES,
+  ...LEGAL_PAGES,
+  ...COMMERCE_STUBS,
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -86,7 +121,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 1,
     });
-    for (const hub of [...VERTICAL_HUBS, ...LEAD_PAGES, ...COMMERCE_STUBS]) {
+    for (const hub of STATIC_HUBS) {
       entries.push({
         url: `${base}/${locale}/${hub.path}`,
         lastModified: now,

@@ -17,6 +17,8 @@ import {getTranslations, setRequestLocale} from "next-intl/server";
 import {routing} from "@/i18n/routing";
 import {Link} from "@/i18n/navigation";
 import {slugify} from "@/lib/slugify";
+import {InlineScript} from "@/components/InlineScript";
+import {productSchema} from "@/lib/seo/schema";
 
 export const revalidate = 60;
 
@@ -83,6 +85,20 @@ export default async function Page({params}: Context) {
   )[0];
 
   const enquiryOnly = doc.availability !== "in-stock";
+
+  // Product JSON-LD — emitted only when the price parses to a real number
+  // (the helper omits `offers` otherwise, and an offer-less Product adds
+  // nothing over the page itself). `<` escaped per the Next.js pattern.
+  const productLd = productSchema({
+    name: doc.name,
+    description: doc.description,
+    displayPrice: doc.price,
+    images: doc.images,
+  });
+  const productLdHtml =
+    "offers" in productLd
+      ? JSON.stringify(productLd).replace(/</g, "\\u003c")
+      : null;
 
   return (
     <article className="pb-24 pt-8">
@@ -186,6 +202,9 @@ export default async function Page({params}: Context) {
           </aside>
         </section>
       </div>
+      {productLdHtml ? (
+        <InlineScript id="merch-jsonld" html={productLdHtml} />
+      ) : null}
     </article>
   );
 }

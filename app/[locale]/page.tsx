@@ -7,7 +7,7 @@ import {BrandHero} from "@/components/home/BrandHero";
 import {VerticalPortals} from "@/components/home/VerticalPortals";
 import {Pillars} from "@/components/home/Pillars";
 import {InlineScript} from "@/components/InlineScript";
-import {organizationSchema} from "@/lib/seo/schema";
+import {organizationSchema, localBusinessSchema} from "@/lib/seo/schema";
 
 type Props = {
   params: Promise<{locale: string}>;
@@ -18,14 +18,18 @@ export default async function Page({params}: Props) {
   // locale (avoids static-shadowing the home across locales).
   await params;
 
-  // Organization JSON-LD — safe: input is JSON.stringify of a plain object
-  // built from static brand defaults; `<` is escaped to prevent
-  // script-context breakout.
-  const orgJsonLd = JSON.stringify(organizationSchema()).replace(/</g, "\\u003c");
+  // JSON-LD — safe: input is JSON.stringify of plain objects built from
+  // static brand defaults; `<` is escaped to prevent script-context
+  // breakout. Organization (global) + LocalBusiness (Bengaluru storefront)
+  // for local-intent queries, as a valid top-level JSON array.
+  const homeJsonLd = JSON.stringify([
+    organizationSchema(),
+    localBusinessSchema(),
+  ]).replace(/</g, "\\u003c");
 
   return (
     <>
-      <InlineScript id="org-jsonld" html={orgJsonLd} />
+      <InlineScript id="home-jsonld" html={homeJsonLd} />
       <div className="-mx-4 -mt-4 sm:-mx-6 lg:-mx-8">
         <BrandHero />
         <VerticalPortals />

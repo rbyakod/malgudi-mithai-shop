@@ -137,22 +137,46 @@ describe("sitemap", () => {
     expect(urls.some((u: string) => u.includes(`/en/merch/${merchSlug}`))).toBe(true);
   });
 
-  it("emits URLs for the commerce stubs and lead pages", async () => {
+  it("emits URLs for cart, lead pages, help/legal pages, and story pillars", async () => {
     const {default: sitemap} = await import("@/app/sitemap");
     const result = await sitemap();
     const urls = result.map((u: {url: string}) => u.url);
-    // Commerce stubs (priority 0.3).
+    // Cart is the only commerce stub listed (priority 0.3).
     expect(urls.some((u: string) => u.endsWith("/en/cart"))).toBe(true);
-    expect(urls.some((u: string) => u.endsWith("/en/checkout"))).toBe(true);
-    expect(urls.some((u: string) => u.endsWith("/en/account"))).toBe(true);
-    expect(urls.some((u: string) => u.endsWith("/en/track-order"))).toBe(true);
     // Lead pages (priority 0.5).
     expect(urls.some((u: string) => u.endsWith("/en/weddings"))).toBe(true);
     expect(urls.some((u: string) => u.endsWith("/en/corporate"))).toBe(true);
+    expect(urls.some((u: string) => u.endsWith("/en/about"))).toBe(true);
     // Vertical hubs beyond mithai (priority 0.9).
     expect(urls.some((u: string) => u.endsWith("/en/qsr"))).toBe(true);
     expect(urls.some((u: string) => u.endsWith("/en/snacks"))).toBe(true);
     expect(urls.some((u: string) => u.endsWith("/en/merch"))).toBe(true);
+    // Help pages (priority 0.4).
+    expect(urls.some((u: string) => u.endsWith("/en/help/shipping"))).toBe(true);
+    expect(urls.some((u: string) => u.endsWith("/en/help/returns"))).toBe(true);
+    expect(urls.some((u: string) => u.endsWith("/en/help/contact"))).toBe(true);
+    // Legal pages (priority 0.3).
+    expect(urls.some((u: string) => u.endsWith("/en/privacy"))).toBe(true);
+    expect(urls.some((u: string) => u.endsWith("/en/terms"))).toBe(true);
+    expect(urls.some((u: string) => u.endsWith("/en/accessibility"))).toBe(true);
+    // Story pillars (priority 0.6).
+    expect(urls.some((u: string) => u.endsWith("/en/stories/farms"))).toBe(true);
+    expect(urls.some((u: string) => u.endsWith("/en/stories/journal"))).toBe(true);
+    expect(urls.some((u: string) => u.endsWith("/en/stories/karigari"))).toBe(true);
+    expect(urls.some((u: string) => u.endsWith("/en/stories/karigars"))).toBe(true);
+    // Build a gift (priority 0.6).
+    expect(urls.some((u: string) => u.endsWith("/en/build-a-gift"))).toBe(true);
+  });
+
+  it("omits noindex personal routes (checkout, account, track-order)", async () => {
+    const {default: sitemap} = await import("@/app/sitemap");
+    const result = await sitemap();
+    const urls = result.map((u: {url: string}) => u.url);
+    // These pages carry `robots: {index: false}` — a sitemap entry would
+    // contradict that. Only /cart remains of the old commerce stubs.
+    expect(urls.some((u: string) => u.endsWith("/en/checkout"))).toBe(false);
+    expect(urls.some((u: string) => u.endsWith("/en/account"))).toBe(false);
+    expect(urls.some((u: string) => u.endsWith("/en/track-order"))).toBe(false);
   });
 
   it("does not include draft stories", async () => {
