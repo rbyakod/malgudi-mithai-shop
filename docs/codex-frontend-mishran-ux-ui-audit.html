@@ -486,6 +486,7 @@
         <li><a href="#accessibility">Accessibility and Performance</a></li>
         <li><a href="#analytics">Analytics and Ops</a></li>
         <li><a href="#frontend-design">Frontend Design Skill Audit</a></li>
+        <li><a href="#chatgpt-audit">Chatgpt Audit</a></li>
         <li><a href="#roadmap">Roadmap</a></li>
         <li><a href="#quickwins">Quick Wins</a></li>
       </ul>
@@ -495,12 +496,13 @@
       <section class="hero">
         <div>
           <p class="eyebrow">UX/UI Audit - Web, iOS, Android</p>
-          <h2>Mishran has premium brand bones and native commerce depth, but the web cannot yet close an order.</h2>
-          <p class="lead">The strongest product experience is split across platforms: the web is an editorial storefront with search, product detail pages, lead capture, WhatsApp fallback, schema, sitemap, and rich brand surfaces; the native apps carry true checkout, Razorpay, account, orders, push, and loyalty. For a premium Indian sweets ecommerce business, launch priority is to close the web commerce gap, convert gifting intent into configured products, deepen local/occasion discovery, and make retention measurable.</p>
+          <h2>Mishran now has a credible web commerce path; launch risk has moved from missing flows to proof, configuration, and instrumentation.</h2>
+          <p class="lead">The strongest product experience is no longer split as sharply across platforms: web checkout, account, order tracking, gifts, occasions, help/legal pages, search facets, PDP trust modules, sitemap/schema, and Kannada localization are now present in the codebase. For a premium Indian sweets ecommerce business, the next launch gate is to verify Razorpay keys in the deployed environment, seed occasion/festival merchandising, publish honest trust proof such as FSSAI and verified reviews, deepen gifting/bulk/wedding flows, and make analytics consent-aware and decision-grade.</p>
         </div>
         <div class="hero-panel">
           <ul class="audit-meta">
             <li><strong>Remediation 2026-08-16: launch-critical gaps closed</strong> All nine launch batches shipped and deployed: web checkout, account, order tracking, legal/help pages, search facets, gifts/occasions pages, PDP trust + cross-sells, genuine Kannada.</li>
+            <li><strong>Chatgpt verified readiness: 84/100</strong> (2026-08-16, codebase review) Web commerce path is implemented; launch confidence depends on environment keys, trust proof, content seeding, and funnel analytics.</li>
             <li><strong>Original readiness: 67/100</strong> (2026-08-15, pre-remediation) Sellable brand experience, incomplete transaction stack on web.</li>
             <li><strong>Still open</strong> Razorpay TEST keys on VPS (pay step 401s until set), occasion content seeding, verified reviews, gift configurator, consent-gated analytics, FSSAI number.</li>
           </ul>
@@ -509,7 +511,7 @@
 
       <section>
         <div class="closure">
-          <strong>Result (2026-08-16):</strong> all nine remediation batches are code-complete, deployed, and live-verified — the web now closes an order end-to-end (phone sign-in → editable cart → address → fresh-tier slot → server-priced summary → Razorpay → verified receipt), every cart is priced server-side with real delivery fees, and legal/help, search facets, gifts/occasions, PDP trust chips with cross-sell rails, and genuine Kannada are all in production. En route, three latent server bugs that had silently broken checkout on every platform — including the native apps — were found and fixed. Remaining before paid traffic: a real Razorpay TEST key pair on the VPS (payments 401 until then), occasion content, verified reviews, and consent-gated analytics.
+          <strong>Result verified by Chatgpt (2026-08-16):</strong> the main remediation claims are materially correct in the source: web checkout, account, track-order, help/legal pages, gifts/occasions hubs, sitemap coverage, search analytics, and noindex handling are present. The document previously overstated some closure language and still contained stale pre-fix statements. Correct current risk: payments still depend on a real Razorpay TEST key pair in the deployed VPS environment; FSSAI remains pending; occasions need content; reviews, consent-gated analytics, richer facets, and the visual gift configurator remain open.
         </div>
       </section>
 
@@ -550,27 +552,27 @@
         <p class="eyebrow">Scorecard</p>
         <h3>Business Readiness by Dimension</h3>
         <div class="grid">
-          <div class="card span-3"><div class="score"><b>7.5</b><span>/10</span></div><h4>Brand UI</h4><p>Distinct, editorial, premium. Stronger than the transaction layer.</p></div>
-          <div class="card span-3"><div class="score"><b>5.0</b><span>/10</span></div><h4>Web Conversion</h4><p>PDP/cart intent exists. Checkout/account/track order are not live.</p></div>
-          <div class="card span-3"><div class="score"><b>7.0</b><span>/10</span></div><h4>Native Commerce</h4><p>Checkout and payments exist on both apps. Some retention/app support gaps remain.</p></div>
-          <div class="card span-3"><div class="score"><b>5.5</b><span>/10</span></div><h4>Discovery</h4><p>Sitemap/schema/l10n exist. Local, occasion, FAQ, reviews, and GEO content are thin.</p></div>
+          <div class="card span-3"><div class="score"><b>8.2</b><span>/10</span></div><h4>Brand UI</h4><p>Distinct, editorial, premium. Now carried further into checkout, account, help, and gifting surfaces.</p></div>
+          <div class="card span-3"><div class="score"><b>8.0</b><span>/10</span></div><h4>Web Conversion</h4><p>Checkout/account/track-order are implemented. Razorpay environment keys and payment smoke remain the gate.</p></div>
+          <div class="card span-3"><div class="score"><b>7.5</b><span>/10</span></div><h4>Commerce Retention</h4><p>Native commerce and web account exist. Reorder, reviews, referrals, and Android Wallet remain.</p></div>
+          <div class="card span-3"><div class="score"><b>7.3</b><span>/10</span></div><h4>Discovery</h4><p>Sitemap/schema/l10n/gifts/occasions/search facets improved. FAQ, city/festival pages, reviews still thin.</p></div>
         </div>
 
         <div class="matrix-wrap" style="margin-top:18px">
           <table>
             <thead>
-              <tr><th>Area</th><th>Status</th><th>Score</th><th>Evidence</th><th>Primary Risk</th></tr>
+              <tr><th>Area</th><th>Status</th><th>Score</th><th>Evidence</th><th>Primary Risk</th><th>Chatgpt Audit</th></tr>
             </thead>
             <tbody>
-              <tr><td>Home and brand storytelling</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td>Hero, vertical portals, pillars, story rails, theme system.</td><td>Brand promise still under-backed by trust proof and real customer evidence.</td></tr>
-              <tr><td>Catalog discovery</td><td><span class="pill partial">Partial</span></td><td>7</td><td>Search, tag filter, A-Z sort, pagination on web; native grids and filters. <em>2026-08-16: live /mithai search + family/freshness facets, URL-synced; search_used fires.</em></td><td>Remaining facets: occasion, price band, delivery tier, city, gifting, dietary detail; merchandising lanes.</td></tr>
-              <tr><td>PDP conversion</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td>Pack sizes, pincode check, quantity, add, buy now, WhatsApp, sticky mobile CTA. <em>2026-08-16: story lead, trust chips, honest labels, same-family cross-sell rail; buy-now routes to checkout via sign-in.</em></td><td>Reviews and urgency levers remain.</td></tr>
-              <tr><td>Web checkout</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td><em>2026-08-16:</em> full CheckoutFlow — address book → fresh-tier slot → server-priced summary → Razorpay create/verify → receipt; stub removed; three latent server bugs fixed.</td><td>Live but the VPS Razorpay secret is a placeholder — pay step 401s until a real TEST key pair is set.</td></tr>
-              <tr><td>Native checkout</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td>Address, pincode tier, slot, Razorpay, verify, confirmation on both apps.</td><td>Need clearer trust recovery, payment failure help, and richer order summary.</td></tr>
-              <tr><td>Gifting and bulk</td><td><span class="pill partial">Partial</span></td><td>7</td><td>Gift builder lead, wedding form, corporate form, gift-box collections. <em>2026-08-16: public /gifts hub + PDPs with real prices (22 boxes backfilled), /occasions hub + details, gift links in footer/sitemap.</em></td><td>Visual gift configurator remains; occasions collection not yet seeded.</td></tr>
-              <tr><td>Retention</td><td><span class="pill partial">Partial</span></td><td>6</td><td>iOS loyalty pass, order lists, push foundations, wallet pass collection. <em>2026-08-16: web sign-in, account, order history/detail, address book live.</em></td><td>Repeat-order, referral, subscription, lifecycle campaigns, reviews, and Android Wallet parity remain.</td></tr>
-              <tr><td>Accessibility</td><td><span class="pill implemented">Implemented</span></td><td>7</td><td>Skip link, labels, native a11y tests, 44pt iOS audit.</td><td>Some manual hardware checks and web contrast/dynamic text verification remain.</td></tr>
-              <tr><td>Analytics</td><td><span class="pill partial">Partial</span></td><td>5</td><td>GA4/Meta scripts and custom events exist.</td><td>No consent gate, weak ecommerce funnel taxonomy, no server-side purchase/order analytics.</td></tr>
+              <tr><td>Home and brand storytelling</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td>Hero, vertical portals, pillars, story rails, theme system.</td><td>Brand promise still under-backed by trust proof and real customer evidence.</td><td>Agree. Strong premium storefront; add verified proof, maker/customer content, and FSSAI before broad paid traffic.</td></tr>
+              <tr><td>Catalog discovery</td><td><span class="pill partial">Partial</span></td><td>7</td><td>Search, tag filter, A-Z sort, pagination on web; native grids and filters. <em>2026-08-16: live /mithai search + family/freshness facets, URL-synced; search_used fires.</em></td><td>Remaining facets: occasion, price band, delivery tier, city, gifting, dietary detail; merchandising lanes.</td><td>Verified partial. Family/freshness and search analytics are present; commercial facets and festival/city lanes remain high-value work.</td></tr>
+              <tr><td>PDP conversion</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td>Pack sizes, pincode check, quantity, add, buy now, WhatsApp, sticky mobile CTA. <em>2026-08-16: story lead, trust chips, honest labels, same-family cross-sell rail; buy-now routes to checkout via sign-in.</em></td><td>Reviews and urgency levers remain.</td><td>Agree. Do not add fake urgency; use real freshness windows, stock/serviceability, reviews, and delivery promise.</td></tr>
+              <tr><td>Web checkout</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td><em>2026-08-16:</em> full CheckoutFlow — address book → fresh-tier slot → server-priced summary → Razorpay create/verify → receipt; stub removed; three latent server bugs fixed.</td><td>Live but the VPS Razorpay secret is a placeholder — pay step 401s until a real TEST key pair is set.</td><td>Verified in code. Treat as launch-blocked until a deployed paid smoke passes with real Razorpay TEST keys.</td></tr>
+              <tr><td>Native checkout</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td>Address, pincode tier, slot, Razorpay, verify, confirmation on both apps.</td><td>Need clearer trust recovery, payment failure help, and richer order summary.</td><td>Still accurate. Web fixes reused the mobile API contract; keep mobile and web error language aligned.</td></tr>
+              <tr><td>Gifting and bulk</td><td><span class="pill partial">Partial</span></td><td>7</td><td>Gift builder lead, wedding form, corporate form, gift-box collections. <em>2026-08-16: public /gifts hub + PDPs with real prices (22 boxes backfilled), /occasions hub + details, gift links in footer/sitemap.</em></td><td>Visual gift configurator remains; occasions collection not yet seeded.</td><td>Verified platform support. Revenue upside now depends on seeded occasion content and a configurable gift-buying flow.</td></tr>
+              <tr><td>Retention</td><td><span class="pill partial">Partial</span></td><td>6.5</td><td>iOS loyalty pass, order lists, push foundations, wallet pass collection. <em>2026-08-16: web sign-in, account, order history/detail, address book live.</em></td><td>Repeat-order, referral, subscription, lifecycle campaigns, reviews, and Android Wallet parity remain.</td><td>Updated from weak to partial-plus. Web account exists; repeat purchase mechanics are still missing.</td></tr>
+              <tr><td>Accessibility</td><td><span class="pill implemented">Implemented</span></td><td>7</td><td>Skip link, labels, native a11y tests, 44pt iOS audit.</td><td>Some manual hardware checks and web contrast/dynamic text verification remain.</td><td>Mostly credible. Re-run manual keyboard/screen-reader pass on newly added checkout, account, gifts, and help routes.</td></tr>
+              <tr><td>Analytics</td><td><span class="pill partial">Partial</span></td><td>5.5</td><td>GA4/Meta scripts and custom events exist.</td><td>No consent gate, weak ecommerce funnel taxonomy, no server-side purchase/order analytics.</td><td>Verified partial. begin_checkout, purchase, and search_used exist; consent TODOs remain explicit in code.</td></tr>
             </tbody>
           </table>
         </div>
@@ -610,15 +612,15 @@
           <div class="finding">
             <span class="pill p0">P0</span>
             <div>
-              <h4>Web checkout is not production ecommerce.</h4>
+              <h4>Web checkout is implemented; deployment payment configuration is the launch blocker.</h4>
               <p><strong>Category:</strong> Launch-Critical/Must Have. <strong>Impact:</strong> Very high. <strong>Effort:</strong> High.</p>
-              <p>The web route returns a commerce stub and WhatsApp fallback. Cart can collect intent, but paid acquisition, SEO traffic, and direct search traffic cannot complete purchase on the web. This is the largest revenue leak.</p>
+              <p>The original audit was correct when written, but Claude's remediation has changed the state: <code>app/[locale]/checkout/page.tsx</code> now renders <code>CheckoutFlow</code>, and the client flow covers sign-in, editable cart, address, serviceability, fresh-tier slots, server-priced summary, Razorpay create/verify, receipt, and WhatsApp recovery. The remaining P0 is not UI absence; it is proving deployed payment credentials and failure recovery before traffic.</p>
               <ul>
-                <li>Port native checkout primitives: address picker, pincode/serviceability, slot picker for fresh tier, Razorpay create/verify, order confirmation.</li>
-                <li>Use the existing mobile API contract and server validation work before adding advanced merchandising.</li>
+                <li>Set a real Razorpay TEST key pair on the VPS and run a paid smoke from product detail → cart → checkout → receipt.</li>
+                <li>Verify blocked pincode, slot unavailable, payment failure, cart changed, and signed-out recovery states on mobile viewport.</li>
                 <li>Keep WhatsApp as assistive recovery, not the primary checkout path.</li>
               </ul>
-              <div class="refs"><span class="ref">app/[locale]/checkout/page.tsx:1-15</span><span class="ref">components/commerce/CommerceStub.tsx:1-55</span><span class="ref">apps/ios/Mishran/UI/Checkout/CheckoutView.swift:19-131</span><span class="ref">apps/android/.../CheckoutScreen.kt:69-187</span></div>
+              <div class="refs"><span class="ref">app/[locale]/checkout/page.tsx:1-51</span><span class="ref">components/checkout/CheckoutFlow.tsx:1-330</span><span class="ref">lib/web/checkoutMachine.ts</span><span class="ref">lib/web/razorpay.ts</span></div>
               <p class="resolution"><span class="pill ok">RESOLVED 2026-08-16</span> Full <code>CheckoutFlow</code> shipped — sign-in → editable cart → address book → fresh-tier slot → server-priced summary → Razorpay create/verify → receipt; stub removed. En route, three latent server bugs that had silently broken checkout on every platform (snapshot lookup, order GET, customerId stringification) were found and fixed. Live-verified end-to-end up to the Razorpay HTTP call; only remaining step is a real TEST key pair on the VPS (task #76).</p>
             </div>
           </div>
@@ -626,13 +628,13 @@
           <div class="finding">
             <span class="pill p0">P0</span>
             <div>
-              <h4>Legal, help, and trust routes are linked but absent.</h4>
+              <h4>Legal and help routes are live; FSSAI and proof remain trust gaps.</h4>
               <p><strong>Category:</strong> Operational/Trust. <strong>Impact:</strong> High. <strong>Effort:</strong> Medium.</p>
-              <p>The footer includes shipping, returns, contact, about, careers, press, wholesale, privacy, terms, and accessibility links, while the actual app routes list does not include those pages. The footer also displays "FSSAI - pending". This undermines food-safety trust and can hurt conversion.</p>
+              <p>The original missing-route issue is largely resolved. The route list now includes about, privacy, terms, accessibility, help/shipping, help/returns, help/contact, and the footer link map matches existing route families. The remaining trust issue is that the footer still intentionally displays "FSSAI - pending" and the site still lacks verified reviews/customer proof.</p>
               <ul>
-                <li>Ship legal/help pages before launch: privacy, terms, shipping, refunds, cancellation, accessibility, FSSAI license, contact.</li>
                 <li>Replace "FSSAI - pending" with the real license number or hide until ready.</li>
-                <li>Fix the 404 "Browse sweets" link, which points at `/sweets` while the real route is `/mithai`.</li>
+                <li>Add verified review capture and display after completed deliveries.</li>
+                <li>Run a link crawl after each new footer/sitemap change.</li>
               </ul>
               <div class="refs"><span class="ref">components/layout/SiteFooter.tsx:40-58</span><span class="ref">components/layout/SiteFooter.tsx:147-158</span><span class="ref">app/[locale]/not-found.tsx:21-25</span></div>
               <p class="resolution"><span class="pill ok">RESOLVED 2026-08-16</span> Privacy, terms, accessibility, about, help/shipping, help/returns, help/contact all live (7 routes, 200 across locales, in sitemap); footer rewired (careers/press/wholesale dropped); <code>/sweets</code> 404 fixed. <span class="pill partial">Still pending</span> the real FSSAI license number (pill reads "pending" until licensed).</p>
@@ -698,7 +700,7 @@
                 <li>Add repeat purchase features for laddoo/barfi/family boxes: "order again", "send to same address", and festival reminders.</li>
                 <li>Use delivered orders to trigger review, referral, and loyalty lifecycle events.</li>
               </ul>
-              <div class="refs"><span class="ref">components/commerce/CommerceStub.tsx:19</span><span class="ref">collections/WalletPasses.ts</span><span class="ref">lib/loyalty/eligibility.ts</span></div>
+              <div class="refs"><span class="ref">app/[locale]/account/page.tsx</span><span class="ref">components/account/AccountView</span><span class="ref">collections/WalletPasses.ts</span><span class="ref">lib/loyalty/eligibility.ts</span></div>
               <p class="resolution"><span class="pill partial">PARTIAL 2026-08-16</span> Shipped: web phone sign-in, account, order history + order detail, address book CRUD with serviceability, and track-order — all live. <span class="pill partial">Remains</span> reorder one-tap, saved recipients, referral/review capture, loyalty state on web, Android Wallet parity.</p>
             </div>
           </div>
@@ -747,18 +749,18 @@
               <li>Strong premium visual system: deep navy, product photography, restrained gold, editorial layouts.</li>
               <li>Home page is not a generic grid: hero, vertical portals, and pillars give brand shape.</li>
               <li>PDP has meaningful conversion affordances: pack sizes, quantity, delivery check, add to cart, buy now, WhatsApp, sticky mobile CTA.</li>
-              <li>Cart preserves draft intent and creates a useful WhatsApp message.</li>
-              <li>Lead flows exist for wedding, corporate, and gift-builder demand.</li>
+              <li>Checkout, account, order tracking, address book, and receipt pages now exist on web.</li>
+              <li>Lead flows exist for wedding, corporate, and gift-builder demand; gifts and occasions now have public hubs.</li>
             </ul>
           </div>
           <div class="card span-6">
             <h4>Risks</h4>
             <ul>
-              <li>Checkout, account, and track-order are not real web flows.</li>
-              <li>Footer links expose non-existent routes and pending FSSAI status.</li>
+              <li>Deployed checkout still needs a real Razorpay TEST key pair and paid smoke verification.</li>
+              <li>Footer/legal trust still shows pending FSSAI status.</li>
               <li>Discovery is catalog-first, not occasion/customer-job-first.</li>
               <li>No social proof: verified reviews, customer photos, press, ratings, trust badges.</li>
-              <li>No web post-purchase loop: reorder, referrals, loyalty, recipient address book.</li>
+              <li>Web post-purchase loop is thin: reorder, referrals, loyalty, reviews, and recipient address book remain.</li>
             </ul>
           </div>
         </div>
@@ -799,7 +801,7 @@
             <h4>Current SEO Assets</h4>
             <ul>
               <li>Locale-prefixed routes for en/hi/kn.</li>
-              <li>Dynamic sitemap for locale x home, vertical hubs, lead pages, commerce stubs, PDPs, and stories.</li>
+              <li>Dynamic sitemap for locale x home, vertical hubs, lead pages, cart, help/legal pages, gifts/occasions, PDPs, and stories.</li>
               <li>Product schema with name, image, brand, parsed INR price, and InStock availability.</li>
               <li>Organization and Breadcrumb schema.</li>
               <li>Story collection and pillar pages: farms, karigari, karigars, journal.</li>
@@ -957,7 +959,7 @@
             <ul>
               <li><strong>Status:</strong> Strong.</li>
               <li><strong>Evidence:</strong> `DESIGN.md` defines Malgudi Blue v2 with navy canvas, blue surfaces, restrained gold, product photography, and editorial hierarchy.</li>
-              <li><strong>Risk:</strong> Brand strength fades on stub pages because checkout/account/track-order use a generic "coming soon" pattern.</li>
+              <li><strong>Risk:</strong> The brand now reaches more commerce surfaces, but trust proof and content depth still lag the visual promise.</li>
             </ul>
           </div>
           <div class="card span-4">
@@ -973,7 +975,7 @@
             <h4>Layout and Hierarchy</h4>
             <p>The skill favors semantic layout, CSS Grid for major structure, strong hierarchy, and asymmetric/product-specific composition. Mishran's home, vertical hubs, and PDP mostly pass.</p>
             <ul>
-              <li><strong>Status:</strong> Good on discovery/PDP, weak on commerce stubs.</li>
+              <li><strong>Status:</strong> Good on discovery/PDP, improved on checkout/account/help pages, still incomplete on gift configuration.</li>
               <li><strong>Evidence:</strong> `BrandHero`, `VerticalPortals`, `VerticalHub`, `MithaiPDP`.</li>
               <li><strong>Risk:</strong> Catalog cards are visually polished but commercially under-faceted.</li>
             </ul>
@@ -1002,13 +1004,13 @@
                 <td>Semantic structure</td>
                 <td>Web uses sections, labels, nav landmarks, skip link, and client islands for interactive states.</td>
                 <td><span class="pill ok">Pass</span></td>
-                <td>Re-run semantic/a11y checks after replacing stubs with real forms.</td>
+                <td>Re-run semantic/a11y checks on the newly added checkout, account, track-order, gifts, occasions, and help routes.</td>
               </tr>
               <tr>
                 <td>Responsive conversion</td>
-                <td>PDP mobile sticky add-to-cart exists; catalog and gift forms are usable, but true web checkout is absent.</td>
-                <td><span class="pill missing">Fail</span></td>
-                <td>Build mobile-first web checkout before paid traffic or serious SEO push.</td>
+                <td>PDP mobile sticky add-to-cart exists and true web checkout is now implemented.</td>
+                <td><span class="pill ok">Pass</span></td>
+                <td>Run mobile-first checkout QA with real Razorpay TEST keys before paid traffic.</td>
               </tr>
               <tr>
                 <td>Motion and performance restraint</td>
@@ -1024,7 +1026,7 @@
               </tr>
               <tr>
                 <td>Accessible interaction states</td>
-                <td>Inputs are labeled, buttons expose state, native apps have a11y tests. Stub pages dodge the hardest states.</td>
+                <td>Inputs are labeled, buttons expose state, native apps have a11y tests. New web checkout/account states now need manual assistive-tech verification.</td>
                 <td><span class="pill partial">Partial</span></td>
                 <td>Design loading, validation, payment failure, address failure, pincode blocked, and cart-changed states in web checkout.</td>
               </tr>
@@ -1042,8 +1044,8 @@
           <div class="card span-6">
             <h4>Frontend-design Specific Fix List</h4>
             <ul>
-              <li>Promote the Malgudi Blue tokens into every missing commerce surface before introducing new styles.</li>
-              <li>Use a checkout layout with clear sections: address, delivery check, slot, payment, order summary, support recovery.</li>
+              <li>Verify the Malgudi Blue tokens hold up across checkout, account, help, gifts, and occasions on mobile.</li>
+              <li>QA checkout states: address, delivery check, slot, payment, order summary, support recovery, cart mutation, and failure.</li>
               <li>Give gift builder a visual product configurator, not only a form.</li>
               <li>Add trust/proof modules as real content: FSSAI, freshness, delivery promise, returns, reviews when verified.</li>
               <li>Keep motion subtle and state-driven; avoid decorative animation while conversion basics are incomplete.</li>
@@ -1051,10 +1053,69 @@
           </div>
           <div class="card span-6">
             <h4>Design Score From This Skill</h4>
-            <div class="score"><b>74</b><span>/100</span></div>
-            <p><strong>Why not higher:</strong> visual identity is strong, but production-grade frontend design includes end-to-end task completion. The current web experience stops short at the highest-intent moment.</p>
-            <p><strong>What would move it above 85:</strong> real web checkout, real account/order tracking, legal/trust pages, richer gift builder, complete mobile-first states, and measurable funnel analytics.</p>
+            <div class="score"><b>84</b><span>/100</span></div>
+            <p><strong>Why not higher:</strong> visual identity and core web commerce are now much stronger, but launch-grade frontend design also needs verified payment environment, content proof, accessible failure states, and decision-grade analytics.</p>
+            <p><strong>What would move it above 90:</strong> Razorpay paid smoke, seeded occasion/festival content, verified reviews, real FSSAI number, richer gift builder, mobile assistive-tech pass, and consent-aware funnel analytics.</p>
           </div>
+        </div>
+      </section>
+
+      <section id="chatgpt-audit">
+        <p class="eyebrow">Chatgpt Audit</p>
+        <h3>Verification of Claude Updates Against the Codebase</h3>
+        <div class="callout">
+          <strong>Verification standard:</strong> checked route files, footer IA, sitemap behavior, checkout/account/order components, gifts/occasions hubs, analytics TODOs, and stale statements inside this HTML. Verdict: Claude's fixes are mostly real, but the report needed correction where old language still said checkout/account/help routes were missing.
+        </div>
+        <div class="matrix-wrap" style="margin-top:18px">
+          <table>
+            <thead>
+              <tr><th>Claim / Area</th><th>Verified State</th><th>Chatgpt Audit</th><th>Code Evidence</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Web checkout</td>
+                <td><span class="pill implemented">Implemented</span></td>
+                <td>Correctly fixed in source. Not yet paid-traffic safe until a deployed Razorpay TEST payment completes without 401.</td>
+                <td><span class="ref">app/[locale]/checkout/page.tsx</span> <span class="ref">components/checkout/CheckoutFlow.tsx</span> <span class="ref">lib/web/checkoutMachine.ts</span></td>
+              </tr>
+              <tr>
+                <td>Account and track order</td>
+                <td><span class="pill implemented">Implemented</span></td>
+                <td>Correctly documented as live. Next UX layer is reorder, saved recipients, loyalty state, review prompts, and support recovery.</td>
+                <td><span class="ref">app/[locale]/account/page.tsx</span> <span class="ref">app/[locale]/track-order/page.tsx</span> <span class="ref">components/account/AccountView</span></td>
+              </tr>
+              <tr>
+                <td>Footer/help/legal routes</td>
+                <td><span class="pill partial">Mostly fixed</span></td>
+                <td>Footer link map now points to existing public route families and /sweets was corrected to /mithai. FSSAI remains pending, so trust is not fully closed.</td>
+                <td><span class="ref">components/layout/SiteFooter.tsx</span> <span class="ref">app/[locale]/not-found.tsx</span> <span class="ref">app/[locale]/help/*</span></td>
+              </tr>
+              <tr>
+                <td>Gifts and occasions</td>
+                <td><span class="pill partial">Platform support exists</span></td>
+                <td>/gifts and /occasions hubs are real and collection-backed. The audit should not imply full merchandising maturity until occasions are seeded and /build-a-gift becomes a visual configurator.</td>
+                <td><span class="ref">app/[locale]/gifts/page.tsx</span> <span class="ref">app/[locale]/occasions/page.tsx</span> <span class="ref">components/commerce/GiftBuilder.tsx</span></td>
+              </tr>
+              <tr>
+                <td>SEO/GEO sitemap</td>
+                <td><span class="pill implemented">Improved</span></td>
+                <td>Sitemap includes hubs, gifts, occasions, stories, lead, help, legal, and cart; it intentionally excludes noindex checkout/account/track-order. Still missing city/festival/FAQ/review depth.</td>
+                <td><span class="ref">app/sitemap.ts</span> <span class="ref">lib/seo/schema.ts</span></td>
+              </tr>
+              <tr>
+                <td>Analytics</td>
+                <td><span class="pill partial">Partial</span></td>
+                <td>begin_checkout, purchase, and search_used are present. Consent gating is explicitly TODO, and server-side order/payment analytics remain incomplete.</td>
+                <td><span class="ref">lib/analytics.ts</span> <span class="ref">components/Analytics/AnalyticsScripts.tsx</span> <span class="ref">components/checkout/CheckoutFlow.tsx</span></td>
+              </tr>
+              <tr>
+                <td>Launch-critical roadmap</td>
+                <td><span class="pill partial">Needs reframing</span></td>
+                <td>Do not keep "build checkout/account/help pages" as future work. The remaining launch-critical work is deployed payment proof, FSSAI, reviews/trust proof, occasion content, and consent-aware analytics.</td>
+                <td><span class="ref">app/[locale] route list</span> <span class="ref">components/layout/SiteFooter.tsx</span></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -1063,27 +1124,27 @@
         <h3>Phased Plan</h3>
         <div class="roadmap">
           <div class="phase">
-            <h4>Phase 1 - Launch-Critical Trust and Web Commerce</h4>
+            <h4>Phase 1 - Launch-Critical Verification and Trust</h4>
             <ul>
-              <li>Build web checkout and payment by reusing the mobile API contract.</li>
-              <li>Ship account, addresses, order tracking, and order confirmation on web.</li>
-              <li>Publish legal/help pages and replace pending FSSAI language.</li>
-              <li>Fix dead footer routes and `/sweets` 404 CTA.</li>
+              <li><s>Build web checkout, account, addresses, order tracking, and order confirmation on web.</s> Done 2026-08-16.</li>
+              <li>Set real Razorpay TEST keys on the VPS and complete one paid smoke through receipt.</li>
+              <li>Replace pending FSSAI language with the real license number or approved launch-safe wording.</li>
+              <li>Run mobile keyboard/screen-reader QA across checkout, account, track-order, gifts, occasions, and help pages.</li>
             </ul>
           </div>
           <div class="phase">
             <h4>Phase 2 - Conversion and Merchandising</h4>
             <ul>
-              <li>Add advanced catalog facets and business-led product lanes.</li>
-              <li>Add PDP trust blocks, cross-sells, reviews placeholder model, and delivery clarity.</li>
-              <li>Replace `buyNow -> cart` with `buyNow -> checkout` after checkout exists.</li>
+              <li>Add advanced catalog facets: price, dietary, giftable, occasion, city/serviceability, delivery tier.</li>
+              <li><s>Add PDP trust blocks and cross-sells.</s> Done first pass; add verified reviews and delivery/return FAQ next.</li>
+              <li><s>Replace `buyNow -> cart` with `buyNow -> checkout` after checkout exists.</s> Done; verify on signed-out and signed-in states.</li>
               <li>Add cart upsells and gift packaging prompts.</li>
             </ul>
           </div>
           <div class="phase">
             <h4>Phase 3 - Gifting, Wedding, Corporate Revenue</h4>
             <ul>
-              <li>Turn GiftBoxes and Occasions into shoppable pages.</li>
+              <li><s>Turn GiftBoxes and Occasions into shoppable pages.</s> Hubs/PDPs exist; seed occasion content and polish merchandising.</li>
               <li>Build a visual gift-box configurator.</li>
               <li>Add wedding and corporate package proof: pricing anchors, photos, SLAs, testimonials.</li>
               <li>Enable saved recipient lists and quote-to-order conversion tracking.</li>
@@ -1119,7 +1180,7 @@
             <ul>
               <li><s>Fix `/sweets` to `/mithai` in 404.</s> ✅ Done 2026-08-16.</li>
               <li><s>Hide or replace dead footer links.</s> ✅ Done 2026-08-16 — footer rewired to live routes.</li>
-              <li><s>Replace "FSSAI - pending" with launch-ready trust language.</s> ✅ Done 2026-08-16 — legal/help trust surface shipped; number itself still pending license.</li>
+              <li>Replace "FSSAI - pending" with the real license number or approved launch-safe wording. ⏳ Open.</li>
               <li><s>Fire `search_used` from catalog search.</s> ✅ Done 2026-08-16 — /mithai search fires it.</li>
             </ul>
           </div>
