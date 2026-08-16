@@ -19,7 +19,7 @@ export default function NotFound() {
           Go home
         </Link>
         <Link
-          href="/sweets"
+          href="/mithai"
           className="rounded-full border border-border-input bg-bg-card px-6 py-2.5 text-sm font-semibold text-text-secondary transition hover:bg-bg-accent/60"
         >
           Browse sweets

@@ -15,6 +15,8 @@ import {routing} from "@/i18n/routing";
 import {Link} from "@/i18n/navigation";
 import {slugify} from "@/lib/slugify";
 import {RetailerLink} from "@/components/snacks/RetailerLink";
+import {InlineScript} from "@/components/InlineScript";
+import {productSchema} from "@/lib/seo/schema";
 
 export const revalidate = 60;
 
@@ -85,6 +87,20 @@ export default async function Page({params}: Context) {
     (r): r is {label: string; url: string} =>
       !!r && !!r.label && !!r.url,
   );
+
+  // Product JSON-LD — emitted only when the MSRP parses to a real number
+  // (the helper omits `offers` otherwise, and an offer-less Product adds
+  // nothing over the page itself). `<` escaped per the Next.js pattern.
+  const productLd = productSchema({
+    name: doc.name,
+    description: doc.description,
+    displayPrice: doc.msrp,
+    images: doc.images,
+  });
+  const productLdHtml =
+    "offers" in productLd
+      ? JSON.stringify(productLd).replace(/</g, "\\u003c")
+      : null;
 
   return (
     <article className="pb-24 pt-8">
@@ -221,6 +237,9 @@ export default async function Page({params}: Context) {
           ) : null}
         </dl>
       </div>
+      {productLdHtml ? (
+        <InlineScript id="snack-jsonld" html={productLdHtml} />
+      ) : null}
     </article>
   );
 }

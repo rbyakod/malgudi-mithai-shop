@@ -42,6 +42,7 @@ const FOOTER_COLUMNS: {heading: string; links: {label: string; href: string}[]}[
       {label: "Cart", href: "/cart"},
       {label: "Shipping & delivery", href: "/help/shipping"},
       {label: "Returns & refunds", href: "/help/returns"},
+      {label: "Track order", href: "/track-order"},
       {label: "Contact", href: "/help/contact"},
     ],
   },
@@ -49,9 +50,9 @@ const FOOTER_COLUMNS: {heading: string; links: {label: string; href: string}[]}[
     heading: "Company",
     links: [
       {label: "About Mishran", href: "/about"},
-      {label: "Careers", href: "/careers"},
-      {label: "Press", href: "/press"},
-      {label: "Wholesale", href: "/wholesale"},
+      {label: "Weddings", href: "/weddings"},
+      {label: "Corporate", href: "/corporate"},
+      {label: "Contact", href: "/help/contact"},
     ],
   },
 ];
@@ -89,7 +90,7 @@ export async function SiteFooter() {
         {/* Brand column */}
         <div className="space-y-3">
           <p className="text-sm font-semibold tracking-wide text-gold">
-            MALGUDI SWEETS
+            Mishran · Malgudi Sweets
           </p>
           <p className="max-w-xs text-[11px] leading-relaxed text-text-light-muted">
             Modern Indian mithai, handcrafted in small batches across our

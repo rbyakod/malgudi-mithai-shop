@@ -398,6 +398,200 @@
     "title": "Track order",
     "blurb": "Your most recent orders and where each one is right now."
   },
+  "Legal": {
+    "privacy": {
+      "eyebrow": "Mishran · Legal",
+      "title": "Privacy policy",
+      "intro": "What we collect, why we collect it, and the choices you have. Plain words, no dark patterns.",
+      "sections": {
+        "s1": {
+          "heading": "What we collect",
+          "p1": "Your phone number is your account — we ask for it when you sign in with a one-time code, and we use it to reach you about your orders. If you share your name or email, we keep those too. When you order, we store the delivery address you chose and the contents of that order.",
+          "p2": "We also collect standard analytics events (pages viewed, products viewed, searches) through Google Analytics and the Meta Pixel so we can see what's working on the store."
+        },
+        "s2": {
+          "heading": "How we use it",
+          "p1": "To make and deliver your orders, to answer when you write to us, and to improve the store. We do not sell or rent your personal data to anyone."
+        },
+        "s3": {
+          "heading": "Payments",
+          "p1": "Payments are processed by Razorpay. Your card, UPI, and net-banking details go directly to Razorpay's checkout — we never see or store them. We keep the payment status and order amount so we can issue refunds and reconcile our books."
+        },
+        "s4": {
+          "heading": "Analytics",
+          "p1": "We use first-party Google Analytics 4 and Meta Pixel events to understand how the store is used. These run without ad personalization for now; if that changes, this page changes with it."
+        },
+        "s5": {
+          "heading": "Storage and retention",
+          "p1": "Your profile, saved addresses, and order history stay on your account while it is active. Order and payment records are retained as long as tax law requires, even after an account is deleted."
+        },
+        "s6": {
+          "heading": "Your choices",
+          "p1": "Write to us on WhatsApp to access, correct, or delete your data, or to delete your account. Deleting your account removes your profile and saved addresses; statutory order records remain. Cart and preference data live in your browser's local storage, not on our servers — clear them anytime."
+        }
+      }
+    },
+    "terms": {
+      "eyebrow": "Mishran · Legal",
+      "title": "Terms of service",
+      "intro": "The deal between you and our kitchens when you order from Mishran.",
+      "sections": {
+        "s1": {
+          "heading": "About these terms",
+          "p1": "These terms govern your use of the Mishran store and any orders you place through it. Mishran is a Malgudi Sweets brand, made and dispatched from our Bengaluru kitchens. By using the store you agree to them."
+        },
+        "s2": {
+          "heading": "Ordering",
+          "p1": "An order becomes a contract when its payment is confirmed. Until then — including while payment is pending — you can walk away with no obligation. If an item sells out or a pincode turns out to be unserviceable after payment, we will cancel and refund that order in full."
+        },
+        "s3": {
+          "heading": "Pricing and taxes",
+          "p1": "All prices are in Indian Rupees and MRP-inclusive of GST — the total you see at checkout is the total you pay, plus the delivery fee shown there."
+        },
+        "s4": {
+          "heading": "Delivery",
+          "p1": "Fresh items deliver to serviceable pincodes in a same-day or next-day slot you choose at checkout. Shelf-stable items deliver within the timeline shown when you check your pincode. Someone should be available to receive the order — and refrigerate it where advised — during the chosen slot.",
+          "p2": "We are not liable for delays caused by events outside our control, but when a delivery fails on our side we make it right — see Returns & refunds."
+        },
+        "s5": {
+          "heading": "Payments",
+          "p1": "We accept payments through Razorpay. If a payment fails or you dismiss the checkout, your order stays pending; you can retry or cancel. We never charge twice for the same order."
+        },
+        "s6": {
+          "heading": "Perishability",
+          "p1": "Mithai is made fresh and is perishable. Consume it within the shelf life shown on the pack and refrigerate where advised. We cannot accept responsibility for items stored contrary to their instructions."
+        },
+        "s7": {
+          "heading": "Changes and governing law",
+          "p1": "We may update these terms as the store evolves; the version in force is the one live on this page. These terms are governed by the laws of India, with jurisdiction in Bengaluru. Questions? Write to us on WhatsApp."
+        }
+      }
+    },
+    "shipping": {
+      "eyebrow": "Mishran · Help",
+      "title": "Shipping & delivery",
+      "intro": "Where we deliver, what it costs ({freshFee} fresh / {shelfFee} shelf-stable), and when it arrives.",
+      "sections": {
+        "s1": {
+          "heading": "Where we deliver",
+          "p1": "We deliver to serviceable pincodes — enter yours on any product page to see whether we reach you, which tier applies, and how long it takes. Fresh-tier pincodes get our made-daily range; everywhere else we ship shelf-stable boxes and gifting."
+        },
+        "s2": {
+          "heading": "Delivery fees",
+          "p1": "A flat {freshFee} per order for fresh-tier delivery and {shelfFee} per order for shelf-stable — the same figures checkout charges, shown before you pay. No surge, no distance math."
+        },
+        "s3": {
+          "heading": "Fresh delivery slots",
+          "p1": "Fresh-tier orders arrive in a slot you choose at checkout: a morning window (10:00–14:00) or an evening window (16:00–20:00), same day or next day depending on when you order."
+        },
+        "s4": {
+          "heading": "Shelf-stable delivery",
+          "p1": "Shelf-stable orders are packed to survive the journey and arrive within the number of days shown at your pincode check. Someone should be available to receive the parcel."
+        },
+        "s5": {
+          "heading": "If something goes wrong",
+          "p1": "Late, damaged, or missing? Tell us within 24 hours of delivery and we will replace or refund — see Returns & refunds for the details."
+        }
+      }
+    },
+    "returns": {
+      "eyebrow": "Mishran · Help",
+      "title": "Returns & refunds",
+      "intro": "Perishables can't come back — so our promise is replacement or refund, fast.",
+      "sections": {
+        "s1": {
+          "heading": "Our promise",
+          "p1": "Everything fresh is made the day it travels and packed to order. If what arrives isn't what you ordered, or arrives compromised, we want to hear about it the same day."
+        },
+        "s2": {
+          "heading": "Fresh and perishable items",
+          "p1": "Because mithai is perishable, we can't accept returns in the usual sense. Instead: message us on WhatsApp within 24 hours of delivery with your order reference and a photo, and we will replace the item or refund it in full — your choice."
+        },
+        "s3": {
+          "heading": "Shelf-stable items and merchandise",
+          "p1": "Unopened shelf-stable boxes and merchandise can be returned within 7 days of delivery. Message us first so we can arrange the pickup and refund."
+        },
+        "s4": {
+          "heading": "Refunds",
+          "p1": "Approved refunds go back to the original payment method through Razorpay, typically within 5–7 business days. When the miss is ours, the delivery fee is refunded with the order."
+        },
+        "s5": {
+          "heading": "Cancellations",
+          "p1": "You can cancel any order before it is dispatched — message us on WhatsApp with your order reference. Once fresh items are out for delivery they can't be recalled, but the 24-hour promise above still applies."
+        }
+      }
+    },
+    "accessibility": {
+      "eyebrow": "Mishran · Accessibility",
+      "title": "Accessibility",
+      "intro": "How we build the store, and what to do when we get it wrong.",
+      "sections": {
+        "s1": {
+          "heading": "Our commitment",
+          "p1": "Mishran should work for everyone who loves mithai. We build the store to be perceivable, operable, and understandable, and we treat accessibility bugs as bugs."
+        },
+        "s2": {
+          "heading": "What we've built",
+          "b1": "Semantic landmarks, headings, and form labels throughout",
+          "b2": "Every control operable by keyboard, with visible focus states",
+          "b3": "Reduced-motion support for animation-sensitive visitors",
+          "b4": "Color contrast checked on the navy canvas and its surfaces",
+          "b5": "Alt text on product photography"
+        },
+        "s3": {
+          "heading": "Known limitations",
+          "p1": "The payment step opens Razorpay's checkout widget, which is outside our control. If you hit a barrier there, message us and we will find another way to take your order."
+        },
+        "s4": {
+          "heading": "Tell us",
+          "p1": "Found something we missed? Message us on WhatsApp with the page and what happened. We aim to respond within two business days."
+        }
+      }
+    },
+    "about": {
+      "eyebrow": "Mishran · Our story",
+      "title": "Our story",
+      "intro": "Modern Indian mithai from Bengaluru — the blend, the kitchens, and the people behind both.",
+      "sections": {
+        "s1": {
+          "heading": "The name",
+          "p1": "Mishran means mixture — the old mithai-wallah's word for a thoughtful blend. We took it as a promise: every box we ship is a deliberate mix of tradition, season, and craft."
+        },
+        "s2": {
+          "heading": "What we make",
+          "p1": "We make modern Indian mithai in small batches across our Bengaluru kitchens — the made-daily classics, festive boxes, and gifting — plus namkeen from our snack shelves and a small line of merchandise for people who cook."
+        },
+        "s3": {
+          "heading": "Where it comes from",
+          "p1": "Our sourcing stories are told where they belong — on the farms and karigars pages. Meet the growers behind our nuts and the makers behind our molds; the stories are the product."
+        },
+        "s4": {
+          "heading": "How it reaches you",
+          "p1": "Fresh items travel in slotted windows the day they're made, to pincodes our kitchen can honestly serve. Everything else is packed to keep, so distance doesn't mean staleness."
+        },
+        "s5": {
+          "heading": "Come say hello",
+          "p1": "The fastest way to reach us is WhatsApp — for orders, events, wholesale, or just to argue about kaju katli. We answer."
+        }
+      }
+    },
+    "contact": {
+      "eyebrow": "Mishran · Help",
+      "title": "Contact us",
+      "intro": "Orders, events, wholesale, or a question about mithai — WhatsApp is the fastest way to reach a human.",
+      "whatsappCta": "Chat with us on WhatsApp",
+      "weddingsEyebrow": "Weddings",
+      "weddingsCta": "Planning a wedding?",
+      "weddingsHint": "Tell us the dates and headcount →",
+      "corporateEyebrow": "Corporate",
+      "corporateCta": "Corporate & bulk gifting",
+      "corporateHint": "Festive boxes, client gifting, events →",
+      "addressHeading": "Kitchens",
+      "addressBody": "Our kitchens and dispatch are in Bengaluru, Karnataka. Fresh delivery serves the city; shelf-stable ships to serviceable pincodes.",
+      "hoursHeading": "Hours",
+      "hoursBody": "WhatsApp: 9:00–21:00 IST, every day. Fresh delivery slots: 10:00–14:00 and 16:00–20:00."
+    }
+  },
   "Stories": {
     "title": "Stories",
     "eyebrow": "From the house",

@@ -1,9 +1,13 @@
 // lib/seo/schema.ts
 // JSON-LD builders for schema.org structured data.
 //
-// Three builders are exposed:
-//   - `productSchema(doc)` — Product, used on mithai/qsr/snacks/merch PDPs.
+// Four builders are exposed:
+//   - `productSchema(doc)` — Product, used on mithai/snacks/merch PDPs
+//     (qsr has no price field, so its Product never carries offers —
+//     callers only emit the schema when a price parses).
 //   - `organizationSchema()` — static Organization, used on home / global.
+//   - `localBusinessSchema()` — LocalBusiness for the storefront itself
+//     (name/url/Bengaluru/₹₹/sameAs), emitted on the home page.
 //   - `breadcrumbSchema(trail)` — BreadcrumbList, used on every PDP.
 //
 // Each builder returns a plain object. Callers embed it via:
@@ -23,9 +27,12 @@ type ProductDoc = {
   name?: string;
   slug?: string;
   ingredients?: string;
+  description?: string;
   story?: unknown;
   displayPrice?: string;
-  images?: ImageField[];
+  // Payload's generated collection types allow `null` for upload-array
+  // fields — accept it so PDPs can pass `doc.images` straight through.
+  images?: ImageField[] | null;
 };
 
 /** Site base URL, falling back to the local dev origin. */
@@ -57,7 +64,7 @@ function parseInrPrice(displayPrice: string | undefined): number | null {
 export function productSchema(doc: ProductDoc): Record<string, unknown> {
   const imageRow = (doc.images ?? []).find((row) => row?.image?.url);
   const image = imageRow?.image?.url ?? `${siteUrl()}/icon.png`;
-  const description = doc.ingredients ?? undefined;
+  const description = doc.description ?? doc.ingredients ?? undefined;
   const price = parseInrPrice(doc.displayPrice);
 
   const offers =
@@ -94,6 +101,36 @@ export function organizationSchema(): Record<string, unknown> {
     name: "Mishran",
     url: base,
     logo: `${base}/icon.png`,
+    sameAs: [
+      "https://instagram.com/mishran",
+      "https://facebook.com/mishran",
+    ],
+  };
+}
+
+/**
+ * Static schema.org LocalBusiness — the storefront as a place: brand name,
+ * site URL, Bengaluru address locality, ₹₹ price band, and the same social
+ * profiles as the Organization schema. Emitted alongside the Organization
+ * JSON-LD on the home page so local-intent queries ("mithai Bengaluru")
+ * have something honest to hold onto. No openingHours/telephone until the
+ * real values exist — same no-invented-fields rule as everywhere else.
+ */
+export function localBusinessSchema(): Record<string, unknown> {
+  const base = siteUrl();
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "Mishran · Malgudi Sweets",
+    url: base,
+    image: `${base}/icon.png`,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Bengaluru",
+      addressRegion: "Karnataka",
+      addressCountry: "IN",
+    },
+    priceRange: "₹₹",
     sameAs: [
       "https://instagram.com/mishran",
       "https://facebook.com/mishran",
