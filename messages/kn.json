@@ -1,12 +1,12 @@
 {
   "Header": {
-    "tagline": "Modern mithai for every celebration",
-    "menu": "Menu",
-    "allSweets": "All sweets",
-    "occasions": "Occasions",
-    "corporate": "Corporate",
-    "orderNow": "Order now",
-    "cart": "Cart"
+    "tagline": "ಪ್ರತಿ ಸಂಭ್ರಮಕ್ಕೂ ಆಧುನಿಕ ಮಿಠಾಯಿ",
+    "menu": "ಮೆನು",
+    "allSweets": "ಎಲ್ಲಾ ಮಿಠಾಯಿಗಳು",
+    "occasions": "ಸಂದರ್ಭಗಳು",
+    "corporate": "ಕಾರ್ಪೊರೇಟ್",
+    "orderNow": "ಈಗ ಆರ್ಡರ್ ಮಾಡಿ",
+    "cart": "ಕಾರ್ಟ್"
   },
   "Nav": {
     "shop": "ಶಾಪ್",
@@ -31,409 +31,409 @@
     "dotLabel": "ಸ್ಲೈಡ್‌ಗೆ ಹೋಗಿ"
   },
   "Home": {
-    "heroBadge": "Handcrafted in Bengaluru • Delivered fresh",
-    "heroTitle": "Mithai that feels festive every single day.",
-    "heroSubtitle": "Mishran reimagines classic Indian mithai with clean, modern flavours and boutique packaging — perfect for Diwali hampers, weddings, office gifting, or a sweet little Tuesday.",
-    "heroPrimaryCta": "Order sweets",
-    "heroSecondaryCta": "View gift boxes",
-    "heroNote": "Same‑day delivery in select Bengaluru pin codes.",
-    "bestSellersLabel": "House favourites",
-    "bestSellersTitle": "Our best‑selling mithai",
-    "occasionsLabel": "For every celebration",
-    "occasionsTitle": "Occasions we sweeten",
-    "whyLabel": "Why people love us",
-    "whyTitle": "Sweetness, without the compromise.",
-    "corporateLabel": "Corporate & bulk orders",
-    "corporateTitle": "Planning sweets for your team or clients?",
-    "corporateLead": "From festive hampers to launch gifts and milestone celebrations, our corporate team helps you choose the right assortments, branding, and delivery plan.",
-    "corporateFormTitle": "Tell us what you're planning",
-    "corporateFormSubtitle": "Share a few details and our team will call you back within one business day.",
-    "footerLocation": "Indiranagar, Bengaluru",
-    "footerPrivacy": "Privacy policy",
-    "heroEyebrow": "A new house of Indian sweets",
-    "heroHeadlineLine1": "A new house",
-    "heroSubhead": "Mishran is a modern mithai house — rooted in Jhajjar milk, hand‑finished by karigars, and re‑imagined for everyday celebrations and the hampers that travel across India.",
-    "ctaExploreMithai": "Explore mithai",
-    "ctaBuildGift": "Build a gift",
-    "heroInsetAlt": "A slice of kaju katli, silver‑leafed and dusted, on a Mishran plate.",
-    "heroInsetLabel": "From the kitchen",
-    "heroInsetTitle": "Kaju katli, vark‑finished",
-    "heroInsetMeta": "Hand‑cut each morning · 500g",
+    "heroBadge": "ಬೆಂಗಳೂರಿನಲ್ಲಿ ಕೈಯಿಂದ ತಯಾರಿಸಿದ • ತಾಜಾ ವಿತರಣೆ",
+    "heroTitle": "ಪ್ರತಿ ದಿನವೂ ಹಬ್ಬದ ಅನುಭವ ನೀಡುವ ಮಿಠಾಯಿ.",
+    "heroSubtitle": "ಮಿಶ್ರಣ್ ಶಾಸ್ತ್ರೀಯ ಭಾರತೀಯ ಮಿಠಾಯಿಗಳನ್ನು ಶುದ್ಧ, ಆಧುನಿಕ ರುಚಿಗಳು ಮತ್ತು ಬುಟೀಕ್ ಪ್ಯಾಕಿಂಗ್‌ನೊಂದಿಗೆ ಹೊಸ ರೂಪದಲ್ಲಿ ನೀಡುತ್ತದೆ — ದೀಪಾವಳಿ ಹ್ಯಾಂಪರ್‌ಗಳು, ಮದುವೆಗಳು, ಕಚೇರಿ ಉಡುಗೊರೆ, ಅಥವಾ ಸಿಹಿಯಾದ ಒಂದು ಸಣ್ಣ ಮಂಗಳವಾರಕ್ಕೆ ಸರಿಯಾದ ಆಯ್ಕೆ.",
+    "heroPrimaryCta": "ಮಿಠಾಯಿ ಆರ್ಡರ್ ಮಾಡಿ",
+    "heroSecondaryCta": "ಉಡುಗೊರೆ ಬಾಕ್ಸ್‌ಗಳನ್ನು ನೋಡಿ",
+    "heroNote": "ಆಯ್ದ ಬೆಂಗಳೂರಿನ ಪಿನ್‌ಕೋಡ್‌ಗಳಲ್ಲಿ ಅದೇ ದಿನ ವಿತರಣೆ.",
+    "bestSellersLabel": "ಮನೆಯ ಅಚ್ಚುಮೆಚ್ಚಿನವು",
+    "bestSellersTitle": "ಹೆಚ್ಚು ಮಾರಾಟವಾಗುವ ನಮ್ಮ ಮಿಠಾಯಿಗಳು",
+    "occasionsLabel": "ಪ್ರತಿ ಸಂಭ್ರಮಕ್ಕೂ",
+    "occasionsTitle": "ನಾವು ಸಿಹಿಗೊಳಿಸುವ ಸಂದರ್ಭಗಳು",
+    "whyLabel": "ಜನ ನಮ್ಮನ್ನು ಏಕೆ ಇಷ್ಟಪಡುತ್ತಾರೆ",
+    "whyTitle": "ಸಿಹಿ — ಯಾವುದೇ ರಾಜಿಯಿಲ್ಲದೆ.",
+    "corporateLabel": "ಕಾರ್ಪೊರೇಟ್ ಮತ್ತು ಸಗಟು ಆರ್ಡರ್‌ಗಳು",
+    "corporateTitle": "ನಿಮ್ಮ ತಂಡ ಅಥವಾ ಗ್ರಾಹಕರಿಗೆ ಮಿಠಾಯಿ ಯೋಜಿಸುತ್ತಿರುವಿರಾ?",
+    "corporateLead": "ಹಬ್ಬದ ಹ್ಯಾಂಪರ್‌ಗಳಿಂದ ಲಾಂಚ್ ಉಡುಗೊರೆ ಮತ್ತು ವಿಶೇಷ ಆಚರಣೆಗಳವರೆಗೆ, ಸರಿಯಾದ ಮಿಠಾಯಿ ಆಯ್ಕೆ, ಬ್ರಾಂಡಿಂಗ್ ಮತ್ತು ವಿತರಣಾ ಯೋಜನೆ ರೂಪಿಸಲು ನಮ್ಮ ಕಾರ್ಪೊರೇಟ್ ತಂಡ ನಿಮಗೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ.",
+    "corporateFormTitle": "ಏನು ಯೋಜಿಸುತ್ತಿರುವಿರಿ ಎಂದು ನಮಗೆ ಹೇಳಿ",
+    "corporateFormSubtitle": "ಕೆಲವು ವಿವರಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ; ಒಂದು ಕೆಲಸದ ದಿನದೊಳಗೆ ನಮ್ಮ ತಂಡ ನಿಮಗೆ ಕರೆ ಮಾಡುತ್ತದೆ.",
+    "footerLocation": "ಇಂದಿರಾನಗರ, ಬೆಂಗಳೂರು",
+    "footerPrivacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+    "heroEyebrow": "ಭಾರತೀಯ ಮಿಠಾಯಿಗಳ ಹೊಸ ಮನೆ",
+    "heroHeadlineLine1": "ಒಂದು ಹೊಸ ಮನೆ",
+    "heroSubhead": "ಮಿಶ್ರಣ್ ಒಂದು ಆಧುನಿಕ ಮಿಠಾಯಿ ಮನೆ — ಝಜ್ಜರ್‌ನ ಹಾಲಿನಲ್ಲಿ ಬೇರೂರಿದ, ಕಾರೀಗರರಿಂದ ಕೈಯಿಂದ ಅಂತಿಮ ರೂಪ ಪಡೆದ, ರೋಜಂದಿನ ಸಂಭ್ರಮಗಳಿಗೂ ಭಾರತಾದ್ಯಂತ ಪ್ರಯಾಣಿಸುವ ಹ್ಯಾಂಪರ್‌ಗಳಿಗೂ ಹೊಸ ರೂಪದಲ್ಲಿ ನಿರ್ಮಿಸಿದ್ದು.",
+    "ctaExploreMithai": "ಮಿಠಾಯಿ ನೋಡಿ",
+    "ctaBuildGift": "ಉಡುಗೊರೆ ಕಟ್ಟಿ",
+    "heroInsetAlt": "ಮಿಶ್ರಣ್ ತಟ್ಟೆಯ ಮೇಲೆ ಬೆಳ್ಳಿ ವರ್ಕ್‌ನಿಂದ ಅಲಂಕೃತ, ಪುಡಿ ಚಿಮುಕಿಸಿದ ಕಾಜು ಕಟ್ಲಿಯ ಒಂದು ತುಂಡು.",
+    "heroInsetLabel": "ಅಡುಗೆಮನೆಯಿಂದ",
+    "heroInsetTitle": "ಕಾಜು ಕಟ್ಲಿ, ವರ್ಕ್ ಫಿನಿಶ್",
+    "heroInsetMeta": "ಪ್ರತಿ ಬೆಳಿಗ್ಗೆ ಕೈಯಿಂದ ಕತ್ತರಿಸಿದ · 500g",
     "portal": {
-      "eyebrow": "Four houses, one kitchen",
-      "title": "Find your Mishran",
-      "intro": "Each vertical carries the same milk‑first promise, dressed for the moment — a quiet Tuesday, a wedding mehendi, a corporate launch, or a hamper that travels across India.",
+      "eyebrow": "ನಾಲ್ಕು ಮನೆಗಳು, ಒಂದು ಅಡುಗೆಮನೆ",
+      "title": "ನಿಮ್ಮ ಮಿಶ್ರಣ್ ಹುಡುಕಿ",
+      "intro": "ಪ್ರತಿ ವರ್ಟಿಕಲ್ ಅದೇ ಹಾಲು-ಮೊದಲ ಭರವಸೆಯನ್ನು ಹೊತ್ತಿದೆ, ಕ್ಷಣಕ್ಕೆ ತಕ್ಕ ಉಡುಗೆಯಲ್ಲಿ — ಒಂದು ಶಾಂತ ಮಂಗಳವಾರ, ಮದುವೆಯ ಮೆಹಂದಿ, ಕಾರ್ಪೊರೇಟ್ ಲಾಂಚ್, ಅಥವಾ ಭಾರತಾದ್ಯಂತ ಪ್ರಯಾಣಿಸುವ ಹ್ಯಾಂಪರ್.",
       "mithai": {
-        "label": "Mithai",
-        "description": "The canon — kaju katli, motichoor, besan laddoo — finished fresh, in weights that suit a Tuesday or a thousand‑box wedding."
+        "label": "ಮಿಠಾಯಿ",
+        "description": "ಶಾಸ್ತ್ರೀಯ ಶ್ರೇಣಿ — ಕಾಜು ಕಟ್ಲಿ, ಮೋತಿಚೂರ್, ಬೇಸನ್ ಲಡ್ಡು — ತಾಜಾವಾಗಿ ಅಂತಿಮ ರೂಪ ಪಡೆದವು, ಒಂದು ಮಂಗಳವಾರಕ್ಕೂ ಸಾವಿರ ಬಾಕ್ಸ್‌ಗಳ ಮದುವೆಗೂ ಸರಿಹೊಂದುವ ತೂಕಗಳಲ್ಲಿ."
       },
       "qsr": {
-        "label": "QSR",
-        "description": "Counter‑quick mithai and savouries from our high‑street kitchens. Walk in, take a box, carry on with your day."
+        "label": "ತ್ವರಿತ ಸೇವೆ",
+        "description": "ನಮ್ಮ ಮುಖ್ಯ ಬೀದಿಯ ಅಡುಗೆಮನೆಗಳಿಂದ ಕೌಂಟರ್‌ನಲ್ಲಿ ಸಿಗುವ ತ್ವರಿತ ಮಿಠಾಯಿ ಮತ್ತು ಖಾರದ ತಿಂಡಿಗಳು. ಒಳಗೆ ಬನ್ನಿ, ಬಾಕ್ಸ್ ತೆಗೆದುಕೊಳ್ಳಿ, ನಿಮ್ಮ ದಿನ ಮುಂದುವರಿಸಿ."
       },
       "snacks": {
-        "label": "Snacks",
-        "description": "Namkeen, mathri, chivra — the savoury shelf of the Mishran house, built for evening chai and travel tins."
+        "label": "ತಿಂಡಿಗಳು",
+        "description": "ನಮ್ಕೀನ್, ಮಠ್ರಿ, ಚಿವಡಾ — ಮಿಶ್ರಣ್ ಮನೆಯ ಖಾರದ ತಿಂಡಿಗಳ ಅಲಮಾರಿ, ಸಂಜಿನ ಚಹಾ ಮತ್ತು ಪ್ರಯಾಣದ ಟಿನ್‌ಗಳಿಗಾಗಿ ರೂಪಿಸಿದ್ದು."
       },
       "merch": {
-        "label": "Merch",
-        "description": "Hamper shells, thalis, and keepsake boxes — the vessels that carry Mishran into homes and across occasions."
+        "label": "ಮರ್ಚ್",
+        "description": "ಹ್ಯಾಂಪರ್ ಚಿಪ್ಪುಗಳು, ಥಾಳಿಗಳು ಮತ್ತು ಜ್ಞಾಪಕ ಬಾಕ್ಸ್‌ಗಳು — ಮಿಶ್ರಣ್‌ನ್ನು ಮನೆಗಳಿಗೂ ಸಂದರ್ಭಗಳಿಗೂ ತಲುಪಿಸುವ ಪಾತ್ರೆಗಳು."
       }
     },
     "pillars": {
-      "eyebrow": "Why Mishran",
-      "title": "Four promises, kept daily.",
-      "intro": "The Mishran house is built on four non‑negotiables — they shape every batch, every box, every karigar's day.",
-      "readMore": "Read the story",
+      "eyebrow": "ಮಿಶ್ರಣ್ ಏಕೆ",
+      "title": "ನಾಲ್ಕು ಭರವಸೆಗಳು, ಪ್ರತಿದಿನ ಪಾಲಿಸುತ್ತೇವೆ.",
+      "intro": "ಮಿಶ್ರಣ್ ಮನೆ ನಾಲ್ಕು ಬಗ್ಗದ ತತ್ವಗಳ ಮೇಲೆ ನಿಂತಿದೆ — ಅವು ಪ್ರತಿ ಬ್ಯಾಚ್, ಪ್ರತಿ ಬಾಕ್ಸ್, ಪ್ರತಿ ಕಾರೀಗರನ ದಿನವನ್ನು ರೂಪಿಸುತ್ತವೆ.",
+      "readMore": "ಕಥೆ ಓದಿ",
       "milkPurity": {
         "label": "Milk Purity",
-        "description": "Milk from our Jhajjar farm, boiled fresh each morning — no milk powder, no reconstituted cream, ever."
+        "description": "ನಮ್ಮ ಝಜ್ಜರ್ ಫಾರ್ಮ್‌ನ ಹಾಲು, ಪ್ರತಿ ಬೆಳಿಗ್ಗೆ ತಾಜಾವಾಗಿ ಕುದಿಸಿದ್ದು — ಹಾಲಿನ ಪುಡಿ ಎಂದಿಗೂ ಇಲ್ಲ, ಪುನಃ ಸಿದ್ಧಪಡಿಸಿದ ಕೆನೆ ಎಂದಿಗೂ ಇಲ್ಲ."
       },
       "karigarMastery": {
         "label": "Karigar Mastery",
-        "description": "Each sweet is finished by a karigar whose family has held the recipe for generations — hands that know when chashni is ready by sound."
+        "description": "ಪ್ರತಿ ಮಿಠಾಯಿಗೆ ಅಂತಿಮ ರೂಪ ನೀಡುವ ಕಾರೀಗರನ ಕುಟುಂಬ ಆ ಪಾಕವಿಧಾನವನ್ನು ಪೀಳಿಗೆಯಿಂದ ಪೀಳಿಗೆಗೆ ಅರಿತಿರುತ್ತದೆ — ಚಾಶ್ನಿ ಸಿದ್ಧವಾಯಿತು ಎಂದು ಸದ್ದಿನಿಂದಲೇ ತಿಳಿಯುವ ಕೈಗಳು."
       },
       "karigari": {
         "label": "Karigari",
-        "description": "The craft itself — the vark on a katli, the boondi of a laddoo, the fold of a peda — done the long way, never the shortcut way."
+        "description": "ಕುಶಲಕಲೆ ಅದೇ — ಕಟ್ಲಿ ಮೇಲಿನ ವರ್ಕ್, ಲಡ್ಡುವಿನ ಬೂಂದಿ, ಪೇಡದ ಮಡಿಕೆ — ದೀರ್ಘ ದಾರಿಯಲ್ಲೇ ಮಾಡಿದ್ದು, ಸುಲಭ ದಾರಿಯಲ್ಲಿ ಎಂದಿಗೂ ಅಲ್ಲ."
       },
       "modernExperience": {
         "label": "Modern Experience",
-        "description": "Boutique packaging, honest labels, on‑time delivery — the same mithai, dressed for how India celebrates today."
+        "description": "ಬುಟೀಕ್ ಪ್ಯಾಕಿಂಗ್, ಪ್ರಾಮಾಣಿಕ ಲೇಬಲ್, ಸಮಯಕ್ಕೆ ಸರಿಯಾದ ವಿತರಣೆ — ಅದೇ ಮಿಠಾಯಿ, ಇಂದಿನ ಭಾರತ ಆಚರಿಸುವ ರೀತಿಗೆ ತಕ್ಕ ಉಡುಗೆಯಲ್ಲಿ."
       }
     }
   },
   "Verticals": {
     "mithai": {
-      "title": "Mithai",
-      "blurb": "The canon — kaju katli, motichoor, besan laddoo. Milk‑first recipes finished fresh by karigars, in weights that suit a Tuesday or a thousand‑box wedding."
+      "title": "ಮಿಠಾಯಿ",
+      "blurb": "ಶಾಸ್ತ್ರೀಯ ಶ್ರೇಣಿ — ಕಾಜು ಕಟ್ಲಿ, ಮೋತಿಚೂರ್, ಬೇಸನ್ ಲಡ್ಡು. ಕಾರೀಗರರಿಂದ ತಾಜಾವಾಗಿ ಅಂತಿಮ ರೂಪ ಪಡೆದ ಹಾಲು-ಮೊದಲ ಪಾಕವಿಧಾನಗಳು, ಒಂದು ಮಂಗಳವಾರಕ್ಕೂ ಸಾವಿರ ಬಾಕ್ಸ್‌ಗಳ ಮದುವೆಗೂ ಸರಿಹೊಂದುವ ತೂಕಗಳಲ್ಲಿ."
     },
     "qsr": {
-      "title": "QSR",
-      "blurb": "Counter‑quick mithai and savouries from our high‑street kitchens. Walk in, take a box, carry on with your day."
+      "title": "ತ್ವರಿತ ಸೇವೆ",
+      "blurb": "ನಮ್ಮ ಮುಖ್ಯ ಬೀದಿಯ ಅಡುಗೆಮನೆಗಳಿಂದ ಕೌಂಟರ್‌ನಲ್ಲಿ ಸಿಗುವ ತ್ವರಿತ ಮಿಠಾಯಿ ಮತ್ತು ಖಾರದ ತಿಂಡಿಗಳು. ಒಳಗೆ ಬನ್ನಿ, ಬಾಕ್ಸ್ ತೆಗೆದುಕೊಳ್ಳಿ, ನಿಮ್ಮ ದಿನ ಮುಂದುವರಿಸಿ."
     },
     "snacks": {
-      "title": "Snacks",
-      "blurb": "Namkeen, mathri, chivra — the savoury shelf of the Mishran house, built for evening chai and travel tins."
+      "title": "ತಿಂಡಿಗಳು",
+      "blurb": "ನಮ್ಕೀನ್, ಮಠ್ರಿ, ಚಿವಡಾ — ಮಿಶ್ರಣ್ ಮನೆಯ ಖಾರದ ತಿಂಡಿಗಳ ಅಲಮಾರಿ, ಸಂಜಿನ ಚಹಾ ಮತ್ತು ಪ್ರಯಾಣದ ಟಿನ್‌ಗಳಿಗಾಗಿ ರೂಪಿಸಿದ್ದು."
     },
     "merch": {
-      "title": "Merch",
-      "blurb": "Hamper shells, thalis, and keepsake boxes — the vessels that carry Mishran into homes and across occasions."
+      "title": "ಮರ್ಚ್",
+      "blurb": "ಹ್ಯಾಂಪರ್ ಚಿಪ್ಪುಗಳು, ಥಾಳಿಗಳು ಮತ್ತು ಜ್ಞಾಪಕ ಬಾಕ್ಸ್‌ಗಳು — ಮಿಶ್ರಣ್‌ನ್ನು ಮನೆಗಳಿಗೂ ಸಂದರ್ಭಗಳಿಗೂ ತಲುಪಿಸುವ ಪಾತ್ರೆಗಳು."
     },
-    "empty": "The kitchen is quiet just now. New batches are being finished — please check back shortly.",
-    "itemCount": "{count} items"
+    "empty": "ಅಡುಗೆಮನೆ ಈಗ ಶಾಂತವಾಗಿದೆ. ಹೊಸ ಬ್ಯಾಚ್‌ಗಳು ಅಂತಿಮ ರೂಪ ಪಡೆಯುತ್ತಿವೆ — ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಇನ್ನೊಮ್ಮೆ ನೋಡಿ.",
+    "itemCount": "{count} ವಸ್ತುಗಳು"
   },
   "Pdp": {
     "_TODO_kn": "Kannada translations pending — Task 14 pattern. Keys below are English stubs.",
     "mithai": {
-      "ingredients": "Ingredients",
-      "allergens": "Allergens",
-      "shelfLife": "Shelf life",
-      "storage": "Storage",
-      "story": "From the karigar's bench",
-      "karigar": "Finished by",
-      "freshness": "Freshness",
-      "addToCart": "Add to draft cart",
-      "added": "Added",
-      "taxNote": "Inclusive of all taxes",
-      "buyNow": "Buy now",
+      "ingredients": "ಪದಾರ್ಥಗಳು",
+      "allergens": "ಅಲರ್ಜೆನ್‌ಗಳು",
+      "shelfLife": "ಶೆಲ್ಫ್ ಅವಧಿ",
+      "storage": "ಸಂಗ್ರಹಣೆ",
+      "story": "ಕಾರೀಗರನ ಕೆಲಸದ ಮೇಜಿನಿಂದ",
+      "karigar": "ಅಂತಿಮ ರೂಪ ನೀಡಿದವರು",
+      "freshness": "ತಾಜಾತನ",
+      "addToCart": "ಡ್ರಾಫ್ಟ್ ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ",
+      "added": "ಸೇರಿಸಲಾಗಿದೆ",
+      "taxNote": "ಎಲ್ಲಾ ತೆರಿಗೆಗಳು ಸೇರಿವೆ",
+      "buyNow": "ಈಗ ಖರೀದಿಸಿ",
       "packSize": {
-        "label": "Pack size"
+        "label": "ಪ್ಯಾಕ್ ಗಾತ್ರ"
       },
       "qty": {
-        "decrease": "Decrease quantity",
-        "increase": "Increase quantity"
+        "decrease": "ಪ್ರಮಾಣ ಕಡಿಮೆ ಮಾಡಿ",
+        "increase": "ಪ್ರಮಾಣ ಹೆಚ್ಚಿಸಿ"
       },
       "pincode": {
-        "label": "Delivery",
-        "placeholder": "Pincode",
-        "check": "Check",
-        "checking": "Checking…",
-        "change": "Change",
-        "invalid": "Enter a 6-digit pincode.",
-        "notServiceable": "We don't deliver to {pincode} yet — pan-India shipping coming soon.",
-        "errorRetry": "Couldn't check — please try again.",
-        "deliverTo": "Deliver to {pincode} · {city} · {tier} · {days, plural, =1 {1 day} other {# days}}",
-        "tierFresh": "Fresh",
-        "tierShelf": "Shelf",
-        "fallbackPromise": "5–7 days delivery · Pan India shipping"
+        "label": "ವಿತರಣೆ",
+        "placeholder": "ಪಿನ್‌ಕೋಡ್",
+        "check": "ಪರಿಶೀಲಿಸಿ",
+        "checking": "ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…",
+        "change": "ಬದಲಾಯಿಸಿ",
+        "invalid": "6 ಅಂಕಿಗಳ ಪಿನ್‌ಕೋಡ್ ನಮೂದಿಸಿ.",
+        "notServiceable": "ನಾವು ಇನ್ನೂ {pincode} ಗೆ ವಿತರಿಸುತ್ತಿಲ್ಲ — ಇಡೀ ಭಾರತದ ಶಿಪ್ಪಿಂಗ್ ಶೀಘ್ರದಲ್ಲಿ ಬರುತ್ತದೆ.",
+        "errorRetry": "ಪರಿಶೀಲಿಸಲಾಗಲಿಲ್ಲ — ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+        "deliverTo": "{pincode} · {city} · {tier} · {days, plural, =1 {1 ದಿನದಲ್ಲಿ} other {# ದಿನಗಳಲ್ಲಿ}} ವಿತರಣೆ",
+        "tierFresh": "ಫ್ರೆಶ್",
+        "tierShelf": "ಶೆಲ್ಫ್",
+        "fallbackPromise": "5–7 ದಿನಗಳಲ್ಲಿ ವಿತರಣೆ · ಇಡೀ ಭಾರತದ ಶಿಪ್ಪಿಂಗ್"
       },
       "trust": {
-        "freshDaily": "Made fresh each morning",
-        "freshToOrder": "Made to order, finished on request",
-        "frozen": "Finished fresh, frozen at peak",
-        "shelfLife": "{shelfLife} shelf life",
-        "vegetarian": "Vegetarian",
-        "sugarFree": "Sugar-free"
+        "freshDaily": "ಪ್ರತಿ ಬೆಳಿಗ್ಗೆ ತಾಜಾ ತಯಾರಿ",
+        "freshToOrder": "ಆರ್ಡರ್‌ಗೆ ತಕ್ಕಂತೆ, ಕೋರಿಕೆಯ ಮೇರೆಗೆ ಅಂತಿಮ ರೂಪ",
+        "frozen": "ತಾಜಾ ತಯಾರಿ, ಉತ್ತಮ ಹಂತದಲ್ಲಿ ಫ್ರೀಜ್ ಮಾಡಿದವು",
+        "shelfLife": "{shelfLife} ಶೆಲ್ಫ್ ಅವಧಿ",
+        "vegetarian": "ಶುದ್ಧ ಸಸ್ಯಾಹಾರಿ",
+        "sugarFree": "ಸಕ್ಕರೆ ಮುಕ್ತ"
       },
       "crossSell": {
-        "title": "More from the {family} collection"
+        "title": "{family} ಸಂಗ್ರಹದ ಇನ್ನಷ್ಟು ಮಿಠಾಯಿಗಳು"
       }
     },
     "qsr": {
-      "category": "Category",
-      "spiceLevel": "Spice",
-      "veg": "Vegetarian",
-      "available": "Available at",
-      "vegYes": "Vegetarian",
-      "vegNo": "Non-vegetarian",
-      "spiceMild": "Mild spice",
-      "spiceMedium": "Medium spice",
-      "spiceHot": "Hot spice",
-      "counterMenu": "See the counter menu",
-      "availabilityNote": "Available at our counters — ask at the store."
+      "category": "ವರ್ಗ",
+      "spiceLevel": "ಖಾರ",
+      "veg": "ಸಸ್ಯಾಹಾರಿ",
+      "available": "ಲಭ್ಯವಿರುವೆಡೆ",
+      "vegYes": "ಸಸ್ಯಾಹಾರಿ",
+      "vegNo": "ಮಾಂಸಾಹಾರಿ",
+      "spiceMild": "ಕಡಿಮೆ ಖಾರ",
+      "spiceMedium": "ಮಧ್ಯಮ ಖಾರ",
+      "spiceHot": "ಜಾಸ್ತಿ ಖಾರ",
+      "counterMenu": "ಕೌಂಟರ್ ಮೆನು ನೋಡಿ",
+      "availabilityNote": "ನಮ್ಮ ಕೌಂಟರ್‌ಗಳಲ್ಲಿ ಲಭ್ಯ — ಅಂಗಡಿಯಲ್ಲಿ ಕೇಳಿ."
     },
     "snacks": {
-      "category": "Category",
-      "weight": "Weight",
+      "category": "ವರ್ಗ",
+      "weight": "ತೂಕ",
       "msrp": "MRP",
-      "buyAt": "Buy at",
-      "taxNote": "MRP · inclusive of all taxes",
-      "packSize": "Pack size",
-      "partnerNote": "Fulfilled by our retail partners · Pan India"
+      "buyAt": "ಖರೀದಿಸಿ",
+      "taxNote": "MRP · ಎಲ್ಲಾ ತೆರಿಗೆಗಳು ಸೇರಿವೆ",
+      "packSize": "ಪ್ಯಾಕ್ ಗಾತ್ರ",
+      "partnerNote": "ನಮ್ಮ ಚಿಲ್ಲರೆ ಪಾಲುದಾರರಿಂದ ಪೂರೈಕೆ · ಇಡೀ ಭಾರತ"
     },
     "merch": {
-      "type": "Type",
-      "price": "Price",
-      "availability": "Availability",
-      "enquire": "Enquire",
-      "enquireDisabled": "Enquiries open soon"
+      "type": "ವಿಧ",
+      "price": "ಬೆಲೆ",
+      "availability": "ಲಭ್ಯತೆ",
+      "enquire": "ವಿಚಾರಿಸಿ",
+      "enquireDisabled": "ವಿಚಾರಣೆ ಶೀಘ್ರದಲ್ಲಿ ತೆರೆಯುತ್ತದೆ"
     },
-    "breadcrumbHome": "Mishran",
-    "notFound": "We couldn't find that one."
+    "breadcrumbHome": "ಮಿಶ್ರಣ್",
+    "notFound": "ಅದು ಸಿಗಲಿಲ್ಲ."
   },
   "Search": {
-    "label": "Search",
-    "placeholder": "Search sweets — kaju, gulab, peda…",
-    "searching": "Searching…",
-    "noResults": "No sweets match that search.",
-    "clear": "Clear filters"
+    "label": "ಹುಡುಕಿ",
+    "placeholder": "ಮಿಠಾಯಿ ಹುಡುಕಿ — ಕಾಜು, ಗುಲಾಬ್, ಪೇಡ…",
+    "searching": "ಹುಡುಕಲಾಗುತ್ತಿದೆ…",
+    "noResults": "ಈ ಹುಡುಕುಗೆ ಹೊಂದುವ ಮಿಠಾಯಿ ಇಲ್ಲ.",
+    "clear": "ಫಿಲ್ಟರ್‌ಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ"
   },
   "MithaiHub": {
-    "familyLabel": "Family",
-    "familyAll": "All",
+    "familyLabel": "ವರ್ಗ",
+    "familyAll": "ಎಲ್ಲಾ",
     "family": {
-      "classic": "Classic",
-      "original": "Original",
-      "sugar-free": "Sugar-free",
-      "regional": "Regional",
-      "seasonal": "Seasonal"
+      "classic": "ಶಾಸ್ತ್ರೀಯ",
+      "original": "ಮೂಲ",
+      "sugar-free": "ಸಕ್ಕರೆ ಮುಕ್ತ",
+      "regional": "ಪ್ರಾದೇಶಿಕ",
+      "seasonal": "ಕಾಲೋಚಿತ"
     },
-    "freshnessLabel": "Freshness",
-    "freshnessAll": "Any freshness",
+    "freshnessLabel": "ತಾಜಾತನ",
+    "freshnessAll": "ಯಾವುದೇ ತಾಜಾತನ",
     "freshness": {
-      "made-daily": "Made daily",
-      "made-to-order": "Made to order",
-      "batch-frozen": "Batch frozen"
+      "made-daily": "ಪ್ರತಿದಿನ ತಯಾರಾಗುವ",
+      "made-to-order": "ಆರ್ಡರ್‌ಗೆ ತಕ್ಕಂತೆ ತಯಾರಾಗುವ",
+      "batch-frozen": "ಬ್ಯಾಚ್ ಫ್ರೀಜ್"
     },
-    "count": "{count, plural, one {# sweet} other {# sweets}}"
+    "count": "{count, plural, one {# ಮಿಠಾಯಿ} other {# ಮಿಠಾಯಿಗಳು}}"
   },
   "Gifts": {
-    "title": "Gifts",
-    "blurb": "Hampers, keepsake boxes, and curated assortments — gifting that carries the house's craft, not just its sweets.",
-    "itemCount": "{count, plural, one {# gift} other {# gifts}}",
-    "empty": "Our gifting collection is being restocked — please check back shortly.",
-    "taxNote": "Inclusive of all taxes",
-    "buildCta": "Build a custom gift",
-    "inTheBox": "In the box",
-    "fillWith": "Fill it with",
-    "addOns": "Add-ons",
-    "packaging": "Packaging",
-    "curated": "Curated assortments"
+    "title": "ಉಡುಗೊರೆಗಳು",
+    "blurb": "ಹ್ಯಾಂಪರ್‌ಗಳು, ಜ್ಞಾಪಕ ಬಾಕ್ಸ್‌ಗಳು ಮತ್ತು ಆಯ್ದ ಮಿಠಾಯಿ ಸಂಯೋಜನೆಗಳು — ಮನೆಯ ಕುಶಲಕಲೆಯನ್ನೇ ಒಯ್ಯುವ ಉಡುಗೊರೆ.",
+    "itemCount": "{count, plural, one {# ಉಡುಗೊರೆ} other {# ಉಡುಗೊರೆಗಳು}}",
+    "empty": "ನಮ್ಮ ಉಡುಗೊರೆ ಸಂಗ್ರಹ ಮರುಸಿದ್ಧವಾಗುತ್ತಿದೆ — ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಇನ್ನೊಮ್ಮೆ ನೋಡಿ.",
+    "taxNote": "ಎಲ್ಲಾ ತೆರಿಗೆಗಳು ಸೇರಿವೆ",
+    "buildCta": "ನಿಮ್ಮದೇ ಉಡುಗೊರೆ ಕಟ್ಟಿ",
+    "inTheBox": "ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಏನಿದೆ",
+    "fillWith": "ಇವುಗಳಿಂದ ತುಂಬಿಸಿ",
+    "addOns": "ಜೊತೆಯ ಸೇರ್ಪಡೆಗಳು",
+    "packaging": "ಪ್ಯಾಕೇಜಿಂಗ್",
+    "curated": "ಆಯ್ದ ಮಿಠಾಯಿ ಸಂಯೋಜನೆಗಳು"
   },
   "Occasions": {
-    "title": "Occasions",
-    "eyebrow": "For every celebration",
-    "blurb": "Diwali, weddings, Rakhi, milestone Mondays — each occasion carries its own edit of sweets and boxes.",
-    "itemCount": "{count, plural, one {# occasion} other {# occasions}}",
-    "empty": "Occasions are being curated — please check back shortly.",
-    "recommended": "For this occasion",
-    "browseGifts": "Browse all gifts"
+    "title": "ಸಂದರ್ಭಗಳು",
+    "eyebrow": "ಪ್ರತಿ ಸಂಭ್ರಮಕ್ಕೂ",
+    "blurb": "ದೀಪಾವಳಿ, ಮದುವೆಗಳು, ರಾಖಿ, ವಿಶೇಷ ಸೋಮವಾರಗಳು — ಪ್ರತಿ ಸಂದರ್ಭಕ್ಕೂ ಅದರದೇ ಆದ ಮಿಠಾಯಿ ಮತ್ತು ಬಾಕ್ಸ್ ಆಯ್ಕೆ.",
+    "itemCount": "{count, plural, one {# ಸಂದರ್ಭ} other {# ಸಂದರ್ಭಗಳು}}",
+    "empty": "ಸಂದರ್ಭಗಳ ಪಟ್ಟಿ ಸಿದ್ಧವಾಗುತ್ತಿದೆ — ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಇನ್ನೊಮ್ಮೆ ನೋಡಿ.",
+    "recommended": "ಈ ಸಂದರ್ಭಕ್ಕೆ",
+    "browseGifts": "ಎಲ್ಲಾ ಉಡುಗೊರೆಗಳನ್ನು ನೋಡಿ"
   },
   "Leads": {
     "_todo": "TODO: translate to Kannada — currently English stubs (Task 14 pattern).",
     "common": {
-      "submit": "Submit",
-      "submitting": "Sending…",
-      "toastSuccess": "Thanks — your enquiry is in.",
-      "errorGeneric": "Something went wrong. Please try again or email us directly.",
-      "thankYouEyebrow": "Received",
-      "thankYouTitle": "Thank you.",
-      "thankYouBody": "Our events team will be in touch within one business day to plan the details with you.",
-      "reference": "Your reference: {id}"
+      "submit": "ಕಳುಹಿಸಿ",
+      "submitting": "ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ…",
+      "toastSuccess": "ಧನ್ಯವಾದಗಳು — ನಿಮ್ಮ ವಿಚಾರಣೆ ದಾಖಲಾಗಿದೆ.",
+      "errorGeneric": "ಏನೋ ತೊಂದರೆಯಾಯಿತು. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ನೇರವಾಗಿ ಇಮೇಲ್ ಮಾಡಿ.",
+      "thankYouEyebrow": "ಸ್ವೀಕರಿಸಲಾಗಿದೆ",
+      "thankYouTitle": "ಧನ್ಯವಾದಗಳು.",
+      "thankYouBody": "ವಿವರಗಳನ್ನು ಯೋಜಿಸಲು ನಮ್ಮ ಕಾರ್ಯಕ್ರಮ ತಂಡ ಒಂದು ಕೆಲಸದ ದಿನದೊಳಗೆ ನಿಮ್ಮೊಂದಿಗೆ ಸಂಪರ್ಕ ಹೊಂದುತ್ತದೆ.",
+      "reference": "ನಿಮ್ಮ ಉಲ್ಲೇಖ: {id}"
     },
     "weddings": {
-      "eyebrow": "Weddings & Bulk Gifting",
-      "title": "Weddings & Bulk Gifting",
-      "intro": "Tell us about the day you're planning. We'll respond within 24 hours with mithai suggestions, packaging options, and a quote.",
-      "formTitle": "Share your event",
-      "formIntro": "A few details and we'll take it from there — tastings, custom assortments, and packaging that matches the occasion.",
-      "groupContact": "Your details",
-      "groupEvent": "The event",
-      "groupPreferences": "Mithai & packaging",
-      "name": "Name",
-      "email": "Email",
-      "phone": "Phone",
-      "date": "Event date",
-      "city": "City",
-      "guests": "Guests",
-      "budget": "Budget",
-      "mithaiPreferences": "Mithai preferences",
-      "packaging": "Packaging",
-      "preferencesHint": "Optional",
-      "message": "Anything else?",
-      "submit": "Submit enquiry"
+      "eyebrow": "ಮದುವೆಗಳು ಮತ್ತು ಸಗಟು ಉಡುಗೊರೆ",
+      "title": "ಮದುವೆಗಳು ಮತ್ತು ಸಗಟು ಉಡುಗೊರೆ",
+      "intro": "ನೀವು ಯೋಜಿಸುತ್ತಿರುವ ದಿನದ ಬಗ್ಗೆ ನಮಗೆ ಹೇಳಿ. 24 ಗಂಟೆಗಳೊಳಗೆ ಮಿಠಾಯಿ ಸಲಹೆಗಳು, ಪ್ಯಾಕಿಂಗ್ ಆಯ್ಕೆಗಳು ಮತ್ತು ಬೆಲೆ ನಿಗದಿಯೊಂದಿಗೆ ಉತ್ತರಿಸುತ್ತೇವೆ.",
+      "formTitle": "ನಿಮ್ಮ ಕಾರ್ಯಕ್ರಮದ ಬಗ್ಗೆ ಹೇಳಿ",
+      "formIntro": "ಕೆಲವು ವಿವರಗಳನ್ನು ನೀಡಿ, ಉಳಿದದ್ದನ್ನು ನಾವು ನೋಡಿಕೊಳ್ಳುತ್ತೇವೆ — ರುಚಿ ಪರೀಕ್ಷೆ, ಇಚ್ಛೆಗೆ ತಕ್ಕ ಮಿಠಾಯಿ ಸಂಯೋಜನೆ, ಮತ್ತು ಸಂದರ್ಭಕ್ಕೆ ಹೊಂದುವ ಪ್ಯಾಕಿಂಗ್.",
+      "groupContact": "ನಿಮ್ಮ ವಿವರಗಳು",
+      "groupEvent": "ಕಾರ್ಯಕ್ರಮ",
+      "groupPreferences": "ಮಿಠಾಯಿ ಮತ್ತು ಪ್ಯಾಕಿಂಗ್",
+      "name": "ಹೆಸರು",
+      "email": "ಇಮೇಲ್",
+      "phone": "ಫೋನ್",
+      "date": "ಕಾರ್ಯಕ್ರಮದ ದಿನಾಂಕ",
+      "city": "ನಗರ",
+      "guests": "ಅತಿಥಿಗಳು",
+      "budget": "ಬಜೆಟ್",
+      "mithaiPreferences": "ಮಿಠಾಯಿ ಆದ್ಯತೆಗಳು",
+      "packaging": "ಪ್ಯಾಕಿಂಗ್",
+      "preferencesHint": "ಐಚ್ಛಿಕ",
+      "message": "ಇನ್ನೇನಾದರೂ?",
+      "submit": "ವಿಚಾರಣೆ ಕಳುಹಿಸಿ"
     },
     "corporate": {
-      "eyebrow": "Corporate & Bulk Orders",
-      "title": "Corporate & Bulk Orders",
-      "intro": "Hampers for Diwali, new‑hire kits, launch gifts — tell us the brief and our corporate team will come back within one business day.",
-      "formTitle": "Brief us",
-      "formIntro": "Company, quantity, deadline, branding — share what you have and we'll build the rest.",
-      "groupContact": "Your details",
-      "groupCompany": "Company",
-      "groupOrder": "The order",
-      "name": "Name",
-      "email": "Email",
-      "phone": "Phone",
-      "company": "Company",
+      "eyebrow": "ಕಾರ್ಪೊರೇಟ್ ಮತ್ತು ಸಗಟು ಆರ್ಡರ್‌ಗಳು",
+      "title": "ಕಾರ್ಪೊರೇಟ್ ಮತ್ತು ಸಗಟು ಆರ್ಡರ್‌ಗಳು",
+      "intro": "ದೀಪಾವಳಿ ಹ್ಯಾಂಪರ್, ಹೊಸ ಸೇರ್ಪಡೆ ಕಿಟ್, ಲಾಂಚ್ ಉಡುಗೊರೆ — ನಿಮ್ಮ ಅಗತ್ಯ ಹೇಳಿ; ನಮ್ಮ ಕಾರ್ಪೊರೇಟ್ ತಂಡ ಒಂದು ಕೆಲಸದ ದಿನದೊಳಗೆ ಉತ್ತರಿಸುತ್ತದೆ.",
+      "formTitle": "ನಮಗೆ ಹೇಳಿ",
+      "formIntro": "ಕಂಪನಿ, ಪ್ರಮಾಣ, ಅಂತಿಮ ದಿನಾಂಕ, ಬ್ರಾಂಡಿಂಗ್ — ಇರುವ ಮಾಹಿತಿ ನೀಡಿ, ಉಳಿದದ್ದನ್ನು ನಾವು ಸಿದ್ಧಪಡಿಸುತ್ತೇವೆ.",
+      "groupContact": "ನಿಮ್ಮ ವಿವರಗಳು",
+      "groupCompany": "ಕಂಪನಿ",
+      "groupOrder": "ಆರ್ಡರ್",
+      "name": "ಹೆಸರು",
+      "email": "ಇಮೇಲ್",
+      "phone": "ಫೋನ್",
+      "company": "ಕಂಪನಿ",
       "gst": "GSTIN",
-      "quantity": "Quantity",
-      "deadline": "Deadline",
-      "occasion": "Occasion",
-      "branding": "Branding",
-      "orderHint": "Approximate",
-      "message": "Anything else?",
-      "submit": "Submit enquiry"
+      "quantity": "ಪ್ರಮಾಣ",
+      "deadline": "ಅಂತಿಮ ದಿನಾಂಕ",
+      "occasion": "ಸಂದರ್ಭ",
+      "branding": "ಬ್ರಾಂಡಿಂಗ್",
+      "orderHint": "ಅಂದಾಜು",
+      "message": "ಇನ್ನೇನಾದರೂ?",
+      "submit": "ವಿಚಾರಣೆ ಕಳುಹಿಸಿ"
     }
   },
   "Cart": {
-    "eyebrow": "Mishran · Commerce",
-    "title": "Your cart",
-    "blurb": "Adjust quantities and review the estimate, then check out online — or send the order to us on WhatsApp.",
-    "empty": "Your cart is empty.",
-    "emptyCta": "Browse mithai",
+    "eyebrow": "ಮಿಶ್ರಣ್ · ಕಾಮರ್ಸ್",
+    "title": "ನಿಮ್ಮ ಕಾರ್ಟ್",
+    "blurb": "ಪ್ರಮಾಣ ಸರಿಹೊಂದಿಸಿ, ಅಂದಾಜು ನೋಡಿ, ನಂತರ ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಚೆಕ್‌ಔಟ್ ಮಾಡಿ — ಅಥವಾ ಆರ್ಡರ್ ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿ.",
+    "empty": "ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿ ಇದೆ.",
+    "emptyCta": "ಮಿಠಾಯಿ ನೋಡಿ",
     "lineTotal": "{quantity} × {price} · {total}",
-    "onRequest": "On request",
-    "remove": "Remove",
-    "decrease": "Decrease quantity",
-    "increase": "Increase quantity",
-    "clear": "Clear cart",
-    "estimateHeading": "Estimate",
-    "estimateItems": "Items",
-    "estimateDelivery": "Delivery",
-    "estimateDeliveryFresh": "Delivery · fresh tier",
-    "estimateDeliveryShelf": "Delivery · shelf-stable",
-    "estimateDeliveryUnknown": "Confirmed at checkout",
-    "estimateTotal": "Estimated total",
-    "estimateNote": "Estimated total — the final amount is confirmed at checkout.",
-    "estimateOnRequestNote": "Some items are priced on request — we'll confirm the final amount at checkout.",
-    "orderTitle": "Ready when you are",
-    "orderNote": "Checkout prices your order with our kitchen in real time; you pay after reviewing the final total.",
-    "whatsapp": "Order on WhatsApp",
-    "proceed": "Proceed to checkout"
+    "onRequest": "ಕೋರಿಕೆಯ ಮೇರೆಗೆ",
+    "remove": "ತೆಗೆದುಹಾಕಿ",
+    "decrease": "ಪ್ರಮಾಣ ಕಡಿಮೆ ಮಾಡಿ",
+    "increase": "ಪ್ರಮಾಣ ಹೆಚ್ಚಿಸಿ",
+    "clear": "ಕಾರ್ಟ್ ಖಾಲಿ ಮಾಡಿ",
+    "estimateHeading": "ಅಂದಾಜು",
+    "estimateItems": "ವಸ್ತುಗಳು",
+    "estimateDelivery": "ವಿತರಣೆ",
+    "estimateDeliveryFresh": "ವಿತರಣೆ · ಫ್ರೆಶ್-ಟಿಯರ್",
+    "estimateDeliveryShelf": "ವಿತರಣೆ · ಶೆಲ್ಫ್-ಸ್ಟೇಬಲ್",
+    "estimateDeliveryUnknown": "ಚೆಕ್‌ಔಟ್‌ನಲ್ಲಿ ದೃಢೀಕರಿಸಲಾಗುತ್ತದೆ",
+    "estimateTotal": "ಅಂದಾಜು ಒಟ್ಟು",
+    "estimateNote": "ಅಂದಾಜು ಒಟ್ಟು — ಅಂತಿಮ ಮೊತ್ತ ಚೆಕ್‌ಔಟ್‌ನಲ್ಲಿ ದೃಢೀಕೃತವಾಗುತ್ತದೆ.",
+    "estimateOnRequestNote": "ಕೆಲವು ವಸ್ತುಗಳಿಗೆ ಬೆಲೆ ಕೋರಿಕೆಯ ಮೇರೆಗೆ ಮಾತ್ರ — ಅಂತಿಮ ಮೊತ್ತವನ್ನು ಚೆಕ್‌ಔಟ್‌ನಲ್ಲಿ ದೃಢೀಕರಿಸುತ್ತೇವೆ.",
+    "orderTitle": "ನೀವು ಸಿದ್ಧರಾದಾಗ ನಾವಿದ್ದೇವೆ",
+    "orderNote": "ಚೆಕ್‌ಔಟ್‌ನಲ್ಲಿ ನಮ್ಮ ಅಡುಗೆಮನೆ ನಿಮ್ಮ ಆರ್ಡರ್‌ಗೆ ತತ್‌ಕ್ಷಣ ಬೆಲೆ ನೀಡುತ್ತದೆ; ಅಂತಿಮ ಒಟ್ಟು ನೋಡಿದ ನಂತರವೇ ನೀವು ಪಾವತಿಸುತ್ತೀರಿ.",
+    "whatsapp": "ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಆರ್ಡರ್ ಮಾಡಿ",
+    "proceed": "ಚೆಕ್‌ಔಟ್‌ಗೆ ಮುಂದುವರಿಸಿ"
   },
   "Checkout": {
-    "eyebrow": "Mishran · Commerce",
-    "title": "Checkout",
-    "blurb": "Address, delivery, and payment — your order is priced fresh by our kitchen the moment you review it.",
-    "loading": "One moment…",
-    "emptyCart": "Your cart is empty — taking you back to it.",
+    "eyebrow": "ಮಿಶ್ರಣ್ · ಕಾಮರ್ಸ್",
+    "title": "ಚೆಕ್‌ಔಟ್",
+    "blurb": "ವಿಳಾಸ, ವಿತರಣೆ ಮತ್ತು ಪಾವತಿ — ನೀವು ಪರಿಶೀಲಿಸುವ ಕ್ಷಣದಲ್ಲೇ ನಮ್ಮ ಅಡುಗೆಮನೆ ನಿಮ್ಮ ಆರ್ಡರ್‌ಗೆ ತಾಜಾ ಬೆಲೆ ನೀಡುತ್ತದೆ.",
+    "loading": "ಒಂದು ಕ್ಷಣ…",
+    "emptyCart": "ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿ ಇದೆ — ಅಲ್ಲಿಗೆ ಹಿಂತಿರುಗಿಸಲಾಗುತ್ತಿದೆ.",
     "steps": {
-      "address": "Address",
-      "delivery": "Delivery",
-      "payment": "Payment"
+      "address": "ವಿಳಾಸ",
+      "delivery": "ವಿತರಣೆ",
+      "payment": "ಪಾವತಿ"
     },
-    "checkingAddress": "Checking delivery to this pincode…",
-    "deliverHere": "Deliver here",
-    "deliveringHere": "Delivering here",
-    "changeAddress": "Change address",
-    "changeSlot": "Change slot",
-    "slotHeading": "Delivery slot",
-    "slotToday": "Today",
-    "slotTomorrow": "Tomorrow",
+    "checkingAddress": "ಈ ಪಿನ್‌ಕೋಡ್‌ಗೆ ವಿತರಣೆ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…",
+    "deliverHere": "ಇಲ್ಲಿಗೆ ವಿತರಿಸಿ",
+    "deliveringHere": "ಇಲ್ಲಿಗೆ ವಿತರಿಸಲಾಗುತ್ತಿದೆ",
+    "changeAddress": "ವಿಳಾಸ ಬದಲಾಯಿಸಿ",
+    "changeSlot": "ಸ್ಲಾಟ್ ಬದಲಾಯಿಸಿ",
+    "slotHeading": "ವಿತರಣಾ ಸ್ಲಾಟ್",
+    "slotToday": "ಇಂದು",
+    "slotTomorrow": "ನಾಳೆ",
     "slotLabel": "{day} · {date} · {window}",
-    "slotNote": "Fresh-tier items are made daily — choose a slot at least a few hours out.",
-    "continue": "Continue",
-    "summaryHeading": "Review & pay",
-    "validating": "Pricing your order with our kitchen…",
-    "shelfNote": "Shelf-stable delivery — dispatches within {days} days.",
+    "slotNote": "ಫ್ರೆಶ್-ವರ್ಗದ ವಸ್ತುಗಳು ಪ್ರತಿದಿನ ತಯಾರಾಗುತ್ತವೆ — ಕನಿಷ್ಠ ಕೆಲವು ಗಂಟೆಗಳ ನಂತರದ ಸ್ಲಾಟ್ ಆಯ್ಕೆ ಮಾಡಿ.",
+    "continue": "ಮುಂದುವರಿಸಿ",
+    "summaryHeading": "ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಪಾವತಿಸಿ",
+    "validating": "ನಮ್ಮ ಅಡುಗೆಮನೆಯಿಂದ ನಿಮ್ಮ ಆರ್ಡರ್‌ನ ಬೆಲೆ ತೆಗೆದುಕೊಳ್ಳಲಾಗುತ್ತಿದೆ…",
+    "shelfNote": "ಶೆಲ್ಫ್-ಸ್ಟೇಬಲ್ ವಿತರಣೆ — {days} ದಿನಗಳೊಳಗೆ ರವಾನೆ.",
     "itemUnitPrice": "{quantity} × {unit} @ {price}",
-    "totalsItems": "Items",
-    "totalsDelivery": "Delivery",
-    "totalsDiscount": "Discount",
-    "totalsTotal": "Total",
-    "taxNote": "Prices are MRP-inclusive of GST.",
-    "payNow": "Pay {amount}",
-    "paying": "Opening Razorpay…",
-    "retry": "Try payment again",
-    "whatsappFallback": "Finish on WhatsApp",
-    "backToCart": "Back to cart",
-    "razorpayName": "Mishran · Malgudi Sweets",
-    "razorpayDescription": "Fresh mithai, delivered",
+    "totalsItems": "ವಸ್ತುಗಳು",
+    "totalsDelivery": "ವಿತರಣೆ",
+    "totalsDiscount": "ರಿಯಾಯಿತಿ",
+    "totalsTotal": "ಒಟ್ಟು",
+    "taxNote": "ಬೆಲೆಗಳಲ್ಲಿ GST ಸೇರಿದೆ (MRP).",
+    "payNow": "{amount} ಪಾವತಿಸಿ",
+    "paying": "Razorpay ತೆರೆಯಲಾಗುತ್ತಿದೆ…",
+    "retry": "ಪಾವತಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+    "whatsappFallback": "ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಪೂರ್ಣಗೊಳಿಸಿ",
+    "backToCart": "ಕಾರ್ಟ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+    "razorpayName": "ಮಿಶ್ರಣ್ · ಮಾಲ್ಗುಡಿ ಸ್ವೀಟ್ಸ್",
+    "razorpayDescription": "ತಾಜಾ ಮಿಠಾಯಿ, ವಿತರಿಸಲಾಗುತ್ತದೆ",
     "errors": {
-      "notServiceable": "We don't deliver to this pincode yet — pick another address or message us on WhatsApp.",
-      "invalidPincode": "That pincode doesn't look right — edit the address and try again.",
-      "serviceabilityCheck": "We couldn't check delivery right now. Please try again.",
-      "pincode": "We can't deliver this cart to that pincode.",
-      "productGone": "One of these items is no longer available — remove it from your cart to continue.",
-      "notPriced": "One of these items isn't priced for online ordering right now — remove it or order it on request via WhatsApp.",
-      "validate": "We couldn't price your cart just now. Please try again.",
-      "cartChanged": "Your cart changed — review it and try again."
+      "notServiceable": "ನಾವು ಇನ್ನೂ ಈ ಪಿನ್‌ಕೋಡ್‌ಗೆ ವಿತರಿಸುವುದಿಲ್ಲ — ಬೇರೆ ವಿಳಾಸ ಆಯ್ಕೆ ಮಾಡಿ ಅಥವಾ ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಸಂದೇಶ ಕಳುಹಿಸಿ.",
+      "invalidPincode": "ಈ ಪಿನ್‌ಕೋಡ್ ಸರಿ ಇಲ್ಲ ಎಂದು ಕಾಣುತ್ತದೆ — ವಿಳಾಸ ತಿದ್ದಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+      "serviceabilityCheck": "ಈಗ ವಿತರಣೆ ಪರಿಶೀಲಿಸಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+      "pincode": "ಈ ಕಾರ್ಟ್ ಅನ್ನು ಆ ಪಿನ್‌ಕೋಡ್‌ಗೆ ವಿತರಿಸಲಾಗುವುದಿಲ್ಲ.",
+      "productGone": "ಇವುಗಳಲ್ಲಿ ಒಂದು ವಸ್ತು ಈಗ ಲಭ್ಯವಿಲ್ಲ — ಮುಂದುವರಿಸಲು ಅದನ್ನು ಕಾರ್ಟ್‌ನಿಂದ ತೆಗೆದುಹಾಕಿ.",
+      "notPriced": "ಇವುಗಳಲ್ಲಿ ಒಂದು ವಸ್ತು ಈಗ ಆನ್‌ಲೈನ್ ಆರ್ಡರ್‌ಗೆ ಬೆಲೆ ನೀಡಿಲ್ಲ — ಅದನ್ನು ತೆಗೆದುಹಾಕಿ ಅಥವಾ ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಕೋರಿಕೆಯ ಮೇರೆಗೆ ಆರ್ಡರ್ ಮಾಡಿ.",
+      "validate": "ನಿಮ್ಮ ಕಾರ್ಟ್‌ನ ಬೆಲೆ ಈಗ ತೆಗೆದುಕೊಳ್ಳಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+      "cartChanged": "ನಿಮ್ಮ ಕಾರ್ಟ್ ಬದಲಾಗಿದೆ — ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
     },
     "payErrors": {
-      "dismissed": "Payment window closed — your order is saved and awaiting payment.",
-      "payment-failed": "The payment didn't go through — your order is saved and awaiting payment.",
-      "verify-failed": "We couldn't confirm the payment with Razorpay — your order is saved and awaiting payment.",
-      "create-failed": "We couldn't start the payment — your order is saved. Try again in a moment.",
-      "script": "The payment window failed to load — check your connection and try again.",
-      "cart-changed": "Your cart changed while paying — review it and check out again."
+      "dismissed": "ಪಾವತಿ ಕಿಟಕಿ ಮುಚ್ಚಿದೆ — ನಿಮ್ಮ ಆರ್ಡರ್ ಉಳಿಸಲಾಗಿದೆ, ಪಾವತಿ ಬಾಕಿ ಇದೆ.",
+      "payment-failed": "ಪಾವತಿ ಆಗಲಿಲ್ಲ — ನಿಮ್ಮ ಆರ್ಡರ್ ಉಳಿಸಲಾಗಿದೆ, ಪಾವತಿ ಬಾಕಿ ಇದೆ.",
+      "verify-failed": "Razorpay ಜೊತೆ ಪಾವತಿ ದೃಢೀಕರಿಸಲಾಗಲಿಲ್ಲ — ನಿಮ್ಮ ಆರ್ಡರ್ ಉಳಿಸಲಾಗಿದೆ, ಪಾವತಿ ಬಾಕಿ ಇದೆ.",
+      "create-failed": "ಪಾವತಿ ಪ್ರಾರಂಭಿಸಲಾಗಲಿಲ್ಲ — ನಿಮ್ಮ ಆರ್ಡರ್ ಉಳಿಸಲಾಗಿದೆ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+      "script": "ಪಾವತಿ ಕಿಟಕಿ ಲೋಡ್ ಆಗಲಿಲ್ಲ — ನಿಮ್ಮ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+      "cart-changed": "ಪಾವತಿ ಸಮಯದಲ್ಲಿ ನಿಮ್ಮ ಕಾರ್ಟ್ ಬದಲಾಗಿದೆ — ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಚೆಕ್‌ಔಟ್ ಮಾಡಿ."
     },
     "success": {
-      "eyebrow": "Mishran · Commerce",
-      "title": "Order confirmed",
-      "lead": "Your payment is confirmed and your order is with our kitchen. We'll message you when it's dispatched.",
-      "noOrder": "We couldn't find that order — check your account for the latest.",
-      "yourOrders": "Your orders",
-      "continueShopping": "Continue shopping"
+      "eyebrow": "ಮಿಶ್ರಣ್ · ಕಾಮರ್ಸ್",
+      "title": "ಆರ್ಡರ್ ದೃಢೀಕೃತ",
+      "lead": "ನಿಮ್ಮ ಪಾವತಿ ದೃಢೀಕೃತವಾಗಿದೆ ಮತ್ತು ಆರ್ಡರ್ ನಮ್ಮ ಅಡುಗೆಮನೆಯಲ್ಲಿದೆ. ರವಾನೆಯಾದಾಗ ಸಂದೇಶ ಕಳುಹಿಸುತ್ತೇವೆ.",
+      "noOrder": "ಆ ಆರ್ಡರ್ ಸಿಗಲಿಲ್ಲ — ಇತ್ತೀಚಿನ ಮಾಹಿತಿಗೆ ನಿಮ್ಮ ಖಾತೆ ನೋಡಿ.",
+      "yourOrders": "ನಿಮ್ಮ ಆರ್ಡರ್‌ಗಳು",
+      "continueShopping": "ಖರೀದಿ ಮುಂದುವರಿಸಿ"
     }
   },
   "Commerce": {
     "_todo": "TODO: translate to Kannada — currently English stubs (Task 14 pattern).",
     "common": {
       "_todo_kn": "TODO: translate to Kannada — currently English stubs (Task 14 pattern).",
-      "eyebrow": "Mishran · Commerce",
-      "whatsappCta": "Message us on WhatsApp",
-      "leadEyebrow": "Bulk & weddings",
-      "leadCta": "Planning a bulk order or wedding?",
-      "leadHint": "Tell us about your event →",
-      "empty": "Your cart is empty.",
-      "emptyCta": "Browse mithai",
-      "itemsReadonlyNote": "Quantities are read-only while we finish our commerce experience.",
-      "itemsEditableNote": "Adjust quantities, then send this draft to Mishran on WhatsApp.",
-      "orderDraftTitle": "Order draft",
-      "remove": "Remove",
-      "decrease": "Decrease quantity",
-      "increase": "Increase quantity",
-      "clear": "Clear cart",
-      "sendOrder": "Send order"
+      "eyebrow": "ಮಿಶ್ರಣ್ · ಕಾಮರ್ಸ್",
+      "whatsappCta": "ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಸಂದೇಶ ಕಳುಹಿಸಿ",
+      "leadEyebrow": "ಸಗಟು ಮತ್ತು ಮದುವೆಗಳು",
+      "leadCta": "ಸಗಟು ಆರ್ಡರ್ ಅಥವಾ ಮದುವೆ ಯೋಜಿಸುತ್ತಿರುವಿರಾ?",
+      "leadHint": "ನಿಮ್ಮ ಕಾರ್ಯಕ್ರಮದ ಬಗ್ಗೆ ಹೇಳಿ →",
+      "empty": "ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿ ಇದೆ.",
+      "emptyCta": "ಮಿಠಾಯಿ ನೋಡಿ",
+      "itemsReadonlyNote": "ನಮ್ಮ ಕಾಮರ್ಸ್ ಅನುಭವ ಪೂರ್ಣಗೊಳ್ಳುವವರೆಗೆ ಪ್ರಮಾಣಗಳನ್ನು ಓದಲು ಮಾತ್ರ ಇಡಲಾಗಿದೆ.",
+      "itemsEditableNote": "ಪ್ರಮಾಣ ಸರಿಹೊಂದಿಸಿ, ನಂತರ ಈ ಡ್ರಾಫ್ಟ್ ಅನ್ನು ಮಿಶ್ರಣ್‌ಗೆ ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿ.",
+      "orderDraftTitle": "ಆರ್ಡರ್ ಡ್ರಾಫ್ಟ್",
+      "remove": "ತೆಗೆದುಹಾಕಿ",
+      "decrease": "ಪ್ರಮಾಣ ಕಡಿಮೆ ಮಾಡಿ",
+      "increase": "ಪ್ರಮಾಣ ಹೆಚ್ಚಿಸಿ",
+      "clear": "ಕಾರ್ಟ್ ಖಾಲಿ ಮಾಡಿ",
+      "sendOrder": "ಆರ್ಡರ್ ಕಳುಹಿಸಿ"
     },
     "stubs": {
       "cart": {
-        "title": "Cart",
-        "blurb": "Your cart is being prepared. Checkout launches with our full commerce experience. For bulk orders or weddings, message us on WhatsApp."
+        "title": "ಕಾರ್ಟ್",
+        "blurb": "ನಿಮ್ಮ ಕಾರ್ಟ್ ಸಿದ್ಧವಾಗುತ್ತಿದೆ. ಚೆಕ್‌ಔಟ್ ನಮ್ಮ ಪೂರ್ಣ ಕಾಮರ್ಸ್ ಅನುಭವದೊಂದಿಗೆ ಬರುತ್ತದೆ. ಸಗಟು ಆರ್ಡರ್ ಅಥವಾ ಮದುವೆಗಳಿಗೆ ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಸಂದೇಶ ಕಳುಹಿಸಿ."
       },
       "checkout": {
-        "title": "Checkout",
-        "blurb": "Checkout is launching soon. To reserve your order today, message us on WhatsApp."
+        "title": "ಚೆಕ್‌ಔಟ್",
+        "blurb": "ಚೆಕ್‌ಔಟ್ ಶೀಘ್ರದಲ್ಲಿ ಬರುತ್ತದೆ. ಇಂದೇ ನಿಮ್ಮ ಆರ್ಡರ್ ಕಾಯ್ದಿರಿಸಲು ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಸಂದೇಶ ಕಳುಹಿಸಿ."
       },
       "account": {
-        "title": "Account",
-        "blurb": "Accounts launch with our commerce experience. For order questions, WhatsApp us."
+        "title": "ಖಾತೆ",
+        "blurb": "ಖಾತೆಗಳು ನಮ್ಮ ಕಾಮರ್ಸ್ ಅನುಭವದೊಂದಿಗೆ ಬರುತ್ತವೆ. ಆರ್ಡರ್ ಪ್ರಶ್ನೆಗಳಿಗೆ ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಸಂಪರ್ಕಿಸಿ."
       },
       "trackOrder": {
-        "title": "Track order",
-        "blurb": "Order tracking launches with Phase 8 commerce. Need help now? WhatsApp us with your order reference."
+        "title": "ಆರ್ಡರ್ ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
+        "blurb": "ಆರ್ಡರ್ ಟ್ರ್ಯಾಕಿಂಗ್ ಫೇಸ್ 8 ಕಾಮರ್ಸ್‌ನೊಂದಿಗೆ ಬರುತ್ತದೆ. ಈಗಲೇ ಸಹಾಯ ಬೇಕೆ? ನಿಮ್ಮ ಆರ್ಡರ್ ಉಲ್ಲೇಖದೊಂದಿಗೆ ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಸಂಪರ್ಕಿಸಿ."
       },
       "buildAGift": {
         "title": "ಗಿಫ್ಟ್ ಕಟ್ಟಿ",
@@ -752,25 +752,25 @@
     "title": "ಕಥೆಗಳು",
     "eyebrow": "ಮನೆಯಿಂದ",
     "intro": "Stories from the Mishran kitchen — farms, karigars, craft, and the modern experience that carries it to your door.",
-    "empty": "Stories are being written. Please check back shortly.",
-    "itemCount": "{count} stories",
-    "readMore": "Read the story",
-    "backToHub": "All stories",
-    "publishedOn": "Published",
-    "pillarLabel": "Pillar",
+    "empty": "ಕಥೆಗಳು ಬರೆಯಲ್ಪಡುತ್ತಿವೆ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಇನ್ನೊಮ್ಮೆ ನೋಡಿ.",
+    "itemCount": "{count} ಕಥೆಗಳು",
+    "readMore": "ಕಥೆ ಓದಿ",
+    "backToHub": "ಎಲ್ಲಾ ಕಥೆಗಳು",
+    "publishedOn": "ಪ್ರಕಟವಾಗಿದೆ",
+    "pillarLabel": "ಸ್ತಂಭ",
     "pillars": {
-      "farm": "Milk & Farms",
-      "milk": "Milk & Farms",
-      "karigar": "Karigar Mastery",
-      "karigari": "Karigari",
-      "packaging": "Packaging",
-      "festival": "Festivals",
-      "regional": "Regional",
-      "recipe": "Recipes",
-      "journal": "Modern Experience"
+      "farm": "ಹಾಲು ಮತ್ತು ಫಾರ್ಮ್‌ಗಳು",
+      "milk": "ಹಾಲು ಮತ್ತು ಫಾರ್ಮ್‌ಗಳು",
+      "karigar": "ಕಾರೀಗರ ಪ್ರಾವೀಣ್ಯತೆ",
+      "karigari": "ಕಾರೀಗರಿ",
+      "packaging": "ಪ್ಯಾಕೇಜಿಂಗ್",
+      "festival": "ಹಬ್ಬಗಳು",
+      "regional": "ಪ್ರಾದೇಶಿಕ",
+      "recipe": "ಪಾಕವಿಧಾನಗಳು",
+      "journal": "ಆಧುನಿಕ ಅನುಭವ"
     },
     "related": {
-      "title": "Featured in this story"
+      "title": "ಈ ಕಥೆಯಲ್ಲಿ ಕಾಣಿಸಿಕೊಂಡವು"
     }
   }
 }
