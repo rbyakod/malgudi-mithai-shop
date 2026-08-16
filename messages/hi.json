@@ -329,7 +329,21 @@
     "orderTitle": "आप तैयार हों, हम भी हैं",
     "orderNote": "चेकआउट पर हमारी रसोई आपका ऑर्डर तुरंत मूल्यित करती है; भुगतान अंतिम कुल देखने के बाद।",
     "whatsapp": "WhatsApp पर ऑर्डर करें",
-    "proceed": "चेकआउट करें"
+    "proceed": "चेकआउट करें",
+    "estimateFreeProgress": "मुफ़्त डिलीवरी के लिए {amount} और जोड़ें",
+    "estimateDeliveryFree": "मुफ़्त डिलीवरी",
+    "estimateFeeFree": "मुफ़्त",
+    "upsellTitle": "पूरे भारत में भेजे जाते हैं",
+    "upsellAdd": "जोड़ें",
+    "upsellAddLabel": "{name} कार्ट में जोड़ें",
+    "emailNudgeTitle": "यह कार्ट मुझे ईमेल पर भेजें",
+    "emailNudgeLabel": "ईमेल पता",
+    "emailNudgePlaceholder": "you@example.com",
+    "emailNudgeConsent": "मुझे मेरी कार्ट और कभी-कभी अपडेट ईमेल पर भेजें",
+    "emailNudgeSubmit": "सहेजें",
+    "emailNudgeSuccess": "सहेज लिया — हम आपकी कार्ट पर नज़र रखेंगे",
+    "emailNudgeInvalid": "कृपया मान्य ईमेल पता डालें।",
+    "restoredNote": "आपकी सहेजी कार्ट वापस आ गई — जहाँ छोड़ा था वहीं से शुरू करें।"
   },
   "Checkout": {
     "eyebrow": "मिश्रण · कॉमर्स",
@@ -471,7 +485,17 @@
     "signInCta": "साइन इन करें",
     "profileEyebrow": "प्रोफ़ाइल",
     "noName": "मिश्रण ग्राहक",
-    "signOut": "साइन आउट करें"
+    "signOut": "साइन आउट करें",
+    "loyalty": {
+      "eyebrow": "लॉयल्टी",
+      "tierSilver": "सिल्वर सदस्य",
+      "tierGold": "गोल्ड सदस्य",
+      "progress": "{delivered} डिलीवर · सिल्वर के लिए {more} और",
+      "benefitNone": "दो ऑर्डर डिलीवर होने पर सिल्वर, पाँच पर गोल्ड।",
+      "benefitSilver": "सिल्वर — सीज़नल बॉक्स और प्राथमिकता स्लॉट का पहले लाभ।",
+      "benefitGold": "गोल्ड — प्राथमिकता स्लॉट, सीज़नल बॉक्स सबसे पहले, और हर ऑर्डर में थोड़ा अतिरिक्त।",
+      "deliveredLabel": "{count} डिलीवर"
+    }
   },
   "Addresses": {
     "heading": "डिलीवरी पते",
@@ -543,7 +567,18 @@
       "returned": "वापस हुआ",
       "failed_delivery": "डिलीवरी असफल",
       "abandoned": "छोड़ा गया"
-    }
+    },
+    "reorderHeading": "दोबारा ऑर्डर करें",
+    "reorderCta": "दोबारा ऑर्डर करें",
+    "reorderAdded": "कार्ट में जोड़ दिया — वहीं ले जा रहे हैं…",
+    "reviewsHeading": "अपनी मिठाइयों की रेटिंग दें",
+    "reviewStarsLabel": "{name} की रेटिंग दें",
+    "reviewStarLabel": "{count} स्टार",
+    "reviewBodyLabel": "आपकी टिप्पणी (वैकल्पिक)",
+    "reviewBodyPlaceholder": "आपको कैसा लगा?",
+    "reviewSubmit": "समीक्षा भेजें",
+    "reviewReceived": "धन्यवाद — समीक्षा मॉडरेशन के लिए मिल गई",
+    "reviewError": "सहेजा नहीं जा सका — कृपया फिर कोशिश करें।"
   },
   "TrackOrder": {
     "eyebrow": "मिश्रण · ऑर्डर",

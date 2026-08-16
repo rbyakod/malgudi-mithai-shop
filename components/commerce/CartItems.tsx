@@ -10,6 +10,13 @@
 // the "final amount confirmed at checkout" note; on-request lines never
 // fake a number.
 //
+// Conversion batch: the estimate block carries the free-delivery threshold
+// (progress row below the tier's threshold, "FREE" fee row at/above —
+// estimateCart mirrors computeTotals exactly), and under it sits the
+// consent-gated "Email me this cart" nudge. Every cart change schedules a
+// debounced draft sync (lib/web/cartDraftSync) so the abandonment cron has
+// current data.
+//
 // Visual language unchanged from the storefront: rounded-2xl card lines,
 // hairline border-card rules, quiet uppercase tracked labels, gold
 // accents. Quantity stepper follows the BuyModule idiom (border-box
@@ -21,7 +28,12 @@ import {useLocale, useTranslations} from "next-intl";
 import {Link} from "@/i18n/navigation";
 import {useCart} from "@/context/CartContext";
 import {track} from "@/lib/analytics";
-import {estimateCart, type CartFees} from "@/lib/web/cartEstimate";
+import {
+  estimateCart,
+  type CartFees,
+  type CartFreeThresholds,
+} from "@/lib/web/cartEstimate";
+import {createCartDraftSyncer, saveCartDraftEmail} from "@/lib/web/cartDraftSync";
 import {formatPaise} from "@/lib/web/format";
 import type {ServiceabilityTier} from "@/lib/web/serviceability";
 import {toWaDigits} from "@/lib/whatsapp";
@@ -30,7 +42,17 @@ type Props = {
   whatsapp: string;
   /** Delivery fees by tier, read from lib/config by the server page. */
   fees: CartFees;
+  /** Free-delivery thresholds by tier (0 = disabled), same server
+   *  provenance as fees. Optional so non-cart callers keep compiling. */
+  freeThresholds?: CartFreeThresholds;
 };
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// One syncer per browser session (module scope — the debounce window and
+// the draft_saved signature should span remounts of this island, and the
+// constructor touches no browser API so SSR import is safe).
+const cartDraftSyncer = createCartDraftSyncer();
 
 // Same key + shape as components/mithai/PincodeCheck.tsx.
 const PINCODE_STORAGE_KEY = "mithran-pincode-v1";
@@ -59,8 +81,8 @@ function cartMessage(
   ].filter(Boolean).join("\n");
 }
 
-export function CartItems({whatsapp, fees}: Props) {
-  const {items, updateQuantity, removeItem, clear} = useCart();
+export function CartItems({whatsapp, fees, freeThresholds}: Props) {
+  const {items, count, updateQuantity, removeItem, clear} = useCart();
   const t = useTranslations("Cart");
   const locale = useLocale();
 
@@ -81,7 +103,41 @@ export function CartItems({whatsapp, fees}: Props) {
     }
   }, []);
 
-  const estimate = useMemo(() => estimateCart(items, tier, fees), [items, tier, fees]);
+  const estimate = useMemo(
+    () => estimateCart(items, tier, fees, freeThresholds),
+    [items, tier, fees, freeThresholds],
+  );
+
+  // ---- Abandoned-cart draft sync ------------------------------------------------
+  // Debounced fire-and-forget per cart state (module-scope syncer — see
+  // cartDraftSyncer above). Empty carts schedule nothing.
+  useEffect(() => {
+    cartDraftSyncer.schedule(items, {
+      subtotalInPaise: estimate.allPriced ? estimate.itemsTotalInPaise : null,
+      itemCount: count,
+      tier,
+    });
+  }, [items, count, tier, estimate.allPriced, estimate.itemsTotalInPaise]);
+  // Leaving /cart with a pending sync flushes it (checkout navigation
+  // still records the draft; conversion marking happens on success).
+  useEffect(() => () => cartDraftSyncer.flush(), []);
+
+  // ---- Email nudge --------------------------------------------------------------
+  const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [emailState, setEmailState] = useState<
+    "idle" | "saving" | "saved" | "invalid"
+  >("idle");
+
+  async function submitEmail() {
+    if (!EMAIL_RE.test(email.trim())) {
+      setEmailState("invalid");
+      return;
+    }
+    setEmailState("saving");
+    const ok = await saveCartDraftEmail(email.trim());
+    setEmailState(ok ? "saved" : "invalid");
+  }
 
   const digits = toWaDigits(whatsapp);
   const waHref = digits
@@ -215,16 +271,37 @@ export function CartItems({whatsapp, fees}: Props) {
             <dt>
               {estimate.deliveryFeeInPaise === null
                 ? t("estimateDelivery")
-                : tier === "fresh"
-                  ? t("estimateDeliveryFresh")
-                  : t("estimateDeliveryShelf")}
+                : estimate.freeDeliveryEarned
+                  ? t("estimateDeliveryFree")
+                  : tier === "fresh"
+                    ? t("estimateDeliveryFresh")
+                    : t("estimateDeliveryShelf")}
             </dt>
             <dd data-testid="cart-estimate-fee">
               {estimate.deliveryFeeInPaise === null
                 ? t("estimateDeliveryUnknown")
-                : formatPaise(estimate.deliveryFeeInPaise)}
+                : estimate.freeDeliveryEarned
+                  ? t("estimateFeeFree")
+                  : formatPaise(estimate.deliveryFeeInPaise)}
             </dd>
           </div>
+          {/* Free-delivery progress — only when the tier's threshold is
+              live, everything is priced, and it hasn't been earned yet. */}
+          {estimate.freeDeliveryThresholdInPaise !== null &&
+          estimate.allPriced &&
+          !estimate.freeDeliveryEarned &&
+          estimate.deliveryFeeInPaise !== null ? (
+            <p
+              data-testid="cart-estimate-free-progress"
+              className="mt-1 border-t border-dashed border-border-card pt-2 text-xs text-gold"
+            >
+              {t("estimateFreeProgress", {
+                amount: formatPaise(
+                  estimate.freeDeliveryThresholdInPaise - estimate.itemsTotalInPaise,
+                ),
+              })}
+            </p>
+          ) : null}
           <div className="flex items-baseline justify-between border-t border-border-card pt-3 text-text-heading">
             <dt className="font-display text-base">{t("estimateTotal")}</dt>
             <dd data-testid="cart-estimate-total" className="font-display text-base">
@@ -241,6 +318,71 @@ export function CartItems({whatsapp, fees}: Props) {
         <p className="mt-3 text-xs italic leading-relaxed text-text-muted">
           {estimate.allPriced ? t("estimateNote") : t("estimateOnRequestNote")}
         </p>
+      </div>
+
+      {/* Email nudge — consent-gated draft capture for abandonment
+          recovery. Quiet inline block under the estimate; WhatsApp CTA in
+          the CTAs block below stays the loud secondary channel. */}
+      <div
+        data-testid="cart-email-nudge"
+        className="rounded-2xl border border-border-card bg-bg-card p-5"
+      >
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
+          {t("emailNudgeTitle")}
+        </p>
+        {emailState === "saved" ? (
+          <p
+            data-testid="cart-email-success"
+            className="mt-3 text-sm leading-relaxed text-text-secondary"
+          >
+            {t("emailNudgeSuccess")}
+          </p>
+        ) : (
+          <form
+            className="mt-3 space-y-3"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void submitEmail();
+            }}
+          >
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <input
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                data-testid="cart-email-input"
+                aria-label={t("emailNudgeLabel")}
+                placeholder={t("emailNudgePlaceholder")}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailState === "invalid") setEmailState("idle");
+                }}
+                className="w-full rounded-full border border-border-input bg-bg-control px-4 py-2 text-sm text-text-heading placeholder:text-text-muted/70 focus:border-primary focus:outline-none"
+              />
+              <button
+                type="submit"
+                disabled={!consent || email.trim() === "" || emailState === "saving"}
+                className="shrink-0 rounded-full bg-primary px-5 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-text-light transition-colors hover:bg-primary-hover disabled:opacity-40"
+              >
+                {t("emailNudgeSubmit")}
+              </button>
+            </div>
+            <label className="flex items-start gap-2 text-xs leading-relaxed text-text-muted">
+              <input
+                type="checkbox"
+                data-testid="cart-email-consent"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="mt-0.5 accent-primary"
+              />
+              {t("emailNudgeConsent")}
+            </label>
+            {emailState === "invalid" ? (
+              <p className="text-xs text-gold">{t("emailNudgeInvalid")}</p>
+            ) : null}
+          </form>
+        )}
       </div>
 
       {/* CTAs — checkout primary, WhatsApp + clear secondary. */}

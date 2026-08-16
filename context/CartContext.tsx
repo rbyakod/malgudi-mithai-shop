@@ -26,6 +26,10 @@ type CartContextType = {
   addItem: (item: Omit<CartItem, "quantity">, qty?: number) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, qty: number) => void;
+  /** Replace the whole cart in one write (draft-restore from an emailed
+   * cart link). Same persistence path as addItem — localStorage keeps
+   * whatever lands here. */
+  replaceCart: (items: CartItem[]) => void;
   clear: () => void;
   count: number;
 };
@@ -98,6 +102,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clear = () => setItems([]);
 
+  const replaceCart = (next: CartItem[]) => setItems(next);
+
   const count = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity, 0),
     [items]
@@ -109,6 +115,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     addItem,
     removeItem,
     updateQuantity,
+    replaceCart,
     clear,
     count,
   };

@@ -331,7 +331,21 @@
     "orderTitle": "ನೀವು ಸಿದ್ಧರಾದಾಗ ನಾವಿದ್ದೇವೆ",
     "orderNote": "ಚೆಕ್‌ಔಟ್‌ನಲ್ಲಿ ನಮ್ಮ ಅಡುಗೆಮನೆ ನಿಮ್ಮ ಆರ್ಡರ್‌ಗೆ ತತ್‌ಕ್ಷಣ ಬೆಲೆ ನೀಡುತ್ತದೆ; ಅಂತಿಮ ಒಟ್ಟು ನೋಡಿದ ನಂತರವೇ ನೀವು ಪಾವತಿಸುತ್ತೀರಿ.",
     "whatsapp": "ವಾಟ್ಸ್‌ಆಪ್‌ನಲ್ಲಿ ಆರ್ಡರ್ ಮಾಡಿ",
-    "proceed": "ಚೆಕ್‌ಔಟ್‌ಗೆ ಮುಂದುವರಿಸಿ"
+    "proceed": "ಚೆಕ್‌ಔಟ್‌ಗೆ ಮುಂದುವರಿಸಿ",
+    "estimateFreeProgress": "ಉಚಿತ ಡೆಲಿವರಿಗಾಗಿ ಇನ್ನು {amount} ಸೇರಿಸಿ",
+    "estimateDeliveryFree": "ಉಚಿತ ಡೆಲಿವರಿ",
+    "estimateFeeFree": "ಉಚಿತ",
+    "upsellTitle": "ಭಾರತದಾದ್ಯಂತ ಕಳುಹಿಸಲಾಗುತ್ತದೆ",
+    "upsellAdd": "ಸೇರಿಸಿ",
+    "upsellAddLabel": "{name} ಅನ್ನು ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ",
+    "emailNudgeTitle": "ಈ ಕಾರ್ಟ್ ಅನ್ನು ಈಮೇಲ್ ಮಾಡಿ",
+    "emailNudgeLabel": "ಈಮೇಲ್ ವಿಳಾಸ",
+    "emailNudgePlaceholder": "you@example.com",
+    "emailNudgeConsent": "ನನ್ನ ಕಾರ್ಟ್ ಮತ್ತು ಸಾಂದರ್ಭಿಕ ಅಪ್‌ಡೇಟ್‌ಗಳನ್ನು ಈಮೇಲ್ ಮಾಡಿ",
+    "emailNudgeSubmit": "ಉಳಿಸಿ",
+    "emailNudgeSuccess": "ಉಳಿಸಲಾಗಿದೆ — ನಿಮ್ಮ ಕಾರ್ಟ್ ಕಣ್ಣಿಡುತ್ತೇವೆ",
+    "emailNudgeInvalid": "ದಯವಿಟ್ಟು ಮಾನ್ಯ ಈಮೇಲ್ ವಿಳಾಸ ನಮೂದಿಸಿ.",
+    "restoredNote": "ನಿಮ್ಮ ಉಳಿಸಿದ ಕಾರ್ಟ್ ಹಿಂದಿದೆ — ಬಿಟ್ಟ ಜಾಗದಿಂದಲೇ ಮುಂದುವರಿಯಿರಿ."
   },
   "Checkout": {
     "eyebrow": "ಮಿಶ್ರಣ್ · ಕಾಮರ್ಸ್",
@@ -475,7 +489,17 @@
     "signInCta": "ಸೈನ್ ಇನ್",
     "profileEyebrow": "ಪ್ರೊಫೈಲ್",
     "noName": "ಮಿಶ್ರಣ್ ಗ್ರಾಹಕ",
-    "signOut": "ಸೈನ್ ಔಟ್"
+    "signOut": "ಸೈನ್ ಔಟ್",
+    "loyalty": {
+      "eyebrow": "ಲಾಯಲ್ಟಿ",
+      "tierSilver": "ಸಿಲ್ವರ್ ಸದಸ್ಯ",
+      "tierGold": "ಗೋಲ್ಡ್ ಸದಸ್ಯ",
+      "progress": "{delivered} ಡೆಲಿವರ್ · ಸಿಲ್ವರ್‌ಗೆ ಇನ್ನು {more}",
+      "benefitNone": "ಎರಡು ಆರ್ಡರ್ ಡೆಲಿವರ್ ಆದರೆ ಸಿಲ್ವರ್, ಐದಕ್ಕೆ ಗೋಲ್ಡ್.",
+      "benefitSilver": "ಸಿಲ್ವರ್ — ಸೀಸನಲ್ ಬಾಕ್ಸ್ ಮತ್ತು ಆದ್ಯತೆ ಸ್ಲಾಟ್‌ಗಳ ಮೊದಲ ಪ್ರವೇಶ.",
+      "benefitGold": "ಗೋಲ್ಡ್ — ಆದ್ಯತೆ ಸ್ಲಾಟ್‌ಗಳು, ಸೀಸನಲ್ ಬಾಕ್ಸ್ ಮೊದಲು, ಮತ್ತು ಪ್ರತಿ ಆರ್ಡರ್‌ನಲ್ಲಿ ಸ್ವಲ್ಪ ಹೆಚ್ಚುವರಿ.",
+      "deliveredLabel": "{count} ಡೆಲಿವರ್"
+    }
   },
   "Addresses": {
     "heading": "ವಿತರಣಾ ವಿಳಾಸಗಳು",
@@ -547,7 +571,18 @@
       "returned": "ಹಿಂತಿರುಗಿದೆ",
       "failed_delivery": "ವಿತರಣೆ ವಿಫಲ",
       "abandoned": "ಬಿಡಲಾಗಿದೆ"
-    }
+    },
+    "reorderHeading": "ಮತ್ತೆ ಆರ್ಡರ್ ಮಾಡಿ",
+    "reorderCta": "ಮತ್ತೆ ಆರ್ಡರ್ ಮಾಡಿ",
+    "reorderAdded": "ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಲಾಗಿದೆ — ಅಲ್ಲಿಗೆ ಕರೆದೊಯ್ಯುತ್ತಿದ್ದೇವೆ…",
+    "reviewsHeading": "ನಿಮ್ಮ ಮಿಠಾಯಿಗಳಿಗೆ ರೇಟಿಂಗ್ ನೀಡಿ",
+    "reviewStarsLabel": "{name} ಗೆ ರೇಟಿಂಗ್ ನೀಡಿ",
+    "reviewStarLabel": "{count} ಸ್ಟಾರ್",
+    "reviewBodyLabel": "ನಿಮ್ಮ ಟಿಪ್ಪಣಿ (ಐಚ್ಛಿಕ)",
+    "reviewBodyPlaceholder": "ನಿಮಗೆ ಹೇಗನ್ಸಿತು?",
+    "reviewSubmit": "ವಿಮರ್ಶೆ ಕಳುಹಿಸಿ",
+    "reviewReceived": "ಧನ್ಯವಾದಗಳು — ವಿಮರ್ಶೆ ಮಾಡರೇಶನ್‌ಗೆ ಸಿಕ್ಕಿತು",
+    "reviewError": "ಉಳಿಸಲಾಗಲಿಲ್ಲ — ದಯವಿಟ್ಟು ಪುನಃ ಪ್ರಯತ್ನಿಸಿ."
   },
   "TrackOrder": {
     "eyebrow": "ಮಿಶ್ರಣ್ · ಆರ್ಡರ್",
