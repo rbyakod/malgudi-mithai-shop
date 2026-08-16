@@ -2,6 +2,7 @@
 import type {Metadata} from "next";
 import "./globals.css";
 import {CartProvider} from "@/context/CartContext";
+import {AuthProvider} from "@/context/AuthContext";
 import {QueryProvider} from "@/context/QueryProvider";
 import {ThemeProvider} from "@/context/ThemeContext";
 import {PageBackground} from "@/components/PageBackground";
@@ -45,7 +46,9 @@ export default function RootLayout({
         <ThemeProvider>
           <PageBackground />
           <QueryProvider>
-            <CartProvider>{children}</CartProvider>
+            <CartProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </CartProvider>
           </QueryProvider>
           <Toaster position="top-center" richColors closeButton />
         </ThemeProvider>
