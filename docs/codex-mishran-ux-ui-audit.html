@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mishran UX/UI Audit - Web and Mobile Apps</title>
+  <style>
+    :root {
+      --ink: #101820;
+      --muted: #5b6773;
+      --subtle: #7b8794;
+      --line: #d9e0e7;
+      --soft: #f5f7fa;
+      --panel: #ffffff;
+      --navy: #041e42;
+      --blue: #0053e2;
+      --blue-dark: #003b9a;
+      --gold: #ffc220;
+      --green: #0f8a5f;
+      --red: #ba3329;
+      --orange: #b85c00;
+      --purple: #6651a8;
+      --shadow: 0 18px 50px rgba(4, 30, 66, 0.12);
+      --radius: 16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(4,30,66,0.05), rgba(4,30,66,0) 340px),
+        #fbfcfe;
+      font-family: var(--sans);
+      line-height: 1.55;
+    }
+
+    a { color: inherit; }
+    code {
+      font-family: var(--mono);
+      font-size: 0.92em;
+      background: #eef3f9;
+      border: 1px solid #dae5f1;
+      border-radius: 6px;
+      padding: 0.1rem 0.35rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 292px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 24px 18px;
+      color: #eaf2ff;
+      background: var(--navy);
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .brand {
+      display: grid;
+      gap: 10px;
+      padding: 8px 8px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      margin-bottom: 18px;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+
+    .brand p {
+      margin: 0;
+      color: #b8c8dd;
+      font-size: 0.86rem;
+    }
+
+    .nav-section {
+      margin: 18px 0 8px;
+      color: #8da8cc;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 750;
+    }
+
+    .toc {
+      display: grid;
+      gap: 4px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 10px;
+      color: #d8e6f8;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+
+    .toc a:hover,
+    .toc a:focus {
+      background: rgba(255,255,255,0.1);
+      outline: none;
+    }
+
+    main {
+      min-width: 0;
+      padding: 44px min(5vw, 64px) 80px;
+    }
+
+    section {
+      scroll-margin-top: 24px;
+      margin-top: 56px;
+    }
+
+    .hero {
+      margin-top: 0;
+      display: grid;
+      gap: 28px;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      align-items: end;
+      padding-bottom: 34px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    h2, h3, h4 { line-height: 1.15; }
+    h2 {
+      margin: 0 0 14px;
+      font-size: clamp(2rem, 4vw, 4.4rem);
+      letter-spacing: -0.03em;
+      max-width: 940px;
+    }
+
+    h3 {
+      margin: 0 0 14px;
+      font-size: clamp(1.45rem, 2vw, 2.05rem);
+      letter-spacing: -0.02em;
+    }
+
+    h4 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 900px;
+      margin: 0;
+    }
+
+    .hero-panel {
+      padding: 22px;
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .audit-meta {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .audit-meta strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.2rem;
+      line-height: 1.15;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(4,30,66,0.06);
+    }
+
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: 1 / -1; }
+
+    .score {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .score b {
+      font-size: 2.35rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .score span { color: var(--subtle); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .p0 { color: #fff; background: var(--red); }
+    .p1 { color: #fff; background: var(--orange); }
+    .p2 { color: #fff; background: var(--purple); }
+    .p3 { color: var(--navy); background: var(--gold); }
+    .ok { color: #075f42; background: #dff7ec; border-color: #b6ebd2; }
+    .partial { color: #714900; background: #fff2cf; border-color: #f4d37d; }
+    .missing { color: #8f1d16; background: #ffe4e1; border-color: #f3aaa4; }
+    .implemented { color: #094f7a; background: #e3f2ff; border-color: #b9def9; }
+    .category { color: #243b53; background: #edf2f7; border-color: #d6e0eb; }
+
+    .callout {
+      border-left: 4px solid var(--blue);
+      padding: 16px 18px;
+      border-radius: 0 14px 14px 0;
+      background: #eef5ff;
+      color: #244260;
+    }
+
+    .callout strong { color: var(--navy); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    th, td {
+      padding: 12px 13px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #30475e;
+      background: #f0f4f8;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    td small {
+      display: block;
+      margin-top: 4px;
+      color: var(--subtle);
+      font-size: 0.78rem;
+    }
+
+    .finding {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 14px;
+      padding: 18px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .finding:first-child { border-top: 0; padding-top: 0; }
+    .finding p { margin: 6px 0 0; color: var(--muted); }
+    .finding ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+
+    .refs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .ref {
+      display: inline-flex;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: #274862;
+      background: #f3f7fb;
+      border: 1px solid #dde7f0;
+      border-radius: 999px;
+      padding: 4px 8px;
+      text-decoration: none;
+    }
+
+    .roadmap {
+      display: grid;
+      gap: 18px;
+      counter-reset: phase;
+    }
+
+    .phase {
+      position: relative;
+      padding: 20px 20px 20px 64px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .phase::before {
+      counter-increment: phase;
+      content: counter(phase);
+      position: absolute;
+      left: 18px;
+      top: 20px;
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--navy);
+      color: white;
+      font-weight: 800;
+    }
+
+    .phase ul, .quick ul, .card ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    .matrix-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 24px rgba(4,30,66,0.05);
+    }
+
+    .footnote {
+      color: var(--subtle);
+      font-size: 0.82rem;
+      margin-top: 12px;
+    }
+
+    .mobile-top {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--navy);
+      color: white;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .mobile-top a {
+      color: white;
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    @media (max-width: 1040px) {
+      .layout { grid-template-columns: 1fr; }
+      aside {
+        position: static;
+        height: auto;
+        padding: 18px;
+      }
+      .toc { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      main { padding: 28px 18px 64px; }
+      .hero { grid-template-columns: 1fr; }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 640px) {
+      .mobile-top { display: flex; justify-content: space-between; }
+      aside { display: none; }
+      h2 { font-size: 2.15rem; }
+      .toc { grid-template-columns: 1fr; }
+      .finding { grid-template-columns: 1fr; }
+      table { min-width: 760px; }
+      .hero-panel { padding: 16px; }
+    }
+
+    @media print {
+      .layout { display: block; }
+      aside, .mobile-top { display: none; }
+      main { padding: 0; }
+      section { break-inside: avoid; }
+      .card, table, .phase { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-top">
+    <a href="#top">Mishran UX/UI Audit</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+  <div class="layout">
+    <aside>
+      <div class="brand">
+        <div class="brand-mark">M</div>
+        <h1>Mishran UX/UI Audit</h1>
+        <p>Grounded in the Next.js storefront, iOS app, Android app, Payload collections, analytics, SEO, and prior parity notes.</p>
+      </div>
+      <div class="nav-section">Report</div>
+      <ul class="toc">
+        <li><a href="#top">Executive Summary</a></li>
+        <li><a href="#method">Method and Evidence</a></li>
+        <li><a href="#scorecard">Scorecard</a></li>
+        <li><a href="#implemented">Implemented vs Missing</a></li>
+        <li><a href="#findings">Priority Findings</a></li>
+        <li><a href="#web">Web Storefront</a></li>
+        <li><a href="#mobile">Mobile Apps</a></li>
+        <li><a href="#seo">SEO/GEO Discovery</a></li>
+        <li><a href="#conversion">Conversion and Checkout</a></li>
+        <li><a href="#gifting">Gifting, Bulk, Wedding</a></li>
+        <li><a href="#retention">Retention and Loyalty</a></li>
+        <li><a href="#accessibility">Accessibility and Performance</a></li>
+        <li><a href="#analytics">Analytics and Ops</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+        <li><a href="#quickwins">Quick Wins</a></li>
+      </ul>
+    </aside>
+
+    <main id="top">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">UX/UI Audit - Web, iOS, Android</p>
+          <h2>Mishran has premium brand bones and native commerce depth, but the web cannot yet close an order.</h2>
+          <p class="lead">The strongest product experience is split across platforms: the web is an editorial storefront with search, product detail pages, lead capture, WhatsApp fallback, schema, sitemap, and rich brand surfaces; the native apps carry true checkout, Razorpay, account, orders, push, and loyalty. For a premium Indian sweets ecommerce business, launch priority is to close the web commerce gap, convert gifting intent into configured products, deepen local/occasion discovery, and make retention measurable.</p>
+        </div>
+        <div class="hero-panel">
+          <ul class="audit-meta">
+            <li><strong>Overall readiness: 67/100</strong> Sellable brand experience, incomplete transaction stack on web.</li>
+            <li><strong>Top P0</strong> Web checkout, account, and order tracking are explicit stubs.</li>
+            <li><strong>Top P1</strong> SEO/GEO is technically valid but thin for local, occasion, FAQ, review, and AI answer surfaces.</li>
+            <li><strong>Top upside</strong> Existing gift-box, occasion, lead, product, and mobile checkout foundations make the next phase tractable.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="method">
+        <p class="eyebrow">Method</p>
+        <h3>Skills Used and Evidence Standard</h3>
+        <div class="grid">
+          <div class="card span-4">
+            <h4>Impeccable</h4>
+            <p>Used for technical UX/a11y/performance audit framing, design specificity, and detector scan. The detector found two implementation quality warnings: layout padding transition and decorative grid background.</p>
+          </div>
+          <div class="card span-4">
+            <h4>Taste</h4>
+            <p>Used to keep the report and recommendations business-specific: premium Indian sweets, not generic ecommerce. The incumbent Malgudi Blue v2 design system was treated as source of truth.</p>
+          </div>
+          <div class="card span-4">
+            <h4>UX/UI Max Pro</h4>
+            <p>Used for ecommerce conversion patterns, mobile app-store pattern guidance, contrast, responsive checks, CTA discipline, and anti-pattern review.</p>
+          </div>
+          <div class="card span-12">
+            <h4>Inspected code areas</h4>
+            <p>Next.js App Router pages, shared React components, Payload collections, sitemap/schema/robots, analytics, localized message files, iOS SwiftUI screens, Android Compose screens, store listing files, accessibility notes, and the prior mobile parity audit.</p>
+            <div class="refs">
+              <span class="ref">app/[locale]/*</span>
+              <span class="ref">components/mithai/*</span>
+              <span class="ref">components/commerce/*</span>
+              <span class="ref">apps/ios/Mishran/UI/*</span>
+              <span class="ref">apps/android/.../ui/*</span>
+              <span class="ref">collections/*</span>
+              <span class="ref">lib/seo/schema.ts</span>
+              <span class="ref">app/sitemap.ts</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scorecard">
+        <p class="eyebrow">Scorecard</p>
+        <h3>Business Readiness by Dimension</h3>
+        <div class="grid">
+          <div class="card span-3"><div class="score"><b>7.5</b><span>/10</span></div><h4>Brand UI</h4><p>Distinct, editorial, premium. Stronger than the transaction layer.</p></div>
+          <div class="card span-3"><div class="score"><b>5.0</b><span>/10</span></div><h4>Web Conversion</h4><p>PDP/cart intent exists. Checkout/account/track order are not live.</p></div>
+          <div class="card span-3"><div class="score"><b>7.0</b><span>/10</span></div><h4>Native Commerce</h4><p>Checkout and payments exist on both apps. Some retention/app support gaps remain.</p></div>
+          <div class="card span-3"><div class="score"><b>5.5</b><span>/10</span></div><h4>Discovery</h4><p>Sitemap/schema/l10n exist. Local, occasion, FAQ, reviews, and GEO content are thin.</p></div>
+        </div>
+
+        <div class="matrix-wrap" style="margin-top:18px">
+          <table>
+            <thead>
+              <tr><th>Area</th><th>Status</th><th>Score</th><th>Evidence</th><th>Primary Risk</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Home and brand storytelling</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td>Hero, vertical portals, pillars, story rails, theme system.</td><td>Brand promise still under-backed by trust proof and real customer evidence.</td></tr>
+              <tr><td>Catalog discovery</td><td><span class="pill partial">Partial</span></td><td>6</td><td>Search, tag filter, A-Z sort, pagination on web; native grids and filters.</td><td>No facets for occasion, price, freshness, delivery tier, city, gifting, dietary detail.</td></tr>
+              <tr><td>PDP conversion</td><td><span class="pill implemented">Implemented</span></td><td>7</td><td>Pack sizes, pincode check, quantity, add, buy now, WhatsApp, sticky mobile CTA.</td><td>Web buy now lands in cart, not payment; no reviews, delivery promise depth, urgency, or cross-sells.</td></tr>
+              <tr><td>Web checkout</td><td><span class="pill missing">Missing</span></td><td>2</td><td>Explicit checkout stub.</td><td>Paid traffic cannot complete a purchase on the web.</td></tr>
+              <tr><td>Native checkout</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td>Address, pincode tier, slot, Razorpay, verify, confirmation on both apps.</td><td>Need clearer trust recovery, payment failure help, and richer order summary.</td></tr>
+              <tr><td>Gifting and bulk</td><td><span class="pill partial">Partial</span></td><td>6</td><td>Gift builder lead, wedding form, corporate form, gift-box collections.</td><td>High-value shoppers cannot configure, compare, price, or reserve gift boxes directly.</td></tr>
+              <tr><td>Retention</td><td><span class="pill partial">Partial</span></td><td>5</td><td>iOS loyalty pass, order lists, push foundations, wallet pass collection.</td><td>No web account, repeat-order, referral, subscription, lifecycle campaign, or Android Wallet parity.</td></tr>
+              <tr><td>Accessibility</td><td><span class="pill implemented">Implemented</span></td><td>7</td><td>Skip link, labels, native a11y tests, 44pt iOS audit.</td><td>Some manual hardware checks and web contrast/dynamic text verification remain.</td></tr>
+              <tr><td>Analytics</td><td><span class="pill partial">Partial</span></td><td>5</td><td>GA4/Meta scripts and custom events exist.</td><td>No consent gate, weak ecommerce funnel taxonomy, no server-side purchase/order analytics.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="implemented">
+        <p class="eyebrow">Implemented vs Partial vs Missing</p>
+        <h3>Feature Matrix</h3>
+        <div class="matrix-wrap">
+          <table>
+            <thead>
+              <tr><th>Feature</th><th>Web</th><th>iOS</th><th>Android</th><th>Priority Category</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Localized storefront routes</td><td><span class="pill implemented">Implemented</span><small>en/hi/kn URL-prefixed routes.</small></td><td><span class="pill partial">Partial</span><small>More language strings exist, but app review pending.</small></td><td><span class="pill partial">Partial</span><small>More language strings exist, Android has i18n TODOs.</small></td><td>SEO/GEO & Discovery</td><td>Complete Indic copy review and align web/app language scope.</td></tr>
+              <tr><td>Product catalog</td><td><span class="pill implemented">Implemented</span></td><td><span class="pill implemented">Implemented</span></td><td><span class="pill implemented">Implemented</span></td><td>Conversion & Revenue</td><td>Add richer filters and merchandising lanes.</td></tr>
+              <tr><td>Search/filter/sort</td><td><span class="pill partial">Partial</span><small>Text search, tag filter, A-Z sort.</small></td><td><span class="pill partial">Partial</span><small>Search plus filter sheet.</small></td><td><span class="pill partial">Partial</span><small>Mithai scoped search/filter.</small></td><td>Conversion & Revenue</td><td>Add price, occasion, dietary, freshness, city/serviceability facets.</td></tr>
+              <tr><td>PDP structured data</td><td><span class="pill partial">Partial</span><small>Product and Breadcrumb only.</small></td><td><span class="pill category">N/A</span></td><td><span class="pill category">N/A</span></td><td>SEO/GEO & Discovery</td><td>Add FAQ, LocalBusiness, OfferShippingDetails, return policy, reviews when honest data exists.</td></tr>
+              <tr><td>Add to cart</td><td><span class="pill implemented">Implemented</span></td><td><span class="pill implemented">Implemented</span></td><td><span class="pill implemented">Implemented</span></td><td>Conversion & Revenue</td><td>Server-price validation and line-level stock messaging on web.</td></tr>
+              <tr><td>Checkout/payment</td><td><span class="pill missing">Missing</span></td><td><span class="pill implemented">Implemented</span></td><td><span class="pill implemented">Implemented</span></td><td>Launch-Critical/Must Have</td><td>Port native address, serviceability, slot, Razorpay flow to web.</td></tr>
+              <tr><td>Account and saved addresses</td><td><span class="pill missing">Missing</span></td><td><span class="pill implemented">Implemented</span></td><td><span class="pill implemented">Implemented</span></td><td>Launch-Critical/Must Have</td><td>Build web auth/account/address book before ads/SEO scale.</td></tr>
+              <tr><td>Track order</td><td><span class="pill missing">Missing</span></td><td><span class="pill implemented">Implemented</span></td><td><span class="pill implemented">Implemented</span></td><td>Operational/Trust</td><td>Expose order status page and post-purchase support on web.</td></tr>
+              <tr><td>Gifting builder</td><td><span class="pill partial">Partial</span></td><td><span class="pill missing">Missing</span></td><td><span class="pill missing">Missing</span></td><td>Conversion & Revenue</td><td>Turn gift collections into a shoppable configurator; mirror in apps later.</td></tr>
+              <tr><td>Wedding/corporate lead flows</td><td><span class="pill implemented">Implemented</span></td><td><span class="pill partial">Partial</span><small>Enquiry path exists.</small></td><td><span class="pill partial">Partial</span><small>Enquiry path exists.</small></td><td>Conversion & Revenue</td><td>Add proof, packages, SLAs, sample assortments, pricing anchors.</td></tr>
+              <tr><td>Loyalty</td><td><span class="pill partial">Partial</span><small>Backend/pass logic, no UI.</small></td><td><span class="pill implemented">Implemented</span><small>Apple Wallet pass.</small></td><td><span class="pill missing">Missing</span><small>Google Wallet deferred.</small></td><td>Retention & Loyalty</td><td>Web loyalty hub and Android Wallet parity.</td></tr>
+              <tr><td>Reviews/testimonials</td><td><span class="pill missing">Missing</span></td><td><span class="pill missing">Missing</span></td><td><span class="pill missing">Missing</span></td><td>Operational/Trust</td><td>Capture verified reviews post delivery; display on PDP, gift, local pages.</td></tr>
+              <tr><td>Legal/trust pages</td><td><span class="pill missing">Missing</span><small>Footer links point to absent routes.</small></td><td><span class="pill partial">Partial</span><small>Store privacy asset exists.</small></td><td><span class="pill partial">Partial</span><small>Privacy asset exists.</small></td><td>Launch-Critical/Must Have</td><td>Ship privacy, terms, shipping, refund, accessibility, FSSAI pages.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="findings">
+        <p class="eyebrow">Priority Findings</p>
+        <h3>Annotated Findings with Severity, Impact, Effort</h3>
+        <div class="card">
+          <div class="finding">
+            <span class="pill p0">P0</span>
+            <div>
+              <h4>Web checkout is not production ecommerce.</h4>
+              <p><strong>Category:</strong> Launch-Critical/Must Have. <strong>Impact:</strong> Very high. <strong>Effort:</strong> High.</p>
+              <p>The web route returns a commerce stub and WhatsApp fallback. Cart can collect intent, but paid acquisition, SEO traffic, and direct search traffic cannot complete purchase on the web. This is the largest revenue leak.</p>
+              <ul>
+                <li>Port native checkout primitives: address picker, pincode/serviceability, slot picker for fresh tier, Razorpay create/verify, order confirmation.</li>
+                <li>Use the existing mobile API contract and server validation work before adding advanced merchandising.</li>
+                <li>Keep WhatsApp as assistive recovery, not the primary checkout path.</li>
+              </ul>
+              <div class="refs"><span class="ref">app/[locale]/checkout/page.tsx:1-15</span><span class="ref">components/commerce/CommerceStub.tsx:1-55</span><span class="ref">apps/ios/Mishran/UI/Checkout/CheckoutView.swift:19-131</span><span class="ref">apps/android/.../CheckoutScreen.kt:69-187</span></div>
+            </div>
+          </div>
+
+          <div class="finding">
+            <span class="pill p0">P0</span>
+            <div>
+              <h4>Legal, help, and trust routes are linked but absent.</h4>
+              <p><strong>Category:</strong> Operational/Trust. <strong>Impact:</strong> High. <strong>Effort:</strong> Medium.</p>
+              <p>The footer includes shipping, returns, contact, about, careers, press, wholesale, privacy, terms, and accessibility links, while the actual app routes list does not include those pages. The footer also displays "FSSAI - pending". This undermines food-safety trust and can hurt conversion.</p>
+              <ul>
+                <li>Ship legal/help pages before launch: privacy, terms, shipping, refunds, cancellation, accessibility, FSSAI license, contact.</li>
+                <li>Replace "FSSAI - pending" with the real license number or hide until ready.</li>
+                <li>Fix the 404 "Browse sweets" link, which points at `/sweets` while the real route is `/mithai`.</li>
+              </ul>
+              <div class="refs"><span class="ref">components/layout/SiteFooter.tsx:40-58</span><span class="ref">components/layout/SiteFooter.tsx:147-158</span><span class="ref">app/[locale]/not-found.tsx:21-25</span></div>
+            </div>
+          </div>
+
+          <div class="finding">
+            <span class="pill p1">P1</span>
+            <div>
+              <h4>SEO/GEO foundation exists, but answer-engine and local-intent coverage is thin.</h4>
+              <p><strong>Category:</strong> SEO/GEO & Discovery. <strong>Impact:</strong> High. <strong>Effort:</strong> Medium.</p>
+              <p>The code has sitemap, locale routes, Product schema, Organization schema, Breadcrumb schema, and honest price parsing. Missing pieces are the ones a premium Indian sweets business needs: LocalBusiness/service area, FAQ, reviews, delivery/return policy, occasion landing pages, city pages, festival pages, and internal links from stories into products.</p>
+              <ul>
+                <li>Add LocalBusiness or FoodEstablishment schema with city/service-area truth.</li>
+                <li>Add FAQ schema for freshness, shelf life, delivery, gifting, bulk, allergens, Jain/sugar-free.</li>
+                <li>Use Occasions collection to create `/diwali-gifts`, `/wedding-mithai`, `/corporate-gifts`, `/rakhi-gifts`, city/local pages.</li>
+              </ul>
+              <div class="refs"><span class="ref">lib/seo/schema.ts:1-126</span><span class="ref">app/sitemap.ts:1-190</span><span class="ref">collections/Occasions.ts:1-21</span></div>
+            </div>
+          </div>
+
+          <div class="finding">
+            <span class="pill p1">P1</span>
+            <div>
+              <h4>Catalog discovery is functional, not commercial.</h4>
+              <p><strong>Category:</strong> Conversion & Revenue. <strong>Impact:</strong> High. <strong>Effort:</strong> Medium.</p>
+              <p>Search currently matches text fields and one tag select; sort is featured/A-Z/Z-A. Users shopping Indian sweets need task-oriented facets: occasion, freshness, delivery city, price band, dietary, shelf life, box compatibility, best sellers, giftable, festival, family, and availability.</p>
+              <ul>
+                <li>Promote business facets already present in collections: family, freshnessStatus, dietaryTags, boxCompatibility, packagingCompatibility, leadTime.</li>
+                <li>Add merchandising lanes: "Same-day Delhi NCR", "Pan-India shelf-stable", "Sugar-free", "Wedding trays", "Corporate Diwali hampers".</li>
+                <li>Track search usage. The event type exists, but the catalog search input does not fire it.</li>
+              </ul>
+              <div class="refs"><span class="ref">components/verticals/CatalogBrowser.tsx:110-152</span><span class="ref">collections/MithaiProducts.ts:51-78</span><span class="ref">lib/analytics.ts:19-37</span></div>
+            </div>
+          </div>
+
+          <div class="finding">
+            <span class="pill p1">P1</span>
+            <div>
+              <h4>Gift-box data exists, but the shopper experience is still a quote form.</h4>
+              <p><strong>Category:</strong> Conversion & Revenue. <strong>Impact:</strong> High. <strong>Effort:</strong> Medium-High.</p>
+              <p>`GiftBoxes`, `Occasions`, `MithaiProducts.boxCompatibility`, and `packagingCompatibility` give the backend enough structure for a real configurator. The current UI collects occasion, box size, budget, date, city, dietary notes, and message, then creates a lead or WhatsApp message. That is useful, but it does not let a customer build confidence in assortment, price, delivery, or packaging.</p>
+              <ul>
+                <li>Turn `/build-a-gift` into a visual builder with box tiers, included pieces, compatible sweets, add-ons, note card, delivery city/date, and price range.</li>
+                <li>Add preset gift paths: Diwali corporate, wedding welcome box, birthday, housewarming, sugar-free family box.</li>
+                <li>Feed the lead payload with selected product ids, not only free-form text.</li>
+              </ul>
+              <div class="refs"><span class="ref">components/commerce/GiftBuilder.tsx:17-84</span><span class="ref">components/commerce/GiftBuilder.tsx:120-172</span><span class="ref">collections/GiftBoxes.ts:1-78</span></div>
+            </div>
+          </div>
+
+          <div class="finding">
+            <span class="pill p1">P1</span>
+            <div>
+              <h4>Account, retention, and loyalty are uneven across platforms.</h4>
+              <p><strong>Category:</strong> Retention & Loyalty. <strong>Impact:</strong> High. <strong>Effort:</strong> High.</p>
+              <p>Native apps have account/order surfaces and iOS loyalty pass support. Web account is a stub. Android Wallet parity is missing. There is no visible repeat-order, subscription, referral, rewards explainer, replenishment reminder, or post-delivery review capture.</p>
+              <ul>
+                <li>Build web account: sign-in, orders, addresses, loyalty state, saved recipients, reorder, support.</li>
+                <li>Add repeat purchase features for laddoo/barfi/family boxes: "order again", "send to same address", and festival reminders.</li>
+                <li>Use delivered orders to trigger review, referral, and loyalty lifecycle events.</li>
+              </ul>
+              <div class="refs"><span class="ref">components/commerce/CommerceStub.tsx:19</span><span class="ref">collections/WalletPasses.ts</span><span class="ref">lib/loyalty/eligibility.ts</span></div>
+            </div>
+          </div>
+
+          <div class="finding">
+            <span class="pill p2">P2</span>
+            <div>
+              <h4>Localization is broad in native strings but shallow on the web.</h4>
+              <p><strong>Category:</strong> SEO/GEO & Discovery. <strong>Impact:</strong> Medium. <strong>Effort:</strong> Medium.</p>
+              <p>Web routing supports only `en`, `hi`, and `kn`. Native string packages include more Indian languages, but Kannada web messages contain explicit English-stub TODOs. Android home also carries a TODO for hardcoded English in journal/portal labels.</p>
+              <ul>
+                <li>Decide launch languages by market and make them real, not placeholder.</li>
+                <li>Use locale landing pages for SEO only where content quality is native-level.</li>
+                <li>Align web and app locale menus so customers do not see a language disappear across platforms.</li>
+              </ul>
+              <div class="refs"><span class="ref">i18n/routing.ts:4-7</span><span class="ref">messages/kn.json:126-299</span><span class="ref">packages/i18n-strings/en.json:96-111</span><span class="ref">apps/android/.../HomeScreen.kt:16-18</span></div>
+            </div>
+          </div>
+
+          <div class="finding">
+            <span class="pill p2">P2</span>
+            <div>
+              <h4>Analytics is present but not yet a decision system.</h4>
+              <p><strong>Category:</strong> Operational/Trust. <strong>Impact:</strong> Medium. <strong>Effort:</strong> Medium.</p>
+              <p>GA4 and Meta scripts can load from Payload/env. Custom events exist for product views, add to cart, buy now, WhatsApp, leads, hero, locale, and theme. Gaps: no consent gate, no server-side order/payment status analytics, no ecommerce-standard event parameters, no search_used firing from catalog search, no funnel dashboard.</p>
+              <ul>
+                <li>Implement consent mode and a minimal privacy notice before scaling paid campaigns.</li>
+                <li>Normalize ecommerce events: view_item, add_to_cart, begin_checkout, add_shipping_info, add_payment_info, purchase, generate_lead.</li>
+                <li>Mirror server-side events for order transitions, payment failures, delivery, loyalty, and lead status changes.</li>
+              </ul>
+              <div class="refs"><span class="ref">components/Analytics/AnalyticsScripts.tsx:21-22</span><span class="ref">lib/analytics.ts:19-55</span><span class="ref">lib/notifications/OrderEventEmitter.ts:32-34</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="web">
+        <p class="eyebrow">Web Storefront</p>
+        <h3>What Works and What Blocks Revenue</h3>
+        <div class="grid">
+          <div class="card span-6">
+            <h4>Strengths</h4>
+            <ul>
+              <li>Strong premium visual system: deep navy, product photography, restrained gold, editorial layouts.</li>
+              <li>Home page is not a generic grid: hero, vertical portals, and pillars give brand shape.</li>
+              <li>PDP has meaningful conversion affordances: pack sizes, quantity, delivery check, add to cart, buy now, WhatsApp, sticky mobile CTA.</li>
+              <li>Cart preserves draft intent and creates a useful WhatsApp message.</li>
+              <li>Lead flows exist for wedding, corporate, and gift-builder demand.</li>
+            </ul>
+          </div>
+          <div class="card span-6">
+            <h4>Risks</h4>
+            <ul>
+              <li>Checkout, account, and track-order are not real web flows.</li>
+              <li>Footer links expose non-existent routes and pending FSSAI status.</li>
+              <li>Discovery is catalog-first, not occasion/customer-job-first.</li>
+              <li>No social proof: verified reviews, customer photos, press, ratings, trust badges.</li>
+              <li>No web post-purchase loop: reorder, referrals, loyalty, recipient address book.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="mobile">
+        <p class="eyebrow">Mobile Apps</p>
+        <h3>Native Apps Are Closer to Transaction-Ready</h3>
+        <div class="grid">
+          <div class="card span-6">
+            <h4>iOS</h4>
+            <p>iOS has home, catalog, product detail, cart, checkout, address creation, pincode serviceability, slots, Razorpay, order confirmation handoff, order detail, account, Apple Wallet loyalty pass, push and Live Activity foundations.</p>
+            <ul>
+              <li>Good: checkout flow is clear and stateful.</li>
+              <li>Good: iOS accessibility audit covers labels, 44pt tap targets, and Dynamic Type checks.</li>
+              <li>Gap: some checkout messages are hardcoded English; physical-device VoiceOver and reduced-motion signoff is pending.</li>
+              <li>Gap: merchandising/gifting depth lags the web lead surfaces.</li>
+            </ul>
+          </div>
+          <div class="card span-6">
+            <h4>Android</h4>
+            <p>Android has home, vertical catalog tabs, search/filter, product detail, cart, checkout, Razorpay launch/verify, order flows, account, push, and widgets.</p>
+            <ul>
+              <li>Good: checkout copy changes according to blocked state: select address, checking, pick slot, place order.</li>
+              <li>Good: catalog has vertical segmentation and pull-to-refresh.</li>
+              <li>Gap: Android home has an explicit i18n TODO for hardcoded English labels.</li>
+              <li>Gap: Google Wallet loyalty parity is not present.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="seo">
+        <p class="eyebrow">SEO/GEO & Discovery</p>
+        <h3>Search Strategy Should Match Indian Mithai Demand</h3>
+        <div class="grid">
+          <div class="card span-7">
+            <h4>Current SEO Assets</h4>
+            <ul>
+              <li>Locale-prefixed routes for en/hi/kn.</li>
+              <li>Dynamic sitemap for locale x home, vertical hubs, lead pages, commerce stubs, PDPs, and stories.</li>
+              <li>Product schema with name, image, brand, parsed INR price, and InStock availability.</li>
+              <li>Organization and Breadcrumb schema.</li>
+              <li>Story collection and pillar pages: farms, karigari, karigars, journal.</li>
+            </ul>
+          </div>
+          <div class="card span-5">
+            <h4>Missing Discovery Surfaces</h4>
+            <ul>
+              <li>Festival pages: Diwali, Rakhi, Holi, Ganesh Chaturthi, wedding season.</li>
+              <li>City/service pages: Bengaluru delivery, Delhi NCR fresh tier, pan-India shelf-stable sweets.</li>
+              <li>FAQ pages and FAQ schema.</li>
+              <li>LocalBusiness/service area schema.</li>
+              <li>Reviews, AggregateRating, testimonial snippets after verified order flow exists.</li>
+              <li>Comparison/search pages: sugar-free mithai, Jain-friendly sweets, dry-fruit sweets, corporate gift boxes.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="conversion">
+        <p class="eyebrow">Conversion & Checkout</p>
+        <h3>Highest Leverage Conversion Work</h3>
+        <div class="matrix-wrap">
+          <table>
+            <thead><tr><th>Recommendation</th><th>Priority</th><th>Impact</th><th>Effort</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>Build web checkout from native API contract</td><td><span class="pill p0">Launch-Critical</span></td><td>Very high</td><td>High</td><td>Use address, pincode, slots, Razorpay, verify, order confirmation.</td></tr>
+              <tr><td>Replace web buy-now route with checkout</td><td><span class="pill p0">Launch-Critical</span></td><td>High</td><td>Medium</td><td>Current `buyNow` pushes to cart; send to checkout when real checkout ships.</td></tr>
+              <tr><td>Add trust blocks on PDP</td><td><span class="pill p1">Conversion</span></td><td>High</td><td>Low</td><td>Freshness, FSSAI, delivery SLA, refund policy, allergen warning, packaging hygiene.</td></tr>
+              <tr><td>Add PDP cross-sells</td><td><span class="pill p1">Revenue</span></td><td>Medium</td><td>Medium</td><td>Compatible gift boxes, same family, festival bundles, "complete the box".</td></tr>
+              <tr><td>Add cart upsell and free-delivery threshold</td><td><span class="pill p1">Revenue</span></td><td>Medium</td><td>Medium</td><td>Use pan-India shelf-stable add-ons and premium gift packaging.</td></tr>
+              <tr><td>Add abandon/recovery hooks</td><td><span class="pill p2">Retention</span></td><td>Medium</td><td>Medium</td><td>Draft cart, WhatsApp link, email/SMS reminder after consent.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="gifting">
+        <p class="eyebrow">Gifting, Bulk, Wedding</p>
+        <h3>Turn Lead Capture Into Premium Buying Confidence</h3>
+        <div class="grid">
+          <div class="card span-4">
+            <h4>Must Have</h4>
+            <ul>
+              <li>Gift-box PDPs with price range, size, compartments, included sweets, allergen notes.</li>
+              <li>Occasion landing pages backed by the `occasions` collection.</li>
+              <li>Corporate form with downloadable quote packet and WhatsApp handoff.</li>
+              <li>Wedding page with tasting, packaging, lead times, guest-count guidance.</li>
+            </ul>
+          </div>
+          <div class="card span-4">
+            <h4>Revenue Expanders</h4>
+            <ul>
+              <li>Tiered bundles: Classic, Premium, Signature, Bespoke.</li>
+              <li>Logo sleeve, ribbon, message card, dry-fruit add-ons.</li>
+              <li>Bulk pricing anchors and delivery cutoff calendar.</li>
+              <li>Saved recipient lists for repeat corporate gifting.</li>
+            </ul>
+          </div>
+          <div class="card span-4">
+            <h4>Brand Differentiators</h4>
+            <ul>
+              <li>Karigar story attached to each box.</li>
+              <li>Packaging provenance and sustainability notes.</li>
+              <li>Festival editorial guides that recommend assortments.</li>
+              <li>Real client/event photography once available.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="retention">
+        <p class="eyebrow">Retention & Loyalty</p>
+        <h3>Retention Should Be Built Around Indian Sweet Buying Cadence</h3>
+        <div class="card">
+          <div class="matrix-wrap">
+            <table>
+              <thead><tr><th>Retention Loop</th><th>Status</th><th>Recommendation</th></tr></thead>
+              <tbody>
+                <tr><td>Reorder</td><td><span class="pill missing">Missing on web</span></td><td>Expose "Order again" from account/orders and product reminders.</td></tr>
+                <tr><td>Festival reminders</td><td><span class="pill missing">Missing</span></td><td>Let users save important dates: Diwali gifting, birthdays, wedding invites, corporate milestones.</td></tr>
+                <tr><td>Loyalty</td><td><span class="pill partial">Partial</span></td><td>Show web loyalty status, iOS pass, and Android Wallet parity.</td></tr>
+                <tr><td>Reviews</td><td><span class="pill missing">Missing</span></td><td>Trigger review capture after delivered status; reuse on PDP and SEO.</td></tr>
+                <tr><td>Support</td><td><span class="pill partial">Partial</span></td><td>WhatsApp exists; add contextual support from PDP, cart, order, account across apps.</td></tr>
+                <tr><td>Subscriptions</td><td><span class="pill missing">Nice-to-Have</span></td><td>Consider monthly family boxes or office pantry snacks after core checkout is stable.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="accessibility">
+        <p class="eyebrow">Accessibility & Performance</p>
+        <h3>Solid Foundation, Some Verification Still Needed</h3>
+        <div class="grid">
+          <div class="card span-6">
+            <h4>Positive</h4>
+            <ul>
+              <li>Web has skip link, labels, aria-live points, form labels above inputs, and semantic sections.</li>
+              <li>iOS audit documents 44pt tap targets, VoiceOver labels, quantity accessibility values, and Dynamic Type checks.</li>
+              <li>Android uses Compose semantics and content descriptions in major flows.</li>
+              <li>Detector found only two design-quality warnings, not systemic visual failure.</li>
+            </ul>
+          </div>
+          <div class="card span-6">
+            <h4>Fix/Verify</h4>
+            <ul>
+              <li>Run web axe + Lighthouse on production-like data after checkout ships.</li>
+              <li>Replace layout padding transition in nav with transform/height-safe approach if scroll jank appears.</li>
+              <li>Review decorative grid background usage under the current Malgudi Blue direction.</li>
+              <li>Complete iOS physical-device VoiceOver, Full Keyboard Access, Reduce Motion signoff.</li>
+              <li>Audit dynamic text in dense checkout/payment errors.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="footnote">Detector evidence: `app/globals.css:492` layout-property transition and `app/globals.css:862` decorative grid background advisory.</p>
+      </section>
+
+      <section id="analytics">
+        <p class="eyebrow">Analytics & Operations</p>
+        <h3>Measure the Funnel Before Scaling Acquisition</h3>
+        <div class="grid">
+          <div class="card span-5">
+            <h4>Existing</h4>
+            <ul>
+              <li>GA4 and Meta Pixel bootstrap from Payload/env.</li>
+              <li>Custom event helper dispatches to `dataLayer` and `fbq`.</li>
+              <li>Events cover product views, add to cart, buy now, WhatsApp, leads, hero slides, locale/theme changes.</li>
+              <li>Lead status collection supports new/contacted/qualified/won/lost.</li>
+            </ul>
+          </div>
+          <div class="card span-7">
+            <h4>Needed Dashboard</h4>
+            <ul>
+              <li>Funnel: view item -> add to cart -> begin checkout -> address -> slot -> payment -> purchase.</li>
+              <li>Gift funnel: build gift start -> valid contact -> quote requested -> contacted -> won/lost.</li>
+              <li>Search: query, zero-result rate, filter usage, product click-through, add-to-cart after search.</li>
+              <li>Operational: payment failure, pincode blocked, slot unavailable, delivery stage drop-offs, support contacts.</li>
+              <li>Retention: reorder rate, review capture rate, loyalty tier movement, push opt-in, referral conversion.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="roadmap">
+        <p class="eyebrow">Prioritized Roadmap</p>
+        <h3>Phased Plan</h3>
+        <div class="roadmap">
+          <div class="phase">
+            <h4>Phase 1 - Launch-Critical Trust and Web Commerce</h4>
+            <ul>
+              <li>Build web checkout and payment by reusing the mobile API contract.</li>
+              <li>Ship account, addresses, order tracking, and order confirmation on web.</li>
+              <li>Publish legal/help pages and replace pending FSSAI language.</li>
+              <li>Fix dead footer routes and `/sweets` 404 CTA.</li>
+            </ul>
+          </div>
+          <div class="phase">
+            <h4>Phase 2 - Conversion and Merchandising</h4>
+            <ul>
+              <li>Add advanced catalog facets and business-led product lanes.</li>
+              <li>Add PDP trust blocks, cross-sells, reviews placeholder model, and delivery clarity.</li>
+              <li>Replace `buyNow -> cart` with `buyNow -> checkout` after checkout exists.</li>
+              <li>Add cart upsells and gift packaging prompts.</li>
+            </ul>
+          </div>
+          <div class="phase">
+            <h4>Phase 3 - Gifting, Wedding, Corporate Revenue</h4>
+            <ul>
+              <li>Turn GiftBoxes and Occasions into shoppable pages.</li>
+              <li>Build a visual gift-box configurator.</li>
+              <li>Add wedding and corporate package proof: pricing anchors, photos, SLAs, testimonials.</li>
+              <li>Enable saved recipient lists and quote-to-order conversion tracking.</li>
+            </ul>
+          </div>
+          <div class="phase">
+            <h4>Phase 4 - SEO/GEO and Content Scale</h4>
+            <ul>
+              <li>Create festival, city, delivery-tier, dietary, and occasion landing pages.</li>
+              <li>Add LocalBusiness, FAQ, OfferShippingDetails, return policy, and review schema where honest.</li>
+              <li>Complete native-quality localization for chosen launch languages.</li>
+              <li>Build internal linking from stories to products, gift boxes, karigars, and occasions.</li>
+            </ul>
+          </div>
+          <div class="phase">
+            <h4>Phase 5 - Retention, Loyalty, and Lifecycle</h4>
+            <ul>
+              <li>Web loyalty hub, Android Google Wallet parity, Apple Wallet pass polish.</li>
+              <li>Review capture, reorder, festival reminders, referrals, and post-purchase education.</li>
+              <li>Lifecycle campaigns through email/SMS/push after consent.</li>
+              <li>Analytics dashboard and event taxonomy cleanup.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="quickwins">
+        <p class="eyebrow">Quick Wins</p>
+        <h3>Low-Effort Fixes With High Trust Impact</h3>
+        <div class="grid quick">
+          <div class="card span-4">
+            <h4>This Week</h4>
+            <ul>
+              <li>Fix `/sweets` to `/mithai` in 404.</li>
+              <li>Hide or replace dead footer links.</li>
+              <li>Replace "FSSAI - pending" with launch-ready trust language.</li>
+              <li>Fire `search_used` from catalog search.</li>
+            </ul>
+          </div>
+          <div class="card span-4">
+            <h4>Next Sprint</h4>
+            <ul>
+              <li>Add privacy, terms, shipping, returns, contact pages.</li>
+              <li>Add PDP trust band and delivery/return FAQ.</li>
+              <li>Add occasion filter and giftable filter.</li>
+              <li>Add review capture schema/data model without displaying fake reviews.</li>
+            </ul>
+          </div>
+          <div class="card span-4">
+            <h4>Before Paid Traffic</h4>
+            <ul>
+              <li>Real web checkout.</li>
+              <li>Consent-aware analytics.</li>
+              <li>Purchase and lead conversion events.</li>
+              <li>Local/festival landing pages with strong content.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:18px">
+          <strong>Bottom line:</strong> do not treat this as a visual redesign problem. The visual system is good enough to sell premium sweets. The urgent work is transaction completion, trust, discovery, and retention.
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
