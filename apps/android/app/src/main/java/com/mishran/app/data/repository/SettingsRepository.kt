@@ -44,6 +44,30 @@ class SettingsRepository @Inject constructor(
     suspend fun setLocaleTag(tag: String) {
         dataStore.edit { it[DataStoreKeys.LOCALE] = tag }
     }
+
+    /**
+     * The catalog sort order's wire value ("featured"/"name_asc"/"name_desc"),
+     * or null when the user never chose one. Kept as a raw string on purpose —
+     * the UI owns the enum; the store stays presentation-free.
+     */
+    fun catalogSortFlow(): Flow<String?> = dataStore.data.map { it[DataStoreKeys.CATALOG_SORT] }
+
+    /** Persist the catalog sort choice so it survives restarts. */
+    suspend fun setCatalogSort(wireValue: String) {
+        dataStore.edit { it[DataStoreKeys.CATALOG_SORT] = wireValue }
+    }
+
+    /**
+     * The last PDP delivery check, pipe-encoded by ProductDetailViewModel's
+     * snapshot codec; null when none ever ran. Read once per PDP visit.
+     */
+    suspend fun deliveryCheck(): String? =
+        dataStore.data.first()[DataStoreKeys.DELIVERY_CHECK]
+
+    /** Persist the latest check so later PDP visits restore it without a refetch. */
+    suspend fun setDeliveryCheck(encoded: String) {
+        dataStore.edit { it[DataStoreKeys.DELIVERY_CHECK] = encoded }
+    }
 }
 
 /** Hilt bridge for the Compose app root (outside any Hilt-scoped host). */

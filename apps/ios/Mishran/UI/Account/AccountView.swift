@@ -92,9 +92,10 @@ struct AccountView: View {
                 .accessibilityLabel(L("account.language"))
                 .accessibilityHint("Choose the app language")
             }
-            // P2: journal + bulk/events entries (stories.title / enquiry.title).
+            // P2: journal + bulk/events entries (stories.title / enquiry.title);
+            // P3: the gift-box builder (gift.title / account.gift).
             Section("More") {
-                NavigationLink(value: Route.stories) {
+                NavigationLink(value: Route.stories()) {
                     Label(L("stories.title"), systemImage: "book")
                 }
                 .accessibilityLabel(L("stories.title"))
@@ -102,6 +103,10 @@ struct AccountView: View {
                     Label(L("enquiry.title"), systemImage: "person.2")
                 }
                 .accessibilityLabel("Bulk and events")
+                NavigationLink(value: Route.gift) {
+                    Label(L("account.gift"), systemImage: "gift")
+                }
+                .accessibilityLabel(L("account.gift"))
             }
         }
         .navigationTitle(L("account.title"))

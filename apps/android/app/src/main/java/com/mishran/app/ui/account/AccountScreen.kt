@@ -21,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,6 +49,7 @@ import com.mishran.app.R
 fun AccountScreen(
     onOpenAddresses: () -> Unit,
     onOpenJournal: () -> Unit,
+    onOpenGift: () -> Unit,
     onOpenEnquiry: () -> Unit,
     onWhatsApp: (digits: String) -> Unit,
     onSignedOut: () -> Unit,
@@ -163,6 +165,46 @@ fun AccountScreen(
                     )
                     Text(
                         text = stringResource(R.string.stories_subtitle),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Text(
+                    text = "›",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+        // Parity batch: gift-builder row (same card-row idiom; the icon
+        // matches the support row's treatment).
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onOpenGift,
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.CardGiftcard,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .padding(start = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.account_gift),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = stringResource(R.string.gift_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

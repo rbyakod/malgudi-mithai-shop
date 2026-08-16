@@ -1,17 +1,25 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/enquiry/EnquiryViewModel.kt — P2 net-new (enquiry).
+// apps/android/app/src/main/java/com/mishran/app/ui/enquiry/EnquiryViewModel.kt — P2 net-new (enquiry) / field-parity batch.
 //
 // State for the single wedding/corporate lead form: a type toggle that swaps
-// the extra-field set (event date/city/guests vs company/quantity/needed-by),
-// client-side validation, and a one-shot POST /api/leads submit whose success
-// state carries the server's leadId. The phone field is pre-filled from the
-// signed-in session (AuthRepository.sessionPhone) and stays editable — the
-// form is public and pre-fill is a convenience, never an obligation.
+// the extra-field set (event date/city/guests/budget/preferences/packaging vs
+// company/quantity/deadline/GSTIN/occasion/branding), client-side validation,
+// and a one-shot POST /api/leads submit whose success state carries the
+// server's leadId. The phone field is pre-filled from the signed-in session
+// (AuthRepository.sessionPhone) and stays editable — the form is public and
+// pre-fill is a convenience, never an obligation.
 //
 // Validation spec: name/phone/message required, email format-checked when
 // present. One deliberate deviation, documented: email is ALSO required
 // client-side because the server route (lib/leads-api.ts) hard-400s a lead
 // without contact.email — letting the request go out to fail there would just
-// trade a field highlight for a full-screen error.
+// trade a field highlight for a full-screen error. GSTIN is optional but, when
+// non-empty, must match ^[0-9A-Z]{15}$ (the GST identification number's exact
+// shape) — the field flags inline instead of shipping a bad value to ops.
+//
+// Wire parity (this batch): payload keys/shapes now match the web forms
+// exactly — eventDate/deadline as ISO yyyy-MM-dd, guests/quantity as JSON
+// numbers, corporate's needed-by riding `deadline` (the web key), GSTIN on the
+// typed contact object.
 package com.mishran.app.ui.enquiry
 
 import androidx.lifecycle.SavedStateHandle
@@ -38,8 +46,11 @@ enum class EnquiryType(val wireValue: String) {
     CORPORATE("corporate"),
 }
 
-/** Every editable field on the form (validation errors key off these). */
-enum class EnquiryField { NAME, PHONE, EMAIL, MESSAGE }
+/**
+ * Every editable field that can carry a validation error. The free-text
+ * extras have no rules of their own; GSTIN validates only when non-empty.
+ */
+enum class EnquiryField { NAME, PHONE, EMAIL, MESSAGE, GSTIN }
 
 /**
  * The whole form as one immutable value — the screen owns nothing, so type
@@ -56,10 +67,16 @@ data class EnquiryForm(
     val eventDate: String = "",
     val city: String = "",
     val guests: String = "",
+    val budget: String = "",
+    val mithaiPreferences: String = "",
+    val packaging: String = "",
     // Corporate extras.
     val company: String = "",
     val quantity: String = "",
     val neededBy: String = "",
+    val gstin: String = "",
+    val occasion: String = "",
+    val branding: String = "",
 )
 
 @HiltViewModel
@@ -107,6 +124,7 @@ class EnquiryViewModel @Inject constructor(
             EnquiryField.PHONE -> _form.value.copy(phone = value)
             EnquiryField.EMAIL -> _form.value.copy(email = value)
             EnquiryField.MESSAGE -> _form.value.copy(message = value)
+            EnquiryField.GSTIN -> _form.value.copy(gstin = value)
         }
         _errors.value = _errors.value - field
     }
@@ -143,8 +161,9 @@ class EnquiryViewModel @Inject constructor(
 
 /**
  * Pure validation: name/phone/message must be non-blank; email must be present
- * (server requirement — see file header) AND well-formed. Returns field →
- * user-facing message; an empty map means the form may be submitted.
+ * (server requirement — see file header) AND well-formed; a non-empty GSTIN
+ * must match ^[0-9A-Z]{15}$. Returns field → user-facing message; an empty map
+ * means the form may be submitted.
  */
 internal fun validateEnquiry(form: EnquiryForm): Map<EnquiryField, String> {
     val errors = linkedMapOf<EnquiryField, String>()
@@ -156,14 +175,20 @@ internal fun validateEnquiry(form: EnquiryForm): Map<EnquiryField, String> {
         errors[EnquiryField.EMAIL] = "That email address doesn't look right."
     }
     if (form.message.isBlank()) errors[EnquiryField.MESSAGE] = "Please tell us what you need."
+    val gstin = form.gstin.trim()
+    if (gstin.isNotEmpty() && !GSTIN_PATTERN.matches(gstin)) {
+        errors[EnquiryField.GSTIN] = "GSTIN is 15 characters (numbers and capital letters)."
+    }
     return errors
 }
 
 /**
- * Form → wire request. Identity + phone + company ride the typed `contact`
- * object; everything else (message, wedding/corporate extras) goes into the
- * free-form `payload` the server persists verbatim. Blanks are omitted rather
- * than sent as empty strings so the stored lead stays clean.
+ * Form → wire request. Identity + phone + company + GSTIN ride the typed
+ * `contact` object; everything else (message, wedding/corporate extras) goes
+ * into the free-form `payload` the server persists verbatim, in the web's
+ * exact shapes: eventDate/deadline as ISO yyyy-MM-dd, guests/quantity as
+ * numbers. Blanks are omitted rather than sent as empty strings so the stored
+ * lead stays clean.
  */
 internal fun EnquiryForm.toRequest(): LeadSubmissionRequest = LeadSubmissionRequest(
     type = type.wireValue,
@@ -172,22 +197,56 @@ internal fun EnquiryForm.toRequest(): LeadSubmissionRequest = LeadSubmissionRequ
         email = email.trim(),
         phone = phone.trim().takeIf { it.isNotBlank() },
         company = company.trim().takeIf { it.isNotBlank() },
+        GSTIN = gstin.trim().takeIf { it.isNotBlank() }?.uppercase(),
     ),
     payload = buildMap {
         message.trim().takeIf { it.isNotBlank() }?.let { put("message", it) }
         when (type) {
             EnquiryType.WEDDING -> {
-                eventDate.trim().takeIf { it.isNotBlank() }?.let { put("eventDate", it) }
+                toIsoDate(eventDate)?.let { put("eventDate", it) }
                 city.trim().takeIf { it.isNotBlank() }?.let { put("city", it) }
-                guests.trim().takeIf { it.isNotBlank() }?.let { put("guests", it) }
+                guests.trim().toIntOrNull()?.let { put("guests", it) }
+                budget.trim().takeIf { it.isNotBlank() }?.let { put("budget", it) }
+                mithaiPreferences.trim().takeIf { it.isNotBlank() }
+                    ?.let { put("mithaiPreferences", it) }
+                packaging.trim().takeIf { it.isNotBlank() }?.let { put("packaging", it) }
             }
             EnquiryType.CORPORATE -> {
-                quantity.trim().takeIf { it.isNotBlank() }?.let { put("quantity", it) }
-                neededBy.trim().takeIf { it.isNotBlank() }?.let { put("neededBy", it) }
+                quantity.trim().toIntOrNull()?.let { put("quantity", it) }
+                toIsoDate(neededBy)?.let { put("deadline", it) }
+                occasion.trim().takeIf { it.isNotBlank() }?.let { put("occasion", it) }
+                branding.trim().takeIf { it.isNotBlank() }?.let { put("branding", it) }
             }
         }
     },
 )
 
+/**
+ * Free-text date → ISO yyyy-MM-dd for the wire. Accepts an already-ISO value
+ * verbatim and the form's human format ("12 Nov 2026"); anything else that
+ * isn't blank rides along raw — the payload is free-form on the server and ops
+ * reads human dates fine, but a *recognized* format is normalized so the web's
+ * stored shape stays uniform. Blank → null (key omitted).
+ */
+internal fun toIsoDate(input: String): String? {
+    val trimmed = input.trim()
+    if (trimmed.isEmpty()) return null
+    if (ISO_DATE.matches(trimmed)) return trimmed
+    return try {
+        java.time.LocalDate.parse(
+            trimmed,
+            java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.ENGLISH),
+        ).toString()
+    } catch (e: java.time.format.DateTimeParseException) {
+        trimmed // unrecognized-but-present: send what the user typed
+    }
+}
+
 /** Deliberately simple: one @, a dot in the domain, no spaces. */
 private val EMAIL_PATTERN = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+
+/** GST identification number: exactly 15 chars of digits + capital letters. */
+internal val GSTIN_PATTERN = Regex("^[0-9A-Z]{15}$")
+
+/** Already-normalized dates pass through untouched. */
+private val ISO_DATE = Regex("^\\d{4}-\\d{2}-\\d{2}$")

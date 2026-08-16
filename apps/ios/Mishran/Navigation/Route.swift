@@ -22,9 +22,16 @@ enum Route: Hashable {
     /// Task 48.2: saved-address management (Account → Delivery addresses).
     case addresses
     /// P2: journal list + reader (Home rail and Account both push here).
-    case stories
+    /// P3 parity: an optional pillar preselects the list's filter chip —
+    /// Home's "Why Mishran" strip deep-links each pillar card to its stories
+    /// (nil = the unfiltered list; the default keeps existing call sites
+    /// reading as before).
+    case stories(pillar: String? = nil)
     case story(slug: String)
     /// P2: bulk & events enquiry. Merch detail pushes with .corporate
     /// pre-set; Account's row defaults to .wedding.
     case enquiry(type: EnquiryType)
+    /// P3 parity: the gift-box builder (Account's "Build a gift" row) —
+    /// posts a "gift-builder-draft" lead through the same LeadRepository.
+    case gift
 }

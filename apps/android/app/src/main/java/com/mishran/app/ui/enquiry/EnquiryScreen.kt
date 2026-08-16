@@ -171,12 +171,37 @@ private fun EnquiryFormContent(
                     placeholder = "e.g. 400",
                     onValueChange = { onExtraChange { copy(guests = it) } },
                 )
+                FormField(
+                    label = stringResource(R.string.enquiry_field_budget),
+                    value = form.budget,
+                    placeholder = "e.g. ₹1,00,000",
+                    onValueChange = { onExtraChange { copy(budget = it) } },
+                )
+                FormField(
+                    label = stringResource(R.string.enquiry_field_mithai_preferences),
+                    value = form.mithaiPreferences,
+                    placeholder = "e.g. kaju katli, motichur ladoo",
+                    onValueChange = { onExtraChange { copy(mithaiPreferences = it) } },
+                )
+                FormField(
+                    label = stringResource(R.string.enquiry_field_packaging),
+                    value = form.packaging,
+                    placeholder = "e.g. individual boxes with name cards",
+                    onValueChange = { onExtraChange { copy(packaging = it) } },
+                )
             }
             EnquiryType.CORPORATE -> {
                 FormField(
                     label = stringResource(R.string.enquiry_field_company),
                     value = form.company,
                     onValueChange = { onExtraChange { copy(company = it) } },
+                )
+                FormField(
+                    label = stringResource(R.string.enquiry_field_gstin),
+                    value = form.gstin,
+                    error = errors[EnquiryField.GSTIN],
+                    placeholder = "15 characters, e.g. 29ABCDE1234F1Z5",
+                    onValueChange = { onFieldChange(EnquiryField.GSTIN, it) },
                 )
                 FormField(
                     label = stringResource(R.string.enquiry_field_quantity),
@@ -189,6 +214,18 @@ private fun EnquiryFormContent(
                     value = form.neededBy,
                     placeholder = "e.g. 20 Oct 2026",
                     onValueChange = { onExtraChange { copy(neededBy = it) } },
+                )
+                FormField(
+                    label = stringResource(R.string.enquiry_field_occasion),
+                    value = form.occasion,
+                    placeholder = "e.g. Diwali gifting",
+                    onValueChange = { onExtraChange { copy(occasion = it) } },
+                )
+                FormField(
+                    label = stringResource(R.string.enquiry_field_branding),
+                    value = form.branding,
+                    placeholder = "e.g. logo-foil seal on each box",
+                    onValueChange = { onExtraChange { copy(branding = it) } },
                 )
             }
         }

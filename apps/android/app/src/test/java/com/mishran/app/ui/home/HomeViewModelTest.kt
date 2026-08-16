@@ -9,10 +9,12 @@ package com.mishran.app.ui.home
 
 import com.mishran.api.models.HeroSlide
 import com.mishran.api.models.Product
+import com.mishran.app.data.repository.BrandRepository
 import com.mishran.app.data.repository.CatalogRepository
 import com.mishran.app.data.repository.HeroCarousel
 import com.mishran.app.data.repository.HeroRepository
 import com.mishran.app.data.repository.StoryRepository
+import com.mishran.app.data.repository.SupportContact
 import com.mishran.app.domain.usecase.GetCatalogUseCase
 import io.mockk.coEvery
 import io.mockk.every
@@ -41,6 +43,7 @@ class HomeViewModelTest {
     private lateinit var catalogRepository: CatalogRepository
     private lateinit var storyRepository: StoryRepository
     private lateinit var heroRepository: HeroRepository
+    private lateinit var brandRepository: BrandRepository
 
     private val carousel = HeroCarousel(
         slides = listOf(
@@ -72,6 +75,10 @@ class HomeViewModelTest {
         catalogRepository = mockk()
         storyRepository = mockk()
         heroRepository = mockk()
+        brandRepository = mockk()
+        // Parity batch: the brand-copy seam — null (offline first run) keeps
+        // the screen on its localized fallbacks.
+        coEvery { brandRepository.getSupportContact() } returns null
         every { getCatalog.invoke(any()) } returns flowOf(emptyList())
         every { catalogRepository.observeFeatured() } returns flowOf(emptyList())
         every { storyRepository.observeLatest(any()) } returns flowOf(emptyList())
@@ -84,7 +91,7 @@ class HomeViewModelTest {
     fun `a resolved carousel populates hero state`() = runTest(dispatcher) {
         coEvery { heroRepository.getHero() } returns carousel
 
-        val vm = HomeViewModel(getCatalog, catalogRepository, storyRepository, heroRepository)
+        val vm = HomeViewModel(getCatalog, catalogRepository, storyRepository, heroRepository, brandRepository)
         vm.hero.collectInTest(this)
         advanceUntilIdle()
 
@@ -97,7 +104,7 @@ class HomeViewModelTest {
             coEvery { heroRepository.getHero() } throws IOException("offline")
             every { getCatalog.invoke(any()) } returns flowOf(listOf(product("p1", "Kaju Katli")))
 
-            val vm = HomeViewModel(getCatalog, catalogRepository, storyRepository, heroRepository)
+            val vm = HomeViewModel(getCatalog, catalogRepository, storyRepository, heroRepository, brandRepository)
             vm.hero.collectInTest(this)
             vm.products.collectInTest(this)
             advanceUntilIdle()
@@ -110,11 +117,43 @@ class HomeViewModelTest {
     fun `an unset global (repository collapses to null) keeps hero null`() = runTest(dispatcher) {
         coEvery { heroRepository.getHero() } returns null
 
-        val vm = HomeViewModel(getCatalog, catalogRepository, storyRepository, heroRepository)
+        val vm = HomeViewModel(getCatalog, catalogRepository, storyRepository, heroRepository, brandRepository)
         vm.hero.collectInTest(this)
         advanceUntilIdle()
 
         assertNull(vm.hero.value)
+    }
+
+    // ---- brand copy (parity batch) ------------------------------------------
+
+    @Test
+    fun `the brand record populates the copy state`() = runTest(dispatcher) {
+        coEvery { heroRepository.getHero() } returns null
+        val contact = SupportContact(
+            whatsappNumber = "+91-98765-43210",
+            whatsappDigits = "919876543210",
+            brandName = "Mishran Halwai",
+            tagline = "Fresh from the karigar daily",
+        )
+        coEvery { brandRepository.getSupportContact() } returns contact
+
+        val vm = HomeViewModel(getCatalog, catalogRepository, storyRepository, heroRepository, brandRepository)
+        vm.brand.collectInTest(this)
+        advanceUntilIdle()
+
+        assertEquals(contact, vm.brand.value)
+    }
+
+    @Test
+    fun `a failed brand fetch keeps the copy state null`() = runTest(dispatcher) {
+        coEvery { heroRepository.getHero() } returns null
+        coEvery { brandRepository.getSupportContact() } throws IOException("offline")
+
+        val vm = HomeViewModel(getCatalog, catalogRepository, storyRepository, heroRepository, brandRepository)
+        vm.brand.collectInTest(this)
+        advanceUntilIdle()
+
+        assertNull(vm.brand.value) // the screen renders its localized fallbacks
     }
 
     private fun product(id: String, name: String): Product = Product(

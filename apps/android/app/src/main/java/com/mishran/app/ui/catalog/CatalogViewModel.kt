@@ -1,4 +1,4 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/catalog/CatalogViewModel.kt — Task 9.3 / P2 net-new (verticals).
+// apps/android/app/src/main/java/com/mishran/app/ui/catalog/CatalogViewModel.kt — Task 9.3 / P2 net-new (verticals) / parity batch.
 //
 // Streams the offline-first catalog into UI state. The repo flow emits twice
 // (cache → network-refreshed); the first emission renders as Cached (usable
@@ -7,7 +7,9 @@
 // 1:1 to the contract's query params (family, dietaryTags, q) — so the state
 // is shareable/bookmarkable later without reshaping. Filtering runs client-side
 // against the full cached list (the whole catalog is on disk; there is nothing
-// to gain from server-side filtering in v1).
+// to gain from server-side filtering in v1), then the chosen sort order is
+// applied over the filtered slice (also client-side — the web sorts its
+// cached list the same way).
 //
 // P2 net-new: the segmented vertical tabs (Mithai · Snacks · QSR · Merch).
 // The Mithai tab is exactly the pre-existing products flow; the other three
@@ -16,6 +18,12 @@
 // filters are Mithai-scoped — the vertical tabs carry no query params yet —
 // so the screen hides that row off the Mithai tab. Switching tabs restarts
 // the active vertical's flow (browse-y pages, no cache worth invalidating).
+//
+// Parity batch: the sort choice persists in DataStore (survives restarts,
+// seeded once at construction like the family/vertical deep-link args), the
+// cart badge counts the Room lines reactively, and quickAdd writes the BASE
+// pack straight from a grid card (bare productId so it merges with a PDP
+// base-pack add; the repository owns that rule).
 package com.mishran.app.ui.catalog
 
 import androidx.lifecycle.SavedStateHandle
@@ -26,20 +34,27 @@ import com.mishran.api.models.Product
 import com.mishran.api.models.QsrItem
 import com.mishran.api.models.Snack
 import com.mishran.app.domain.usecase.GetCatalogUseCase
+import com.mishran.app.data.local.entity.CartItemEntity
+import com.mishran.app.data.repository.CartRepository
+import com.mishran.app.data.repository.SettingsRepository
 import com.mishran.app.data.repository.VerticalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -75,6 +90,22 @@ data class CatalogFilters(
     val dietaryTags: Set<String> = emptySet(),
 ) {
     val isActive: Boolean get() = family != null || dietaryTags.isNotEmpty()
+}
+
+/**
+ * Sort orders the catalog offers. `wireValue` is the DataStore string (and a
+ * future URL arg), matching the web's option ids.
+ */
+enum class CatalogSortOrder(val wireValue: String) {
+    FEATURED("featured"),
+    NAME_ASC("name_asc"),
+    NAME_DESC("name_desc");
+
+    companion object {
+        /** Resolve a persisted/deep-linked value; unknown falls back to Featured. */
+        fun fromWireValue(value: String?): CatalogSortOrder =
+            entries.firstOrNull { it.wireValue == value } ?: FEATURED
+    }
 }
 
 /**
@@ -136,6 +167,8 @@ private data class VerticalPage<T>(
 class CatalogViewModel @Inject constructor(
     private val getCatalog: GetCatalogUseCase,
     private val verticalRepository: VerticalRepository,
+    private val cartRepository: CartRepository,
+    private val settingsRepository: SettingsRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -145,6 +178,21 @@ class CatalogViewModel @Inject constructor(
     private val initialFamily = savedStateHandle.get<String>("family")
         ?.let { name -> Product.Family.entries.firstOrNull { it.value == name } }
     private val filters = MutableStateFlow(CatalogFilters(family = initialFamily))
+
+    /**
+     * Active sort order. Defaults to Featured, then adopts whatever the user
+     * persisted last (one DataStore read — the same seed pattern as the
+     * family/vertical route args above).
+     */
+    private val sort = MutableStateFlow(CatalogSortOrder.FEATURED)
+    val sortOrder: StateFlow<CatalogSortOrder> = sort.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val persisted = settingsRepository.catalogSortFlow().first() ?: return@launch
+            sort.value = CatalogSortOrder.fromWireValue(persisted)
+        }
+    }
 
     /** Bumped by refresh(); the first pass is a normal (ETag-conditional) load. */
     private val refreshTrigger = MutableStateFlow(0)
@@ -177,12 +225,13 @@ class CatalogViewModel @Inject constructor(
             CatalogUiState.Loading,
         )
 
-    /** The catalog after search + filters — what the grid renders. */
+    /** The catalog after search + filters + sort — what the grid renders. */
     val visibleProducts: StateFlow<List<Product>> = combine(
         uiState,
         query,
         filters,
-        ) { state, q, f -> filterProducts(state.products, q, f) }
+        sort,
+    ) { state, q, f, s -> sortProducts(filterProducts(state.products, q, f), s) }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
@@ -213,6 +262,40 @@ class CatalogViewModel @Inject constructor(
 
     fun clearFilters() {
         filters.value = CatalogFilters()
+    }
+
+    /** Swap the sort order and persist the choice for the next session. */
+    fun onSortChange(value: CatalogSortOrder) {
+        sort.value = value
+        viewModelScope.launch { settingsRepository.setCatalogSort(value.wireValue) }
+    }
+
+    // ---- Cart parity: badge + quick add -----------------------------------
+
+    /** Σ quantity over the Room lines; the toolbar badge renders it (0 hides). */
+    val cartCount: StateFlow<Int> = cartRepository.observeItems()
+        .map(::cartBadgeCount)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            0,
+        )
+
+    /** Fired once a quick-add write lands — the screen confirms with a snackbar. */
+    private val _quickAdded = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val quickAdded: SharedFlow<Unit> = _quickAdded
+
+    /**
+     * Add the BASE pack of a grid card straight to the cart: verbatim
+     * displayPrice, bare productId line id (pack = null — the repository's
+     * no-pack path), quantity 1 stacked on any existing line. Mithai-grid
+     * only; the screen never offers it on the vertical tabs or Home rail.
+     */
+    fun quickAdd(product: Product) {
+        viewModelScope.launch {
+            cartRepository.add(product, quantity = 1, pack = null)
+            _quickAdded.emit(Unit)
+        }
     }
 
     /** Pull-to-refresh / retry: restarts the flow with `force = true`. */
@@ -288,8 +371,11 @@ private const val VERTICAL_ERROR_MESSAGE =
 
 /**
  * Pure client-side filter: family must match when set, every selected dietary
- * tag must be present, and a non-blank query matches name (case-insensitive)
- * or slug. Extracted from the ViewModel so it is directly unit-testable.
+ * tag must be present, and a non-blank query case-insensitively matches any of
+ * the product's text fields — name, slug, the long description (the contract's
+ * `story` field; Product carries no separate description), the family value,
+ * or any dietary tag. The widened matcher is what the web catalog searches
+ * over. Extracted from the ViewModel so it is directly unit-testable.
  */
 internal fun filterProducts(
     products: List<Product>,
@@ -300,9 +386,38 @@ internal fun filterProducts(
     return products.filter { product ->
         val familyOk = filters.family == null || product.family == filters.family
         val tagsOk = filters.dietaryTags.all { it in product.dietaryTags.orEmpty() }
-        val queryOk = q.isEmpty() ||
-            product.name.lowercase().contains(q) ||
-            product.slug.contains(q)
+        val queryOk = q.isEmpty() || product.matchesSearchQuery(q)
         familyOk && tagsOk && queryOk
     }
 }
+
+/** The widened per-product matcher: any of the text fields containing `q`. */
+private fun Product.matchesSearchQuery(q: String): Boolean =
+    name.lowercase().contains(q) ||
+        slug.lowercase().contains(q) ||
+        story.orEmpty().lowercase().contains(q) ||
+        family.value.lowercase().contains(q) ||
+        dietaryTags.orEmpty().any { it.lowercase().contains(q) }
+
+/**
+ * Pure client-side sort over the filtered slice. Featured puts flagged rows
+ * first (stable within each group, ties broken by name — matching the web's
+ * featured-then-name rule); the name orders compare locale-free lowercase so
+ * the result is deterministic in JVM tests and on device alike.
+ */
+internal fun sortProducts(products: List<Product>, order: CatalogSortOrder): List<Product> =
+    when (order) {
+        CatalogSortOrder.FEATURED ->
+            products.sortedWith(
+                compareByDescending<Product> { it.featured == true }
+                    .thenBy { it.name.lowercase() },
+            )
+        CatalogSortOrder.NAME_ASC -> products.sortedBy { it.name.lowercase() }
+        CatalogSortOrder.NAME_DESC -> products.sortedByDescending { it.name.lowercase() }
+    }
+
+/**
+ * Badge count = Σ quantity over the lines (not the line count — three of one
+ * sweet read as 3, not 1). Extracted so the derivation is unit-testable.
+ */
+internal fun cartBadgeCount(items: List<CartItemEntity>): Int = items.sumOf { it.quantity }

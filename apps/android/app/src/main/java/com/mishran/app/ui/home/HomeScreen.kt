@@ -1,4 +1,4 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/home/HomeScreen.kt — P1 parity / P2 net-new.
+// apps/android/app/src/main/java/com/mishran/app/ui/home/HomeScreen.kt — P1 parity / P2 net-new / parity batch.
 //
 // The Home tab, structured like the web storefront home but app-paced:
 // a photo hero (web hero's counterpart), a best-sellers rail, a
@@ -13,9 +13,12 @@
 // slides deep-link into product/vertical detail; anything else (unset,
 // offline, single slide) keeps the original hero untouched below.
 //
-// TODO(i18n): "From the journal" and the portal labels hardcode the English
-// copy from packages/i18n-strings/en.json (home.journal, vertical.mithai/
-// snacks/qsr/merch) — swap for R.string references in the i18n sweep.
+// Parity batch: a slim announcement strip pinned above the hero carrying the
+// live brand tagline (localized fallback when the brand-settings global omits
+// it), a "Why Mishran" pillars strip whose four cards deep-link into the
+// journal with the pillar preselected, and live brand copy in the static
+// fallback hero (brandName/tagline when /brand carries them, app defaults
+// otherwise).
 package com.mishran.app.ui.home
 
 import android.content.Context
@@ -100,6 +103,19 @@ private val VERTICAL_PORTALS = listOf(
     Triple(R.string.vertical_merch, R.string.merch_enquire, "merch"),
 )
 
+/**
+ * "Why Mishran" pillar cards (parity batch): (labelRes, pillar wire value).
+ * Each deep-links into the journal with the pillar preselected — the labels
+ * are the marketing names, the values are Story.Pillar wire names, so the
+ * "Milk Purity" card lands on the farm-stories filter, not a literal "milk".
+ */
+private val WHY_MISHRAN_PILLARS = listOf(
+    R.string.home_pillars_milk to "farm",
+    R.string.home_pillars_karigar to "karigar",
+    R.string.home_pillars_karigari to "karigari",
+    R.string.home_pillars_modern to "journal",
+)
+
 @Composable
 fun HomeScreen(
     onProductClick: (slug: String) -> Unit,
@@ -109,6 +125,7 @@ fun HomeScreen(
     onHeroSlideClick: (verticalValue: String, slug: String) -> Unit,
     onStoryClick: (slug: String) -> Unit,
     onJournal: () -> Unit,
+    onPillarClick: (pillarValue: String) -> Unit,
     onOrders: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -121,6 +138,10 @@ fun HomeScreen(
     // P3 parity: the admin-curated carousel; null until resolved and on any
     // failure — the static hero below keeps rendering in the meantime.
     val hero by viewModel.hero.collectAsStateWithLifecycle()
+    // Parity batch: live brand copy for the announcement strip + masthead;
+    // null while neither cache nor network has a record — the localized
+    // fallbacks render in that case.
+    val brand by viewModel.brand.collectAsStateWithLifecycle()
     val heroCarousel = hero?.takeIf { it.slides.isNotEmpty() }
     val heroImage = bestSellers.firstOrNull()?.images?.firstOrNull()
 
@@ -129,6 +150,23 @@ fun HomeScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
+        // Announcement strip (parity batch) — the live brand tagline when the
+        // brand-settings global carries one, the localized fallback otherwise.
+        // Slim on purpose: one line, never a section.
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = brand?.tagline ?: stringResource(R.string.home_announcement),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+        }
+
         // Hero — the curated carousel when the global has slides (P3),
         // else the photo, scrim, wordmark + tagline + CTA hero unchanged.
         if (heroCarousel != null) {
@@ -165,14 +203,17 @@ fun HomeScreen(
                         .align(Alignment.BottomStart)
                         .padding(20.dp),
                 ) {
+                    // Live brand copy (parity batch): the masthead swaps in
+                    // the brand-settings name/tagline when present, the app
+                    // defaults otherwise.
                     Text(
-                        text = stringResource(R.string.app_name),
+                        text = brand?.brandName ?: stringResource(R.string.app_name),
                         style = MaterialTheme.typography.displaySmall,
                         fontWeight = FontWeight.Light,
                         color = Color.White,
                     )
                     Text(
-                        text = stringResource(R.string.home_hero_tagline),
+                        text = brand?.tagline ?: stringResource(R.string.home_hero_tagline),
                         style = MaterialTheme.typography.bodyLarge,
                         color = Color.White.copy(alpha = 0.85f),
                     )
@@ -236,6 +277,35 @@ fun HomeScreen(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                     ),
                     shape = RoundedCornerShape(50),
+                )
+            }
+        }
+
+        // Why Mishran (parity batch) — four brand pillars; each card opens the
+        // journal with that pillar's stories preselected.
+        SectionHeader(stringResource(R.string.home_pillars_title))
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 4.dp),
+        ) {
+            items(WHY_MISHRAN_PILLARS.size) { index ->
+                val (labelRes, pillarValue) = WHY_MISHRAN_PILLARS[index]
+                val label = stringResource(labelRes)
+                PillarCard(
+                    label = label,
+                    containerColor = when (index) {
+                        0 -> MaterialTheme.colorScheme.primaryContainer
+                        1 -> MaterialTheme.colorScheme.secondaryContainer
+                        2 -> MaterialTheme.colorScheme.tertiaryContainer
+                        else -> MaterialTheme.colorScheme.surfaceVariant
+                    },
+                    contentColor = when (index) {
+                        0 -> MaterialTheme.colorScheme.onPrimaryContainer
+                        1 -> MaterialTheme.colorScheme.onSecondaryContainer
+                        2 -> MaterialTheme.colorScheme.onTertiaryContainer
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    onClick = { onPillarClick(pillarValue) },
                 )
             }
         }
@@ -522,6 +592,48 @@ private fun JournalRailCard(story: Story, onClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+    }
+}
+
+/**
+ * One "Why Mishran" pillar card — styled after [JournalRailCard] but without
+ * imagery: the label's initial sits where the story photo would (the rail
+ * card's own no-image fallback idiom), themed container/on-container pairs
+ * keep contrast guaranteed, and the tap opens the filtered journal.
+ */
+@Composable
+private fun PillarCard(
+    label: String,
+    containerColor: Color,
+    contentColor: Color,
+    onClick: () -> Unit,
+) {
+    Card(
+        modifier = Modifier.width(150.dp).height(92.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+        ),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(onClick = onClick)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = label.take(1),
+                style = MaterialTheme.typography.headlineMedium,
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 2,
+            )
         }
     }
 }

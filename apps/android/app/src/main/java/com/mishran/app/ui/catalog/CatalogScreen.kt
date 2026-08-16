@@ -1,4 +1,4 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/catalog/CatalogScreen.kt — Task 9.3 / P1 parity / P2 net-new (verticals).
+// apps/android/app/src/main/java/com/mishran/app/ui/catalog/CatalogScreen.kt — Task 9.3 / P1 parity / P2 net-new (verticals) / parity batch.
 //
 // The catalog browse surface: a segmented vertical-tab header
 // (Mithai · Snacks · QSR · Merch), search bar, active-filter chip row, and a
@@ -10,6 +10,11 @@
 // that row hides off the Mithai tab. Pull-to-refresh wraps everything:
 // products refresh (ETag-bypassing) on Mithai, a plain reload on the others.
 // P1 parity wrapped the scrollable content in material3's PullToRefreshBox.
+//
+// Parity batch: the cart toolbar icon carries a live count badge (Σ quantity,
+// hidden at 0), the search row gains the sort menu (Featured / A–Z / Z–A,
+// persisted), and Mithai cards expose the quick-add button whose write lands
+// as a brief "Added" snackbar.
 package com.mishran.app.ui.catalog
 
 import androidx.compose.foundation.layout.Arrangement
@@ -24,11 +29,17 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -38,9 +49,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -79,7 +93,17 @@ fun CatalogScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val vertical by viewModel.activeVertical.collectAsState()
     val listing by viewModel.verticalState.collectAsState()
+    val sortOrder by viewModel.sortOrder.collectAsState()
+    val cartCount by viewModel.cartCount.collectAsState()
     var showFilterSheet by remember { mutableStateOf(false) }
+
+    // Quick-add confirmation: one "Added" snackbar per write, at the bottom of
+    // the browse surface (short-lived by design — the badge count updates too).
+    val snackbarHostState = remember { SnackbarHostState() }
+    val quickAddedLabel = stringResource(R.string.catalog_quick_added)
+    LaunchedEffect(viewModel) {
+        viewModel.quickAdded.collect { snackbarHostState.showSnackbar(quickAddedLabel) }
+    }
 
     // Pull-to-refresh over the whole scrollable surface; on the Mithai tab the
     // ViewModel's isRefreshing bridges gesture → refresh() → Fresh emission,
@@ -90,6 +114,7 @@ fun CatalogScreen(
         onRefresh = if (isMithai) viewModel::refresh else viewModel::retryVertical,
         modifier = Modifier.fillMaxSize(),
     ) {
+        Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
         // Vertical tabs — the catalog's header row (cart button rides along).
         Row(
@@ -122,8 +147,26 @@ fun CatalogScreen(
                     )
                 }
             }
-            IconButton(onClick = onCartClick) {
-                Icon(Icons.Filled.ShoppingCart, contentDescription = stringResource(R.string.nav_cart))
+            // Live cart count badge (Σ quantity over the Room lines); hidden at
+            // 0 so an empty cart reads exactly like the pre-badge icon. The
+            // description carries the count for TalkBack.
+            BadgedBox(
+                badge = {
+                    if (cartCount > 0) {
+                        Badge { Text(cartCount.toString()) }
+                    }
+                },
+            ) {
+                IconButton(onClick = onCartClick) {
+                    Icon(
+                        Icons.Filled.ShoppingCart,
+                        contentDescription = if (cartCount > 0) {
+                            stringResource(R.string.cart_badge_count, cartCount.toString())
+                        } else {
+                            stringResource(R.string.nav_cart)
+                        },
+                    )
+                }
             }
         }
 
@@ -148,6 +191,10 @@ fun CatalogScreen(
                             }
                         }
                     },
+                )
+                SortMenu(
+                    selected = sortOrder,
+                    onSelect = viewModel::onSortChange,
                 )
             }
 
@@ -230,6 +277,7 @@ fun CatalogScreen(
                         ProductGrid(
                             products = products,
                             onProductClick = onProductClick,
+                            onQuickAdd = viewModel::quickAdd,
                         )
                     }
                 }
@@ -282,6 +330,11 @@ fun CatalogScreen(
             }
         }
         }
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
     }
 
     if (showFilterSheet) {
@@ -294,10 +347,55 @@ fun CatalogScreen(
     }
 }
 
+/**
+ * Sort trigger + dropdown. An icon button (label = the generic Sort copy, so
+ * TalkBack reads "Sort, Featured" via the menu that follows) anchored to the
+ * search field's end; the three fixed orders match the web catalog's options
+ * and persist through the ViewModel.
+ */
+@Composable
+private fun SortMenu(
+    selected: CatalogSortOrder,
+    onSelect: (CatalogSortOrder) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    IconButton(onClick = { expanded = true }) {
+        Icon(
+            Icons.AutoMirrored.Filled.Sort,
+            contentDescription = stringResource(R.string.catalog_sort_label),
+        )
+    }
+    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        CatalogSortOrder.entries.forEach { order ->
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = when (order) {
+                            CatalogSortOrder.FEATURED -> stringResource(R.string.catalog_sort_featured)
+                            CatalogSortOrder.NAME_ASC -> stringResource(R.string.catalog_sort_name_asc)
+                            CatalogSortOrder.NAME_DESC -> stringResource(R.string.catalog_sort_name_desc)
+                        },
+                    )
+                },
+                leadingIcon = if (order == selected) {
+                    { Icon(Icons.Filled.Check, contentDescription = null) }
+                } else {
+                    null
+                },
+                onClick = {
+                    onSelect(order)
+                    expanded = false
+                },
+            )
+        }
+    }
+}
+
 @Composable
 private fun ProductGrid(
     products: List<Product>,
     onProductClick: (Product) -> Unit,
+    onQuickAdd: (Product) -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -310,6 +408,7 @@ private fun ProductGrid(
             ProductCard(
                 product = product,
                 onClick = { onProductClick(product) },
+                onQuickAdd = { onQuickAdd(product) },
             )
         }
     }

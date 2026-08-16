@@ -1,18 +1,19 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/stories/StoriesScreen.kt — P2 net-new (stories).
+// apps/android/app/src/main/java/com/mishran/app/ui/stories/StoriesScreen.kt — P2 net-new (stories) / parity batch.
 //
 // The journal list: the newest story rendered as a full-bleed hero card (image
 // + title + pillar chip + date), with every older story as a row beneath
 // (thumbnail, title, excerpt, pillar chip, date). PullToRefreshBox over the
 // LazyColumn drives a forced ETag-bypassing refresh. Entry points: Home's
-// "From the journal" rail, the Account "Journal" row.
+// "From the journal" rail, the Account "Journal" row, and (parity batch)
+// Home's "Why Mishran" cards, which preselect a pillar via ?pillar=.
 //
-// TODO(i18n): strings below hardcode the English copy already present in
-// packages/i18n-strings/en.json (stories.title "Journal", stories.empty
-// "Stories are coming soon") — swap for R.string references in the sweep that
-// wires generated resources.
+// Parity batch: a horizontal single-select FilterChip row above the list —
+// "All" plus one chip per pillar present in the cached stories, labeled via
+// the stories.pillar.<value> strings.
 package com.mishran.app.ui.stories
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,10 +27,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
@@ -57,6 +60,20 @@ import coil.compose.AsyncImage
 import com.mishran.app.R
 import com.mishran.api.models.Story
 
+/** Label resource per pillar wire value; the fallback renders the raw value. */
+internal fun pillarLabelRes(pillar: String): Int? = when (pillar) {
+    "farm" -> R.string.stories_pillar_farm
+    "milk" -> R.string.stories_pillar_milk
+    "karigar" -> R.string.stories_pillar_karigar
+    "karigari" -> R.string.stories_pillar_karigari
+    "packaging" -> R.string.stories_pillar_packaging
+    "festival" -> R.string.stories_pillar_festival
+    "regional" -> R.string.stories_pillar_regional
+    "recipe" -> R.string.stories_pillar_recipe
+    "journal" -> R.string.stories_pillar_journal
+    else -> null
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StoriesScreen(
@@ -66,6 +83,9 @@ fun StoriesScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val selectedPillar by viewModel.selectedPillar.collectAsStateWithLifecycle()
+    val availablePillars by viewModel.availablePillars.collectAsStateWithLifecycle()
+    val stories by viewModel.visibleStories.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -84,40 +104,70 @@ fun StoriesScreen(
             onRefresh = viewModel::refresh,
             modifier = Modifier.fillMaxSize().padding(padding),
         ) {
-            when {
-                state is StoriesUiState.Loading -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) { CircularProgressIndicator() }
-                state.stories.isEmpty() -> Box(
-                    modifier = Modifier.fillMaxSize().padding(24.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = stringResource(R.string.stories_empty),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                    )
+            Column(modifier = Modifier.fillMaxSize()) {
+                // Pillar chips — All + one per pillar present in the list.
+                if (state !is StoriesUiState.Loading && availablePillars.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        FilterChip(
+                            selected = selectedPillar == null,
+                            onClick = { viewModel.onPillarChange(null) },
+                            label = { Text(stringResource(R.string.stories_filter_all)) },
+                        )
+                        availablePillars.forEach { pillar ->
+                            val labelRes = pillarLabelRes(pillar)
+                            FilterChip(
+                                selected = selectedPillar == pillar,
+                                onClick = { viewModel.onPillarChange(pillar) },
+                                label = {
+                                    Text(
+                                        text = labelRes?.let { stringResource(it) } ?: pillar,
+                                    )
+                                },
+                            )
+                        }
+                    }
                 }
-                else -> LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    // Newest story: the hero card. The repository emits
-                    // newest-first, so index 0 is the hero by construction.
-                    item(key = state.stories[0].id) {
-                        StoryHeroCard(
-                            story = state.stories[0],
-                            onClick = { onStoryClick(state.stories[0].slug) },
+                when {
+                    state is StoriesUiState.Loading -> Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) { CircularProgressIndicator() }
+                    stories.isEmpty() -> Box(
+                        modifier = Modifier.fillMaxSize().padding(24.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.stories_empty),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
                         )
                     }
-                    items(state.stories.size - 1, key = { state.stories[it + 1].id }) { index ->
-                        val story = state.stories[index + 1]
-                        StoryRow(
-                            story = story,
-                            onClick = { onStoryClick(story.slug) },
-                        )
+                    else -> LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        // Newest story: the hero card. The repository emits
+                        // newest-first, so index 0 is the hero by construction.
+                        item(key = stories[0].id) {
+                            StoryHeroCard(
+                                story = stories[0],
+                                onClick = { onStoryClick(stories[0].slug) },
+                            )
+                        }
+                        items(stories.size - 1, key = { stories[it + 1].id }) { index ->
+                            val story = stories[index + 1]
+                            StoryRow(
+                                story = story,
+                                onClick = { onStoryClick(story.slug) },
+                            )
+                        }
                     }
                 }
             }

@@ -1,4 +1,4 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/home/HomeViewModel.kt — P1 parity / P2 net-new.
+// apps/android/app/src/main/java/com/mishran/app/ui/home/HomeViewModel.kt — P1 parity / P2 net-new / parity batch.
 //
 // Home-tab state off the offline-first catalog (cache emission renders
 // instantly; the network refresh may swap in newer rows). Reuses
@@ -21,16 +21,24 @@
 // blocks the screen). Null — not yet loaded, unset, or failed — keeps the
 // existing static hero rendering; the screen swaps the carousel in only
 // when slides exist.
+//
+// Parity batch (live brand copy): `brand` exposes the cached-or-fetched
+// SupportContact — the announcement strip renders its tagline (localized
+// fallback when the global omits it) and the static hero swaps its wordmark
+// + tagline for brandName/tagline when present. Same null-on-failure shape
+// as `hero`.
 package com.mishran.app.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mishran.api.models.Product
 import com.mishran.api.models.Story
+import com.mishran.app.data.repository.BrandRepository
 import com.mishran.app.data.repository.CatalogRepository
 import com.mishran.app.data.repository.HeroCarousel
 import com.mishran.app.data.repository.HeroRepository
 import com.mishran.app.data.repository.StoryRepository
+import com.mishran.app.data.repository.SupportContact
 import com.mishran.app.domain.usecase.GetCatalogUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -47,6 +55,7 @@ class HomeViewModel @Inject constructor(
     catalogRepository: CatalogRepository,
     storyRepository: StoryRepository,
     heroRepository: HeroRepository,
+    brandRepository: BrandRepository,
 ) : ViewModel() {
 
     /** Whole cached catalog — the screen slices hero + family counts from it. */
@@ -96,6 +105,21 @@ class HomeViewModel @Inject constructor(
      */
     val hero: StateFlow<HeroCarousel?> = flow {
         emit(heroRepository.getHero())
+    }.catch { emit(null) }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            null,
+        )
+
+    /**
+     * The brand record (contact + display copy), or null while unknown —
+     * offline-first through BrandRepository's DataStore cache. Null copy
+     * fields mean the brand-settings global omits them; the screen renders
+     * its localized fallbacks in that case.
+     */
+    val brand: StateFlow<SupportContact?> = flow {
+        emit(brandRepository.getSupportContact())
     }.catch { emit(null) }
         .stateIn(
             viewModelScope,

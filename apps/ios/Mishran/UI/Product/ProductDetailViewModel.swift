@@ -131,6 +131,34 @@ final class ProductDetailViewModel {
         return "\(productId):\(pack.label)"
     }
 
+    /// Quick add (catalog card, P3 parity): upsert the BASE pack line off a
+    /// catalog row — bare productId, verbatim displayPrice, packLabel nil —
+    /// so the line merges both with earlier quick adds AND with the PDP's
+    /// own base-pack addToCart (same id by construction; a derived-pack line
+    /// on the same product stacks separately, exactly like two PDP chips).
+    nonisolated static func quickAddToCart(
+        _ product: ProductEntity,
+        quantity: Int = 1,
+        in context: ModelContext
+    ) {
+        let cart = findOrCreateCart(in: context)
+        if let line = cart.items.first(where: { $0.productId == product.id }) {
+            line.quantity = min(line.quantity + max(quantity, 1), maxQuantity)
+        } else {
+            let line = CartItemEntity(
+                productId: product.id,
+                name: product.name,
+                slug: product.slug,
+                packLabel: nil,
+                unitPricePaise: pricePaise(from: product.displayPrice) ?? 0,
+                quantity: max(quantity, 1)
+            )
+            context.insert(line)
+            line.cart = cart
+        }
+        try? context.save()
+    }
+
     /// Pack display label for a line — nil on the base pack (Android parity:
     /// "Null = base pack"), so cart rows show the chip only where it varies.
     nonisolated static func packLabel(pack: PackSize?, displayPrice: String?) -> String? {
