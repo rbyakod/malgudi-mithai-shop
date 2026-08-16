@@ -7,6 +7,11 @@
 // pincode via the shared lib/web/serviceability lookup (fresh tier /
 // shelf-stable / outside delivery zones), checked once per distinct
 // pincode on load.
+//
+// `variant="checkout"` renders the compact picker checkout embeds: one
+// "Deliver here" action per card (selection via onSelect/selectedId, the
+// selected card carries the gold frame), the add-address form stays, and
+// the account-only actions (set-default / delete) are hidden.
 
 import { useCallback, useEffect, useState } from "react";
 import {useTranslations} from "next-intl";
@@ -49,8 +54,17 @@ const EMPTY_FORM: NewAddress = {
   isDefault: false,
 };
 
-export function AddressBook() {
+type Props = {
+  variant?: "full" | "checkout";
+  /** checkout only: id of the card rendered as selected. */
+  selectedId?: string | null;
+  /** checkout only: fired when the customer picks "Deliver here". */
+  onSelect?: (address: Address) => void;
+};
+
+export function AddressBook({variant = "full", selectedId, onSelect}: Props) {
   const t = useTranslations("Addresses");
+  const tCheckout = useTranslations("Checkout");
   const {session, ready} = useAuth();
 
   const [addresses, setAddresses] = useState<Address[] | null>(null);
@@ -326,11 +340,16 @@ export function AddressBook() {
         <ul className="mt-6 space-y-4">
           {addresses.map((address) => {
             const badge = badgeFor(address.pincode);
+            const isSelected = variant === "checkout" && address.id === selectedId;
             return (
               <li
                 key={address.id}
                 data-testid="address-card"
-                className="rounded-2xl border border-border-card bg-bg-card p-5"
+                className={`rounded-2xl border bg-bg-card p-5 transition-colors ${
+                  isSelected
+                    ? "border-gold"
+                    : "border-border-card"
+                }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
@@ -359,25 +378,45 @@ export function AddressBook() {
                     ) : null}
                   </div>
                   <div className="flex items-center gap-4">
-                    {!address.isDefault ? (
+                    {variant === "checkout" ? (
                       <button
                         type="button"
-                        onClick={() => void setDefault(address.id)}
-                        disabled={busy}
-                        className="text-[10px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline disabled:opacity-60"
+                        data-testid="address-deliver-here"
+                        aria-pressed={isSelected}
+                        onClick={() => onSelect?.(address)}
+                        className={`border-y px-4 py-2 font-display text-[11px] font-medium uppercase tracking-[0.18em] transition-colors ${
+                          isSelected
+                            ? "border-gold bg-gold text-text-on-gold"
+                            : "border-gold/60 bg-bg-control text-primary hover:bg-bg-accent"
+                        }`}
                       >
-                        {t("setDefault")}
+                        {isSelected
+                          ? tCheckout("deliveringHere")
+                          : tCheckout("deliverHere")}
                       </button>
-                    ) : null}
-                    <button
-                      type="button"
-                      aria-label={t("deleteAria", {line1: address.line1})}
-                      onClick={() => void removeAddress(address.id)}
-                      disabled={busy}
-                      className="text-[10px] font-medium uppercase tracking-[0.18em] text-text-muted underline-offset-4 hover:text-primary hover:underline disabled:opacity-60"
-                    >
-                      {t("delete")}
-                    </button>
+                    ) : (
+                      <>
+                        {!address.isDefault ? (
+                          <button
+                            type="button"
+                            onClick={() => void setDefault(address.id)}
+                            disabled={busy}
+                            className="text-[10px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline disabled:opacity-60"
+                          >
+                            {t("setDefault")}
+                          </button>
+                        ) : null}
+                        <button
+                          type="button"
+                          aria-label={t("deleteAria", {line1: address.line1})}
+                          onClick={() => void removeAddress(address.id)}
+                          disabled={busy}
+                          className="text-[10px] font-medium uppercase tracking-[0.18em] text-text-muted underline-offset-4 hover:text-primary hover:underline disabled:opacity-60"
+                        >
+                          {t("delete")}
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               </li>
