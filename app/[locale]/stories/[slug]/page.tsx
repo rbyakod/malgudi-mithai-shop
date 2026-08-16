@@ -16,6 +16,10 @@ import {getTranslations, setRequestLocale} from "next-intl/server";
 import {routing} from "@/i18n/routing";
 import {Link} from "@/i18n/navigation";
 import {StoryHero} from "@/components/stories/StoryHero";
+import {
+  RelatedProductsRail,
+  type RelatedProductEntry,
+} from "@/components/stories/RelatedProductsRail";
 
 export const revalidate = 60;
 
@@ -31,6 +35,7 @@ type StoryDoc = {
   body?: SerializedEditorState | null;
   heroImage?: {url?: string} | null;
   publishedAt?: string | null;
+  relatedProducts?: ReadonlyArray<RelatedProductEntry | null> | null;
 };
 
 export async function generateStaticParams() {
@@ -76,7 +81,9 @@ export default async function StoryPage({params}: Context) {
     where: {slug: {equals: slug}},
     limit: 1,
     locale: locale as "en" | "hi" | "kn" | undefined,
-    depth: 1,
+    // depth 2 so relatedProducts populate (depth 1) and their image uploads
+    // resolve too — same shape as the occasions recommendedProducts rail.
+    depth: 2,
   });
   const doc = r.docs[0] as StoryDoc | undefined;
   if (!doc) notFound();
@@ -105,6 +112,9 @@ export default async function StoryPage({params}: Context) {
             <RichText data={doc.body} />
           </section>
         ) : null}
+
+        {/* Related products rail — hidden when the story curates none */}
+        <RelatedProductsRail related={doc.relatedProducts ?? []} />
 
         {/* Back to hub */}
         <div className="mt-16 border-t border-border-card pt-6">

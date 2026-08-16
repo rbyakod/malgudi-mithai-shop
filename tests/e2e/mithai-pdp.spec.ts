@@ -4,9 +4,13 @@
 // and that the buy module (pack sizes, pincode check, quantity stepper,
 // CTAs) works end to end against the serviceability API.
 //
+// Batch 8 additions: the trust strip chips + honest-label column, and the
+// same-family cross-sell rail.
+//
 // kaju-katli comes from scripts/seed-data/mithai-catalog.json (the catalog
 // seed upserts by slug and supersedes the older scripts/seed.ts fixture):
-// displayPrice "₹1,562 / 1 kg", ingredients mention cashew.
+// displayPrice "₹1,562 / 1 kg", ingredients mention cashew, dietaryTags
+// ["vegetarian"], allergens ["tree-nuts", "milk"], family "classic".
 
 import {test, expect} from "@playwright/test";
 
@@ -83,4 +87,52 @@ test("mithai PDP buy now adds and routes to the cart", async ({page}) => {
   await page.getByTestId("buy-now").click();
   await expect(page).toHaveURL(/\/en\/cart$/);
   await expect(page.getByText(/Kaju Katli/)).toBeVisible();
+});
+
+test("mithai PDP trust strip carries the seeded chips and honest labels", async ({page}) => {
+  await page.goto("/en/mithai/kaju-katli");
+
+  // Trust strip — seeded kaju-katli: freshness promise, shelf life, and the
+  // vegetarian dietary chip (uppercase styling is CSS-only; DOM text is
+  // title-case).
+  const strip = page.getByTestId("pdp-trust-strip");
+  await expect(strip).toBeVisible();
+  await expect(strip).toContainText("Made to order");
+  await expect(strip).toContainText("7-10 days shelf life");
+  await expect(strip).toContainText("Vegetarian");
+
+  // Honest-label column — allergens list + storage row (both seeded).
+  const honest = page.getByTestId("pdp-honest-label");
+  await expect(honest).toBeVisible();
+  await expect(page.getByTestId("pdp-allergens").locator("li")).toHaveCount(2);
+  await expect(page.getByTestId("pdp-allergens")).toContainText("tree-nuts");
+  await expect(page.getByTestId("pdp-storage")).toContainText(/room temperature/i);
+});
+
+test("mithai PDP renders the same-family cross-sell rail", async ({page}) => {
+  await page.goto("/en/mithai/kaju-katli");
+
+  // kaju-katli is family "classic" (26 seeded members) — the rail must show
+  // up to 4 siblings, never the current product, all linking to mithai PDPs.
+  const rail = page.getByTestId("pdp-cross-sell-rail");
+  await expect(rail).toBeVisible();
+
+  const hrefs = await rail.locator("a").evaluateAll((els) =>
+    els
+      .map((el) => el.getAttribute("href"))
+      .filter((h): h is string => Boolean(h)),
+  );
+  expect(hrefs.length).toBeGreaterThan(0);
+  expect(hrefs.length).toBeLessThanOrEqual(4);
+  for (const href of hrefs) {
+    expect(href).toMatch(/\/en\/mithai\/[a-z0-9-]+$/);
+    expect(href).not.toContain("kaju-katli");
+  }
+
+  // Cards lead with photography — every pick renders an image panel.
+  await expect(rail.locator("li img").first()).toBeVisible();
+
+  // The first card resolves to a real PDP.
+  const response = await page.request.get(hrefs[0]!);
+  expect(response.status()).toBe(200);
 });

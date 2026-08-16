@@ -163,7 +163,11 @@
         "freshToOrder": "Made to order, finished on request",
         "frozen": "Finished fresh, frozen at peak",
         "shelfLife": "{shelfLife} shelf life",
-        "vegetarian": "Vegetarian"
+        "vegetarian": "Vegetarian",
+        "sugarFree": "Sugar-free"
+      },
+      "crossSell": {
+        "title": "More from the {family} collection"
       }
     },
     "qsr": {
@@ -764,6 +768,9 @@
       "regional": "Regional",
       "recipe": "Recipes",
       "journal": "Modern Experience"
+    },
+    "related": {
+      "title": "Featured in this story"
     }
   }
 }

@@ -34,6 +34,24 @@ test("story detail renders the lexical body", async ({page}) => {
   ).toBeVisible();
 });
 
+// Batch 8 — related-products rail. scripts/seed.ts curates kaju-katli on the
+// sample story once the catalog seed has run; soft-skip (gift-rail pattern)
+// when a DB predates that wiring or the admin cleared the field.
+test("story detail renders the related-products rail when curated", async ({page}) => {
+  await page.goto("/en/stories/jhajjar-farm");
+
+  const rail = page.getByTestId("story-related-rail");
+  if (!(await rail.count())) {
+    test.skip(true, "story has no relatedProducts curated");
+  }
+
+  // Every card href resolves per its relationTo collection and 200s.
+  const href = await rail.locator("a").first().getAttribute("href");
+  expect(href).toMatch(/\/en\/(mithai|gifts|qsr|snacks|merch)\/[a-z0-9-]+$/);
+  const response = await page.request.get(href!);
+  expect(response.status()).toBe(200);
+});
+
 test("unknown story slug 404s", async ({page}) => {
   await page.goto("/en/stories/no-such-story");
   // The not-found page renders a 404 + "Page not found" heading. Anchor on

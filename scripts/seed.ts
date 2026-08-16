@@ -160,6 +160,24 @@ async function createIfMissing(payload: Awaited<ReturnType<typeof getPayload>>, 
 async function main() {
   const payload = await getPayload();
   console.log("Seeding product collections + sample story...");
+
+  // Batch 8: curate one related product on the sample story so the story
+  // detail's related-products rail has an entry in dev/test DBs. Resolved
+  // here (not in the static seed data) because relationships take doc ids;
+  // skipped when the catalog seed hasn't run yet. The field is polymorphic,
+  // so each row carries {relationTo, value}.
+  const kajuKatli = await payload.find({
+    collection: "mithai-products",
+    where: {slug: {equals: "kaju-katli"}},
+    limit: 1,
+  });
+  const storySeed = seeds.find((s) => s.collection === "stories");
+  if (storySeed && kajuKatli.docs.length > 0) {
+    storySeed.data.relatedProducts = [
+      {relationTo: "mithai-products", value: kajuKatli.docs[0]!.id},
+    ];
+  }
+
   for (const seed of seeds) {
     await createIfMissing(payload, seed);
   }
