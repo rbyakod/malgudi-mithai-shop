@@ -21,7 +21,9 @@ test("mithai PDP shows display price and ingredients", async ({page}) => {
   await expect(page.getByText("₹1,562 / 1 kg").first()).toBeVisible();
 
   // Ingredients mentions cashew (seed → "cashew, sugar, ghee, cardamom.").
-  await expect(page.getByText(/Cashew/i)).toBeVisible();
+  // Match the exact seeded string — the story lead also says "cashew", so a
+  // loose /cashew/i regex now matches twice (strict-mode violation).
+  await expect(page.getByText("cashew, sugar, ghee, cardamom.")).toBeVisible();
 });
 
 test("mithai PDP derives pack sizes around the seeded price", async ({page}) => {
@@ -78,15 +80,22 @@ test("mithai PDP quantity stepper feeds the cart", async ({page}) => {
 
   await page.getByTestId("add-to-cart").click();
   await page.goto("/en/cart");
-  await expect(page.getByText("Qty 2")).toBeVisible();
+  // Batch 5 cart rewrite: quantities render via cart-qty-value testids.
+  await expect(page.getByTestId("cart-qty-value")).toHaveText("2");
 });
 
-test("mithai PDP buy now adds and routes to the cart", async ({page}) => {
+test("mithai PDP buy now adds and routes through sign-in when signed out", async ({page}) => {
   await page.goto("/en/mithai/kaju-katli");
 
   await page.getByTestId("buy-now").click();
-  await expect(page).toHaveURL(/\/en\/cart$/);
-  await expect(page.getByText(/Kaju Katli/)).toBeVisible();
+  // Checkout is customer-scoped: signed-out buyers land on sign-in with a
+  // deep link back to checkout (the cart survives in localStorage).
+  await expect(page).toHaveURL(/\/en\/sign-in\?/);
+  await expect(page).toHaveURL(/next=/);
+
+  // The item landed in the cart before the redirect.
+  await page.goto("/en/cart");
+  await expect(page.getByTestId("cart-line")).toContainText(/Kaju Katli/i);
 });
 
 test("mithai PDP trust strip carries the seeded chips and honest labels", async ({page}) => {
