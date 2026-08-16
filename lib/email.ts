@@ -6,10 +6,14 @@
 // draft conversion, etc.) has already succeeded and the user should not be
 // penalized for a notification failure.
 //
-// Body shape: currently a JSON dump of the lead record. When the body grows
-// beyond that (HTML template, branding, CTA links), extract to
-// `lib/email/templates.ts` — deferred for now (YAGNI).
+// Body shape: lead notifications remain a JSON dump (ops-facing). The
+// customer-facing abandoned-cart reminder moved to lib/email/templates.ts
+// (inline-styled brand HTML) — conversion batch, Batch A.
 import { Resend } from "resend";
+import {
+  abandonedCartEmailHtml,
+  type AbandonedCartDraft,
+} from "./email/templates";
 
 /** Shape of a Lead record passed to sendLeadNotification. */
 export interface LeadPayload {
@@ -57,4 +61,39 @@ export async function sendLeadNotification(
     // Log and continue. Common cause in prod: sender domain not verified.
     console.error("[email] Resend send failed:", error);
   }
+}
+
+/**
+ * Send the abandoned-cart reminder to the shopper. Same contract as
+ * sendLeadNotification: no-op (with a warning) when RESEND_API_KEY is
+ * unset, never throws. Returns true when a send was attempted, false when
+ * skipped — the cron only stamps reminderSentAt on true, so a box without
+ * the key never burns a draft's one-and-only reminder.
+ */
+export async function sendAbandonedCartReminder(
+  to: string,
+  draft: AbandonedCartDraft,
+  productNames: string[],
+): Promise<boolean> {
+  if (!resend) {
+    if (process.env.NODE_ENV !== "test") {
+      console.warn("[email] RESEND_API_KEY missing; skipping send.");
+    }
+    return false;
+  }
+
+  const { error } = await resend.emails.send({
+    from: "Mishran <hello@mishran.shop>",
+    to,
+    subject: "Your Mishran cart is still waiting",
+    html: abandonedCartEmailHtml(draft, productNames),
+  });
+
+  if (error) {
+    // Log and continue — recovery is best-effort; the cron still marks the
+    // draft as reminded so a provider outage does not spam retries.
+    console.error("[email] Resend send failed:", error);
+    return true;
+  }
+  return true;
 }

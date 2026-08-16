@@ -1,5 +1,7 @@
 README.md
 build.gradle
+docs/AccountLoyaltyGet200Response.md
+docs/AccountLoyaltyGet200ResponseData.md
 docs/AccountLoyaltyPassGet200Response.md
 docs/AccountLoyaltyPassGet200ResponseData.md
 docs/Address.md
@@ -79,6 +81,10 @@ docs/RazorpayCreateOrderResponse.md
 docs/RazorpayVerifyRequest.md
 docs/RazorpayVerifyResponse.md
 docs/RefreshResponse.md
+docs/Review.md
+docs/ReviewInput.md
+docs/ReviewsApi.md
+docs/ReviewsPost200Response.md
 docs/ServiceableResponse.md
 docs/Snack.md
 docs/SnackRetailer.md
@@ -104,6 +110,7 @@ src/main/kotlin/com/mishran/api/apis/LoyaltyApi.kt
 src/main/kotlin/com/mishran/api/apis/NotificationsApi.kt
 src/main/kotlin/com/mishran/api/apis/OrdersApi.kt
 src/main/kotlin/com/mishran/api/apis/PaymentsApi.kt
+src/main/kotlin/com/mishran/api/apis/ReviewsApi.kt
 src/main/kotlin/com/mishran/api/apis/StoriesApi.kt
 src/main/kotlin/com/mishran/api/apis/WalletApi.kt
 src/main/kotlin/com/mishran/api/infrastructure/ApiAbstractions.kt
@@ -123,6 +130,8 @@ src/main/kotlin/com/mishran/api/infrastructure/ResponseExtensions.kt
 src/main/kotlin/com/mishran/api/infrastructure/Serializer.kt
 src/main/kotlin/com/mishran/api/infrastructure/URIAdapter.kt
 src/main/kotlin/com/mishran/api/infrastructure/UUIDAdapter.kt
+src/main/kotlin/com/mishran/api/models/AccountLoyaltyGet200Response.kt
+src/main/kotlin/com/mishran/api/models/AccountLoyaltyGet200ResponseData.kt
 src/main/kotlin/com/mishran/api/models/AccountLoyaltyPassGet200Response.kt
 src/main/kotlin/com/mishran/api/models/AccountLoyaltyPassGet200ResponseData.kt
 src/main/kotlin/com/mishran/api/models/Address.kt
@@ -192,6 +201,9 @@ src/main/kotlin/com/mishran/api/models/RazorpayCreateOrderResponse.kt
 src/main/kotlin/com/mishran/api/models/RazorpayVerifyRequest.kt
 src/main/kotlin/com/mishran/api/models/RazorpayVerifyResponse.kt
 src/main/kotlin/com/mishran/api/models/RefreshResponse.kt
+src/main/kotlin/com/mishran/api/models/Review.kt
+src/main/kotlin/com/mishran/api/models/ReviewInput.kt
+src/main/kotlin/com/mishran/api/models/ReviewsPost200Response.kt
 src/main/kotlin/com/mishran/api/models/ServiceableResponse.kt
 src/main/kotlin/com/mishran/api/models/Snack.kt
 src/main/kotlin/com/mishran/api/models/SnackRetailer.kt
@@ -200,3 +212,9 @@ src/main/kotlin/com/mishran/api/models/StoriesGet200ResponseData.kt
 src/main/kotlin/com/mishran/api/models/StoriesSlugGet200Response.kt
 src/main/kotlin/com/mishran/api/models/Story.kt
 src/main/kotlin/com/mishran/api/models/StoryDetail.kt
+src/test/kotlin/com/mishran/api/apis/ReviewsApiTest.kt
+src/test/kotlin/com/mishran/api/models/AccountLoyaltyGet200ResponseDataTest.kt
+src/test/kotlin/com/mishran/api/models/AccountLoyaltyGet200ResponseTest.kt
+src/test/kotlin/com/mishran/api/models/ReviewInputTest.kt
+src/test/kotlin/com/mishran/api/models/ReviewTest.kt
+src/test/kotlin/com/mishran/api/models/ReviewsPost200ResponseTest.kt

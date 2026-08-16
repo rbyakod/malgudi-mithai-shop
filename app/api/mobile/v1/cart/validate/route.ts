@@ -24,8 +24,9 @@ import { config as appConfig } from '../../../../../../lib/config';
 //     fresh-tier pincodes,
 //   - persists a tamper-evident cart snapshot whose items carry
 //     unit/priceInPaise/packLabel/image and whose totals are real
-//     (subtotal + flat delivery fee by tier from lib/config; taxes are 0
-//     — MRP-inclusive GST),
+//     (subtotal + flat delivery fee by tier from lib/config, waived at or
+//     above the tier's free-delivery threshold; taxes are 0 —
+//     MRP-inclusive GST),
 //   - normalizes iOS relative slot tokens ("today"/"morning") so the
 //     Orders.slot date field validates downstream.
 
@@ -150,6 +151,10 @@ export async function POST(req: NextRequest) {
       {
         freshPaise: appConfig.deliveryFeeFreshPaise,
         shelfStablePaise: appConfig.deliveryFeeShelfStablePaise,
+      },
+      {
+        freshPaise: appConfig.freeDeliveryThresholdFreshPaise,
+        shelfStablePaise: appConfig.freeDeliveryThresholdShelfStablePaise,
       },
     );
 

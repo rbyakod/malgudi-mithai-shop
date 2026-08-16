@@ -59,6 +59,10 @@ import { RevokedTokens } from "./collections/RevokedTokens";
 import { SecurityEvents } from "./collections/SecurityEvents";
 // Mobile app (Task 19.1): Apple Wallet loyalty passes.
 import { WalletPasses } from "./collections/WalletPasses";
+// Conversion batch, Batch A: product reviews (capture-only) + server cart
+// drafts (abandonment recovery).
+import { Reviews } from "./collections/Reviews";
+import { CartDrafts } from "./collections/CartDrafts";
 // Globals (Task 8).
 import { BrandSettings } from "./globals/BrandSettings";
 import { NavSettings } from "./globals/NavSettings";
@@ -146,6 +150,9 @@ export default buildConfig({
     SecurityEvents,
     // Mobile app (Task 19.1): Apple Wallet loyalty passes.
     WalletPasses,
+    // Conversion batch, Batch A.
+    Reviews,
+    CartDrafts,
   ],
   globals: [
     BrandSettings,
@@ -175,6 +182,19 @@ export default buildConfig({
         }
       } catch (error) {
         console.warn("Failed to create TTL index on drafts.expiresAt:", error);
+      }
+      // Same 30-day TTL for cart drafts (abandonment recovery, Batch A).
+      try {
+        const cartDraftsModel = adapter.collections["cart-drafts"];
+        if (cartDraftsModel) {
+          await cartDraftsModel.collection.createIndex(
+            { expiresAt: 1 },
+            { expireAfterSeconds: 0 },
+          );
+          console.log("Created TTL index on cart-drafts.expiresAt");
+        }
+      } catch (error) {
+        console.warn("Failed to create TTL index on cart-drafts.expiresAt:", error);
       }
     },
   }),

@@ -145,6 +145,100 @@ describe('computeTotals', () => {
   });
 });
 
+describe('computeTotals free-delivery thresholds', () => {
+  const fees = { freshPaise: 4900, shelfStablePaise: 9900 };
+  // User-decided defaults: ₹999 fresh / ₹1,999 shelf-stable.
+  const thresholds = { freshPaise: 99900, shelfStablePaise: 199900 };
+
+  it('waives the fresh fee at or above the fresh threshold (>= is inclusive)', () => {
+    const at = computeTotals([{ priceInPaise: 99900, quantity: 1 }], 'fresh', fees, thresholds);
+    expect(at.deliveryFeeInPaise).toBe(0);
+    expect(at.totalInPaise).toBe(99900);
+
+    const above = computeTotals([{ priceInPaise: 100000, quantity: 1 }], 'fresh', fees, thresholds);
+    expect(above.deliveryFeeInPaise).toBe(0);
+  });
+
+  it('keeps the fresh fee just below the fresh threshold', () => {
+    const below = computeTotals([{ priceInPaise: 99899, quantity: 1 }], 'fresh', fees, thresholds);
+    expect(below.deliveryFeeInPaise).toBe(4900);
+    expect(below.totalInPaise).toBe(99899 + 4900);
+  });
+
+  it('waives the shelf fee at or above the shelf threshold', () => {
+    const at = computeTotals(
+      [{ priceInPaise: 199900, quantity: 1 }],
+      'shelf',
+      fees,
+      thresholds,
+    );
+    expect(at.deliveryFeeInPaise).toBe(0);
+    expect(at.totalInPaise).toBe(199900);
+  });
+
+  it('keeps the shelf fee below the shelf threshold even above the fresh one', () => {
+    // ₹1,000 clears the fresh threshold but NOT the shelf one — a shelf
+    // cart must not inherit the fresh tier's waiver.
+    const mixed = computeTotals(
+      [{ priceInPaise: 100000, quantity: 1 }],
+      'shelf',
+      fees,
+      thresholds,
+    );
+    expect(mixed.deliveryFeeInPaise).toBe(9900);
+  });
+
+  it('treats threshold 0 as disabled (fee always applies)', () => {
+    const disabled = computeTotals(
+      [{ priceInPaise: 999999, quantity: 1 }],
+      'fresh',
+      fees,
+      { freshPaise: 0, shelfStablePaise: 0 },
+    );
+    expect(disabled.deliveryFeeInPaise).toBe(4900);
+    const disabledShelf = computeTotals(
+      [{ priceInPaise: 999999, quantity: 1 }],
+      'shelf',
+      fees,
+      { freshPaise: 0, shelfStablePaise: 0 },
+    );
+    expect(disabledShelf.deliveryFeeInPaise).toBe(9900);
+  });
+
+  it('never waives for a null/missing tier (tier must be known)', () => {
+    // Mirrors the UI rule: thresholds only apply once a pincode resolved a
+    // tier (pre-pincode estimates carry tier null/undefined). An 'unknown'
+    // tier value prices — and therefore waives — at the shelf-stable rate,
+    // exactly like the fee mapping above.
+    const unknown = computeTotals(
+      [{ priceInPaise: 999999, quantity: 1 }],
+      'unknown',
+      fees,
+      thresholds,
+    );
+    expect(unknown.deliveryFeeInPaise).toBe(0); // shelf threshold cleared
+    const nullTier = computeTotals(
+      [{ priceInPaise: 999999, quantity: 1 }],
+      null,
+      fees,
+      thresholds,
+    );
+    expect(nullTier.deliveryFeeInPaise).toBe(9900);
+    const missingTier = computeTotals(
+      [{ priceInPaise: 999999, quantity: 1 }],
+      undefined,
+      fees,
+      thresholds,
+    );
+    expect(missingTier.deliveryFeeInPaise).toBe(9900);
+  });
+
+  it('omitting thresholds keeps the historical fee behavior', () => {
+    const legacy = computeTotals([{ priceInPaise: 999999, quantity: 1 }], 'fresh', fees);
+    expect(legacy.deliveryFeeInPaise).toBe(4900);
+  });
+});
+
 describe('normalizeSlot', () => {
   afterEach(() => {
     vi.useRealTimers();
