@@ -75,17 +75,34 @@ struct EnquiryView: View {
                     TextField(L("enquiry.field.guests"), text: $viewModel.form.guests)
                         .keyboardType(.numberPad)
                         .accessibilityLabel("Number of guests")
+                    TextField(L("enquiry.field.budget"), text: $viewModel.form.budget)
+                        .accessibilityLabel("Budget")
+                    TextField(L("enquiry.field.mithai_preferences"), text: $viewModel.form.mithaiPreferences, axis: .vertical)
+                        .lineLimit(1...3)
+                        .accessibilityLabel("Mithai preferences")
+                    TextField(L("enquiry.field.packaging"), text: $viewModel.form.packaging, axis: .vertical)
+                        .lineLimit(1...3)
+                        .accessibilityLabel("Packaging")
                 }
             case .corporate:
                 Section("Corporate details") {
                     TextField(L("enquiry.field.company"), text: $viewModel.form.company)
                         .textInputAutocapitalization(.words)
                         .accessibilityLabel("Company name")
+                    TextField(L("enquiry.field.gstin"), text: $viewModel.form.gstin)
+                        .textInputAutocapitalization(.characters)
+                        .autocorrectionDisabled()
+                        .accessibilityLabel("GSTIN")
                     TextField(L("enquiry.field.quantity"), text: $viewModel.form.quantity)
                         .keyboardType(.numberPad)
                         .accessibilityLabel("Quantity")
                     DatePicker(L("enquiry.field.deadline"), selection: $viewModel.form.neededBy, displayedComponents: .date)
                         .accessibilityLabel("Needed by date")
+                    TextField(L("enquiry.field.occasion"), text: $viewModel.form.occasion)
+                        .accessibilityLabel("Occasion")
+                    TextField(L("enquiry.field.branding"), text: $viewModel.form.branding, axis: .vertical)
+                        .lineLimit(1...3)
+                        .accessibilityLabel("Branding")
                 }
             }
 

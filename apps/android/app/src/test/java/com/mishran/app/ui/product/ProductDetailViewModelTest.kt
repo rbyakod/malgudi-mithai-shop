@@ -7,8 +7,12 @@ package com.mishran.app.ui.product
 
 import androidx.lifecycle.SavedStateHandle
 import com.mishran.api.models.Product
+import com.mishran.api.models.ServiceableResponse
+import com.mishran.app.data.repository.AddressRepository
+import com.mishran.app.data.repository.BrandRepository
 import com.mishran.app.data.repository.CartRepository
 import com.mishran.app.data.repository.CatalogRepository
+import com.mishran.app.data.repository.SettingsRepository
 import com.mishran.app.ui.common.UiState
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -22,6 +26,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -31,6 +36,9 @@ class ProductDetailViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private lateinit var repository: CatalogRepository
     private lateinit var cartRepository: CartRepository
+    private lateinit var addressRepository: AddressRepository
+    private lateinit var settingsRepository: SettingsRepository
+    private lateinit var brandRepository: BrandRepository
 
     private val product = Product(
         id = "p1",
@@ -44,13 +52,29 @@ class ProductDetailViewModelTest {
         Dispatchers.setMain(dispatcher)
         repository = mockk()
         cartRepository = mockk()
+        addressRepository = mockk()
+        settingsRepository = mockk()
+        brandRepository = mockk()
+        // Parity batch: both init seams answer "nothing cached" by default,
+        // and the product lookup answers the happy path — per-test stubs
+        // recorded later take precedence in mockk.
+        coEvery { repository.getProduct(any()) } returns product
+        coEvery { settingsRepository.deliveryCheck() } returns null
+        coEvery { settingsRepository.setDeliveryCheck(any()) } returns Unit
+        coEvery { brandRepository.getSupportContact() } returns null
     }
 
     @After
     fun tearDown() = Dispatchers.resetMain()
 
-    private fun viewModel(slug: String = "kaju-katli") =
-        ProductDetailViewModel(repository, cartRepository, SavedStateHandle(mapOf("slug" to slug)))
+    private fun viewModel(slug: String = "kaju-katli") = ProductDetailViewModel(
+        repository,
+        cartRepository,
+        addressRepository,
+        settingsRepository,
+        brandRepository,
+        SavedStateHandle(mapOf("slug" to slug)),
+    )
 
     @Test
     fun `slug is read from the saved state handle`() {
@@ -161,5 +185,148 @@ class ProductDetailViewModelTest {
         coVerify(exactly = 1) { cartRepository.add(product, 1, fiveHundred) }
         boughtCollector.cancel()
         addedCollector.cancel()
+    }
+
+    // ---- Parity batch: "Check delivery" ----------------------------------
+
+    @Test
+    fun `a persisted snapshot restores the pincode and result without a refetch`() =
+        runTest(dispatcher) {
+            coEvery { settingsRepository.deliveryCheck() } returns
+                DeliveryCheckSnapshot("110001", "fresh", "New Delhi", 0).encode()
+
+            val vm = viewModel()
+            advanceUntilIdle()
+
+            assertEquals("110001", vm.pincode.value)
+            val state = vm.deliveryCheck.value
+            assertTrue(state is DeliveryCheckState.Serviceable)
+            state as DeliveryCheckState.Serviceable
+            assertEquals("fresh", state.tier)
+            assertEquals("New Delhi", state.city)
+            coVerify(exactly = 0) { addressRepository.checkServiceability(any()) }
+        }
+
+    @Test
+    fun `a malformed pincode flips to Invalid without a request`() = runTest(dispatcher) {
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        vm.onPincodeChange("1234")
+        vm.checkDelivery()
+        advanceUntilIdle()
+
+        assertTrue(vm.deliveryCheck.value is DeliveryCheckState.Invalid)
+        coVerify(exactly = 0) { addressRepository.checkServiceability(any()) }
+    }
+
+    @Test
+    fun `a serviceable answer renders the tier, city and SLA, and persists`() =
+        runTest(dispatcher) {
+            coEvery { addressRepository.checkServiceability("110001") } returns
+                ServiceableResponse(serviceable = true, tier = "shelf", city = "New Delhi", slaDays = 3)
+
+            val vm = viewModel()
+            advanceUntilIdle()
+
+            vm.onPincodeChange("110001")
+            vm.checkDelivery()
+            advanceUntilIdle()
+
+            val state = vm.deliveryCheck.value as DeliveryCheckState.Serviceable
+            assertEquals("110001", state.pincode)
+            assertEquals("shelf", state.tier)
+            assertEquals("New Delhi", state.city)
+            assertEquals(3, state.slaDays)
+            coVerify(exactly = 1) {
+                settingsRepository.setDeliveryCheck(
+                    DeliveryCheckSnapshot("110001", "shelf", "New Delhi", 3).encode(),
+                )
+            }
+        }
+
+    @Test
+    fun `a not-serviceable answer is surfaced, never persisted`() = runTest(dispatcher) {
+        coEvery { addressRepository.checkServiceability("700001") } returns
+            ServiceableResponse(serviceable = false)
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        vm.onPincodeChange("700001")
+        vm.checkDelivery()
+        advanceUntilIdle()
+
+        assertEquals(DeliveryCheckState.NotServiceable("700001"), vm.deliveryCheck.value)
+        coVerify(exactly = 0) { settingsRepository.setDeliveryCheck(any()) }
+    }
+
+    @Test
+    fun `an unreachable serviceability lookup degrades to Error`() = runTest(dispatcher) {
+        coEvery { addressRepository.checkServiceability(any()) } returns null
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        vm.onPincodeChange("110001")
+        vm.checkDelivery()
+        advanceUntilIdle()
+
+        assertEquals(DeliveryCheckState.Error, vm.deliveryCheck.value)
+    }
+
+    @Test
+    fun `pincode entry is clamped to six digits`() {
+        val vm = viewModel()
+        vm.onPincodeChange("1100019")
+        assertEquals("110001", vm.pincode.value)
+    }
+
+    // ---- Pure helpers (directly, no harness) ------------------------------
+
+    @Test
+    fun `isServiceablePincode accepts six digits with a non-zero lead`() {
+        assertTrue(isServiceablePincode("110001"))
+        assertFalse(isServiceablePincode("011001")) // leading zero
+        assertFalse(isServiceablePincode("11001")) // five digits
+        assertFalse(isServiceablePincode("11000a")) // non-digit
+        assertFalse(isServiceablePincode(""))
+    }
+
+    @Test
+    fun `snapshot encode and decode round-trip`() {
+        val snapshot = DeliveryCheckSnapshot("110001", "fresh", "New Delhi", null)
+        assertEquals("110001|fresh|New Delhi|", snapshot.encode())
+        assertEquals(snapshot, DeliveryCheckSnapshot.decode(snapshot.encode()))
+    }
+
+    @Test
+    fun `snapshot decode rejects malformed payloads`() {
+        assertEquals(null, DeliveryCheckSnapshot.decode("110001|fresh")) // too few parts
+        assertEquals(null, DeliveryCheckSnapshot.decode("|fresh|city|2")) // empty pincode
+        assertEquals(null, DeliveryCheckSnapshot.decode("110001||city|2")) // empty tier
+    }
+
+    @Test
+    fun `deliveryDaysLabel prefers same-day for fresh, SLA days otherwise`() {
+        assertEquals("same-day", deliveryDaysLabel("fresh", 0, "same-day"))
+        assertEquals("3 days", deliveryDaysLabel("shelf", 3, "same-day"))
+        assertEquals("", deliveryDaysLabel("shelf", null, "same-day"))
+    }
+
+    @Test
+    fun `buildProductWhatsAppMessage enumerates pack, price and quantity`() {
+        val oneKg = PackSize(label = "1 kg", priceLabel = "₹1,440 / 1 kg", grams = 1000)
+        val message = buildProductWhatsAppMessage(product.copy(displayPrice = "₹720 / 500g"), oneKg, 2)
+        assertTrue(message.contains("Kaju Katli"))
+        assertTrue(message.contains("1 kg · ₹1,440 / 1 kg"))
+        assertTrue(message.contains("Quantity: 2"))
+    }
+
+    @Test
+    fun `buildProductWhatsAppMessage falls back to the display price without a pack`() {
+        val message = buildProductWhatsAppMessage(product.copy(displayPrice = "₹720 / 500g"), null, 1)
+        assertTrue(message.contains("₹720 / 500g"))
+        assertTrue(message.contains("Quantity: 1"))
     }
 }

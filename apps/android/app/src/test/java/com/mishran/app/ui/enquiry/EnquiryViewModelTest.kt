@@ -124,7 +124,8 @@ class EnquiryViewModelTest {
             request.contact,
         )
         assertEquals(
-            mapOf("message" to "Dessert table", "eventDate" to "12 Nov 2026", "city" to "Mysuru", "guests" to "400"),
+            // Parity batch: the web wire shape — ISO date, guests as a number.
+            mapOf("message" to "Dessert table", "eventDate" to "2026-11-12", "city" to "Mysuru", "guests" to 400),
             request.payload,
         )
     }
@@ -137,7 +138,7 @@ class EnquiryViewModelTest {
             phone = "+919812345678",
             email = "arun@corp.example",
             company = "Acme Gifting",
-            quantity = "250 boxes",
+            quantity = "250",
             neededBy = "", // blank — dropped
             message = "Diwali hampers",
         ).toRequest()
@@ -145,7 +146,7 @@ class EnquiryViewModelTest {
         assertEquals("corporate", request.type)
         assertEquals("Acme Gifting", request.contact.company)
         assertEquals(
-            mapOf("message" to "Diwali hampers", "quantity" to "250 boxes"),
+            mapOf("message" to "Diwali hampers", "quantity" to 250),
             request.payload,
         )
     }

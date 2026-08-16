@@ -49,7 +49,8 @@ struct HomeView: View {
                 repository: CatalogRepository(client: MishranAPIClient(), cache: cache),
                 storyRepository: StoryRepository(client: MishranAPIClient(), context: container.mainContext),
                 verticalsRepository: VerticalsRepository(client: MishranAPIClient()),
-                heroRepository: HeroRepository(client: MishranAPIClient())
+                heroRepository: HeroRepository(client: MishranAPIClient()),
+                brandRepository: BrandRepository(client: MishranAPIClient())
             )
             viewModel = model
             await model.load()
@@ -76,9 +77,8 @@ struct HomeView: View {
         }
         ToolbarItemGroup(placement: .topBarTrailing) {
             NavigationLink(value: Route.cart) {
-                Label(L("nav.cart"), systemImage: "cart")
+                CartToolbarLabel()
             }
-            .accessibilityLabel(L("nav.cart"))
             NavigationLink(value: Route.orders) {
                 Label(L("nav.orders"), systemImage: "shippingbox")
             }
@@ -94,6 +94,10 @@ struct HomeView: View {
     private func content(_ viewModel: HomeViewModel) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                // Slim brand strip above everything: the live tagline when
+                // /brand carries one, else the bundled announcement line.
+                announcementStrip(viewModel.announcementText)
+
                 // Admin-curated carousel replaces the static hero when /hero
                 // resolves slides; empty/failed keeps the featured fallback.
                 if viewModel.hasHeroSlides {
@@ -104,7 +108,7 @@ struct HomeView: View {
                         router.push(route)
                     }
                 } else {
-                    hero(bestSellers: viewModel.bestSellers)
+                    hero(bestSellers: viewModel.bestSellers, viewModel: viewModel)
                 }
 
                 sectionHeader(L("home.best_sellers"))
@@ -112,6 +116,9 @@ struct HomeView: View {
 
                 sectionHeader(L("home.shop_by_vertical"))
                 verticalPortalsRow(viewModel)
+
+                sectionHeader(L("home.pillars.title"))
+                pillarsStrip()
 
                 if !viewModel.latestStories.isEmpty {
                     sectionHeader(L("home.journal"))
@@ -146,9 +153,25 @@ struct HomeView: View {
         .background(Color.mishranBrandCanvas)
     }
 
+    /// Slim one-line strip at the very top of Home content: the live brand
+    /// tagline (accent-on-tint capsule) or the bundled fallback line.
+    private func announcementStrip(_ text: String) -> some View {
+        Text(text)
+            .font(.mishranBodySm.weight(.semibold))
+            .foregroundStyle(Color.mishranBrandAccent)
+            .lineLimit(1)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, .mishranSpacingSm)
+            .padding(.horizontal, .mishranSpacingLg)
+            .background(Color.mishranBrandAccent.opacity(0.10))
+            .accessibilityAddTraits(.isStaticText)
+    }
+
     /// Photo hero over the first best seller's image, scrim, wordmark +
-    /// tagline + browse CTA (web home's counterpart; Android parity).
-    private func hero(bestSellers: [ProductEntity]) -> some View {
+    /// tagline + browse CTA (web home's counterpart; Android parity). The
+    /// wordmark/tagline use the LIVE brand copy when /brand carries any,
+    /// else the bundled app.* strings.
+    private func hero(bestSellers: [ProductEntity], viewModel: HomeViewModel) -> some View {
         ZStack(alignment: .bottomLeading) {
             ProductRemoteImage(imageURL: bestSellers.first?.images?.first)
                 .frame(height: 260)
@@ -161,10 +184,10 @@ struct HomeView: View {
             )
             .allowsHitTesting(false)
             VStack(alignment: .leading, spacing: .mishranSpacingSm) {
-                Text(L("app.name"))
+                Text(viewModel.heroWordmark)
                     .font(.mishranDisplay.weight(.light))
                     .foregroundStyle(.white)
-                Text(L("app.tagline"))
+                Text(viewModel.heroTagline)
                     .font(.mishranBodyLg)
                     .foregroundStyle(.white.opacity(0.85))
                 Button {
@@ -255,6 +278,56 @@ struct HomeView: View {
             .padding(.horizontal, .mishranSpacingLg)
             .padding(.vertical, .mishranSpacingXs)
         }
+    }
+
+    /// "Why Mishran" pillar strip (P3): four cards, journalRail's surface/
+    /// border language at a shorter height; each card pushes the journal
+    /// with its pillar preselected (Route.stories carries the pillar).
+    private func pillarsStrip() -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: .mishranSpacingMd) {
+                ForEach(HomeViewModel.whyMishranPillars) { card in
+                    pillarCard(card)
+                }
+            }
+            .padding(.horizontal, .mishranSpacingLg)
+            .padding(.vertical, .mishranSpacingXs)
+        }
+    }
+
+    /// One pillar card (extracted so the strip's ForEach stays cheap for
+    /// the type checker).
+    private func pillarCard(_ card: HomePillarCard) -> some View {
+        let title = L(card.titleKey)
+        return Button {
+            router.push(.stories(pillar: card.storyPillar))
+        } label: {
+            VStack(alignment: .leading, spacing: .mishranSpacingSm) {
+                Image(systemName: card.symbol)
+                    .font(.mishranBodyXl)
+                    .foregroundStyle(Color.mishranBrandAccent)
+                Text(title)
+                    .font(.mishranBodyMd.weight(.semibold))
+                    .foregroundStyle(Color.mishranBrandInk)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+            }
+            .padding(.mishranSpacingMd)
+            .frame(width: 150)
+            .frame(minHeight: 88, alignment: .topLeading)
+            .background(
+                RoundedRectangle(cornerRadius: .mishranRadiusMd)
+                    .fill(Color.mishranBrandSurface)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: .mishranRadiusMd)
+                    .strokeBorder(Color.mishranBrandAccent.opacity(0.15), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .frame(minHeight: 44)
+        .accessibilityLabel(title)
+        .accessibilityHint("Read the \(title) stories")
     }
 
     /// "From the journal": the three newest stories, best-sellers-rail

@@ -40,6 +40,30 @@ object DataStoreKeys {
     val BRAND_WHATSAPP_DIGITS: Preferences.Key<String> =
         stringPreferencesKey("brand_whatsapp_digits")
 
+    /**
+     * Brand display name from the brand-settings global (via GET /brand), null
+     * when unset. Cached beside the WhatsApp pair so Home's masthead + the
+     * announcement strip render offline exactly as on the first online visit.
+     */
+    val BRAND_NAME: Preferences.Key<String> = stringPreferencesKey("brand_name")
+
+    /** Brand one-line tagline, cached alongside [BRAND_NAME]; absent = unset. */
+    val BRAND_TAGLINE: Preferences.Key<String> = stringPreferencesKey("brand_tagline")
+
+    /**
+     * Catalog sort order wire value ("featured" / "name_asc" / "name_desc") —
+     * persisted so the chosen order survives restarts (web stores the same
+     * choice in localStorage).
+     */
+    val CATALOG_SORT: Preferences.Key<String> = stringPreferencesKey("catalog_sort")
+
+    /**
+     * The last PDP delivery check, pipe-encoded "pincode|tier|city|slaDays"
+     * (see ProductDetailViewModel's snapshot codec). Restored on later PDP
+     * visits without a refetch — matches the web's last-check memory.
+     */
+    val DELIVERY_CHECK: Preferences.Key<String> = stringPreferencesKey("delivery_check")
+
     /** Persisted locale tag (en, hi, kn, …) chosen by the user, if any. */
     val LOCALE: Preferences.Key<String> = stringPreferencesKey("locale")
 

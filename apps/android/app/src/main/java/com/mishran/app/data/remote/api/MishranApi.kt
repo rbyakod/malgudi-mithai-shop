@@ -288,19 +288,28 @@ data class DeleteResponse(
  *
  * The server enforces type + contact.name + contact.email; everything else is
  * optional and forwarded as typed contact columns or arbitrary payload keys.
+ * `payload` values are [Any] (not String) because the web lead shapes send
+ * count-like extras as JSON numbers (guests, quantity) and dates as ISO
+ * strings — Moshi's reflective adapter serializes Int/String values as-is.
+ * `source` marks the submitting surface; the gift builder sends
+ * "android-app" (mirroring the web gift-builder draft).
  */
 data class LeadSubmissionRequest(
-    /** "wedding" | "corporate" — drives which ops lane receives the lead. */
+    /** "wedding" | "corporate" | "gift-builder-draft". */
     val type: String,
     val contact: Contact,
-    /** Form extras (event date/city/guests, company/quantity/needed-by, message). */
-    val payload: Map<String, String> = emptyMap(),
+    /** Form extras (event date/city/guests, box options, message, …). */
+    val payload: Map<String, Any> = emptyMap(),
+    /** Submitting surface, when the shape carries one ("android-app"). */
+    val source: String? = null,
 ) {
     data class Contact(
         val name: String,
         val email: String,
         val phone: String? = null,
         val company: String? = null,
+        /** Corporate GSTIN, uppercase alnum-15; server column key is GSTIN. */
+        val GSTIN: String? = null,
     )
 }
 

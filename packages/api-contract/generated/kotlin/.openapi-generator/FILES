@@ -200,7 +200,3 @@ src/main/kotlin/com/mishran/api/models/StoriesGet200ResponseData.kt
 src/main/kotlin/com/mishran/api/models/StoriesSlugGet200Response.kt
 src/main/kotlin/com/mishran/api/models/Story.kt
 src/main/kotlin/com/mishran/api/models/StoryDetail.kt
-src/test/kotlin/com/mishran/api/apis/HeroApiTest.kt
-src/test/kotlin/com/mishran/api/models/HeroGet200ResponseTest.kt
-src/test/kotlin/com/mishran/api/models/HeroSlideTest.kt
-src/test/kotlin/com/mishran/api/models/HeroTest.kt

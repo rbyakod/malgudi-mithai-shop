@@ -172,4 +172,67 @@ final class ProductDetailViewModelTests: XCTestCase {
         XCTAssertNil(vm.product)
         XCTAssertEqual(vm.errorMessage, "No such sweet")
     }
+
+    // MARK: P3 quick add (catalog card)
+
+    private func quickAddFixture() -> ProductEntity {
+        ProductEntity(
+            id: "p1", slug: "kaju-katli", name: "Kaju Katli", family: "classic",
+            displayPrice: "₹720/kg"
+        )
+    }
+
+    func testQuickAddCreatesBareBasePackLine() throws {
+        ProductDetailViewModel.quickAddToCart(quickAddFixture(), in: container.mainContext)
+
+        let items = try container.mainContext.fetch(FetchDescriptor<CartItemEntity>())
+        XCTAssertEqual(items.count, 1)
+        XCTAssertEqual(items[0].productId, "p1", "base pack keys as the bare productId")
+        XCTAssertEqual(items[0].packLabel, nil, "quick-add lines carry no pack chip")
+        XCTAssertEqual(items[0].quantity, 1)
+        XCTAssertEqual(items[0].unitPricePaise, 72_000, "the verbatim displayPrice parses into paise")
+    }
+
+    func testQuickAddMergesWithItselfAndPDPBasePack() async throws {
+        // Two card taps → one line at 2.
+        ProductDetailViewModel.quickAddToCart(quickAddFixture(), in: container.mainContext)
+        ProductDetailViewModel.quickAddToCart(quickAddFixture(), in: container.mainContext)
+
+        // A PDP base-pack add on the same product merges by construction
+        // (both key the bare productId).
+        MockURLProtocol.routes["catalog/products/kaju-katli"] = (200, [:], json(detailJSON))
+        let vm = makeViewModel(slug: "kaju-katli")
+        await vm.load()
+        vm.quantity = 3
+        vm.addToCart()
+
+        let items = try container.mainContext.fetch(FetchDescriptor<CartItemEntity>())
+        XCTAssertEqual(items.count, 1, "quick adds and the PDP base pack share one line")
+        XCTAssertEqual(items[0].quantity, 5)
+    }
+
+    func testQuickAddStacksSeparatelyFromDerivedPackLines() async throws {
+        ProductDetailViewModel.quickAddToCart(quickAddFixture(), in: container.mainContext)
+
+        MockURLProtocol.routes["catalog/products/kaju-katli"] = (200, [:], json(packDetailJSON))
+        let vm = makeViewModel(slug: "kaju-katli")
+        await vm.load()
+        vm.selectPack(vm.packSizes[1]) // derived 500g rung
+        vm.addToCart()
+
+        let items = try container.mainContext.fetch(FetchDescriptor<CartItemEntity>())
+        XCTAssertEqual(items.count, 2, "a derived-pack line stacks beside the quick-add base line")
+        let byId = Dictionary(uniqueKeysWithValues: items.map { ($0.productId, $0) })
+        XCTAssertEqual(byId["p1"]?.quantity, 1)
+        XCTAssertEqual(byId["p1:500g"]?.quantity, 1)
+    }
+
+    func testQuickAddClampsAtMaxQuantity() throws {
+        ProductDetailViewModel.quickAddToCart(quickAddFixture(), quantity: 25, in: container.mainContext)
+        ProductDetailViewModel.quickAddToCart(quickAddFixture(), quantity: 25, in: container.mainContext)
+
+        let items = try container.mainContext.fetch(FetchDescriptor<CartItemEntity>())
+        XCTAssertEqual(items.count, 1)
+        XCTAssertEqual(items[0].quantity, 20, "the stepper's max rides the quick-add upsert too")
+    }
 }

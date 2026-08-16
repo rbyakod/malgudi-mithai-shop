@@ -2,11 +2,23 @@
 // Home-tab state off the offline-first catalog (Android HomeViewModel
 // parity): the screen derives its hero image, best-seller rail, and — since
 // P2 — the "Shop by vertical" portal row from the one list, with the story
-// repository feeding the "From the journal" rail. Derivations are
-// nonisolated pure functions so the featured/fallback and portal rules are
-// unit-testable without a repository.
+// repository feeding the "From the journal" rail. P3 parity adds the brand
+// copy feeds: the announcement strip + static-hero wordmark/tagline read the
+// cached GET /brand doc (bundled app.* strings stand in until it lands).
+// Derivations are nonisolated pure functions so the featured/fallback and
+// portal rules are unit-testable without a repository.
 import Foundation
 import Observation
+
+/// One "Why Mishran" pillar card (P3): a headline keyed to the i18n table
+/// plus the story pillar its tap filters the journal by. Static list — the
+/// mapping (milk→farm, modern→journal, …) mirrors the web's pillar strip.
+struct HomePillarCard: Equatable, Identifiable {
+    let id: String
+    let titleKey: String
+    let symbol: String
+    let storyPillar: String
+}
 
 @MainActor
 @Observable
@@ -16,6 +28,14 @@ final class HomeViewModel {
     /// "From the journal" rail length (en.json home.journal).
     nonisolated static let journalRailCount = 3
 
+    /// The four pillars, in strip order (home.pillars.*).
+    nonisolated static let whyMishranPillars: [HomePillarCard] = [
+        HomePillarCard(id: "milk", titleKey: "home.pillars.milk", symbol: "drop.fill", storyPillar: "farm"),
+        HomePillarCard(id: "karigar", titleKey: "home.pillars.karigar", symbol: "paintbrush.fill", storyPillar: "karigar"),
+        HomePillarCard(id: "karigari", titleKey: "home.pillars.karigari", symbol: "scroll.fill", storyPillar: "karigari"),
+        HomePillarCard(id: "modern", titleKey: "home.pillars.modern", symbol: "sparkles", storyPillar: "journal"),
+    ]
+
     private let repository: CatalogRepository
     /// P2 journal + verticals feeds — optional so tests (and a nil SwiftData
     /// container) can build the model without them.
@@ -23,10 +43,16 @@ final class HomeViewModel {
     private let verticalsRepository: VerticalsRepository?
     /// Admin-curated hero carousel (optional for the same reason).
     private let heroRepository: HeroRepository?
+    /// P3 brand copy (announcement strip + static hero) — optional likewise.
+    private let brandRepository: BrandRepository?
 
     private(set) var products: [ProductEntity] = []
     private(set) var stories: [StoryEntity] = []
     private(set) var portals: [VerticalPortal] = []
+    /// Live brand copy — nil until /brand answers (or forever offline), and
+    /// the view falls back to the bundled strings.
+    private(set) var brandName: String?
+    private(set) var brandTagline: String?
     /// True when the catalog refresh failed AND nothing was cached — the
     /// view swaps the rail's spinner for an error + retry row. Without it
     /// a dead base URL or offline first launch spins forever (the catalog
@@ -41,21 +67,25 @@ final class HomeViewModel {
         repository: CatalogRepository,
         storyRepository: StoryRepository? = nil,
         verticalsRepository: VerticalsRepository? = nil,
-        heroRepository: HeroRepository? = nil
+        heroRepository: HeroRepository? = nil,
+        brandRepository: BrandRepository? = nil
     ) {
         self.repository = repository
         self.storyRepository = storyRepository
         self.verticalsRepository = verticalsRepository
         self.heroRepository = heroRepository
+        self.brandRepository = brandRepository
         products = repository.products
         stories = storyRepository?.stories ?? []
     }
 
     func load() async {
-        // The hero fetch rides alongside the offline-first content — one
-        // parallel hop, never a gate: a slow/failed /hero can't delay the
-        // catalog, and its failure collapses to nil (static hero stays).
+        // The hero + brand fetches ride alongside the offline-first content
+        // — one parallel hop, never a gate: a slow/failed /hero or /brand
+        // can't delay the catalog, and failures collapse to nil (static
+        // hero + bundled copy stay).
         async let hero = heroRepository?.hero()
+        async let brand = brandRepository?.brand()
         loadFailed = false
         await repository.getCatalog()
         products = repository.products
@@ -74,6 +104,25 @@ final class HomeViewModel {
             heroSlides = fetched.slides
             heroAutoplayMs = fetched.autoplayMs
         }
+        if let copy = await brand {
+            brandName = copy.brandName
+            brandTagline = copy.tagline
+        }
+    }
+
+    /// Announcement-strip copy: the live tagline when /brand carries one,
+    /// else the bundled home.announcement line (never blank).
+    var announcementText: String {
+        Self.announcement(brandTagline: brandTagline)
+    }
+
+    /// Static hero wordmark/tagline with the live overrides applied
+    /// (brandName ?? app.name, tagline ?? app.tagline).
+    var heroWordmark: String { brandName ?? L("app.name") }
+    var heroTagline: String { brandTagline ?? L("app.tagline") }
+
+    nonisolated static func announcement(brandTagline: String?) -> String {
+        brandTagline ?? L("home.announcement")
     }
 
     /// Whether the curated carousel replaces the static hero (false until

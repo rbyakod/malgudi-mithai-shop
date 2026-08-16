@@ -32,12 +32,15 @@ object Routes {
     const val ACCOUNT = "account"
     const val ADDRESSES = "addresses"
     // P2 net-new surfaces.
-    const val STORIES = "stories"
+    /** Pattern with an optional pillar filter arg (Home's "Why Mishran" cards). */
+    const val STORIES = "stories?pillar={pillar}"
     const val STORY = "story/{slug}"
     const val ENQUIRY = "enquiry?type={type}"
     const val SNACK = "snack/{slug}"
     const val QSR_ITEM = "qsr/{slug}"
     const val MERCH_ITEM = "merch/{slug}"
+    // Parity batch: the gift-builder lead form (Account's "Build a gift" row).
+    const val GIFT = "gift"
 
     /** Deep-link URI pattern — must stay in lockstep with the manifest intent-filter. */
     const val ORDER_DEEPLINK_PATTERN = "mishran://order/{id}"
@@ -58,6 +61,14 @@ object Routes {
     }
     fun product(slug: String): String = "product/$slug"
     fun story(slug: String): String = "story/$slug"
+
+    /**
+     * Built STORIES route: bare "stories" (All pillars) or with the pillar
+     * preselected — the same optional-arg idiom as [catalog]; values are the
+     * Story.Pillar wire names ("farm", "karigar", …).
+     */
+    fun stories(pillar: String? = null): String =
+        if (pillar == null) "stories" else "stories?pillar=$pillar"
 
     /** Enquiry route; `type` presets the form (merch passes "corporate"). */
     fun enquiry(type: String? = null): String =

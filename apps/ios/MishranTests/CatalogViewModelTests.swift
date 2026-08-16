@@ -122,4 +122,49 @@ final class CatalogViewModelTests: XCTestCase {
         XCTAssertEqual(out.count, 1)
         XCTAssertEqual(CatalogViewModel.filter(products, searchText: "zzz", filters: CatalogFilters()).count, 0)
     }
+
+    // MARK: P3 — widened search matcher
+
+    func testMatcherHitsNameSlugStoryIngredientsFamilyAndTags() {
+        let product = ProductEntity(
+            id: "p9", slug: "rose-barfi", name: "Gulab Petal Barfi", family: "classic",
+            displayPrice: "₹480",
+            dietaryTags: ["rose", "eggless"],
+            ingredients: "Cashews, rose petals, cane sugar",
+            story: "A Lucknowi karigari classic perfumed with damask rose."
+        )
+        for query in [
+            "gulab",        // name
+            "rose-barfi",   // slug
+            "damask",       // story (long-form copy)
+            "cashews",      // ingredients
+            "classic",      // family raw value
+            "eggless",      // dietary tag
+            "ROSE",         // case-insensitive
+        ] {
+            XCTAssertTrue(CatalogViewModel.matches(product, searchText: query), "query \(query) should hit")
+        }
+        XCTAssertFalse(CatalogViewModel.matches(product, searchText: "laddoo"), "no haystack carries this")
+        XCTAssertTrue(CatalogViewModel.matches(product, searchText: "  "), "blank-ish query passes everything")
+        XCTAssertTrue(CatalogViewModel.matches(product, searchText: ""), "empty query passes everything")
+    }
+
+    func testMatcherIsDiacriticInsensitive() {
+        let product = ProductEntity(id: "p10", slug: "cafe-barfi", name: "Café Barfi", family: "classic")
+        XCTAssertTrue(CatalogViewModel.matches(product, searchText: "cafe"))
+    }
+
+    // MARK: P3 — sort composition
+
+    func testFilteredProductsNarrowsThenSorts() async {
+        MockURLProtocol.routes["catalog/products"] = (200, [:], json(productsJSON))
+        let vm = makeViewModel()
+        await vm.load()
+
+        vm.searchText = "kaju"
+        vm.sort = .nameDesc
+        XCTAssertEqual(vm.filteredProducts.map(\.name), ["Sugar-Free Kaju Katli", "Kaju Katli"], "survivors re-order under the active sort")
+        XCTAssertEqual(CatalogSort.load(from: UserDefaults.standard), .nameDesc, "the choice persists on change")
+        UserDefaults.standard.removeObject(forKey: CatalogSort.defaultsKey)
+    }
 }

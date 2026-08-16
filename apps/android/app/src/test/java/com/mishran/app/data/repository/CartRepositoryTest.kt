@@ -78,6 +78,18 @@ class CartRepositoryTest {
     }
 
     @Test
+    fun `a quick add (pack = null) merges into an existing bare-id line`() = runTest {
+        // PDP base-pack add first, then the catalog grid's quick add: both
+        // key the bare product id, so the quantities stack — one line.
+        repository.add(kajuKatli, quantity = 2, pack = null)
+        repository.add(kajuKatli, quantity = 1, pack = null)
+
+        assertEquals(1, table.size)
+        assertEquals(3, table.getValue("p1").quantity)
+        assertEquals(null, table.getValue("p1").packLabel)
+    }
+
+    @Test
     fun `setQuantity normalizes below-one values to one`() = runTest {
         repository.add(kajuKatli, quantity = 3)
         repository.setQuantity("p1", 0)

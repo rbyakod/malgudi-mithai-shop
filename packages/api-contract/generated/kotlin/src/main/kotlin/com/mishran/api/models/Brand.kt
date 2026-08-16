@@ -28,10 +28,13 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
- * Brand support contact for the apps' help surfaces. Only WhatsApp fields from the analytics-settings global are exposed — analytics IDs (GA4/Pixel/Hotjar) deliberately do NOT appear on this public endpoint. Falls back to the shared placeholder number when unset. 
+ * Brand support contact + display copy for the apps' help surfaces and home masthead. Only WhatsApp fields from the analytics-settings global are exposed — analytics IDs (GA4/Pixel/Hotjar) deliberately do NOT appear on this public endpoint. WhatsApp falls back to the shared placeholder number when unset; brand copy fields are null when the brand-settings global omits them (apps render localized fallback copy in that case). 
  *
  * @param whatsappNumber Display form, e.g. +91-98765-43210.
  * @param whatsappDigits Digits only, for wa.me deep links.
+ * @param brandName Brand name from the brand-settings global, null when unset.
+ * @param tagline One-line tagline from the brand-settings global, null when unset.
+ * @param positioning Short positioning statement from the brand-settings global, null when unset.
  */
 
 
@@ -43,7 +46,19 @@ data class Brand (
 
     /* Digits only, for wa.me deep links. */
     @Json(name = "whatsappDigits")
-    val whatsappDigits: kotlin.String
+    val whatsappDigits: kotlin.String,
+
+    /* Brand name from the brand-settings global, null when unset. */
+    @Json(name = "brandName")
+    val brandName: kotlin.String? = null,
+
+    /* One-line tagline from the brand-settings global, null when unset. */
+    @Json(name = "tagline")
+    val tagline: kotlin.String? = null,
+
+    /* Short positioning statement from the brand-settings global, null when unset. */
+    @Json(name = "positioning")
+    val positioning: kotlin.String? = null
 
 ) {
 

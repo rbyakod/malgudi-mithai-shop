@@ -7,6 +7,7 @@ package com.mishran.app.ui.cart
 
 import com.mishran.api.models.Product
 import com.mishran.app.data.local.entity.CartItemEntity
+import com.mishran.app.data.repository.BrandRepository
 import com.mishran.app.data.repository.CartRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -31,6 +32,7 @@ class CartViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private lateinit var repository: CartRepository
+    private lateinit var brandRepository: BrandRepository
 
     /** The live cart the mocked observeItems reads from. */
     private val table = MutableStateFlow<List<CartItemEntity>>(emptyList())
@@ -47,7 +49,11 @@ class CartViewModelTest {
     fun setUp() {
         Dispatchers.setMain(dispatcher)
         repository = mockk()
+        brandRepository = mockk()
         every { repository.observeItems() } returns table
+        // Parity batch: the WhatsApp button's digits seam — null keeps the
+        // placeholder, and no test here needs a real brand record.
+        coEvery { brandRepository.getSupportContact() } returns null
     }
 
     @After
@@ -60,7 +66,7 @@ class CartViewModelTest {
             line("p2", null, quantity = 1),
         )
 
-        val vm = CartViewModel(repository)
+        val vm = CartViewModel(repository, brandRepository)
         vm.state.backgroundCollect(this)
         advanceUntilIdle()
 
@@ -72,7 +78,7 @@ class CartViewModelTest {
 
     @Test
     fun `empty table yields the empty state`() = runTest(dispatcher) {
-        val vm = CartViewModel(repository)
+        val vm = CartViewModel(repository, brandRepository)
         vm.state.backgroundCollect(this)
 
         assertTrue(vm.state.value.isEmpty)
@@ -84,7 +90,7 @@ class CartViewModelTest {
     fun `add dispatches product and quantity to the repository`() = runTest(dispatcher) {
         coEvery { repository.add(any(), any()) } returns Unit
 
-        val vm = CartViewModel(repository)
+        val vm = CartViewModel(repository, brandRepository)
         vm.add(product, 3)
         advanceUntilIdle()
 
@@ -95,7 +101,7 @@ class CartViewModelTest {
     fun `add emits the lineAdded event after the write`() = runTest(dispatcher) {
         coEvery { repository.add(any(), any()) } returns Unit
 
-        val vm = CartViewModel(repository)
+        val vm = CartViewModel(repository, brandRepository)
         var fired = 0
         val collector = launch { vm.lineAdded.collect { fired++ } }
 
@@ -110,7 +116,7 @@ class CartViewModelTest {
     fun `increment and decrement delegate with the adjusted quantity`() = runTest(dispatcher) {
         coEvery { repository.setQuantity(any(), any()) } returns Unit
 
-        val vm = CartViewModel(repository)
+        val vm = CartViewModel(repository, brandRepository)
         vm.increment("p1", current = 2)
         vm.decrement("p1", current = 2)
         advanceUntilIdle()
@@ -124,7 +130,7 @@ class CartViewModelTest {
         coEvery { repository.remove(any()) } returns Unit
         coEvery { repository.clear() } returns Unit
 
-        val vm = CartViewModel(repository)
+        val vm = CartViewModel(repository, brandRepository)
         vm.remove("p1")
         vm.clear()
         advanceUntilIdle()
@@ -145,6 +151,39 @@ class CartViewModelTest {
     @Test
     fun `formatPaise renders sub-rupee amounts with two decimals`() {
         assertEquals("₹12.50", formatPaise(1250))
+    }
+
+    // ---- "Send order on WhatsApp" message builder (parity batch) ----------
+
+    @Test
+    fun `buildCartWhatsAppMessage enumerates every line and the total`() {
+        val message = buildCartWhatsAppMessage(
+            items = listOf(
+                line("p1", "₹720 / 500g", quantity = 2),
+                line("p2", "₹960 / 1 kg", quantity = 1),
+            ),
+            totalLabel = "₹2,400",
+        )
+        assertTrue(message.startsWith("Hi Mishran! I'd like to order:"))
+        assertTrue(message.contains("1. Sweet p1 × 2 — ₹720 / 500g"))
+        assertTrue(message.contains("2. Sweet p2 × 1 — ₹960 / 1 kg"))
+        assertTrue(message.endsWith("Total: ₹2,400"))
+    }
+
+    @Test
+    fun `buildCartWhatsAppMessage folds the pack label into the line name`() {
+        val packed = CartItemEntity(
+            productId = "p1",
+            slug = "kaju-katli",
+            name = "Kaju Katli",
+            packLabel = "500g",
+            imageUrl = null,
+            displayPrice = "₹720 / 500g",
+            quantity = 1,
+            addedAt = 0L,
+        )
+        val message = buildCartWhatsAppMessage(listOf(packed), totalLabel = "₹720")
+        assertTrue(message.contains("1. Kaju Katli (500g) × 1 — ₹720 / 500g"))
     }
 
     private fun line(productId: String, displayPrice: String?, quantity: Int) = CartItemEntity(

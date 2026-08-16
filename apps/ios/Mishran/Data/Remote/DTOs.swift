@@ -232,18 +232,43 @@ enum CatalogResult: Equatable {
     case notModified
 }
 
-// MARK: - Brand (P1 parity: WhatsApp support)
+// MARK: - Brand (P1 parity: WhatsApp support; P3 parity: brand copy)
 
-/// GET /brand — public support contact ({data:{whatsappNumber,whatsappDigits}}).
-/// Only the WhatsApp fields of the analytics-settings global are exposed;
-/// analytics IDs deliberately never appear on this endpoint. Both fields are
-/// contract-required, so decoding failures fall to the repository's
-/// hardcoded fallback number.
+/// GET /brand — public support contact + brand copy
+/// ({data:{whatsappNumber,whatsappDigits,brandName?,tagline?,positioning?}}).
+/// Only those fields of the analytics-settings global are exposed; analytics
+/// IDs deliberately never appear on this endpoint. The WhatsApp pair is
+/// contract-required (decoding failures fall to the repository's hardcoded
+/// fallback number); the copy trio is nullable — an unset Payload global
+/// rides nothing and the callers fall back to the bundled app.* strings.
+/// Optionals keep the UserDefaults-cached JSON decodable: JSONDecoder
+/// ignores unknowns and missing keys decode as nil.
 struct BrandDTO: Codable, Equatable {
     /// Display form, e.g. "+91-98765-43210".
     let whatsappNumber: String
     /// Digits only, for wa.me deep links.
     let whatsappDigits: String
+    /// Live wordmark override (Home's static hero + fallbacks); nil = app.name.
+    let brandName: String?
+    /// Live tagline override (Home's announcement strip + static hero).
+    let tagline: String?
+    /// Positioning line (surfaced by later marketing surfaces; rides the
+    /// cache so it round-trips even while nothing renders it yet).
+    let positioning: String?
+
+    init(
+        whatsappNumber: String,
+        whatsappDigits: String,
+        brandName: String? = nil,
+        tagline: String? = nil,
+        positioning: String? = nil
+    ) {
+        self.whatsappNumber = whatsappNumber
+        self.whatsappDigits = whatsappDigits
+        self.brandName = brandName
+        self.tagline = tagline
+        self.positioning = positioning
+    }
 }
 
 // MARK: - Hero (admin-curated home carousel)
@@ -504,26 +529,53 @@ struct MerchPageDTO: Decodable, Equatable {
     let pageSize: Int
 }
 
-// MARK: - Leads (P2 enquiry)
+// MARK: - Leads (P2 enquiry; P3 wire parity)
+
+/// JSON scalar for a lead's free-form payload — the web lead shapes carry
+/// BOTH strings and numbers (wedding `guests`, corporate `quantity` ride as
+/// JSON numbers), so a `[String: String]` payload cannot express the
+/// contract. Scalars only: no lead field needs nested objects or floats.
+enum LeadPayloadValue: Encodable, Equatable, Hashable {
+    case string(String)
+    case number(Int)
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .string(let value): try container.encode(value)
+        case .number(let value): try container.encode(value)
+        }
+    }
+
+    /// Convenience for callers building the dictionary inline.
+    static func stringOrNil(_ value: String?) -> LeadPayloadValue? {
+        value.map { .string($0) }
+    }
+}
 
 /// POST /api/leads request body — mirrors the web LeadSubmission shape
 /// (type + nested contact; everything else rides the free-form payload).
 /// Required server-side: type, contact.name, contact.email. Synthesized
-/// Encodable omits nil optionals, so blank email/company ride nothing.
+/// Encodable omits nil optionals, so blank email/company/GSTIN ride nothing.
 struct LeadInputDTO: Encodable, Equatable {
     struct Contact: Encodable, Equatable {
         let name: String
         var email: String?
         var phone: String?
         var company: String?
+        /// Corporate GSTIN — the server column key is literally "GSTIN"
+        /// (uppercase), so the Swift property name matches it verbatim.
+        var GSTIN: String?
     }
 
-    /// Lead type literal (collections/Leads.ts options) — the app's enquiry
-    /// screen sends "wedding" or "corporate".
+    /// Lead type literal (collections/Leads.ts options) — the enquiry screen
+    /// sends "wedding"/"corporate", the gift builder "gift-builder-draft".
     let type: String
     let contact: Contact
-    /// Free-form extras: message + the type-specific fields.
-    var payload: [String: String]
+    /// Free-form extras: message + the type-specific fields, in the web
+    /// forms' exact shapes (eventDate/deadline ISO yyyy-MM-dd, guests/
+    /// quantity as numbers).
+    var payload: [String: LeadPayloadValue]
     var source: String?
 }
 

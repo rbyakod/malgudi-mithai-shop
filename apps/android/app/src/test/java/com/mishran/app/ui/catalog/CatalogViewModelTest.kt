@@ -12,6 +12,9 @@ import com.mishran.api.models.Merch
 import com.mishran.api.models.Product
 import com.mishran.api.models.QsrItem
 import com.mishran.api.models.Snack
+import com.mishran.app.data.local.entity.CartItemEntity
+import com.mishran.app.data.repository.CartRepository
+import com.mishran.app.data.repository.SettingsRepository
 import com.mishran.app.data.repository.VerticalRepository
 import com.mishran.app.domain.usecase.GetCatalogUseCase
 import io.mockk.coEvery
@@ -38,6 +41,8 @@ class CatalogViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private lateinit var getCatalog: GetCatalogUseCase
     private lateinit var verticalRepository: VerticalRepository
+    private lateinit var cartRepository: CartRepository
+    private lateinit var settingsRepository: SettingsRepository
 
     private val cachedList = listOf(product("p1", "Kaju Katli", Product.Family.classic, listOf("sugar-free")))
     private val freshList = listOf(
@@ -50,6 +55,13 @@ class CatalogViewModelTest {
         Dispatchers.setMain(dispatcher)
         getCatalog = mockk()
         verticalRepository = mockk()
+        cartRepository = mockk()
+        settingsRepository = mockk()
+        // Parity batch defaults: no persisted sort, empty live cart badge.
+        every { settingsRepository.catalogSortFlow() } returns flowOf(null)
+        coEvery { settingsRepository.setCatalogSort(any()) } returns Unit
+        every { cartRepository.observeItems() } returns flowOf(emptyList())
+        coEvery { cartRepository.add(any(), any(), any()) } returns Unit
     }
 
     @After
@@ -59,7 +71,7 @@ class CatalogViewModelTest {
     fun `first emission renders as Cached, second as Fresh`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(cachedList, freshList)
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.uiState.collectInTest(this)
         advanceUntilIdle()
 
@@ -71,7 +83,7 @@ class CatalogViewModelTest {
     fun `visible products track the latest emission`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(cachedList, freshList)
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.visibleProducts.collectInTest(this)
         advanceUntilIdle()
 
@@ -82,7 +94,7 @@ class CatalogViewModelTest {
     fun `search query filters visible products by name case-insensitively`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.visibleProducts.collectInTest(this)
         advanceUntilIdle()
 
@@ -95,7 +107,7 @@ class CatalogViewModelTest {
     fun `clearing search restores the full list`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.visibleProducts.collectInTest(this)
         advanceUntilIdle()
 
@@ -109,7 +121,7 @@ class CatalogViewModelTest {
     fun `family filter narrows to that family`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.visibleProducts.collectInTest(this)
         advanceUntilIdle()
 
@@ -126,7 +138,7 @@ class CatalogViewModelTest {
         )
         every { getCatalog(any()) } returns flowOf(both)
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.visibleProducts.collectInTest(this)
         advanceUntilIdle()
 
@@ -139,7 +151,7 @@ class CatalogViewModelTest {
     fun `clearFilters resets family and tags`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.activeFilters.collectInTest(this)
         advanceUntilIdle()
 
@@ -154,7 +166,7 @@ class CatalogViewModelTest {
     fun `available dietary tags are the distinct union across products`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.availableDietaryTags.collectInTest(this)
         advanceUntilIdle()
 
@@ -165,7 +177,7 @@ class CatalogViewModelTest {
     fun `refresh re-invokes the use case with force`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(freshList)
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.uiState.collectInTest(this)
         advanceUntilIdle()
 
@@ -179,7 +191,7 @@ class CatalogViewModelTest {
     fun `initial load is not forced`() = runTest(dispatcher) {
         every { getCatalog(any()) } returns flowOf(cachedList)
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.uiState.collectInTest(this)
         advanceUntilIdle()
 
@@ -196,7 +208,7 @@ class CatalogViewModelTest {
         coEvery { verticalRepository.getQsrItems() } returns Result.success(emptyList())
         coEvery { verticalRepository.getMerch() } returns Result.success(emptyList())
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.verticalState.collectInTest(this)
         advanceUntilIdle()
 
@@ -215,7 +227,7 @@ class CatalogViewModelTest {
         coEvery { verticalRepository.getQsrItems() } returns Result.success(emptyList())
         coEvery { verticalRepository.getMerch() } returns Result.success(emptyList())
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         val emissions = mutableListOf<VerticalListing>()
         // Child of the test scope, not backgroundScope: under the virtual
         // scheduler a backgroundScope subscriber gets the initial value but
@@ -245,7 +257,7 @@ class CatalogViewModelTest {
         coEvery { verticalRepository.getQsrItems() } returns Result.failure(IOException("offline"))
         coEvery { verticalRepository.getMerch() } returns Result.success(emptyList())
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.verticalState.collectInTest(this)
         advanceUntilIdle()
 
@@ -267,7 +279,7 @@ class CatalogViewModelTest {
             if (fail) Result.failure(IOException("offline")) else Result.success(listOf(merch))
         }
 
-        val vm = CatalogViewModel(getCatalog, verticalRepository, SavedStateHandle())
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
         vm.verticalState.collectInTest(this)
         advanceUntilIdle()
 
@@ -291,6 +303,8 @@ class CatalogViewModelTest {
         val deepLinked = CatalogViewModel(
             getCatalog,
             verticalRepository,
+            cartRepository,
+            settingsRepository,
             SavedStateHandle(mapOf("vertical" to "merch")),
         )
         deepLinked.verticalState.collectInTest(this)
@@ -300,6 +314,8 @@ class CatalogViewModelTest {
         val bogus = CatalogViewModel(
             getCatalog,
             verticalRepository,
+            cartRepository,
+            settingsRepository,
             SavedStateHandle(mapOf("vertical" to "nope")),
         )
         bogus.verticalState.collectInTest(this)
@@ -326,6 +342,119 @@ class CatalogViewModelTest {
         val hits = filterProducts(freshList, "pak", CatalogFilters(family = Product.Family.regional))
         assertEquals(listOf(freshList[1]), hits)
         assertTrue(filterProducts(freshList, "pak", CatalogFilters(family = Product.Family.classic)).isEmpty())
+    }
+
+    // ---- widened search matcher (parity batch) -----------------------------
+
+    @Test
+    fun `query matches the long description`() {
+        val wordy = product("p9", "Motichur Ladoo", Product.Family.classic, emptyList())
+            .copy(story = "Made the Bikaner way with boondi fried in ghee.")
+        assertEquals(listOf(wordy), filterProducts(listOf(wordy, freshList[1]), "boondi", CatalogFilters()))
+    }
+
+    @Test
+    fun `query matches the family wire value`() {
+        val regional = freshList[1] // Mysore Pak, family regional
+        assertEquals(listOf(regional), filterProducts(freshList, "regional", CatalogFilters()))
+    }
+
+    @Test
+    fun `query matches a dietary tag`() {
+        // sugar-free lives on p1 (Kaju Katli), eggless only on p2 (Mysore Pak).
+        assertEquals(listOf(freshList[0]), filterProducts(freshList, "sugar-free", CatalogFilters()))
+        assertEquals(listOf(freshList[1]), filterProducts(freshList, "eggless", CatalogFilters()))
+    }
+
+    // ---- sort (parity batch) ------------------------------------------------
+
+    @Test
+    fun `featured sort puts flagged rows first, ties by name`() {
+        val zFeatured = product("p1", "Zedo", Product.Family.classic, emptyList()).copy(featured = true)
+        val aFeatured = product("p2", "Aloo", Product.Family.classic, emptyList()).copy(featured = true)
+        val plain = product("p3", "Beta", Product.Family.classic, emptyList())
+        assertEquals(
+            listOf(aFeatured, zFeatured, plain),
+            sortProducts(listOf(plain, zFeatured, aFeatured), CatalogSortOrder.FEATURED),
+        )
+    }
+
+    @Test
+    fun `name sorts compare lowercase both directions`() {
+        val b = product("p1", "Beta", Product.Family.classic, emptyList())
+        val a = product("p2", "apple", Product.Family.classic, emptyList())
+        assertEquals(listOf(a, b), sortProducts(listOf(b, a), CatalogSortOrder.NAME_ASC))
+        assertEquals(listOf(b, a), sortProducts(listOf(b, a), CatalogSortOrder.NAME_DESC))
+    }
+
+    @Test
+    fun `the persisted sort order seeds the choice and changes persist`() = runTest(dispatcher) {
+        every { getCatalog(any()) } returns flowOf(cachedList)
+        every { settingsRepository.catalogSortFlow() } returns flowOf("name_desc")
+
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
+        vm.visibleProducts.collectInTest(this)
+        advanceUntilIdle()
+
+        assertEquals(CatalogSortOrder.NAME_DESC, vm.sortOrder.value)
+
+        vm.onSortChange(CatalogSortOrder.NAME_ASC)
+        advanceUntilIdle()
+        coVerify(exactly = 1) { settingsRepository.setCatalogSort("name_asc") }
+    }
+
+    @Test
+    fun `an unknown persisted sort value falls back to Featured`() {
+        assertEquals(CatalogSortOrder.FEATURED, CatalogSortOrder.fromWireValue("bogus"))
+        assertEquals(CatalogSortOrder.FEATURED, CatalogSortOrder.fromWireValue(null))
+    }
+
+    // ---- cart badge + quick add (parity batch) ------------------------------
+
+    @Test
+    fun `badge count sums line quantities, not lines`() {
+        val lines = listOf(
+            CartItemEntity(productId = "p1", slug = "a", name = "A", quantity = 3, addedAt = 0L),
+            CartItemEntity(productId = "p2", slug = "b", name = "B", quantity = 1, addedAt = 1L),
+        )
+        assertEquals(4, cartBadgeCount(lines))
+        assertEquals(0, cartBadgeCount(emptyList()))
+    }
+
+    @Test
+    fun `badge count tracks the live cart`() = runTest(dispatcher) {
+        val table = kotlinx.coroutines.flow.MutableStateFlow(emptyList<CartItemEntity>())
+        every { cartRepository.observeItems() } returns table
+        every { getCatalog(any()) } returns flowOf(cachedList)
+
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
+        vm.cartCount.collectInTest(this)
+        advanceUntilIdle()
+        assertEquals(0, vm.cartCount.value)
+
+        table.value = listOf(
+            CartItemEntity(productId = "p1", slug = "a", name = "A", quantity = 2, addedAt = 0L),
+        )
+        advanceUntilIdle()
+        assertEquals(2, vm.cartCount.value)
+    }
+
+    @Test
+    fun `quickAdd writes the base pack as a bare-id line and confirms`() = runTest(dispatcher) {
+        every { getCatalog(any()) } returns flowOf(cachedList)
+
+        val vm = CatalogViewModel(getCatalog, verticalRepository, cartRepository, settingsRepository, SavedStateHandle())
+        var confirmed = 0
+        val collector = launch { vm.quickAdded.collect { confirmed++ } }
+        advanceUntilIdle()
+
+        vm.quickAdd(cachedList[0])
+        advanceUntilIdle()
+
+        // Bare productId line (pack = null) so a PDP base-pack add merges in.
+        coVerify(exactly = 1) { cartRepository.add(cachedList[0], 1, null) }
+        assertEquals(1, confirmed)
+        collector.cancel()
     }
 
     private fun product(

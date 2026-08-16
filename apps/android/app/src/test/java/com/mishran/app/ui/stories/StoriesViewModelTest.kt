@@ -6,6 +6,7 @@
 // CatalogViewModelTest's harness. NOTE: source-complete (no SDK).
 package com.mishran.app.ui.stories
 
+import androidx.lifecycle.SavedStateHandle
 import com.mishran.api.models.Story
 import com.mishran.app.data.repository.StoryRepository
 import io.mockk.coVerify
@@ -36,6 +37,13 @@ class StoriesViewModelTest {
         story("s1", "The Karigar"),
     )
 
+    /** Mixed pillars for the filter tests: farm, karigar, karigar (dup). */
+    private val mixedPillars = listOf(
+        story("s2", "Milk, on the road", Story.Pillar.farm),
+        story("s1", "The Karigar", Story.Pillar.karigar),
+        story("s3", "Hands of Bikaner", Story.Pillar.karigar),
+    )
+
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
@@ -49,7 +57,7 @@ class StoriesViewModelTest {
     fun `first emission renders as Cached, second as Fresh`() = runTest(dispatcher) {
         every { repository.getStories(any()) } returns flowOf(cachedList, freshList)
 
-        val vm = StoriesViewModel(repository)
+        val vm = StoriesViewModel(repository, SavedStateHandle())
         vm.uiState.collectInTest(this)
         advanceUntilIdle()
 
@@ -61,7 +69,7 @@ class StoriesViewModelTest {
     fun `an empty cache renders an empty Fresh list, not a stuck Loading`() = runTest(dispatcher) {
         every { repository.getStories(any()) } returns flowOf(emptyList(), emptyList())
 
-        val vm = StoriesViewModel(repository)
+        val vm = StoriesViewModel(repository, SavedStateHandle())
         vm.uiState.collectInTest(this)
         advanceUntilIdle()
 
@@ -73,7 +81,7 @@ class StoriesViewModelTest {
     fun `initial load is not forced`() = runTest(dispatcher) {
         every { repository.getStories(any()) } returns flowOf(cachedList)
 
-        val vm = StoriesViewModel(repository)
+        val vm = StoriesViewModel(repository, SavedStateHandle())
         vm.uiState.collectInTest(this)
         advanceUntilIdle()
 
@@ -85,7 +93,7 @@ class StoriesViewModelTest {
     fun `refresh re-collects with force = true and clears the refreshing flag`() = runTest(dispatcher) {
         every { repository.getStories(any()) } returns flowOf(freshList)
 
-        val vm = StoriesViewModel(repository)
+        val vm = StoriesViewModel(repository, SavedStateHandle())
         vm.uiState.collectInTest(this)
         advanceUntilIdle()
 
@@ -94,6 +102,64 @@ class StoriesViewModelTest {
 
         coVerify(exactly = 1) { repository.getStories(true) }
         assertEquals(false, vm.isRefreshing.value)
+    }
+
+    // ---- pillar filter (parity batch) --------------------------------------
+
+    @Test
+    fun `a pillar route arg seeds the filter`() = runTest(dispatcher) {
+        every { repository.getStories(any()) } returns flowOf(mixedPillars)
+
+        val vm = StoriesViewModel(repository, SavedStateHandle(mapOf("pillar" to "farm")))
+        vm.visibleStories.collectInTest(this)
+        advanceUntilIdle()
+
+        assertEquals("farm", vm.selectedPillar.value)
+        assertEquals(listOf("Milk, on the road"), vm.visibleStories.value.map { it.title })
+    }
+
+    @Test
+    fun `an unknown pillar arg falls back to All`() = runTest(dispatcher) {
+        every { repository.getStories(any()) } returns flowOf(mixedPillars)
+
+        val vm = StoriesViewModel(repository, SavedStateHandle(mapOf("pillar" to "stale-link")))
+        vm.visibleStories.collectInTest(this)
+        advanceUntilIdle()
+
+        assertEquals(null, vm.selectedPillar.value)
+        assertEquals(mixedPillars, vm.visibleStories.value)
+    }
+
+    @Test
+    fun `onPillarChange narrows the list to the exact pillar`() = runTest(dispatcher) {
+        every { repository.getStories(any()) } returns flowOf(mixedPillars)
+
+        val vm = StoriesViewModel(repository, SavedStateHandle())
+        vm.visibleStories.collectInTest(this)
+        advanceUntilIdle()
+
+        vm.onPillarChange("karigar")
+        advanceUntilIdle()
+
+        assertEquals(2, vm.visibleStories.value.size)
+        assertTrue(vm.visibleStories.value.all { it.pillar.value == "karigar" })
+    }
+
+    @Test
+    fun `availablePillars derives first-seen order without duplicates`() = runTest(dispatcher) {
+        every { repository.getStories(any()) } returns flowOf(mixedPillars)
+
+        val vm = StoriesViewModel(repository, SavedStateHandle())
+        vm.availablePillars.collectInTest(this)
+        advanceUntilIdle()
+
+        assertEquals(listOf("farm", "karigar"), vm.availablePillars.value)
+    }
+
+    @Test
+    fun `filterStoriesByPillar keeps everything for null`() {
+        assertEquals(mixedPillars, filterStoriesByPillar(mixedPillars, null))
+        assertEquals(2, filterStoriesByPillar(mixedPillars, "karigar").size)
     }
 
     // ---- date formatter ---------------------------------------------------
@@ -109,14 +175,15 @@ class StoriesViewModelTest {
         assertEquals("not-a-date", formatStoryDate("not-a-date"))
     }
 
-    private fun story(id: String, title: String) = Story(
-        id = id,
-        slug = title.lowercase().replace(" ", "-"),
-        title = title,
-        pillar = Story.Pillar.karigar,
-        excerpt = "Excerpt of $title.",
-        publishedAt = "2026-07-30T09:00:00Z",
-    )
+    private fun story(id: String, title: String, pillar: Story.Pillar = Story.Pillar.karigar) =
+        Story(
+            id = id,
+            slug = title.lowercase().replace(" ", "-"),
+            title = title,
+            pillar = pillar,
+            excerpt = "Excerpt of $title.",
+            publishedAt = "2026-07-30T09:00:00Z",
+        )
 }
 
 /** Collect the flow in the background so stateIn's WhileSubscribed starts. */

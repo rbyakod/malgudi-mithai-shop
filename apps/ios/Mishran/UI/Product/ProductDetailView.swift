@@ -1,4 +1,8 @@
 // ProductDetailView.swift — Task 16.4 / P1 parity (Mishran Mobile Apps v1).
+// P3 parity: the pincode delivery-check section under the buy area, the
+// "Ask on WhatsApp" row (prefilled product enquiry off the cached brand
+// number), and the sticky bottom buy bar (compact-width idiom; the app is
+// iPhone-only, so the bar applies unconditionally).
 import SwiftData
 import SwiftUI
 
@@ -8,6 +12,14 @@ struct ProductDetailView: View {
     /// P1: Buy now adds the selected pack and jumps straight to checkout.
     var onBuyNow: (() -> Void)? = nil
 
+    /// P3: pincode serviceability check (restores the last saved result).
+    @State private var deliveryCheck: DeliveryCheckModel
+    /// P3: support digits for the WhatsApp row — cached BrandRepository
+    /// read, resolved once per appearance; the URL itself is composed at
+    /// tap time so the prefill reflects the CURRENT pack + quantity.
+    @State private var whatsappDigits: String?
+    @Environment(\.openURL) private var openURL
+
     init(
         slug: String,
         client: MishranAPIClient,
@@ -16,6 +28,7 @@ struct ProductDetailView: View {
         onBuyNow: (() -> Void)? = nil
     ) {
         _viewModel = State(initialValue: ProductDetailViewModel(slug: slug, client: client, context: context))
+        _deliveryCheck = State(initialValue: DeliveryCheckModel(client: client))
         self.onAddedToCart = onAddedToCart
         self.onBuyNow = onBuyNow
     }
@@ -90,6 +103,25 @@ struct ProductDetailView: View {
                         }
                     }
 
+                    // P3: pincode serviceability (between the buy area and
+                    // the detail rows — the web PDP's placement).
+                    DeliveryCheckSection(model: deliveryCheck)
+
+                    // P3: prefilled product enquiry over WhatsApp.
+                    Button {
+                        openWhatsAppEnquiry(for: product)
+                    } label: {
+                        Label(L("product.whatsapp.ask"), systemImage: "message.circle.fill")
+                            .font(.mishranBodyMd.weight(.semibold))
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(Color.mishranBrandAccent)
+                    .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
+                    .disabled(whatsappDigits == nil)
+                    .accessibilityLabel(L("product.whatsapp.ask"))
+                    .accessibilityHint("Opens WhatsApp with this product prefilled")
+
                     ForEach(detailRows(for: product), id: \.label) { row in
                         VStack(alignment: .leading, spacing: 4) {
                             Text(row.label)
@@ -121,10 +153,87 @@ struct ProductDetailView: View {
         }
         .navigationTitle(viewModel.product?.name ?? "Sweet")
         .navigationBarTitleDisplayMode(.inline)
+        // P3: sticky buy bar (web's buy-rail counterpart). safeAreaInset
+        // keeps the scroll content inset above the bar on every device;
+        // iPhone-only app → unconditional (no size-class gate needed).
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if let product = viewModel.product {
+                buyBar(for: product)
+            }
+        }
         .task {
             if viewModel.product == nil {
                 await viewModel.load()
             }
+        }
+        .task {
+            // Resolve the support digits once per appearance (cache-first);
+            // the row stays disabled until digits exist.
+            guard whatsappDigits == nil else { return }
+            let repository = BrandRepository(client: MishranAPIClient())
+            whatsappDigits = await repository.whatsappDigits()
+        }
+    }
+
+    /// Bottom bar: truncated name + "qty × price" + Add to cart. The
+    /// in-content Buy now button stays as-is — the bar is the always-visible
+    /// escape hatch for long detail scrolls, not a replacement.
+    private func buyBar(for product: ProductEntity) -> some View {
+        VStack(spacing: 0) {
+            Divider()
+            HStack(spacing: .mishranSpacingMd) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(product.name)
+                        .font(.mishranBodyMd.weight(.semibold))
+                        .lineLimit(1)
+                    if let price = viewModel.priceLine {
+                        Text("\(viewModel.quantity) × \(price)")
+                            .font(.mishranBodySm)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+                .accessibilityElement(children: .combine)
+
+                Spacer(minLength: .mishranSpacingSm)
+
+                Button {
+                    viewModel.addToCart()
+                    onAddedToCart?()
+                } label: {
+                    Label(L("product.add_to_cart"), systemImage: "cart.badge.plus")
+                        .font(.mishranBodyMd.weight(.semibold))
+                        .padding(.horizontal, .mishranSpacingSm)
+                        .frame(minHeight: 44)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Color.mishranBrandAccent)
+                .foregroundStyle(Color.mishranBrandCanvas)
+                .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
+                .accessibilityLabel(L("product.add_to_cart"))
+            }
+            .padding(.horizontal, .mishranSpacingLg)
+            .padding(.vertical, .mishranSpacingSm)
+        }
+        .background(.regularMaterial)
+    }
+
+    /// Compose the wa.me enquiry URL at TAP time (the prefill mirrors the
+    /// currently selected pack + quantity, not whatever was live at render)
+    /// and hand it to the system opener.
+    private func openWhatsAppEnquiry(for product: ProductEntity) {
+        guard let whatsappDigits else { return }
+        let text = WhatsAppMessages.productEnquiry(
+            name: product.name,
+            packLabel: ProductDetailViewModel.packLabel(
+                pack: viewModel.selectedPack,
+                displayPrice: product.displayPrice
+            ),
+            priceLine: viewModel.priceLine,
+            quantity: viewModel.quantity
+        )
+        if let url = BrandRepository.whatsappURL(digits: whatsappDigits, text: text) {
+            openURL(url)
         }
     }
 

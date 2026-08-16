@@ -209,8 +209,8 @@ struct DestinationView: View {
             AccountView(router: router, onSignedOut: onSignedOut)
         case .addresses:
             AddressesView()
-        case .stories:
-            StoriesView()
+        case let .stories(pillar):
+            StoriesView(initialPillar: pillar)
         case let .story(slug):
             StoryReaderView(
                 slug: slug,
@@ -219,6 +219,8 @@ struct DestinationView: View {
             )
         case let .enquiry(type):
             EnquiryView(initialType: type)
+        case .gift:
+            GiftView()
         }
     }
 }
@@ -320,6 +322,15 @@ private struct CatalogDestination: View {
                     }
                 } else {
                     ProgressView()
+                }
+            }
+        }
+        // P3: live cart-count entry (same CartToolbarLabel as Home's
+        // toolbar) — catalog shoppers shouldn't have to pop back to check.
+        .toolbar {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                NavigationLink(value: Route.cart) {
+                    CartToolbarLabel()
                 }
             }
         }

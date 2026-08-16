@@ -64,6 +64,7 @@ import com.mishran.app.ui.product.ProductDetailScreen
 import com.mishran.app.ui.stories.StoriesScreen
 import com.mishran.app.ui.stories.StoryReaderScreen
 import com.mishran.app.ui.enquiry.EnquiryScreen
+import com.mishran.app.ui.gift.GiftScreen
 import com.mishran.app.ui.verticals.MerchDetailScreen
 import com.mishran.app.ui.verticals.QsrDetailScreen
 import com.mishran.app.ui.verticals.SnackDetailScreen
@@ -223,7 +224,10 @@ fun MishranAppRoot() {
                         }
                     },
                     onStoryClick = { slug -> navController.navigate(Routes.story(slug)) },
-                    onJournal = { navController.navigate(Routes.STORIES) },
+                    onJournal = { navController.navigate(Routes.stories()) },
+                    // Parity batch: "Why Mishran" cards — journal with the
+                    // pillar preselected via the ?pillar= arg.
+                    onPillarClick = { pillar -> navController.navigate(Routes.stories(pillar)) },
                     onOrders = { navController.navigate(Routes.ORDERS) },
                 )
             }
@@ -266,11 +270,29 @@ fun MishranAppRoot() {
                 ProductDetailScreen(
                     onAddedToCart = { navController.popBackStack() },
                     onBuyNow = { navController.navigate(Routes.CHECKOUT) },
+                    // Parity batch: "Ask on WhatsApp" opens the wa.me link the
+                    // screen composed (product facts + selected pack).
+                    onWhatsApp = { url ->
+                        val chat = android.content.Intent(
+                            android.content.Intent.ACTION_VIEW,
+                            android.net.Uri.parse(url),
+                        )
+                        context.startActivity(chat)
+                    },
                 )
             }
             composable(Routes.CART) {
                 // Task 10.1: local cart. Checkout is Task 10.2-10.4.
+                // Parity batch: "Send order on WhatsApp" opens the wa.me link
+                // the screen composed (lines + estimated total).
                 CartScreen(
+                    onWhatsApp = { url ->
+                        val chat = android.content.Intent(
+                            android.content.Intent.ACTION_VIEW,
+                            android.net.Uri.parse(url),
+                        )
+                        context.startActivity(chat)
+                    },
                     onCheckout = { navController.navigate(Routes.CHECKOUT) },
                     onBrowse = {
                         navController.navigate(Routes.catalog()) {
@@ -369,7 +391,8 @@ fun MishranAppRoot() {
                 // digits until that lands — the ViewModel resolves which).
                 AccountScreen(
                     onOpenAddresses = { navController.navigate(Routes.ADDRESSES) },
-                    onOpenJournal = { navController.navigate(Routes.STORIES) },
+                    onOpenJournal = { navController.navigate(Routes.stories()) },
+                    onOpenGift = { navController.navigate(Routes.GIFT) },
                     onOpenEnquiry = { navController.navigate(Routes.enquiry()) },
                     onWhatsApp = { digits ->
                         val chat = android.content.Intent(
@@ -394,13 +417,30 @@ fun MishranAppRoot() {
                 AddressesScreen(onBack = { navController.popBackStack() })
             }
             // ---- P2 net-new surfaces ------------------------------------------
-            composable(Routes.STORIES) {
-                // Journal list (Home rail / Account row). Newest-first with a
-                // hero card; pull-to-refresh forces a network pass.
+            composable(
+                route = Routes.STORIES,
+                arguments = listOf(
+                    navArgument("pillar") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                ),
+            ) {
+                // Journal list (Home rail / Account row / Home's "Why Mishran"
+                // cards via ?pillar=). Newest-first with a hero card; the
+                // optional pillar preselects the filter chip; pull-to-refresh
+                // forces a network pass.
                 StoriesScreen(
                     onBack = { navController.popBackStack() },
                     onStoryClick = { slug -> navController.navigate(Routes.story(slug)) },
                 )
+            }
+            composable(Routes.GIFT) {
+                // Parity batch: the gift-builder lead form (Account's "Build a
+                // gift" row). Same one-shot POST /api/leads intake as the
+                // enquiry form, typed "gift-builder-draft".
+                GiftScreen(onBack = { navController.popBackStack() })
             }
             composable(
                 route = Routes.STORY,

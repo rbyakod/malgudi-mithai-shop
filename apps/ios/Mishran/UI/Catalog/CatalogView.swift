@@ -1,11 +1,16 @@
 // CatalogView.swift — Task 16.3 (Mishran Mobile Apps v1).
-// 2-column LazyVGrid of ProductCards with search + filter sheet.
+// 2-column LazyVGrid of ProductCards with search + filter sheet. P3 parity:
+// a sort menu (Featured / name A–Z / Z–A, persisted) under the search bar,
+// and a quick-add button on every card (base pack, one tap — the grid is
+// the mithai tab, so the whole grid quick-adds).
+import SwiftData
 import SwiftUI
 
 struct CatalogView: View {
     @Bindable var viewModel: CatalogViewModel
     var onSelect: ((ProductEntity) -> Void)? = nil
 
+    @Environment(\.modelContext) private var context
     @State private var isShowingFilters = false
 
     private let columns = [
@@ -25,6 +30,8 @@ struct CatalogView: View {
                 }
             }
 
+            sortRow
+
             if let message = viewModel.errorMessage {
                 Text(message)
                     .font(.mishranBodyMd)
@@ -39,6 +46,8 @@ struct CatalogView: View {
                     ForEach(viewModel.filteredProducts, id: \.id) { product in
                         ProductCard(product: product) {
                             onSelect?(product)
+                        } onQuickAdd: {
+                            ProductDetailViewModel.quickAddToCart(product, in: context)
                         }
                     }
                 }
@@ -72,6 +81,32 @@ struct CatalogView: View {
                 await viewModel.load()
             }
         }
+    }
+
+    /// Sort menu (iOS-native Menu + Picker idiom): label shows the active
+    /// mode, the picker re-orders the grid and persists the choice. ≥44pt
+    /// frame — the a11y audit reads the element frame, not the hit area.
+    private var sortRow: some View {
+        HStack {
+            Spacer()
+            Menu {
+                Picker(L("catalog.sort.label"), selection: $viewModel.sort) {
+                    ForEach(CatalogSort.allCases) { sort in
+                        Text(sort.displayName).tag(sort)
+                    }
+                }
+            } label: {
+                Label(viewModel.sort.displayName, systemImage: "arrow.up.arrow.down")
+                    .font(.mishranBodySm.weight(.semibold))
+                    .foregroundStyle(Color.mishranBrandInk)
+                    .padding(.horizontal, .mishranSpacingSm)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+            }
+            .accessibilityLabel(L("catalog.sort.label"))
+            .accessibilityValue(viewModel.sort.displayName)
+        }
+        .padding(.horizontal, .mishranSpacingSm)
     }
 }
 

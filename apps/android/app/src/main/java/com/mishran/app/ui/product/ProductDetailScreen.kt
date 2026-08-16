@@ -1,4 +1,4 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/product/ProductDetailScreen.kt — Task 9.4 / P1 parity.
+// apps/android/app/src/main/java/com/mishran/app/ui/product/ProductDetailScreen.kt — Task 9.4 / P1 parity / parity batch.
 //
 // Product detail: swipeable image gallery (Coil), name/price/freshness badge,
 // pack-size chip row, ingredients / shelf life / storage / story sections,
@@ -6,6 +6,13 @@
 // are owned by the caller — Task 10.1 wires the cart write; P1 parity adds
 // Buy now (same write, straight to checkout) and the pack chips (the
 // selected chip swaps the price line and scopes the cart line).
+//
+// Parity batch adds two service rows under the price/pack block:
+//   - "Check delivery" — 6-digit pincode + Check against the same
+//     serviceability endpoint checkout uses, with the result line (city ·
+//     tier · ETA), invalid/not-serviceable/error states, and a "Change" reset
+//     that keeps the field. A previously persisted check restores on entry.
+//   - "Ask on WhatsApp" — opens wa.me with an English product-facts prefill.
 package com.mishran.app.ui.product
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -26,9 +33,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -36,9 +45,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -61,11 +72,13 @@ import coil.compose.AsyncImage
 import com.mishran.api.models.Product
 import com.mishran.app.R
 import com.mishran.app.ui.common.UiState
+import com.mishran.app.util.buildWhatsAppUrl
 
 @Composable
 fun ProductDetailScreen(
     onAddedToCart: () -> Unit,
     onBuyNow: () -> Unit = {},
+    onWhatsApp: (url: String) -> Unit = {},
     viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -100,10 +113,10 @@ fun ProductDetailScreen(
         is UiState.Success -> ProductDetailContent(
             product = s.data,
             quantity = quantity,
-            onIncrement = viewModel::incrementQuantity,
-            onDecrement = viewModel::decrementQuantity,
+            viewModel = viewModel,
             onAddToCart = viewModel::addToCart,
             onBuyNow = viewModel::buyNow,
+            onWhatsApp = onWhatsApp,
         )
     }
 }
@@ -112,10 +125,10 @@ fun ProductDetailScreen(
 private fun ProductDetailContent(
     product: Product,
     quantity: Int,
-    onIncrement: () -> Unit,
-    onDecrement: () -> Unit,
+    viewModel: ProductDetailViewModel,
     onAddToCart: (PackSize?) -> Unit,
     onBuyNow: (PackSize?) -> Unit,
+    onWhatsApp: (url: String) -> Unit,
 ) {
     // Pack chips derive purely from the product (verbatim port of the web's
     // lib/mithai/packSizes.ts). Products whose price/weight don't parse get
@@ -179,6 +192,8 @@ private fun ProductDetailContent(
                 )
             }
 
+            DeliveryCheckSection(viewModel = viewModel)
+
             Section(stringResource(R.string.product_ingredients), product.ingredients)
             Section(stringResource(R.string.product_shelf_life), product.shelfLife)
             Section(stringResource(R.string.product_storage), product.storage)
@@ -187,6 +202,17 @@ private fun ProductDetailContent(
                 Section(label = stringResource(R.string.product_allergens), body = allergens.joinToString(", "))
             }
 
+            WhatsAppAskRow(
+                onClick = {
+                    onWhatsApp(
+                        buildWhatsAppUrl(
+                            digits = viewModel.whatsappDigits.value,
+                            message = buildProductWhatsAppMessage(product, selectedPack, quantity),
+                        ),
+                    )
+                },
+            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -194,7 +220,10 @@ private fun ProductDetailContent(
             ) {
                 Text(stringResource(R.string.product_quantity), style = MaterialTheme.typography.titleSmall)
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedIconButton(onClick = onDecrement, enabled = quantity > 1) {
+                    OutlinedIconButton(
+                        onClick = viewModel::decrementQuantity,
+                        enabled = quantity > 1,
+                    ) {
                         Icon(Icons.Filled.Remove, contentDescription = "One less")
                     }
                     Text(
@@ -202,7 +231,7 @@ private fun ProductDetailContent(
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
-                    OutlinedIconButton(onClick = onIncrement) {
+                    OutlinedIconButton(onClick = viewModel::incrementQuantity) {
                         Icon(Icons.Filled.Add, contentDescription = "One more")
                     }
                 }
@@ -263,6 +292,154 @@ private fun PackSizeRow(
                 text = stringResource(R.string.product_pack_estimate),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+/**
+ * "Check delivery" box under the price/pack block. Idle (or Invalid/Error)
+ * shows the pincode entry + Check; a landed Serviceable/NotServiceable answer
+ * shows the result row with a "Change" reset that keeps the field's text.
+ * Checking shows the spinner copy; Invalid/Error carry their own inline
+ * messages under the field.
+ */
+@Composable
+private fun DeliveryCheckSection(viewModel: ProductDetailViewModel) {
+    val pincode by viewModel.pincode.collectAsState()
+    val check by viewModel.deliveryCheck.collectAsState()
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = stringResource(R.string.product_delivery_label),
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.semantics { heading() },
+        )
+        when (val state = check) {
+            is DeliveryCheckState.Serviceable -> {
+                val tierLabel = when (state.tier) {
+                    TIER_SHELF_WIRE -> stringResource(R.string.product_delivery_tier_shelf)
+                    else -> stringResource(R.string.product_delivery_tier_fresh)
+                }
+                val daysLabel = deliveryDaysLabel(
+                    tier = state.tier,
+                    slaDays = state.slaDays,
+                    sameDayLabel = stringResource(R.string.product_delivery_same_day),
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(
+                            R.string.product_delivery_result,
+                            state.city.orEmpty(),
+                            tierLabel,
+                            daysLabel,
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.weight(1f),
+                    )
+                    TextButton(onClick = viewModel::resetDeliveryCheck) {
+                        Text(stringResource(R.string.product_delivery_change))
+                    }
+                }
+            }
+            is DeliveryCheckState.NotServiceable -> {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(
+                            R.string.product_delivery_not_serviceable,
+                            state.pincode,
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.weight(1f),
+                    )
+                    TextButton(onClick = viewModel::resetDeliveryCheck) {
+                        Text(stringResource(R.string.product_delivery_change))
+                    }
+                }
+            }
+            else -> {
+                // Entry form — also the shape shown for Checking (disabled),
+                // Invalid and Error (supporting text carries the difference).
+                OutlinedTextField(
+                    value = pincode,
+                    onValueChange = viewModel::onPincodeChange,
+                    label = { Text(stringResource(R.string.product_delivery_placeholder)) },
+                    isError = check is DeliveryCheckState.Invalid,
+                    singleLine = true,
+                    supportingText = when (check) {
+                        DeliveryCheckState.Invalid -> {
+                            { Text(stringResource(R.string.product_delivery_invalid)) }
+                        }
+                        DeliveryCheckState.Error -> {
+                            { Text(stringResource(R.string.product_delivery_error)) }
+                        }
+                        else -> null
+                    },
+                    trailingIcon = if (check is DeliveryCheckState.Checking) {
+                        {
+                            CircularProgressIndicator(
+                                modifier = Modifier.height(18.dp).width(18.dp),
+                                strokeWidth = 2.dp,
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                if (check !is DeliveryCheckState.Checking) {
+                    Button(
+                        onClick = viewModel::checkDelivery,
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                    ) {
+                        Text(stringResource(R.string.product_delivery_check))
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.product_delivery_checking),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** The shelf tier's wire value (mirrors checkout's TIER_SHELF). */
+private const val TIER_SHELF_WIRE = "shelf"
+
+/**
+ * "Ask on WhatsApp" support row — same clickable-Card idiom as Account's rows.
+ * The caller owns the ACTION_VIEW intent; this side only builds the prefilled
+ * wa.me URL from the current product facts.
+ */
+@Composable
+private fun WhatsAppAskRow(onClick: () -> Unit) {
+    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.padding(12.dp).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Chat,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+            Text(
+                text = stringResource(R.string.product_whatsapp_ask),
+                style = MaterialTheme.typography.titleSmall,
             )
         }
     }

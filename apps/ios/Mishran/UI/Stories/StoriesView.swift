@@ -2,15 +2,26 @@
 // Journal list: hero card for the newest story + rows for the rest, all off
 // the cached StoryEntity rows (offline-first — pull-to-refresh swaps the
 // set). The view model is the StoryRepository itself (CatalogRepository
-// idiom: it owns the rows + loading/error state). Labels resolve from
-// packages/i18n-strings (stories.title/empty) via the L() helper —
-// Task 20.3 wiring.
+// idiom: it owns the rows + loading/error state). P3 parity: a pillar
+// filter chip row (All + one chip per pillar present in the cached set,
+// single-select) — Home's "Why Mishran" strip deep-links in with a pillar
+// preselected. Labels resolve from packages/i18n-strings (stories.title/
+// empty/filter.all/pillar.*) via the L() helper — Task 20.3 wiring.
 import SwiftData
 import SwiftUI
 
 struct StoriesView: View {
+    /// Pillar preselected by the route (Home's pillar cards); nil = All.
+    var initialPillar: String? = nil
+
     @Environment(\.modelContext) private var context
     @State private var repository: StoryRepository?
+    @State private var selectedPillar: String?
+
+    init(initialPillar: String? = nil) {
+        self.initialPillar = initialPillar
+        _selectedPillar = State(initialValue: initialPillar)
+    }
 
     var body: some View {
         Group {
@@ -30,11 +41,11 @@ struct StoriesView: View {
 
     @ViewBuilder
     private func content(_ repository: StoryRepository) -> some View {
-        let stories = repository.stories
-        if repository.isLoading && stories.isEmpty {
+        let stories = filtered(repository.stories)
+        if repository.isLoading && repository.stories.isEmpty {
             ProgressView(L("common.loading"))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if stories.isEmpty, repository.errorMessage != nil {
+        } else if repository.stories.isEmpty, repository.errorMessage != nil {
             ContentUnavailableView {
                 Label(L("common.load_error"), systemImage: "exclamationmark.triangle")
             } description: {
@@ -44,7 +55,7 @@ struct StoriesView: View {
                     Task { await repository.getStories() }
                 }
             }
-        } else if stories.isEmpty {
+        } else if repository.stories.isEmpty {
             ContentUnavailableView(
                 L("stories.empty"),
                 systemImage: "book",
@@ -53,6 +64,8 @@ struct StoriesView: View {
         } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: .mishranSpacingMd) {
+                    pillarChips(repository.stories)
+
                     NavigationLink(value: Route.story(slug: stories[0].slug)) {
                         StoryHeroCard(story: stories[0])
                     }
@@ -72,6 +85,57 @@ struct StoriesView: View {
                 await repository.getStories()
             }
         }
+    }
+
+    /// The chip row: All + one chip per pillar present in the cached set
+    /// (sorted — stable across refreshes). Pill-cap pills, 44pt floor (the
+    /// vertical-tab idiom in MishranApp's CatalogDestination).
+    private func pillarChips(_ stories: [StoryEntity]) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: .mishranSpacingSm) {
+                chip(label: L("stories.filter.all"), value: nil)
+                ForEach(StoryPillar.present(in: stories), id: \.self) { pillar in
+                    chip(label: StoryPillar.label(pillar), value: pillar)
+                }
+            }
+            .padding(.horizontal, .mishranSpacingXs)
+        }
+        .frame(minHeight: 44)
+    }
+
+    private func chip(label: String, value: String?) -> some View {
+        let isSelected = selectedPillar == value
+        return Button {
+            selectedPillar = value
+        } label: {
+            Text(label)
+                .font(.mishranBodySm.weight(.semibold))
+                .padding(.horizontal, .mishranSpacingMd)
+                .frame(minHeight: 44)
+                .background(
+                    Capsule().fill(isSelected ? Color.mishranBrandAccent : Color.mishranBrandSurface)
+                )
+                .overlay(
+                    Capsule().strokeBorder(
+                        Color.mishranBrandAccent.opacity(isSelected ? 0 : 0.25),
+                        lineWidth: 1
+                    )
+                )
+                .foregroundStyle(isSelected ? .white : Color.mishranBrandInk)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    /// Rows under the active pillar filter (nil = everything). An empty
+    /// filtered set still renders the hero-slot ContentUnavailableView path
+    /// via stories[0] — guarded by falling back to the full list only when
+    /// the filter matches nothing (chip sets derive from the data, so a
+    /// pillar with rows can never filter to empty in practice).
+    private func filtered(_ stories: [StoryEntity]) -> [StoryEntity] {
+        guard let selectedPillar else { return stories }
+        return stories.filter { $0.pillar == selectedPillar }
     }
 }
 

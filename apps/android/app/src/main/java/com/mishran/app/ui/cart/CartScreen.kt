@@ -1,9 +1,14 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/cart/CartScreen.kt — Task 10.1.
+// apps/android/app/src/main/java/com/mishran/app/ui/cart/CartScreen.kt — Task 10.1 / parity batch.
 //
 // The cart: line items with quantity steppers + remove, an estimated-total
 // footer with a checkout CTA, and an empty state that routes to the catalog.
 // The total label says "est." because it is derived from display prices —
 // the server's cart-validate snapshot is the authoritative number.
+//
+// Parity batch: a "Send order on WhatsApp" outline button beside checkout —
+// it opens wa.me with every line enumerated + the estimated total (the
+// message builder is a pure function in CartViewModel). The caller owns the
+// ACTION_VIEW intent.
 package com.mishran.app.ui.cart
 
 import androidx.compose.foundation.layout.Arrangement
@@ -46,12 +51,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mishran.app.R
 import com.mishran.app.data.local.entity.CartItemEntity
+import com.mishran.app.util.buildWhatsAppUrl
 import java.util.Locale
 
 @Composable
 fun CartScreen(
     onCheckout: () -> Unit,
     onBrowse: () -> Unit,
+    onWhatsApp: (url: String) -> Unit = {},
     viewModel: CartViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -105,6 +112,23 @@ fun CartScreen(
                     modifier = Modifier.fillMaxWidth().height(52.dp),
                 ) {
                     Text(stringResource(R.string.cart_checkout_items, state.itemCount))
+                }
+                OutlinedButton(
+                    onClick = {
+                        onWhatsApp(
+                            buildWhatsAppUrl(
+                                digits = viewModel.whatsappDigits.value,
+                                message = buildCartWhatsAppMessage(
+                                    items = state.items,
+                                    totalLabel = formatPaise(state.estimatedTotalPaise) +
+                                        if (state.hasUnpricedLines) "+" else "",
+                                ),
+                            ),
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.cart_whatsapp_send))
                 }
                 OutlinedButton(
                     onClick = viewModel::clear,

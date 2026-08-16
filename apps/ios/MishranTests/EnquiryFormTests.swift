@@ -1,10 +1,13 @@
-// EnquiryFormTests.swift — P2 (Mishran Mobile Apps v1).
+// EnquiryFormTests.swift — P2 (Mishran Mobile Apps v1); P3 wire parity.
 // Pure validation + request mapping for the Bulk & events form (AddressForm
-// pattern — no rendering): the submit gate (name/phone/message required,
-// email well-formed when present), the per-type payload extras, and the
-// LeadInputDTO encoding (nested contact, nil optionals omitted). Plus the
-// submitLead transport contract: the /api/leads route is PUBLIC, sits at
-// the site root (outside /api/mobile/v1), and answers BARE JSON.
+// pattern — no rendering): the submit gate (name/phone/email/message
+// required — email became required in P3 because the route always 400'd a
+// blank one — plus the GSTIN shape check), the per-type payload extras in
+// the web forms' EXACT shapes (guests/quantity as JSON numbers, deadline
+// key), and the LeadInputDTO encoding (nested contact with GSTIN, nil
+// optionals omitted). Plus the submitLead transport contract: the
+// /api/leads route is PUBLIC, sits at the site root (outside
+// /api/mobile/v1), and answers BARE JSON.
 import XCTest
 @testable import Mishran
 
@@ -40,10 +43,12 @@ final class EnquiryFormTests: XCTestCase {
         }
     }
 
-    func testEmailOptionalButValidatedWhenPresent() {
+    func testEmailRequiredAndValidated() {
+        // P3: email is REQUIRED — the server 400s a blank one, so the old
+        // "optional-but-validated" gate only deferred the failure to the wire.
         var form = validFixture()
         form.email = ""
-        XCTAssertTrue(form.isValid, "blank email passes the client gate")
+        XCTAssertFalse(form.isValid, "blank email must gate Submit")
 
         for email in ["not-an-email", "a@b", "a b@example.com", "@example.com"] {
             form.email = email
@@ -67,6 +72,9 @@ final class EnquiryFormTests: XCTestCase {
         var form = validFixture()
         form.city = "Mysuru  "
         form.guests = "300"
+        form.budget = "₹40,000–₹60,000"
+        form.mithaiPreferences = "Kaju katli, no khoya"
+        form.packaging = "Eco gift boxes"
 
         let input = form.input
 
@@ -75,28 +83,83 @@ final class EnquiryFormTests: XCTestCase {
         XCTAssertEqual(input.contact.email, "meera@example.com")
         XCTAssertEqual(input.contact.phone, "+919876543210")
         XCTAssertNil(input.contact.company, "blank company rides nothing")
+        XCTAssertNil(input.contact.GSTIN, "blank GSTIN rides nothing")
         XCTAssertEqual(input.source, "ios-app")
-        XCTAssertEqual(input.payload["city"], "Mysuru", "extras are trimmed")
-        XCTAssertEqual(input.payload["guests"], "300")
-        XCTAssertNotNil(input.payload["eventDate"], "the DatePicker always carries a date")
-        XCTAssertEqual(input.payload["message"], form.message)
+        XCTAssertEqual(input.payload["city"], .string("Mysuru"), "extras are trimmed")
+        XCTAssertEqual(input.payload["guests"], .number(300), "guests rides as a JSON number")
+        XCTAssertEqual(input.payload["budget"], .string("₹40,000–₹60,000"))
+        XCTAssertEqual(input.payload["mithaiPreferences"], .string("Kaju katli, no khoya"))
+        XCTAssertEqual(input.payload["packaging"], .string("Eco gift boxes"))
+        XCTAssertEqual(input.payload["eventDate"], .string(EnquiryForm.dayString(form.eventDate)))
+        XCTAssertEqual(input.payload["message"], .string(form.message))
         XCTAssertNil(input.payload["quantity"], "corporate-only extra never rides a wedding lead")
+        XCTAssertNil(input.payload["deadline"], "corporate-only date never rides a wedding lead")
     }
 
-    func testCorporateInputCarriesCompanyAndNeededBy() throws {
+    func testCorporateInputCarriesCompanyGstinAndDeadline() throws {
         var form = validFixture(type: .corporate)
         form.company = "Vertex Labs"
         form.quantity = "500"
-        form.email = ""
+        form.gstin = "29ABCDE1234F1Z5"
+        form.occasion = "Diwali"
+        form.branding = "Logo-embossed boxes"
 
         let input = form.input
 
         XCTAssertEqual(input.type, "corporate")
         XCTAssertEqual(input.contact.company, "Vertex Labs")
-        XCTAssertNil(input.contact.email, "blank email rides nothing")
-        XCTAssertEqual(input.payload["quantity"], "500")
-        XCTAssertNotNil(input.payload["neededBy"])
+        XCTAssertEqual(input.contact.GSTIN, "29ABCDE1234F1Z5")
+        XCTAssertEqual(input.payload["quantity"], .number(500), "quantity rides as a JSON number")
+        XCTAssertEqual(input.payload["deadline"], .string(EnquiryForm.dayString(form.neededBy)))
+        XCTAssertEqual(input.payload["occasion"], .string("Diwali"))
+        XCTAssertEqual(input.payload["branding"], .string("Logo-embossed boxes"))
         XCTAssertNil(input.payload["eventDate"], "wedding-only extra never rides a corporate lead")
+        XCTAssertNil(input.payload["city"], "wedding-only extra never rides a corporate lead")
+    }
+
+    // MARK: GSTIN
+
+    func testGstinValidationRegex() {
+        XCTAssertTrue(EnquiryForm.gstinIsValid("29ABCDE1234F1Z5"), "15 chars of digits + caps passes")
+        XCTAssertFalse(EnquiryForm.gstinIsValid(""), "blank is the gate's job, not the regex's")
+        XCTAssertFalse(EnquiryForm.gstinIsValid("29abcde1234f1z5"), "lowercase never matches")
+        XCTAssertFalse(EnquiryForm.gstinIsValid("29ABCDE1234F1Z"), "14 chars fails")
+        XCTAssertFalse(EnquiryForm.gstinIsValid("29ABCDE1234F1Z55"), "16 chars fails")
+        XCTAssertFalse(EnquiryForm.gstinIsValid("29ABCDE1234F1Z-"), "non-alphanumeric fails")
+        XCTAssertTrue(EnquiryForm.gstinIsValid("  29ABCDE1234F1Z5 "), "surrounding whitespace is trimmed")
+    }
+
+    func testGstinGatesSubmitWhenPresent() {
+        var form = validFixture(type: .corporate)
+        form.gstin = "29ABCDE1234F1Z5"
+        XCTAssertTrue(form.isValid)
+
+        for gstin in ["29ABCDE1234F1Z", "29ABCDE1234F1Z55", "29abcde1234f1z5"] {
+            form.gstin = gstin
+            XCTAssertFalse(form.isValid, "malformed GSTIN \(gstin.debugDescription) must gate Submit")
+        }
+
+        form.gstin = ""
+        XCTAssertTrue(form.isValid, "GSTIN stays optional end to end")
+    }
+
+    func testBlankWeddingExtrasRideNothing() {
+        var form = validFixture()
+        form.city = "   "
+        form.guests = ""
+        form.budget = ""
+        form.mithaiPreferences = ""
+        form.packaging = ""
+
+        let payload = form.payload
+
+        XCTAssertNil(payload["city"])
+        XCTAssertNil(payload["guests"])
+        XCTAssertNil(payload["budget"])
+        XCTAssertNil(payload["mithaiPreferences"])
+        XCTAssertNil(payload["packaging"])
+        XCTAssertNotNil(payload["eventDate"], "the DatePicker always carries a date")
+        XCTAssertNotNil(payload["message"])
     }
 
     func testLeadInputEncodesNestedContactAndOmitsBlankOptionals() throws {
@@ -116,8 +179,26 @@ final class EnquiryFormTests: XCTestCase {
         XCTAssertEqual(contact["phone"] as? String, "+919876543210")
         XCTAssertNil(contact["email"], "blank email must be omitted")
         XCTAssertNil(contact["company"], "blank company must be omitted")
+        XCTAssertNil(contact["GSTIN"], "blank GSTIN must be omitted")
         let payload = try XCTUnwrap(object["payload"] as? [String: Any])
         XCTAssertEqual(payload["message"] as? String, form.message)
+    }
+
+    func testPayloadEncodesCountsAsJsonNumbersAndGstinOnContact() throws {
+        var form = validFixture(type: .corporate)
+        form.quantity = "500"
+        form.gstin = "29ABCDE1234F1Z5"
+
+        let data = try JSONEncoder().encode(form.input)
+        let object = try XCTUnwrap(
+            try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        )
+
+        let payload = try XCTUnwrap(object["payload"] as? [String: Any])
+        XCTAssertEqual(payload["quantity"] as? Int, 500, "counts ride as JSON numbers, not strings")
+        XCTAssertNotNil(payload["deadline"] as? String)
+        let contact = try XCTUnwrap(object["contact"] as? [String: Any])
+        XCTAssertEqual(contact["GSTIN"] as? String, "29ABCDE1234F1Z5", "GSTIN rides the contact verbatim")
     }
 
     func testLeadResponseDecodesBareJSON() throws {
