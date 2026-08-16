@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Path depth: app/api/mobile/v1/auth/otp/verify/ = 7 dirs deep -> 7 ../ to repo root.
 
@@ -71,11 +71,24 @@ function makeReq(body: unknown) {
 }
 
 describe('POST /auth/otp/verify', () => {
+  const ORIGINAL_BYPASS_PHONE = process.env.OTP_BYPASS_PHONE;
+  const ORIGINAL_BYPASS_CODE = process.env.OTP_BYPASS_CODE;
+
   beforeEach(() => {
     otpStore.clear();
     customerStore.clear();
     argon2Mock.verify.mockReset();
     argon2Mock.verify.mockResolvedValue(true);
+    // Default: seam off.
+    delete process.env.OTP_BYPASS_PHONE;
+    delete process.env.OTP_BYPASS_CODE;
+  });
+
+  afterEach(() => {
+    if (ORIGINAL_BYPASS_PHONE === undefined) delete process.env.OTP_BYPASS_PHONE;
+    else process.env.OTP_BYPASS_PHONE = ORIGINAL_BYPASS_PHONE;
+    if (ORIGINAL_BYPASS_CODE === undefined) delete process.env.OTP_BYPASS_CODE;
+    else process.env.OTP_BYPASS_CODE = ORIGINAL_BYPASS_CODE;
   });
 
   it('returns tokens and customer on valid OTP', async () => {
@@ -129,5 +142,66 @@ describe('POST /auth/otp/verify', () => {
     expect(res.status).toBe(410);
     const body = await res.json();
     expect(body.error.code).toBe('OTP_EXPIRED');
+  });
+
+  // --- OTP_BYPASS_PHONE comma-separated allow-list seam --------------------
+
+  function seedBypassOtp(id: string, phone: string) {
+    otpStore.set(id, {
+      id,
+      phone,
+      codeHash: 'hashed-code',
+      attempts: 0,
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+      consumedAt: null,
+    });
+  }
+
+  it('verifies a listed phone with the fixed bypass code, skipping the hash compare', async () => {
+    process.env.OTP_BYPASS_PHONE = '+918088983014,+919812345678';
+    process.env.OTP_BYPASS_CODE = '424242';
+    seedBypassOtp('otp-b1', '+919812345678');
+    // argon2 always fails — success proves the seam skipped the hash compare.
+    argon2Mock.verify.mockResolvedValue(false);
+
+    const res = await verifyHandler(makeReq({ requestId: 'otp-b1', code: '424242' }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.customer.phone).toBe('+919812345678');
+    expect(otpStore.get('otp-b1').consumedAt).toBeTruthy();
+  });
+
+  it('tolerates whitespace around bypass list entries', async () => {
+    process.env.OTP_BYPASS_PHONE = ' +918088983014 , +919812345678 ';
+    process.env.OTP_BYPASS_CODE = '424242';
+    seedBypassOtp('otp-b2', '+918088983014');
+    argon2Mock.verify.mockResolvedValue(false);
+
+    const res = await verifyHandler(makeReq({ requestId: 'otp-b2', code: '424242' }));
+    expect(res.status).toBe(200);
+  });
+
+  it('does NOT apply the bypass to a phone outside the list', async () => {
+    process.env.OTP_BYPASS_PHONE = '+918088983014,+919812345678';
+    process.env.OTP_BYPASS_CODE = '424242';
+    seedBypassOtp('otp-b3', '+919999999999');
+    argon2Mock.verify.mockResolvedValue(false);
+
+    const res = await verifyHandler(makeReq({ requestId: 'otp-b3', code: '424242' }));
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error.code).toBe('OTP_INVALID');
+  });
+
+  it('disables the bypass seam entirely when the env is empty', async () => {
+    process.env.OTP_BYPASS_PHONE = '';
+    process.env.OTP_BYPASS_CODE = '424242';
+    seedBypassOtp('otp-b4', '+918088983014');
+    argon2Mock.verify.mockResolvedValue(false);
+
+    const res = await verifyHandler(makeReq({ requestId: 'otp-b4', code: '424242' }));
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error.code).toBe('OTP_INVALID');
   });
 });

@@ -8,6 +8,7 @@ import config from '../../../../../../../payload.config';
 import { container } from '../../../../../../../lib/container';
 import { jsonResponse, errorResponse } from '../../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../../lib/api/errors';
+import { isBypassPhone } from '../../../../../../../lib/auth/bypassPhones';
 import { logger } from '../../../../../../../lib/observability/Logger';
 
 const Body = z.object({
@@ -52,14 +53,14 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Test login seam (temporary): when OTP_BYPASS_PHONE is set, that single
-    // number skips the SMS provider entirely — testers still get a real
-    // request record (hash, expiry, attempts) and verify with the fixed
-    // OTP_BYPASS_CODE in the verify route. Needed because this VPS has no
-    // MSG91 keys: without it send dies OTP_PROVIDER_DOWN before the client
-    // ever receives a requestId. Unset the env vars to delete the seam.
-    const bypassPhone = process.env.OTP_BYPASS_PHONE;
-    if (!(bypassPhone && parsed.data.phone === bypassPhone)) {
+    // Test login seam (temporary): when a phone is in the OTP_BYPASS_PHONE
+    // comma-separated list, it skips the SMS provider entirely — testers
+    // still get a real request record (hash, expiry, attempts) and verify
+    // with the fixed OTP_BYPASS_CODE in the verify route. Needed because
+    // this VPS has no MSG91 keys: without it send dies OTP_PROVIDER_DOWN
+    // before the client ever receives a requestId. Unset the env vars to
+    // delete the seam.
+    if (!isBypassPhone(parsed.data.phone)) {
       try {
         const send = await container.otpService.send(parsed.data.phone, code);
         await payload.update({

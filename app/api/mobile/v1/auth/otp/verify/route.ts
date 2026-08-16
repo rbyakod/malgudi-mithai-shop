@@ -7,6 +7,7 @@ import config from '../../../../../../../payload.config';
 import { container } from '../../../../../../../lib/container';
 import { jsonResponse, errorResponse } from '../../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../../lib/api/errors';
+import { isBypassPhone } from '../../../../../../../lib/auth/bypassPhones';
 
 const Body = z.object({
   requestId: z.string().min(1),
@@ -49,15 +50,15 @@ export async function POST(req: NextRequest) {
       throw new ApiError(ErrorCode.OTP_INVALID, 'Too many attempts');
     }
 
-    // Test login seam (temporary): when OTP_BYPASS_PHONE/OTP_BYPASS_CODE are
-    // set, that single number verifies with the fixed code — the hash compare
-    // is skipped but every other rule (fresh unconsumed request, expiry,
-    // attempt throttle, consume-on-success, customer upsert) is enforced, so
-    // testers exercise the real flow. Unset the env vars to delete the seam.
-    const bypassPhone = process.env.OTP_BYPASS_PHONE;
+    // Test login seam (temporary): when OTP_BYPASS_PHONE (comma-separated
+    // list) / OTP_BYPASS_CODE are set, a listed number verifies with the
+    // fixed code — the hash compare is skipped but every other rule (fresh
+    // unconsumed request, expiry, attempt throttle, consume-on-success,
+    // customer upsert) is enforced, so testers exercise the real flow.
+    // Unset the env vars to delete the seam.
     const bypassCode = process.env.OTP_BYPASS_CODE;
     const bypassMatch = Boolean(
-      bypassPhone && bypassCode && otp.phone === bypassPhone && parsed.data.code === bypassCode,
+      bypassCode && isBypassPhone(otp.phone) && parsed.data.code === bypassCode,
     );
 
     const ok = bypassMatch || (await argon2.verify(otp.codeHash, parsed.data.code));
