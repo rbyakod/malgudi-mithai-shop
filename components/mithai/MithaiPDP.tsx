@@ -26,6 +26,7 @@ import {getPayload} from "@/lib/payload-client";
 import {getTranslations} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
 import {BuyModule} from "@/components/mithai/BuyModule";
+import {CrossSellRail} from "@/components/mithai/CrossSellRail";
 import {derivePackSizes} from "@/lib/mithai/packSizes";
 import {isFullWidthLayout} from "@/lib/storefront-layout";
 import {readStorefrontLayoutMode} from "@/lib/storefront-layout-server";
@@ -44,6 +45,13 @@ const FRESHNESS_KEY: Record<string, string> = {
   "made-daily": "freshDaily",
   "made-to-order": "freshToOrder",
   "batch-frozen": "frozen",
+};
+
+// Dietary chips keyed by the seed's known dietaryTags values. Admin-entered
+// free text renders verbatim — the strip's uppercase tracking styles it.
+const DIETARY_KEY: Record<string, string> = {
+  vegetarian: "vegetarian",
+  "sugar-free": "sugarFree",
 };
 
 export async function MithaiPDP({slug, locale}: Props) {
@@ -109,8 +117,11 @@ export async function MithaiPDP({slug, locale}: Props) {
   // Payload's lexical field (or a plain string for older fixtures) → the
   // italic standfirst the magazine spread below leads with.
   const storyText = flattenLexical(doc!.story);
-  const isVegetarian = (doc!.dietaryTags ?? []).some(
-    (tag) => tag.toLowerCase() === "vegetarian",
+  const dietaryChips = Array.from(new Set(doc!.dietaryTags ?? [])).map(
+    (tag) => {
+      const key = DIETARY_KEY[tag.toLowerCase()];
+      return {tag, label: key ? t(`trust.${key}`) : tag};
+    },
   );
 
   return (
@@ -187,13 +198,22 @@ export async function MithaiPDP({slug, locale}: Props) {
             />
 
             {/* Trust strip — real fields only, quiet uppercase microcopy */}
-            {freshnessLabel || doc!.shelfLife || isVegetarian ? (
-              <ul className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border-card pt-5 text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
+            {freshnessLabel ||
+            doc!.shelfLife ||
+            doc!.leadTime ||
+            dietaryChips.length > 0 ? (
+              <ul
+                data-testid="pdp-trust-strip"
+                className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border-card pt-5 text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80"
+              >
                 {freshnessLabel ? <li>{freshnessLabel}</li> : null}
                 {doc!.shelfLife ? (
                   <li>{t("trust.shelfLife", {shelfLife: doc!.shelfLife})}</li>
                 ) : null}
-                {isVegetarian ? <li>{t("trust.vegetarian")}</li> : null}
+                {doc!.leadTime ? <li>{doc!.leadTime}</li> : null}
+                {dietaryChips.map(({tag, label}) => (
+                  <li key={tag}>{label}</li>
+                ))}
               </ul>
             ) : null}
           </div>
@@ -264,32 +284,52 @@ export async function MithaiPDP({slug, locale}: Props) {
             ) : null}
           </div>
 
-          <aside className="border-l border-border-card pl-6 lg:pl-10">
-            <h2 className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-              {t("allergens")}
-            </h2>
-            {doc!.allergens && doc!.allergens.length > 0 ? (
-              <ul className="mt-4 space-y-1 text-sm text-text-muted">
-                {doc!.allergens.map((a) => (
-                  <li key={a}>{a}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-4 text-sm italic text-text-muted">—</p>
-            )}
+          {/* Honest-label column — each row renders only when the doc
+              actually carries the data (no empty "—" placeholders). */}
+          {(doc!.allergens?.length ?? 0) > 0 || doc!.storage ? (
+            <aside
+              data-testid="pdp-honest-label"
+              className="border-l border-border-card pl-6 lg:pl-10"
+            >
+              {doc!.allergens && doc!.allergens.length > 0 ? (
+                <div data-testid="pdp-allergens">
+                  <h2 className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
+                    {t("allergens")}
+                  </h2>
+                  <ul className="mt-4 space-y-1 text-sm text-text-muted">
+                    {doc!.allergens.map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
 
-            {doc!.storage ? (
-              <>
-                <h3 className="mt-8 text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-                  {t("storage")}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-text-muted">
-                  {doc!.storage}
-                </p>
-              </>
-            ) : null}
-          </aside>
+              {doc!.storage ? (
+                <div data-testid="pdp-storage">
+                  <h3
+                    className={[
+                      "text-[11px] font-medium uppercase tracking-[0.22em] text-primary",
+                      (doc!.allergens?.length ?? 0) > 0 ? "mt-8" : "",
+                    ].join(" ")}
+                  >
+                    {t("storage")}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-text-muted">
+                    {doc!.storage}
+                  </p>
+                </div>
+              ) : null}
+            </aside>
+          ) : null}
         </section>
+
+        {/* Same-family cross-sell rail — fetches its own siblings and
+            renders nothing when the family has no other members. */}
+        <CrossSellRail
+          family={doc!.family}
+          selfSlug={doc!.slug ?? slug}
+          locale={locale}
+        />
       </div>
     </article>
   );
