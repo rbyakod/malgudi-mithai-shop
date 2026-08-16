@@ -497,14 +497,14 @@
         <div>
           <p class="eyebrow">UX/UI Audit - Web, iOS, Android</p>
           <h2>Mishran now has a credible web commerce path; launch risk has moved from missing flows to proof, configuration, and instrumentation.</h2>
-          <p class="lead">The strongest product experience is no longer split as sharply across platforms: web checkout, account, order tracking, gifts, occasions, help/legal pages, search facets, PDP trust modules, sitemap/schema, and Kannada localization are now present in the codebase. For a premium Indian sweets ecommerce business, the next launch gate is to verify Razorpay keys in the deployed environment, seed occasion/festival merchandising, publish honest trust proof such as FSSAI and verified reviews, deepen gifting/bulk/wedding flows, and make analytics consent-aware and decision-grade.</p>
+          <p class="lead">The strongest product experience is no longer split as sharply across platforms: web checkout, account, order tracking, gifts, occasions, help/legal pages, search facets, PDP trust modules, sitemap/schema, Kannada localization, and the retention loop (reorder, loyalty state, review capture, abandoned-cart recovery) are now present in the codebase. For a premium Indian sweets ecommerce business, the next launch gate is to verify Razorpay keys in the deployed environment, seed occasion/festival merchandising, publish honest trust proof such as FSSAI and approved reviews, deepen gifting/bulk/wedding flows, and make analytics consent-aware and decision-grade.</p>
         </div>
         <div class="hero-panel">
           <ul class="audit-meta">
             <li><strong>Remediation 2026-08-16: launch-critical gaps closed</strong> All nine launch batches shipped and deployed: web checkout, account, order tracking, legal/help pages, search facets, gifts/occasions pages, PDP trust + cross-sells, genuine Kannada.</li>
             <li><strong>Chatgpt verified readiness: 84/100</strong> (2026-08-16, codebase review) Web commerce path is implemented; launch confidence depends on environment keys, trust proof, content seeding, and funnel analytics.</li>
             <li><strong>Original readiness: 67/100</strong> (2026-08-15, pre-remediation) Sellable brand experience, incomplete transaction stack on web.</li>
-            <li><strong>Still open</strong> Razorpay TEST keys on VPS (pay step 401s until set), occasion content seeding, verified reviews, gift configurator, consent-gated analytics, FSSAI number.</li>
+            <li><strong>Still open</strong> Razorpay TEST keys on VPS (pay step 401s until set), occasion content seeding, review display (capture is live), gift configurator, consent-gated analytics, FSSAI number, RESEND_API_KEY to activate abandoned-cart emails.</li>
           </ul>
         </div>
       </section>
@@ -554,7 +554,7 @@
         <div class="grid">
           <div class="card span-3"><div class="score"><b>8.2</b><span>/10</span></div><h4>Brand UI</h4><p>Distinct, editorial, premium. Now carried further into checkout, account, help, and gifting surfaces.</p></div>
           <div class="card span-3"><div class="score"><b>8.0</b><span>/10</span></div><h4>Web Conversion</h4><p>Checkout/account/track-order are implemented. Razorpay environment keys and payment smoke remain the gate.</p></div>
-          <div class="card span-3"><div class="score"><b>7.5</b><span>/10</span></div><h4>Commerce Retention</h4><p>Native commerce and web account exist. Reorder, reviews, referrals, and Android Wallet remain.</p></div>
+          <div class="card span-3"><div class="score"><b>7.5</b><span>/10</span></div><h4>Commerce Retention</h4><p>Web account, reorder, loyalty state, review capture, and cart recovery live. Referrals, review display, and Android Wallet remain.</p></div>
           <div class="card span-3"><div class="score"><b>7.3</b><span>/10</span></div><h4>Discovery</h4><p>Sitemap/schema/l10n/gifts/occasions/search facets improved. FAQ, city/festival pages, reviews still thin.</p></div>
         </div>
 
@@ -570,7 +570,7 @@
               <tr><td>Web checkout</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td><em>2026-08-16:</em> full CheckoutFlow — address book → fresh-tier slot → server-priced summary → Razorpay create/verify → receipt; stub removed; three latent server bugs fixed.</td><td>Live but the VPS Razorpay secret is a placeholder — pay step 401s until a real TEST key pair is set.</td><td>Verified in code. Treat as launch-blocked until a deployed paid smoke passes with real Razorpay TEST keys.</td></tr>
               <tr><td>Native checkout</td><td><span class="pill implemented">Implemented</span></td><td>8</td><td>Address, pincode tier, slot, Razorpay, verify, confirmation on both apps.</td><td>Need clearer trust recovery, payment failure help, and richer order summary.</td><td>Still accurate. Web fixes reused the mobile API contract; keep mobile and web error language aligned.</td></tr>
               <tr><td>Gifting and bulk</td><td><span class="pill partial">Partial</span></td><td>7</td><td>Gift builder lead, wedding form, corporate form, gift-box collections. <em>2026-08-16: public /gifts hub + PDPs with real prices (22 boxes backfilled), /occasions hub + details, gift links in footer/sitemap.</em></td><td>Visual gift configurator remains; occasions collection not yet seeded.</td><td>Verified platform support. Revenue upside now depends on seeded occasion content and a configurable gift-buying flow.</td></tr>
-              <tr><td>Retention</td><td><span class="pill partial">Partial</span></td><td>6.5</td><td>iOS loyalty pass, order lists, push foundations, wallet pass collection. <em>2026-08-16: web sign-in, account, order history/detail, address book live.</em></td><td>Repeat-order, referral, subscription, lifecycle campaigns, reviews, and Android Wallet parity remain.</td><td>Updated from weak to partial-plus. Web account exists; repeat purchase mechanics are still missing.</td></tr>
+              <tr><td>Retention</td><td><span class="pill partial">Partial</span></td><td>7.5</td><td>iOS loyalty pass, order lists, push foundations, wallet pass collection. <em>2026-08-16: web sign-in, account, order history/detail, address book live.</em> <em>2026-08-16 (conversion batch): one-tap reorder, loyalty state card on /account, review capture from delivered orders, abandoned-cart recovery (drafts + consent-gated email cron + ?draft= restore).</em></td><td>Referral, subscription, lifecycle campaigns, review display, saved recipients, and Android Wallet parity remain.</td><td>Repeat-purchase mechanics now exist on web; the post-purchase loop is no longer missing, just shallow.</td></tr>
               <tr><td>Accessibility</td><td><span class="pill implemented">Implemented</span></td><td>7</td><td>Skip link, labels, native a11y tests, 44pt iOS audit.</td><td>Some manual hardware checks and web contrast/dynamic text verification remain.</td><td>Mostly credible. Re-run manual keyboard/screen-reader pass on newly added checkout, account, gifts, and help routes.</td></tr>
               <tr><td>Analytics</td><td><span class="pill partial">Partial</span></td><td>5.5</td><td>GA4/Meta scripts and custom events exist.</td><td>No consent gate, weak ecommerce funnel taxonomy, no server-side purchase/order analytics.</td><td>Verified partial. begin_checkout, purchase, and search_used exist; consent TODOs remain explicit in code.</td></tr>
             </tbody>
@@ -597,8 +597,8 @@
               <tr><td>Track order</td><td><span class="pill implemented">Implemented</span><small>2026-08-16: order history, detail, track-order page.</small></td><td><span class="pill implemented">Implemented</span></td><td><span class="pill implemented">Implemented</span></td><td>Operational/Trust</td><td><s>Expose order status page and post-purchase support on web.</s> Done.</td></tr>
               <tr><td>Gifting builder</td><td><span class="pill partial">Partial</span><small>2026-08-16: shoppable /gifts PDPs with prices + /occasions pages live; visual configurator remains.</small></td><td><span class="pill missing">Missing</span></td><td><span class="pill missing">Missing</span></td><td>Conversion & Revenue</td><td>Turn gift collections into a shoppable configurator; mirror in apps later.</td></tr>
               <tr><td>Wedding/corporate lead flows</td><td><span class="pill implemented">Implemented</span></td><td><span class="pill partial">Partial</span><small>Enquiry path exists.</small></td><td><span class="pill partial">Partial</span><small>Enquiry path exists.</small></td><td>Conversion & Revenue</td><td>Add proof, packages, SLAs, sample assortments, pricing anchors.</td></tr>
-              <tr><td>Loyalty</td><td><span class="pill partial">Partial</span><small>Backend/pass logic, no UI.</small></td><td><span class="pill implemented">Implemented</span><small>Apple Wallet pass.</small></td><td><span class="pill missing">Missing</span><small>Google Wallet deferred.</small></td><td>Retention & Loyalty</td><td>Web loyalty hub and Android Wallet parity.</td></tr>
-              <tr><td>Reviews/testimonials</td><td><span class="pill missing">Missing</span></td><td><span class="pill missing">Missing</span></td><td><span class="pill missing">Missing</span></td><td>Operational/Trust</td><td>Capture verified reviews post delivery; display on PDP, gift, local pages.</td></tr>
+              <tr><td>Loyalty</td><td><span class="pill partial">Partial</span><small>2026-08-16: loyalty state card on /account (GET /account/loyalty).</small></td><td><span class="pill implemented">Implemented</span><small>Apple Wallet pass.</small></td><td><span class="pill missing">Missing</span><small>Google Wallet deferred.</small></td><td>Retention & Loyalty</td><td>Fuller web loyalty hub and Android Wallet parity.</td></tr>
+              <tr><td>Reviews/testimonials</td><td><span class="pill partial">Partial</span><small>2026-08-16: capture live (verified-purchase stamped, moderation-gated); display pending.</small></td><td><span class="pill missing">Missing</span></td><td><span class="pill missing">Missing</span></td><td>Operational/Trust</td><td>Display approved reviews on PDP, gift, local pages once real ones exist.</td></tr>
               <tr><td>Legal/trust pages</td><td><span class="pill implemented">Implemented</span><small>2026-08-16: privacy, terms, accessibility, about, help/shipping, help/returns, help/contact live; footer rewired; /sweets 404 fixed. FSSAI number still pending.</small></td><td><span class="pill partial">Partial</span><small>Store privacy asset exists.</small></td><td><span class="pill partial">Partial</span><small>Privacy asset exists.</small></td><td>Launch-Critical/Must Have</td><td><s>Ship privacy, terms, shipping, refund, accessibility, FSSAI pages.</s> Done — swap in the real FSSAI number when licensed.</td></tr>
             </tbody>
           </table>
@@ -701,7 +701,7 @@
                 <li>Use delivered orders to trigger review, referral, and loyalty lifecycle events.</li>
               </ul>
               <div class="refs"><span class="ref">app/[locale]/account/page.tsx</span><span class="ref">components/account/AccountView</span><span class="ref">collections/WalletPasses.ts</span><span class="ref">lib/loyalty/eligibility.ts</span></div>
-              <p class="resolution"><span class="pill partial">PARTIAL 2026-08-16</span> Shipped: web phone sign-in, account, order history + order detail, address book CRUD with serviceability, and track-order — all live. <span class="pill partial">Remains</span> reorder one-tap, saved recipients, referral/review capture, loyalty state on web, Android Wallet parity.</p>
+              <p class="resolution"><span class="pill partial">PARTIAL 2026-08-16</span> Shipped: web phone sign-in, account, order history + order detail, address book CRUD with serviceability, and track-order — all live. <span class="pill ok">2026-08-16 (conversion batch):</span> one-tap reorder from order detail (exact pack sizes via <code>packLabel</code>), loyalty state card on /account (GET /account/loyalty, Silver≥2/Gold≥5 delivered), and review capture from delivered orders (Reviews collection, moderation-gated, verified-purchase stamped — no display until real approved reviews exist). <span class="pill partial">Remains</span> saved recipients, referral capture, review display, Android loyalty/reorder parity.</p>
             </div>
           </div>
 
@@ -760,7 +760,7 @@
               <li>Footer/legal trust still shows pending FSSAI status.</li>
               <li>Discovery is catalog-first, not occasion/customer-job-first.</li>
               <li>No social proof: verified reviews, customer photos, press, ratings, trust badges.</li>
-              <li>Web post-purchase loop is thin: reorder, referrals, loyalty, reviews, and recipient address book remain.</li>
+              <li>Web post-purchase loop is filling in: reorder, loyalty state, and review capture are live (2026-08-16); referrals, review display, and saved recipients remain.</li>
             </ul>
           </div>
         </div>
@@ -814,7 +814,7 @@
               <li>City/service pages: Bengaluru delivery, Delhi NCR fresh tier, pan-India shelf-stable sweets.</li>
               <li>FAQ pages and FAQ schema.</li>
               <li>LocalBusiness/service area schema.</li>
-              <li>Reviews, AggregateRating, testimonial snippets after verified order flow exists.</li>
+              <li>Reviews, AggregateRating, testimonial snippets after approved real reviews exist (capture shipped 2026-08-16).</li>
               <li>Comparison/search pages: sugar-free mithai, Jain-friendly sweets, dry-fruit sweets, corporate gift boxes.</li>
             </ul>
           </div>
@@ -832,8 +832,8 @@
               <tr><td>Replace web buy-now route with checkout</td><td><span class="pill p0">Launch-Critical</span></td><td>High</td><td>Medium</td><td><s>Current `buyNow` pushes to cart; send to checkout when real checkout ships.</s> <strong>Done 2026-08-16</strong> — buy-now → `/checkout` (signed-in) or `/sign-in?next=/checkout`.</td></tr>
               <tr><td>Add trust blocks on PDP</td><td><span class="pill p1">Conversion</span></td><td>High</td><td>Low</td><td><s>Freshness, FSSAI, delivery SLA, refund policy, allergen warning, packaging hygiene.</s> <strong>Done 2026-08-16</strong> — lead time + dietary chips in trust strip; honest-label column (allergens, storage, shelf life). FSSAI number still pending.</td></tr>
               <tr><td>Add PDP cross-sells</td><td><span class="pill p1">Revenue</span></td><td>Medium</td><td>Medium</td><td><s>Compatible gift boxes, same family, festival bundles, "complete the box".</s> <strong>Partly done 2026-08-16</strong> — same-family rail (≤4, live on kaju-katli) + stories → products rails; gift-box compat rails remain.</td></tr>
-              <tr><td>Add cart upsell and free-delivery threshold</td><td><span class="pill p1">Revenue</span></td><td>Medium</td><td>Medium</td><td>Use pan-India shelf-stable add-ons and premium gift packaging.</td></tr>
-              <tr><td>Add abandon/recovery hooks</td><td><span class="pill p2">Retention</span></td><td>Medium</td><td>Medium</td><td>Draft cart, WhatsApp link, email/SMS reminder after consent.</td></tr>
+              <tr><td>Add cart upsell and free-delivery threshold</td><td><span class="pill p1">Revenue</span></td><td>Medium</td><td>Medium</td><td><s>Use pan-India shelf-stable add-ons and premium gift packaging.</s> <strong>Done 2026-08-16</strong> — server-authoritative thresholds ₹999 fresh / ₹1,999 shelf (fee→0, live-verified), cart progress row + FREE label, "Ships pan-India" upsell rail with add-to-cart. Priced gift-packaging upsell still deferred (no machine price on Packaging).</td></tr>
+              <tr><td>Add abandon/recovery hooks</td><td><span class="pill p2">Retention</span></td><td>Medium</td><td>Medium</td><td><s>Draft cart, WhatsApp link, email/SMS reminder after consent.</s> <strong>Done 2026-08-16</strong> — cart drafts sync to server (30-day TTL), "Email me this cart" consent capture, one-shot abandoned-cart email cron (30-min scheduler live on VPS), <code>?draft=</code> restore link. Email sends activate when RESEND_API_KEY is set; SMS deferred.</td></tr>
             </tbody>
           </table>
         </div>
@@ -881,10 +881,10 @@
             <table>
               <thead><tr><th>Retention Loop</th><th>Status</th><th>Recommendation</th></tr></thead>
               <tbody>
-                <tr><td>Reorder</td><td><span class="pill missing">Missing on web</span></td><td>Expose "Order again" from account/orders and product reminders.</td></tr>
+                <tr><td>Reorder</td><td><span class="pill partial">Partial</span></td><td><em>2026-08-16: one-tap "Order again" live on web order detail (exact pack sizes via packLabel).</em> Product reminders and Android parity remain.</td></tr>
                 <tr><td>Festival reminders</td><td><span class="pill missing">Missing</span></td><td>Let users save important dates: Diwali gifting, birthdays, wedding invites, corporate milestones.</td></tr>
-                <tr><td>Loyalty</td><td><span class="pill partial">Partial</span></td><td>Show web loyalty status, iOS pass, and Android Wallet parity.</td></tr>
-                <tr><td>Reviews</td><td><span class="pill missing">Missing</span></td><td>Trigger review capture after delivered status; reuse on PDP and SEO.</td></tr>
+                <tr><td>Loyalty</td><td><span class="pill partial">Partial</span></td><td><em>2026-08-16: loyalty state card live on web /account.</em> Android Wallet parity remains.</td></tr>
+                <tr><td>Reviews</td><td><span class="pill partial">Partial</span></td><td><em>2026-08-16: capture live — Reviews collection + rating form on delivered orders, verified-purchase stamped, moderation-gated.</em> Display on PDP/SEO once approved reviews exist.</td></tr>
                 <tr><td>Support</td><td><span class="pill partial">Partial</span></td><td>WhatsApp exists; add contextual support from PDP, cart, order, account across apps.</td></tr>
                 <tr><td>Subscriptions</td><td><span class="pill missing">Nice-to-Have</span></td><td>Consider monthly family boxes or office pantry snacks after core checkout is stable.</td></tr>
               </tbody>
@@ -1055,7 +1055,7 @@
             <h4>Design Score From This Skill</h4>
             <div class="score"><b>84</b><span>/100</span></div>
             <p><strong>Why not higher:</strong> visual identity and core web commerce are now much stronger, but launch-grade frontend design also needs verified payment environment, content proof, accessible failure states, and decision-grade analytics.</p>
-            <p><strong>What would move it above 90:</strong> Razorpay paid smoke, seeded occasion/festival content, verified reviews, real FSSAI number, richer gift builder, mobile assistive-tech pass, and consent-aware funnel analytics.</p>
+            <p><strong>What would move it above 90:</strong> Razorpay paid smoke, seeded occasion/festival content, approved-review display, real FSSAI number, richer gift builder, mobile assistive-tech pass, and consent-aware funnel analytics.</p>
           </div>
         </div>
       </section>
@@ -1081,7 +1081,7 @@
               <tr>
                 <td>Account and track order</td>
                 <td><span class="pill implemented">Implemented</span></td>
-                <td>Correctly documented as live. Next UX layer is reorder, saved recipients, loyalty state, review prompts, and support recovery.</td>
+                <td>Correctly documented as live. Reorder, loyalty state, and review prompts shipped 2026-08-16; next UX layer is saved recipients, referrals, review display, and support recovery.</td>
                 <td><span class="ref">app/[locale]/account/page.tsx</span> <span class="ref">app/[locale]/track-order/page.tsx</span> <span class="ref">components/account/AccountView</span></td>
               </tr>
               <tr>
@@ -1163,7 +1163,7 @@
             <h4>Phase 5 - Retention, Loyalty, and Lifecycle</h4>
             <ul>
               <li>Web loyalty hub, Android Google Wallet parity, Apple Wallet pass polish.</li>
-              <li>Review capture, reorder, festival reminders, referrals, and post-purchase education.</li>
+              <li><s>Review capture, reorder.</s> ✅ Done 2026-08-16 (web). Festival reminders, referrals, and post-purchase education remain.</li>
               <li>Lifecycle campaigns through email/SMS/push after consent.</li>
               <li>Analytics dashboard and event taxonomy cleanup.</li>
             </ul>
@@ -1190,7 +1190,7 @@
               <li><s>Add privacy, terms, shipping, returns, contact pages.</s> ✅ Done 2026-08-16 — all live + sitemap.</li>
               <li><s>Add PDP trust band and delivery/return FAQ.</s> ✅ Trust band done 2026-08-16 (chips + honest labels); FAQ still open.</li>
               <li><s>Add occasion filter and giftable filter.</s> ⏳ Occasion routes live but collection unseeded; filters remain.</li>
-              <li><s>Add review capture schema/data model without displaying fake reviews.</s> ⏳ Open.</li>
+              <li><s>Add review capture schema/data model without displaying fake reviews.</s> ✅ Done 2026-08-16 — Reviews collection + rating form on delivered orders; display stays off until approved real reviews exist.</li>
             </ul>
           </div>
           <div class="card span-4">
