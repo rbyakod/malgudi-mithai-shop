@@ -7,6 +7,7 @@ local.properties
 
 # Kotlin
 .cxx/
+.kotlin/
 
 # IDE
 *.iml
