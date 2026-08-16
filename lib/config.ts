@@ -59,6 +59,11 @@ const schema = z.object({
   // ₹49 / ₹99.
   deliveryFeeFreshPaise: z.coerce.number().int().min(0).default(4900),
   deliveryFeeShelfStablePaise: z.coerce.number().int().min(0).default(9900),
+  // Free-delivery thresholds by tier (conversion batch) — delivery fee drops
+  // to 0 once the priced subtotal reaches the tier's threshold. 0 disables
+  // the threshold for that tier. Defaults are the user-decided ₹999 / ₹1,999.
+  freeDeliveryThresholdFreshPaise: z.coerce.number().int().min(0).default(99900),
+  freeDeliveryThresholdShelfStablePaise: z.coerce.number().int().min(0).default(199900),
 });
 
 export type Config = z.infer<typeof schema> & {
@@ -113,6 +118,8 @@ const env = {
   apnsBundleId: process.env.APNS_BUNDLE_ID,
   deliveryFeeFreshPaise: process.env.DELIVERY_FEE_FRESH_PAISE,
   deliveryFeeShelfStablePaise: process.env.DELIVERY_FEE_SHELF_STABLE_PAISE,
+  freeDeliveryThresholdFreshPaise: process.env.FREE_DELIVERY_THRESHOLD_FRESH_PAISE,
+  freeDeliveryThresholdShelfStablePaise: process.env.FREE_DELIVERY_THRESHOLD_SHELF_STABLE_PAISE,
 };
 
 export const config: Config = {

@@ -29,6 +29,14 @@ export function splitCartId(id: string): {productId: string; packLabel?: string}
  * client bundle). */
 export type CartFees = {freshPaise: number; shelfStablePaise: number};
 
+/**
+ * Free-delivery thresholds by tier (0 = disabled for that tier). Same
+ * server-provenance as CartFees; the fee rule mirrors computeTotals in
+ * lib/commerce/pricing exactly: when the tier is known, its threshold is
+ * > 0, and the priced subtotal has reached it, the delivery fee is 0.
+ */
+export type CartFreeThresholds = {freshPaise: number; shelfStablePaise: number};
+
 export type LineEstimate = {
   item: CartItem;
   /** Unit price in paise, or null when the line is priced "on request". */
@@ -51,12 +59,22 @@ export type CartEstimate = {
    * confirmed at checkout).
    */
   estimatedTotalInPaise: number | null;
+  /**
+   * The free-delivery threshold that applies to the saved tier, or null
+   * when the tier is unknown or its threshold is disabled (0). Purely
+   * informational for the progress UI — the fee above already carries the
+   * rule.
+   */
+  freeDeliveryThresholdInPaise: number | null;
+  /** True when the priced subtotal met the tier's threshold (fee is 0). */
+  freeDeliveryEarned: boolean;
 };
 
 export function estimateCart(
   items: CartItem[],
   tier: ServiceabilityTier | null,
   fees: CartFees,
+  freeThresholds?: CartFreeThresholds,
 ): CartEstimate {
   const lines: LineEstimate[] = items.map((item) => {
     const unitPriceInPaise = item.priceLabel
@@ -75,10 +93,24 @@ export function estimateCart(
     0,
   );
   const allPriced = lines.every((line) => line.lineTotalInPaise !== null);
+  const tierThresholdInPaise =
+    tier && freeThresholds
+      ? tier === "fresh"
+        ? freeThresholds.freshPaise
+        : freeThresholds.shelfStablePaise
+      : null;
+  // Mirror of computeTotals' threshold rule: threshold > 0 and priced
+  // subtotal >= threshold → fee 0. A 0 threshold disables free delivery.
+  const freeDeliveryEarned =
+    tierThresholdInPaise !== null &&
+    tierThresholdInPaise > 0 &&
+    itemsTotalInPaise >= tierThresholdInPaise;
   const deliveryFeeInPaise = tier
-    ? tier === "fresh"
-      ? fees.freshPaise
-      : fees.shelfStablePaise
+    ? freeDeliveryEarned
+      ? 0
+      : tier === "fresh"
+        ? fees.freshPaise
+        : fees.shelfStablePaise
     : null;
 
   return {
@@ -89,5 +121,10 @@ export function estimateCart(
     estimatedTotalInPaise: allPriced
       ? itemsTotalInPaise + (deliveryFeeInPaise ?? 0)
       : null,
+    freeDeliveryThresholdInPaise:
+      tierThresholdInPaise !== null && tierThresholdInPaise > 0
+        ? tierThresholdInPaise
+        : null,
+    freeDeliveryEarned,
   };
 }

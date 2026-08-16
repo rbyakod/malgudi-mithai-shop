@@ -34,6 +34,7 @@ export type EventName =
   | "whatsapp_clicked"
   | "search_used"
   | "draft_saved"
+  | "cart_restored"
   | "locale_changed"
   | "theme_changed"
   | "missing_translation";
