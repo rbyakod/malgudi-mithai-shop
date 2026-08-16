@@ -12,7 +12,7 @@ import {SiteFooter} from "@/components/layout/SiteFooter";
 import {isFullWidthLayout} from "@/lib/storefront-layout";
 import {
   readStorefrontLayoutMode,
-  readThemeSwitcherEnabled,
+  readThemeSwitcherVisibility,
 } from "@/lib/storefront-layout-server";
 
 // Static rendering: enumerate the locales so every [locale] route below can
@@ -59,9 +59,9 @@ export default async function LocaleLayout({children, params}: Props) {
   setRequestLocale(locale);
 
   const messages = (await import(`../../messages/${locale}.json`)).default;
-  const [layoutMode, showThemeSwitcher] = await Promise.all([
+  const [layoutMode, themeSwitcherVisibility] = await Promise.all([
     readStorefrontLayoutMode(),
-    readThemeSwitcherEnabled(),
+    readThemeSwitcherVisibility(),
   ]);
   const mainClassName = [
     "mx-auto w-full flex-1 px-4 pb-16 pt-4 sm:px-6",
@@ -76,7 +76,7 @@ export default async function LocaleLayout({children, params}: Props) {
         <BrandBar layoutMode={layoutMode} />
         <SiteHeader
           layoutMode={layoutMode}
-          showThemeSwitcher={showThemeSwitcher}
+          themeSwitcherVisibility={themeSwitcherVisibility}
         />
         <main id="main-content" className={mainClassName}>
           {children}

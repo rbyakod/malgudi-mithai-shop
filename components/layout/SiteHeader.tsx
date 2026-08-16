@@ -20,7 +20,11 @@ import {
   STORY_NAV_LINKS,
 } from "@/components/layout/nav-links";
 import {track} from "@/lib/analytics";
-import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
+import {
+  isFullWidthLayout,
+  type StorefrontLayoutMode,
+  type ThemeSwitcherVisibility,
+} from "@/lib/storefront-layout";
 
 // Re-export so callers (and tests) can import NAV_LINKS from the spec-mandated
 // path `@/components/layout/SiteHeader`. The constant itself lives in a pure
@@ -170,12 +174,12 @@ function isActiveLink(
 
 type Props = {
   layoutMode?: StorefrontLayoutMode;
-  showThemeSwitcher?: boolean;
+  themeSwitcherVisibility?: ThemeSwitcherVisibility;
 };
 
 export function SiteHeader({
   layoutMode = "fixed",
-  showThemeSwitcher = false,
+  themeSwitcherVisibility = "disabled",
 }: Props) {
   const {count} = useCart();
   const {theme} = useTheme();
@@ -193,6 +197,9 @@ export function SiteHeader({
     "mx-auto px-4 sm:px-6",
     isFullWidthLayout(layoutMode) ? "max-w-none lg:px-10 2xl:px-14" : "max-w-6xl lg:px-8",
   ].join(" ");
+  const showThemeSwitcher =
+    themeSwitcherVisibility === "all" ||
+    (themeSwitcherVisibility === "home" && pathname === "/");
 
   useEffect(() => {
     const threshold = 40;

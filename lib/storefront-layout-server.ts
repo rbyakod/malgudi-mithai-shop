@@ -1,8 +1,11 @@
 import {getPayload} from "@/lib/payload-client";
 import {
   DEFAULT_STOREFRONT_LAYOUT_MODE,
+  DEFAULT_THEME_SWITCHER_VISIBILITY,
   normalizeCatalogPageSize,
+  normalizeThemeSwitcherVisibility,
   type StorefrontLayoutMode,
+  type ThemeSwitcherVisibility,
 } from "@/lib/storefront-layout";
 
 export async function readStorefrontLayoutMode(): Promise<StorefrontLayoutMode> {
@@ -16,18 +19,32 @@ export async function readStorefrontLayoutMode(): Promise<StorefrontLayoutMode> 
   }
 }
 
-export async function readThemeSwitcherEnabled(): Promise<boolean> {
+export async function readThemeSwitcherVisibility(): Promise<ThemeSwitcherVisibility> {
   if (process.env.NEXT_PUBLIC_ENABLE_THEME_SWITCHER === "true") {
-    return true;
+    return "all";
   }
 
   try {
     const payload = await getPayload();
     const global = await payload.findGlobal({slug: "theme-settings"});
-    return (global as {showThemeSwitcher?: unknown}).showThemeSwitcher === true;
+    const visibility = normalizeThemeSwitcherVisibility(
+      (global as {themeSwitcherVisibility?: unknown}).themeSwitcherVisibility,
+    );
+
+    if (visibility !== DEFAULT_THEME_SWITCHER_VISIBILITY) {
+      return visibility;
+    }
+
+    return (global as {showThemeSwitcher?: unknown}).showThemeSwitcher === true
+      ? "all"
+      : DEFAULT_THEME_SWITCHER_VISIBILITY;
   } catch {
-    return false;
+    return DEFAULT_THEME_SWITCHER_VISIBILITY;
   }
+}
+
+export async function readThemeSwitcherEnabled(): Promise<boolean> {
+  return (await readThemeSwitcherVisibility()) !== "disabled";
 }
 
 export async function readCatalogPageSize(): Promise<number> {

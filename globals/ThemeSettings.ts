@@ -30,13 +30,38 @@ export const ThemeSettings: GlobalConfig = {
       ],
     },
     {
+      name: "themeSwitcherVisibility",
+      type: "select",
+      label: "Theme Studio visibility",
+      defaultValue: "disabled",
+      admin: {
+        description:
+          "Controls whether the customer-facing Theme Studio appears on the storefront. Keep disabled for launch.",
+      },
+      options: [
+        {
+          label: "Disabled",
+          value: "disabled",
+        },
+        {
+          label: "Home page only",
+          value: "home",
+        },
+        {
+          label: "All storefront pages",
+          value: "all",
+        },
+      ],
+    },
+    {
       name: "showThemeSwitcher",
       type: "checkbox",
       label: "Show Theme Studio in storefront header",
       defaultValue: false,
       admin: {
+        hidden: true,
         description:
-          "Keep off for launch. Enable only during preview or internal design review.",
+          "Legacy flag retained for older saved settings. Use Theme Studio visibility instead.",
       },
     },
     {

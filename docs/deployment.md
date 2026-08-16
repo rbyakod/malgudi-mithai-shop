@@ -293,20 +293,21 @@ Two different things share this global — don't confuse them:
 - **Store-level settings** (fields on the global itself):
   - *Storefront width* — `Fixed` (centered) or `Full width` (wider catalog
     pages).
+  - *Theme Studio visibility* — `Disabled`, `Home page only`, or `All storefront pages`;
+    default is disabled for launch. (Equivalent env override:
+    `NEXT_PUBLIC_ENABLE_THEME_SWITCHER=true` forces all storefront pages.)
   - *Catalog items per page* — 12–120, default 100.
-  - *Show Theme Studio in storefront header* — checkbox, **default off**;
-    keep off for launch. (Equivalent env override:
-    `NEXT_PUBLIC_ENABLE_THEME_SWITCHER=true`.)
 - **Theme Studio** (the header palette switcher): what your shoppers would
   use to try alternate color sets. The palettes themselves — *Mishran
   Default, Diwali Saffron, Wedding Heritage, Everyday Sage, Evening Navy*,
   plus design-system variants — are **defined in code** in
   `lib/themes.ts`, not in the admin. Adding or changing a palette is a code
-  change (edit `THEMES`, deploy); the admin only controls whether the
+  change (edit `THEMES`, deploy); the admin controls only where the
   switcher is visible.
 
-To preview themes internally: tick *Show Theme Studio…*, save, use the
-palette picker in the site header, then untick when done.
+To preview themes internally: set *Theme Studio visibility* to *Home page only*
+or *All storefront pages*, save, use the palette picker in the site header, then
+set it back to *Disabled* when done.
 
 ---
 
