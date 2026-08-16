@@ -10,7 +10,7 @@ import Foundation
 import AnyCodable
 #endif
 
-/** Order totals in paise (INR). All zero today; real pricing lands in Phase 8 alongside the commerce schema on MithaiProducts.  */
+/** Order totals in paise (INR). itemsTotal is the sum of server-priced snapshot lines (priceInPaise x quantity). deliveryFee is a flat fee by pincode serviceability tier — fresh (same-city, ₹49 default) vs shelf-stable (courier, ₹99 default); both env-tunable server-side. taxes is always 0: catalog prices are MRP inclusive of GST. discount is 0 (no promotions yet). total &#x3D; itemsTotal + deliveryFee.  */
 public struct OrderTotals: Codable, JSONEncodable, Hashable {
 
     public static let itemsTotalInPaiseRule = NumericRule<Int>(minimum: 0, exclusiveMinimum: false, maximum: nil, exclusiveMaximum: false, multipleOf: nil)

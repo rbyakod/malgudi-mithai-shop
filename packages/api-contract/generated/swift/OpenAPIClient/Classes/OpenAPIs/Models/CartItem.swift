@@ -14,17 +14,22 @@ public struct CartItem: Codable, JSONEncodable, Hashable {
 
     public static let productIdRule = StringRule(minLength: 1, maxLength: nil, pattern: nil)
     public static let quantityRule = NumericRule<Int>(minimum: 1, exclusiveMinimum: false, maximum: nil, exclusiveMaximum: false, multipleOf: nil)
+    public static let packLabelRule = StringRule(minLength: 1, maxLength: nil, pattern: nil)
     public var productId: String
     public var quantity: Int
+    /** Optional pack-size label from the web PDP's derived selector (e.g. \"250g\", \"500g\", \"1 kg\"). When present the server prices the matching derived pack option; when absent the product's base display price is used. Mobile apps omit it today.  */
+    public var packLabel: String?
 
-    public init(productId: String, quantity: Int) {
+    public init(productId: String, quantity: Int, packLabel: String? = nil) {
         self.productId = productId
         self.quantity = quantity
+        self.packLabel = packLabel
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case productId
         case quantity
+        case packLabel
     }
 
     // Encodable protocol methods
@@ -33,6 +38,7 @@ public struct CartItem: Codable, JSONEncodable, Hashable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(productId, forKey: .productId)
         try container.encode(quantity, forKey: .quantity)
+        try container.encodeIfPresent(packLabel, forKey: .packLabel)
     }
 }
 

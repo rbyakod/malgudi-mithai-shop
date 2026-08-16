@@ -761,12 +761,14 @@ export interface paths {
         /**
          * @description Validate the customer's cart: authenticate, re-check pincode
          *     serviceability, re-fetch each product to confirm it still exists,
-         *     persist a tamper-evident cart snapshot, and return the snapshot
-         *     id + shape valid for 10 minutes.
-         *
-         *     NOTE: totals are all zero today — commerce / variant pricing on
-         *     MithaiProducts is deferred to Phase 8. This endpoint gives mobile
-         *     clients a stable contract for cart shape + availability now.
+         *     price every line server-side (optional per-item packLabel prices
+         *     the matching derived pack size; unpriceable lines like "on
+         *     request" are rejected 422), enforce the fresh-tier rule (made-daily
+         *     items only ship to fresh-tier pincodes), normalize iOS relative
+         *     slot tokens, persist a tamper-evident cart snapshot with real
+         *     totals (subtotal + flat delivery fee by tier; taxes 0, MRP
+         *     inclusive of GST), and return the snapshot id + shape valid for
+         *     10 minutes.
          */
         post: {
             parameters: {
@@ -2083,6 +2085,13 @@ export interface components {
         CartItem: {
             productId: string;
             quantity: number;
+            /**
+             * @description Optional pack-size label from the web PDP's derived selector
+             *     (e.g. "250g", "500g", "1 kg"). When present the server prices
+             *     the matching derived pack option; when absent the product's
+             *     base display price is used. Mobile apps omit it today.
+             */
+            packLabel?: string;
         };
         CartValidateRequest: {
             items: components["schemas"]["CartItem"][];
@@ -2093,8 +2102,12 @@ export interface components {
             };
         };
         /**
-         * @description Order totals in paise (INR). All zero today; real pricing lands in
-         *     Phase 8 alongside the commerce schema on MithaiProducts.
+         * @description Order totals in paise (INR). itemsTotal is the sum of server-priced
+         *     snapshot lines (priceInPaise x quantity). deliveryFee is a flat fee
+         *     by pincode serviceability tier — fresh (same-city, ₹49 default) vs
+         *     shelf-stable (courier, ₹99 default); both env-tunable server-side.
+         *     taxes is always 0: catalog prices are MRP inclusive of GST.
+         *     discount is 0 (no promotions yet). total = itemsTotal + deliveryFee.
          */
         OrderTotals: {
             itemsTotalInPaise: number;
@@ -2110,6 +2123,17 @@ export interface components {
             quantity: number;
             /** @enum {string|null} */
             freshnessStatus: "made-daily" | "made-to-order" | "batch-frozen" | null;
+            /**
+             * @description Pack-size label the line was priced against (present when the
+             *     request's CartItem carried one); null for base-price lines.
+             */
+            packLabel?: string | null;
+            /** @description Pack identity of the priced line, e.g. "500g" / "1 kg" / "250 g". */
+            unit?: string;
+            /** @description Server-resolved line price in paise (per unit, not x quantity). */
+            priceInPaise?: number;
+            /** @description First product image URL (absolute), when one exists. */
+            image?: string | null;
         };
         CartSnapshot: {
             /** Format: uuid */

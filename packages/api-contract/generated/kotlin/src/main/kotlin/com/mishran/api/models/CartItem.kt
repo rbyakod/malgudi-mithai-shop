@@ -32,6 +32,7 @@ import com.squareup.moshi.JsonClass
  *
  * @param productId 
  * @param quantity 
+ * @param packLabel Optional pack-size label from the web PDP's derived selector (e.g. \"250g\", \"500g\", \"1 kg\"). When present the server prices the matching derived pack option; when absent the product's base display price is used. Mobile apps omit it today. 
  */
 
 
@@ -41,7 +42,11 @@ data class CartItem (
     val productId: kotlin.String,
 
     @Json(name = "quantity")
-    val quantity: kotlin.Int
+    val quantity: kotlin.Int,
+
+    /* Optional pack-size label from the web PDP's derived selector (e.g. \"250g\", \"500g\", \"1 kg\"). When present the server prices the matching derived pack option; when absent the product's base display price is used. Mobile apps omit it today.  */
+    @Json(name = "packLabel")
+    val packLabel: kotlin.String? = null
 
 ) {
 

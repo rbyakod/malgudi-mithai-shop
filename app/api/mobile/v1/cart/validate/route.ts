@@ -1,30 +1,33 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { getPayload } from 'payload';
-import { randomUUID } from 'node:crypto';
 import config from '../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../lib/api/errors';
 import { requireCustomer } from '../../../../../../lib/api/authMiddleware';
+import { flattenImages } from '../../../../../../lib/api/catalogSerializers';
+import { resolveLinePrice, computeTotals, normalizeSlot } from '../../../../../../lib/commerce/pricing';
+import { config as appConfig } from '../../../../../../lib/config';
 
-// Cart validate — schema-only implementation.
+// Cart validate — the pricing boundary of the checkout flow.
 //
-// The brief's original logic referenced four MithaiProducts fields that do
-// NOT exist on the collection today: `tier`, `stock`, `priceInPaise`, `unit`.
-// The collection has `freshnessStatus` (not tier), no stock, no numeric
-// price (only display-only string `displayPrice`), and no unit. Commerce /
-// variant pricing is explicitly deferred to Phase 8 per the collection
-// header comment. This endpoint therefore:
+// The catalog carries exactly ONE real price per product as a display
+// string ("₹920 / 250g"); the web PDP additionally sells derived pack
+// sizes under cart ids `${productId}:${label}`. This endpoint is the
+// pricing truth both clients check out against:
 //   - validates request shape + authn + pincode serviceability,
-//   - re-fetches each product to confirm it still exists,
-//   - persists a cart snapshot (Task 4.4) so the subsequent create-order
-//     route can re-read it server-side rather than trusting a client cart,
-//   - returns a stable cart snapshot whose totals are all zero with
-//     prominent TODOs pointing at Phase 8.
-//
-// Mobile clients get a stable contract to integrate against now; real
-// pricing, tier-based fulfillment rules, stock checks, and delivery-fee
-// computation land together with the commerce schema in Phase 8.
+//   - re-fetches each product fresh to confirm it still exists,
+//   - prices every line server-side (lib/commerce/pricing.ts — same
+//     derivation/rounding as the PDP; optional items[].packLabel selects
+//     a derived pack size; unpriceable lines ("on request") are rejected),
+//   - enforces the fresh-tier rule: made-daily items only ship on
+//     fresh-tier pincodes,
+//   - persists a tamper-evident cart snapshot whose items carry
+//     unit/priceInPaise/packLabel/image and whose totals are real
+//     (subtotal + flat delivery fee by tier from lib/config; taxes are 0
+//     — MRP-inclusive GST),
+//   - normalizes iOS relative slot tokens ("today"/"morning") so the
+//     Orders.slot date field validates downstream.
 
 const Slot = z.object({
   date: z.string().min(1),
@@ -37,6 +40,8 @@ const Body = z.object({
       z.object({
         productId: z.string().min(1),
         quantity: z.number().int().min(1),
+        // Optional pack-size label from the web PDP's derived selector.
+        packLabel: z.string().min(1).optional(),
       }),
     )
     .min(1),
@@ -71,14 +76,17 @@ export async function POST(req: NextRequest) {
     }
     const pincodeTier = (pincodeDoc.docs[0] as { tier?: string }).tier ?? 'unknown';
 
-    // Re-fetch each product fresh to confirm availability + snapshot metadata.
-    // No pricing is computed here — see file header + Phase 8 TODO.
+    // Re-fetch each product fresh; price it and stamp the snapshot line.
     const items: Array<{
       productId: string;
       slug: string;
       name: string;
       quantity: number;
       freshnessStatus: string | null;
+      packLabel: string | null;
+      unit: string;
+      priceInPaise: number;
+      image: string | null;
     }> = [];
 
     for (const it of parsed.data.items) {
@@ -92,6 +100,9 @@ export async function POST(req: NextRequest) {
             slug: string;
             name: string;
             freshnessStatus?: string | null;
+            displayPrice?: string | null;
+            weight?: string | null;
+            images?: unknown;
           }
         | null;
 
@@ -102,8 +113,23 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // TODO Phase 8: enforce fresh→Delhi-NCR-only when a tier field exists.
-      // TODO Phase 8: enforce stock >= quantity when a stock field exists.
+      // Fresh-tier rule (F3): made-daily items ship same-city only. Mixed
+      // carts are rejected up front with the offending line named.
+      if (product.freshnessStatus === 'made-daily' && pincodeTier !== 'fresh') {
+        throw new ApiError(
+          ErrorCode.PINCODE_NOT_SERVICEABLE,
+          `${product.name} is made daily and only ships on the fresh tier — cannot deliver to ${parsed.data.pincode}`,
+        );
+      }
+
+      const linePrice = resolveLinePrice(product, it.packLabel);
+      if (!linePrice) {
+        throw new ApiError(
+          ErrorCode.VALIDATION,
+          `${product.name} is not priced for online ordering${it.packLabel ? ` (pack "${it.packLabel}" is unavailable)` : ''}`,
+          { fieldErrors: { productId: product.id } },
+        );
+      }
 
       items.push({
         productId: product.id,
@@ -111,19 +137,21 @@ export async function POST(req: NextRequest) {
         name: product.name,
         quantity: it.quantity,
         freshnessStatus: product.freshnessStatus ?? null,
+        packLabel: it.packLabel ?? null,
+        unit: linePrice.unit,
+        priceInPaise: linePrice.priceInPaise,
+        image: flattenImages(product.images)[0] ?? null,
       });
     }
 
-    // TODO Phase 8: compute itemsTotal from real variant prices.
-    // TODO Phase 8: compute deliveryFee from pincodeTier + itemsTotal.
-    // TODO Phase 8: compute taxes (GST estimate) once prices exist.
-    const totals = {
-      itemsTotalInPaise: 0,
-      deliveryFeeInPaise: 0,
-      taxesInPaise: 0,
-      discountInPaise: 0,
-      totalInPaise: 0,
-    };
+    const totals = computeTotals(
+      items,
+      pincodeTier,
+      {
+        freshPaise: appConfig.deliveryFeeFreshPaise,
+        shelfStablePaise: appConfig.deliveryFeeShelfStablePaise,
+      },
+    );
 
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
@@ -139,7 +167,7 @@ export async function POST(req: NextRequest) {
         totals,
         pincode: parsed.data.pincode,
         pincodeTier,
-        slot: parsed.data.slot,
+        slot: normalizeSlot(parsed.data.slot),
         expiresAt,
       },
     });
