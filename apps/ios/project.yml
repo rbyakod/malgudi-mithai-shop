@@ -18,6 +18,9 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.10"
+    # Asset-catalog app icon (ASC validation rejects bundles without
+    # CFBundleIconName — this setting is what emits it).
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     CODE_SIGN_STYLE: Automatic
     # Ad-hoc signing ("Sign to Run Locally", no team needed) — simulator
     # builds are signed locally so the keychain + entitlements work in
@@ -43,10 +46,6 @@ targets:
     platform: iOS
     sources:
       - path: Mishran
-        excludes:
-          # Widget-rendering code compiles into the MishranWidgets extension
-          # only (Task 18.2) — an ActivityConfiguration is inert in the app.
-          - "LiveActivity/DeliveryActivity.swift"
       # Monorepo brand tokens, compiled in place (zero duplication — same
       # convention as the Android srcDir wiring). Regenerate with
       # `pnpm codegen:swift` in packages/brand-tokens.
@@ -69,7 +68,6 @@ targets:
       # The repo publishes one product: RazorpayCheckout (name != repo name).
       - package: Razorpay
         product: RazorpayCheckout
-      - target: MishranWidgets
     info:
       path: Mishran/Info.plist
       properties:
@@ -110,38 +108,14 @@ targets:
         # (CODE_SIGNING_ALLOWED=NO above); applies to signed device/Cloud builds.
         CODE_SIGN_ENTITLEMENTS: Mishran/Mishran.entitlements
 
-  MishranWidgets:
-    type: app-extension
-    platform: iOS
-    sources:
-      # Shared attributes/state (also compiled into the app target).
-      - path: Mishran/LiveActivity/DeliveryAttributes.swift
-      # Shared L() helper — the activity's labels localize against the
-      # extension's own copy of the generated i18n tables (Task 20.3).
-      - path: Mishran/Support/Localization.swift
-      # Widget rendering — extension-only (inert in the app bundle).
-      - path: Mishran/LiveActivity/DeliveryActivity.swift
-      # Brand tokens for the activity UI (same srcDir convention as the app).
-      - path: ../../packages/brand-tokens/generated/swift
-        group: Generated
-      # i18n tables for the activity UI — the extension bundle needs its
-      # own copy (it can't read the app bundle's Localizable.strings).
-      - path: ../../packages/i18n-strings/generated/ios
-        group: Generated
-        buildPhase: resources
-    info:
-      path: MishranWidgets/Info.plist
-      properties:
-        CFBundleDisplayName: MishranWidgets
-        # Sim install requires bundleVersion on the extension placeholder.
-        CFBundleShortVersionString: "0.1.0"
-        CFBundleVersion: "1"
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.widgetkit-extension
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.mishran.app.widgets
-        TARGETED_DEVICE_FAMILY: "1"
+  # NOTE (2026-08-15): the MishranWidgets app-extension target was removed
+  # from the shipping bundle — its renderer (DeliveryActivity.swift, kept in
+  # git history) had no @main WidgetBundle, so the appex linked without a
+  # Swift entry point and App Store Connect rejected every upload with
+  # "Invalid Mach-O header: __swift5_entry missing". Live Activities are
+  # push-gated (Firebase/APNs, still externally blocked) so nothing could
+  # trigger one anyway; DeliveryAttributes.swift + LiveActivityManager stay
+  # in the app target for when the widget returns with a real entry point.
 
   MishranUITests:
     type: bundle.ui-testing
