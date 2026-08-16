@@ -85,12 +85,21 @@ export async function POST(req: NextRequest) {
 
       // Server-trust: re-read the persisted snapshot. Must belong to this
       // customer and must not be expired.
+      //
+      // overrideAccess: true because the snapshots collection has no public
+      // read access config, so a local-API read with the default access
+      // (no req.user) is denied and EVERY create-order returned
+      // SNAPSHOT_NOT_FOUND. Authorization is enforced right below by
+      // comparing the authenticated customerId. depth: 0 keeps the
+      // customerId relation an id string (default depth populates it into
+      // an object, which would also break the comparison).
       let snapshotDoc: { id: string; customerId?: string; items?: unknown; totals?: unknown; slot?: unknown; expiresAt?: string } | null;
       try {
         snapshotDoc = (await payload.findByID({
           collection: 'snapshots',
           id: parsed.data.snapshotId,
-          overrideAccess: false,
+          overrideAccess: true,
+          depth: 0,
         })) as typeof snapshotDoc;
       } catch {
         snapshotDoc = null;

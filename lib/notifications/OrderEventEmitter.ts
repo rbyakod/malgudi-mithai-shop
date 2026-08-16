@@ -62,9 +62,14 @@ export async function emitOrderEvent(orderId: string, stage: string): Promise<vo
 
   const payload = await getPayload({ config });
 
-  const order = (await payload.findByID({ collection: "orders", id: orderId })) as
-    | { id: string; customerId: string | number }
-    | null;
+  // depth: 0 keeps customerId an id string — at the default depth Payload
+  // populates the relation into an object, String() of which is
+  // "[object Object]" and every downstream customer lookup 404s.
+  const order = (await payload.findByID({
+    collection: "orders",
+    id: orderId,
+    depth: 0,
+  })) as { id: string; customerId: string | number } | null;
   if (!order) return;
 
   const customerId = String(order.customerId);

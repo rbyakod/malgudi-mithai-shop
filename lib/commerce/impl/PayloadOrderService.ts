@@ -57,10 +57,17 @@ export class PayloadOrderService implements OrderService {
   async getById(id: string, customerId: string): Promise<Order | null> {
     const payload = await getPayload({ config });
     try {
+      // overrideAccess: true (the local-API default we rely on everywhere
+      // else here) because the orders collection has no public read
+      // access config — with overrideAccess: false the anonymous local
+      // read is denied and EVERY getById returned null (verify 404s,
+      // GET /orders/[id] 404s). Authorization is the customerId check
+      // below. depth: 0 keeps the customerId relation an id string.
       const doc = await payload.findByID({
         collection: "orders",
         id,
-        overrideAccess: false,
+        overrideAccess: true,
+        depth: 0,
       });
       if (!doc) return null;
       if ((doc as { customerId?: string }).customerId !== customerId) return null;

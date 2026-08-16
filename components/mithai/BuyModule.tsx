@@ -17,6 +17,7 @@ import {useTransition, useState} from "react";
 import {useTranslations} from "next-intl";
 import {useRouter} from "@/i18n/navigation";
 import {useCart} from "@/context/CartContext";
+import {useAuth} from "@/context/AuthContext";
 import {track} from "@/lib/analytics";
 import type {PackSize} from "@/lib/mithai/packSizes";
 import {PincodeCheck} from "@/components/mithai/PincodeCheck";
@@ -44,6 +45,7 @@ export function BuyModule({
 }: Props) {
   const t = useTranslations("Pdp.mithai");
   const {addItem} = useCart();
+  const {session} = useAuth();
   const router = useRouter();
   // The base option carries the verbatim displayPrice — select it by default
   // so the page opens on the product's real price (ladder chips stay
@@ -93,7 +95,14 @@ export function BuyModule({
     startTransition(() => {
       addItem({id: cartId, name, priceLabel, image: cartImage}, qty);
       track("buy_now", {id: cartId, name, quantity: qty});
-      router.push("/cart");
+      // Checkout needs a signed-in customer (address + orders are
+      // customer-scoped). Signed-out buyers are routed through sign-in with
+      // a deep link back — the cart survives in localStorage.
+      if (session) {
+        router.push("/checkout");
+      } else {
+        router.push({pathname: "/sign-in", query: {next: "/checkout"}});
+      }
     });
   }
 

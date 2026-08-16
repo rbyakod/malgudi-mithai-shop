@@ -19,6 +19,10 @@ export type CartItem = {
 
 type CartContextType = {
   items: CartItem[];
+  /** False until the post-hydration localStorage restore has run — lets
+   * consumers (e.g. checkout's empty-cart redirect) distinguish "not
+   * restored yet" from "actually empty". */
+  ready: boolean;
   addItem: (item: Omit<CartItem, "quantity">, qty?: number) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, qty: number) => void;
@@ -38,6 +42,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // didn't match the client" error caused by count badges appearing
   // on hydration.
   const [items, setItems] = useState<CartItem[]>([]);
+  const [ready, setReady] = useState(false);
 
   // After mount, load any saved cart from localStorage.
   useEffect(() => {
@@ -53,6 +58,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot readiness flag after the restore pass
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -98,6 +105,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value: CartContextType = {
     items,
+    ready,
     addItem,
     removeItem,
     updateQuantity,
