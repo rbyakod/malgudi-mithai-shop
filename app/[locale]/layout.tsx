@@ -14,6 +14,8 @@ import {
   readStorefrontLayoutMode,
   readThemeSwitcherVisibility,
 } from "@/lib/storefront-layout-server";
+import {InlineScript} from "@/components/InlineScript";
+import {HtmlLangSync} from "@/components/layout/HtmlLangSync";
 
 // Static rendering: enumerate the locales so every [locale] route below can
 // be prerendered. Without this, dynamic child segments (e.g. mithai/[slug])
@@ -77,9 +79,20 @@ export default async function LocaleLayout({children, params}: Props) {
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
+      {/* <html lang> — the root layout renders <html> with a static "en"
+          because it cannot see the [locale] param (and reading headers there
+          would force dynamic rendering for every page). Set the real locale
+          pre-paint for screen readers + user agents; HtmlLangSync covers
+          soft locale switches where this script never re-executes. */}
+      <InlineScript
+        type="text/javascript"
+        id="html-lang-init"
+        html={`document.documentElement.lang=${JSON.stringify(locale)}`}
+      />
+      <HtmlLangSync locale={locale} />
       {/* Layout shell — BrandBar (server, reads Payload) + SiteHeader (client,
           owns theme/locale/cart UI) + main content + SiteFooter (server). */}
-      <div className="relative z-10 flex min-h-screen flex-col text-text-primary">
+      <div className="relative z-10 flex min-h-dvh flex-col text-text-primary">
         <BrandBar layoutMode={layoutMode} />
         <SiteHeader
           layoutMode={layoutMode}
