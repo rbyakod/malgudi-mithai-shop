@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mishran — Web ↔ Mobile Feature Parity Audit · 2026-08-15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#faf6ee; --card:#fffdf8; --ink:#2a1c12; --ink-soft:#5c4a3a;
+    --kakvi:#8a4b1f; --saffron:#d98324; --marigold:#e8a13a;
+    --line:#e5d9c3; --line-strong:#d4c3a5;
+    --ok:#2e7d4f; --ok-bg:#e6f2ea;
+    --warn:#9a6b0a; --warn-bg:#fdf3dd;
+    --miss:#b3382e; --miss-bg:#fbe8e5;
+    --plus:#1f5f8a; --plus-bg:#e4eef6;
+    --na:#7a7a7a; --na-bg:#efefef;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:'Work Sans',sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px 90px}
+
+  /* masthead */
+  header.mast{background:linear-gradient(160deg,#2a1c12 0%,#4a2e17 55%,#6b3f1c 100%);color:#f7ecd9;padding:54px 0 46px;position:relative;overflow:hidden}
+  header.mast::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(232,161,58,.28),transparent 70%)}
+  .mast .wrap{padding-bottom:0}
+  .kicker{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--marigold);font-weight:600}
+  h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(30px,4.5vw,46px);line-height:1.08;margin:14px 0 12px;max-width:820px}
+  .mast p.lede{color:#e9d9bf;max-width:760px;font-size:16px}
+  .mast .meta{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:26px;font-size:13px;color:#cdb897}
+  .mast .meta b{color:#f7ecd9;font-weight:600}
+
+  /* scorecards */
+  .scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:-24px 0 46px;position:relative;z-index:2}
+  .score{background:var(--card);border:1px solid var(--line-strong);border-radius:14px;padding:20px 22px;box-shadow:0 8px 24px rgba(42,28,18,.08)}
+  .score h3{font-family:'Fraunces',serif;font-size:17px;font-weight:700;margin-bottom:4px}
+  .score .sub{font-size:12.5px;color:var(--ink-soft);margin-bottom:12px}
+  .bars{display:grid;gap:7px}
+  .bar{display:grid;grid-template-columns:92px 1fr 34px;align-items:center;gap:10px;font-size:12.5px}
+  .bar .track{background:#efe7d6;border-radius:99px;height:10px;overflow:hidden}
+  .bar .fill{height:100%;border-radius:99px}
+  .bar .n{text-align:right;font-weight:700;font-size:12.5px}
+  .f-ok{background:var(--ok)} .f-warn{background:var(--saffron)} .f-miss{background:var(--miss)} .f-plus{background:var(--plus)}
+
+  /* controls */
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:22px;position:sticky;top:0;background:var(--paper);padding:12px 0;z-index:5;border-bottom:1px solid var(--line)}
+  .controls .lbl{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-right:6px}
+  button.f{border:1.5px solid var(--line-strong);background:var(--card);color:var(--ink);border-radius:99px;padding:5px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  button.f:hover{border-color:var(--kakvi)}
+  button.f.on{background:var(--ink);color:#f7ecd9;border-color:var(--ink)}
+
+  /* sections */
+  h2.area{font-family:'Fraunces',serif;font-weight:900;font-size:26px;margin:52px 0 6px;display:flex;align-items:baseline;gap:14px}
+  h2.area .num{font-size:14px;color:var(--saffron);letter-spacing:.1em;font-family:'Work Sans',sans-serif;font-weight:700}
+  .area-sub{color:var(--ink-soft);font-size:14px;margin-bottom:18px;max-width:860px}
+
+  table.mx{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);border:1px solid var(--line-strong);border-radius:14px;overflow:hidden;font-size:14px}
+  .mx thead th{background:#f2e9d8;text-align:left;padding:11px 16px;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);border-bottom:1px solid var(--line-strong)}
+  .mx td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+  .mx tr:last-child td{border-bottom:none}
+  .mx tr:hover td{background:#fdf9f0}
+  .mx .feat{font-weight:600;width:21%}
+  .mx .feat small{display:block;font-weight:400;color:var(--ink-soft);font-size:12px;margin-top:2px}
+  .mx .web{width:33%;color:var(--ink-soft);font-size:13px}
+  .mx .st{width:10.5%;white-space:nowrap}
+  .mx .note{width:25%;font-size:12.5px;color:var(--ink-soft)}
+  .hide{display:none}
+
+  .chip{display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:2.5px 9px;font-size:11.5px;font-weight:700;letter-spacing:.02em}
+  .c-ok{background:var(--ok-bg);color:var(--ok)} .c-warn{background:var(--warn-bg);color:var(--warn)}
+  .c-miss{background:var(--miss-bg);color:var(--miss)} .c-plus{background:var(--plus-bg);color:var(--plus)}
+  .c-na{background:var(--na-bg);color:var(--na)}
+  .chip::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+
+  /* callouts */
+  .callout{border-radius:14px;padding:20px 24px;margin:20px 0;border:1px solid var(--line-strong)}
+  .callout h4{font-family:'Fraunces',serif;font-size:17px;margin-bottom:8px}
+  .callout.live{background:linear-gradient(135deg,#fdf6e7,#f9edda)}
+  .callout.live h4{color:var(--kakvi)}
+  .callout ul{margin:8px 0 0 18px}
+  .callout li{margin:5px 0}
+  code{background:#f1e8d6;border-radius:5px;padding:1px 6px;font-size:12.5px;font-family:ui-monospace,Menlo,monospace;color:#6b3f1c}
+
+  /* mobile-only grid */
+  .mo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:16px}
+  .mo{background:var(--card);border:1px solid var(--line-strong);border-radius:12px;padding:16px 18px}
+  .mo h5{font-size:14px;font-weight:700;margin-bottom:4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .mo p{font-size:12.5px;color:var(--ink-soft)}
+  .tag{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:5px;padding:2px 7px}
+  .t-ios{background:var(--plus-bg);color:var(--plus)} .t-droid{background:var(--ok-bg);color:var(--ok)}
+  .t-both{background:var(--warn-bg);color:var(--warn)}
+
+  footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--line-strong);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  @media(max-width:860px){
+    .mx .web,.mx .note{display:none}
+    .mx .st{width:44%}
+    .mx .feat{width:56%}
+  }
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="kicker">Mishran · Platform Parity Audit</div>
+    <h1>Web ↔ Mobile Feature Audit</h1>
+    <p class="lede">Every user-facing capability of the Next.js storefront cross-mapped against the iOS (SwiftUI) and Android (Compose) apps — full parity, partial, missing, or mobile-only — with evidence from code inventory of all three codebases and live verification against production.</p>
+    <div class="meta">
+      <span><b>Date</b> Aug 15, 2026</span>
+      <span><b>Web</b> ~60 features · <b>iOS</b> ~45 · <b>Android</b> ~50</span>
+      <span><b>Production</b> mishran.pranavb.com</span>
+      <span><b>Apps</b> iOS 0.1.0(2) · Android debug (live URL)</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- SCORECARDS -->
+  <div class="scores">
+    <div class="score">
+      <h3>iOS vs Web</h3>
+      <div class="sub">43 comparable web features assessed</div>
+      <div class="bars">
+        <div class="bar"><span>Full parity</span><div class="track"><div class="fill f-ok" style="width:49%"></div></div><span class="n">21</span></div>
+        <div class="bar"><span>Partial</span><div class="track"><div class="fill f-warn" style="width:19%"></div></div><span class="n">8</span></div>
+        <div class="bar"><span>Missing</span><div class="track"><div class="fill f-miss" style="width:33%"></div></div><span class="n">14</span></div>
+        <div class="bar"><span>Mobile-only</span><div class="track"><div class="fill f-plus" style="width:30%"></div></div><span class="n">13+</span></div>
+      </div>
+    </div>
+    <div class="score">
+      <h3>Android vs Web</h3>
+      <div class="sub">43 comparable web features assessed</div>
+      <div class="bars">
+        <div class="bar"><span>Full parity</span><div class="track"><div class="fill f-ok" style="width:51%"></div></div><span class="n">22</span></div>
+        <div class="bar"><span>Partial</span><div class="track"><div class="fill f-warn" style="width:16%"></div></div><span class="n">7</span></div>
+        <div class="bar"><span>Missing</span><div class="track"><div class="fill f-miss" style="width:35%"></div></div><span class="n">15</span></div>
+        <div class="bar"><span>Mobile-only</span><div class="track"><div class="fill f-plus" style="width:28%"></div></div><span class="n">12+</span></div>
+      </div>
+    </div>
+    <div class="score">
+      <h3>Where the platforms differ</h3>
+      <div class="sub">Headline findings</div>
+      <div class="bars" style="grid-template-columns:1fr;gap:9px;font-size:13px">
+        <div>🛒 <b>Commerce lives on mobile only</b> — real checkout, Razorpay, orders, auth. Web checkout/account/track-order are Phase-8 stubs.</div>
+        <div>🎁 <b>Lead capture lives on web only</b> — gift-box builder has no mobile counterpart; wedding/corporate forms are field-subsets on mobile.</div>
+        <div>🎨 <b>Theming &amp; analytics are web only</b> — 8-palette Theme Studio and GA4/Pixel events have no mobile equivalent (Firebase is externally gated).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <span class="lbl">Show</span>
+    <button class="f on" data-s="all">All</button>
+    <button class="f" data-s="ok">✓ Full parity</button>
+    <button class="f" data-s="warn">◐ Partial</button>
+    <button class="f" data-s="miss">✗ Missing</button>
+    <button class="f" data-s="plus">＋ Mobile-only</button>
+    <button class="f" data-s="na">· Web-only infra</button>
+  </div>
+
+  <div class="callout live">
+    <h4>✔ Verified live on production (this audit)</h4>
+    <ul>
+      <li><b>Web home hero carousel</b> — exactly 1 carousel region, <b>5 slides</b> (kaju-katli, mysore-pak, motichoor-laddu, aloo-bhujia, chole-bhature), dot indicators, autoplay; 53 optimized <code>next/image</code> assets on the page.</li>
+      <li><b>Live API hero</b> — <code>GET /api/mobile/v1/hero</code> returns all 5 slides with absolute image URLs; both apps render the carousel with static-hero fallback when empty.</li>
+      <li><b>Apps vs live catalog</b> — 91 mithai + 39 snacks + 33 QSR + 22 merch products reachable from both apps (catalog → search → PDP → cart proven by LiveApiUITests + emulator taps).</li>
+    </ul>
+  </div>
+
+  <!-- 1. HOME -->
+  <h2 class="area"><span class="num">01</span> Home</h2>
+  <p class="area-sub">The storefront front door. Mobile replaced the web's editorial layout with a photo-first, rail-driven structure — the hero carousel is the centerpiece on all three.</p>
+  <table class="mx">
+    <thead><tr><th>Feature</th><th>Web implementation</th><th>iOS</th><th>Android</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr data-s="warn"><td class="feat">Brand hero<small>editorial two-column, live Payload copy</small></td><td class="web">BrandHero reads brand name + positioning from <code>brand-settings</code> global; static kaju-katli still-life fallback; dual CTAs</td><td class="st"><span class="chip c-warn">◐</span></td><td class="st"><span class="chip c-warn">◐</span></td><td class="note">Apps show wordmark + tagline in the static fallback hero, but copy is bundled — not live from the Payload global. Serves as carousel fallback only.</td></tr>
+      <tr data-s="ok"><td class="feat">Hero carousel<small>admin-curated slides</small></td><td class="web">HeroRotator: autoplay (admin 3–15 s), pause on hover/focus/off-screen, arrows + dots, per-slide View link + inline add-to-cart, reduced-motion honored</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Both apps: paged carousel, dots, autoplay from server interval, reduced-motion honored, per-vertical slide routing, static fallback. Deltas: no hover-pause/arrows (touch), no per-slide add-to-cart, no <code>hero_slide_view</code> analytics.</td></tr>
+      <tr data-s="ok"><td class="feat">Vertical portals<small>entry to 4 verticals</small></td><td class="web">4 numbered editorial rows (Mithai/QSR/Snacks/Merch), image-left/right flip</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">iOS: image cards with live counts ("Snacks · 39"). Android: themed color tiles (contrast-safe without imagery). Both deep-link the catalog tab.</td></tr>
+      <tr data-s="miss"><td class="feat">Brand pillars strip<small>"Why Mishran" → stories pillars</small></td><td class="web">Pillars.tsx — 4-column broadsheet strip linking /stories/farms, karigars, karigari, journal</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">No pillars section on either app. Would need pillar routing to exist first (see Stories).</td></tr>
+      <tr data-s="ok"><td class="feat">Best sellers rail<small>featured products</small></td><td class="web">Featured-first ordering inside catalog browser sort</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Both apps: horizontal rail of <code>featured</code> products (server flag), first-8 fallback, "Bestseller" badge on cards.</td></tr>
+      <tr data-s="ok"><td class="feat">Shop by family<small>category shortcuts</small></td><td class="web">Tag-filter dropdown in CatalogBrowser</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Chips with per-family counts; tap seeds the catalog filter (deep-link args).</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 2. CATALOG -->
+  <h2 class="area"><span class="num">02</span> Catalog &amp; Search</h2>
+  <p class="area-sub">All four verticals browse-able everywhere. The apps' offline-first cache is a mobile advantage; sort and quick-add are the web's remaining edges.</p>
+  <table class="mx">
+    <thead><tr><th>Feature</th><th>Web implementation</th><th>iOS</th><th>Android</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr data-s="ok"><td class="feat">Mithai catalog grid<small>91 products</small></td><td class="web">VerticalHub + CatalogBrowser, 100-doc batched full read, page size from theme-settings</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">2-column grids; two-emit Room/SwiftData cache → network refresh without losing scroll state.</td></tr>
+      <tr data-s="ok"><td class="feat">Snacks / QSR / Merch hubs</td><td class="web">Same shared browser over the 3 other collections, per-vertical tag facet</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Segmented tabs inside catalog (capsule pills ≥44 pt on iOS); per-vertical card types (MSRP·weight / veg dot·category / type·availability).</td></tr>
+      <tr data-s="warn"><td class="feat">Search<small>free-text</small></td><td class="web">Client-side match across title + tag + price + description + freshness + dietary tags</td><td class="st"><span class="chip c-warn">◐</span></td><td class="st"><span class="chip c-warn">◐</span></td><td class="note">Apps match <b>name only</b> (iOS: case/diacritic-insensitive; Android: name+slug). A <code>GET /api/search</code> unified endpoint exists live but no app consumes it.</td></tr>
+      <tr data-s="ok"><td class="feat">Family + dietary filters</td><td class="web">Tag-filter dropdown per hub</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">iOS: medium-detent sheet (family, dietary AND-subset, regional shortcut). Android: bottom sheet (family dropdown + dietary chips). Active-filter chip rows on both.</td></tr>
+      <tr data-s="miss"><td class="feat">Sort<small>Featured / A–Z / Z–A</small></td><td class="web">Dropdown in CatalogBrowser</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">No sort control in either app; grids follow server order. Cheap win client-side since the full catalog is cached.</td></tr>
+      <tr data-s="ok"><td class="feat">Pagination / result counts</td><td class="web">Numbered pages, "Showing X–Y of Z"</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Adapted: apps render the full cached catalog as one scroll; distinct empty copy for "no results" vs "not synced".</td></tr>
+      <tr data-s="miss"><td class="feat">Quick add from grid</td><td class="web">Per-card "Quick add" button + toast + analytics</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">Cards navigate to PDP only. Note: quick-add on web is mithai-only and pack-unaware (base id) — porting it needs the pack decision.</td></tr>
+      <tr data-s="plus"><td class="feat">Offline cache + ETag<small>＋ mobile advantage</small></td><td class="web">— (web relies on ISR)</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note">Full catalog cached (Room / SwiftData), <code>If-None-Match</code> conditional GET, 304 extends freshness, 6-h staleness window; iOS adds a BGTaskScheduler background refresh.</td></tr>
+      <tr data-s="plus"><td class="feat">Pull-to-refresh<small>＋ mobile</small></td><td class="web">—</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note">iOS native refresh everywhere; Android <code>PullToRefreshBox</code> (material3 1.3) on catalog + orders, ETag-bypassing force refresh.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 3. PDP -->
+  <h2 class="area"><span class="num">03</span> Product Detail</h2>
+  <p class="area-sub">The buy module ports are exact (pack-size algorithm is a verbatim port on both platforms). Editorial framing content is where web still leads.</p>
+  <table class="mx">
+    <thead><tr><th>Feature</th><th>Web implementation</th><th>iOS</th><th>Android</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr data-s="ok"><td class="feat">Mithai PDP core<small>gallery · price · sections</small></td><td class="web">MithaiPDP: breadcrumb, family eyebrow, freshness promise, trust strip, provenance strip, ingredients, honest-label aside</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Both: hero/gallery, price, freshness, ingredients/shelf-life/storage/story/allergens sections (hidden when blank). Missing on mobile: <b>provenance strip</b> (karigar name, lead time) and trust microcopy strip.</td></tr>
+      <tr data-s="ok"><td class="feat">Pack-size selector<small>derived 250g/500g/1kg</small></td><td class="web">packSizes.ts ladder; base rung verbatim, siblings ×g scaled, ₹10 rounding, en-IN grouping; off-ladder = single info chip</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Verbatim ports (PackSizes.swift / PackSizes.kt); selection swaps price line; cart ids <code>${productId}:${label}</code> with base-pack merging; estimate disclaimer on both.</td></tr>
+      <tr data-s="ok"><td class="feat">Quantity stepper</td><td class="web">−/+ clamped 1–20, aria-labels, polite live region</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">1–20 on iOS (buttons disable at bounds); 1+ on Android. TalkBack/VoiceOver labels on both.</td></tr>
+      <tr data-s="ok"><td class="feat">Add to cart / Buy now</td><td class="web">Add with ✓ state; buy-now adds then routes to /cart; useTransition disable</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">iOS: "Added to cart" flip + pushes checkout on buy. Android: pop-back after add, one-shot buy-now flow to checkout. Cart/validate collapses pack lines by base productId.</td></tr>
+      <tr data-s="warn"><td class="feat">Sticky buy bar<small>mobile-viewport rail</small></td><td class="web">Fixed bottom rail on &lt;md: truncated name + qty×price + add</td><td class="st"><span class="chip c-warn">◐</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Android has the bottom add/buy bar. iOS CTAs are inline (scroll with content).</td></tr>
+      <tr data-s="warn"><td class="feat">Pincode serviceability check</td><td class="web">On the PDP: 6-digit input → tier/city/SLA, persisted to localStorage across visits</td><td class="st"><span class="chip c-warn">◐</span></td><td class="st"><span class="chip c-warn">◐</span></td><td class="note">Both apps run the check at <b>checkout</b> (with fresh-tier item gating + slot copy), not on the PDP, and don't persist it across sessions.</td></tr>
+      <tr data-s="ok"><td class="feat">QSR item page<small>walk-in vertical</small></td><td class="web">Veg/non-veg dot, spice level, available-at stores, no add-to-cart</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Both detail screens honor the no-cart rule; store lists rendered.</td></tr>
+      <tr data-s="ok"><td class="feat">Snacks item page<small>retail vertical</small></td><td class="web">MSRP + tax note, weight chip, external retailer links (new tab)</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">"Where to buy" rows open retailer sites externally on both apps.</td></tr>
+      <tr data-s="ok"><td class="feat">Merch item page<small>enquiry-led</small></td><td class="web">Price/type/availability; Enquire button is <b>inert</b>; enquiry-only shows disabled "open soon"</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Mobile is ahead: Enquire actually pushes the enquiry form (type pre-set). Web's button does nothing yet.</td></tr>
+      <tr data-s="miss"><td class="feat">Product-viewed analytics</td><td class="web"><code>product_viewed</code> on PDP mount → GA4/Pixel</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">Externally gated: Firebase project + google-services.json needed (on the deferred register).</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 4. CART & CHECKOUT -->
+  <h2 class="area"><span class="num">04</span> Cart &amp; Checkout</h2>
+  <p class="area-sub">The starkest split in the audit: the web cart is a WhatsApp relay into a Phase-8 stub; both apps run the complete verified payment flow.</p>
+  <table class="mx">
+    <thead><tr><th>Feature</th><th>Web implementation</th><th>iOS</th><th>Android</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr data-s="ok"><td class="feat">Cart persistence</td><td class="web">localStorage <code>mithai-cart-v1</code>, hydration-safe restore</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">SwiftData / Room — survives reinstall-adjacent scenarios better than localStorage; pack-aware line ids.</td></tr>
+      <tr data-s="ok"><td class="feat">Cart editing<small>qty · remove · clear</small></td><td class="web">Qty +/−, remove, Clear; empty state links to catalog</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Both add swipe-to-delete; iOS adds edit-mode delete; totals = Σ unit×qty with "delivery at checkout" note.</td></tr>
+      <tr data-s="miss"><td class="feat">Live cart badge<small>header count chip</small></td><td class="web">Header quantity pill, updates instantly from cart context</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">Neither app shows a count badge on the cart toolbar entry / bottom bar (verified by grep). Small, high-visibility win.</td></tr>
+      <tr data-s="miss"><td class="feat">WhatsApp order relay<small>from cart</small></td><td class="web">Cart builds a prefilled message enumerating every line + locale</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">Superseded on mobile by real checkout — but worth keeping in mind if payment ever fails; only support links exist today.</td></tr>
+      <tr data-s="miss"><td class="feat">Checkout flow<small>web status</small></td><td class="web">CommerceStub placeholder + WhatsApp fallback — no address, slot, or payment UI</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note"><b>Mobile-only:</b> address → pincode tier → slot picker (fresh tier, today/tomorrow × AM/PM) → Razorpay (create-order → sheet → HMAC verify, fresh idempotency key per attempt, signature fail-closed) → order confirmed.</td></tr>
+      <tr data-s="plus"><td class="feat">Razorpay payments<small>＋ mobile</small></td><td class="web">—</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note">Android uses the with-data listener (signature parked correctly); iOS uses the with-data delegate. Dismiss = cart intact.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 5. ORDERS & ACCOUNT -->
+  <h2 class="area"><span class="num">05</span> Orders, Account &amp; Auth</h2>
+  <p class="area-sub">Entirely mobile territory — the web has stubs at /account and /track-order while the apps carry the full post-purchase lifecycle.</p>
+  <table class="mx">
+    <thead><tr><th>Feature</th><th>Web implementation</th><th>iOS</th><th>Android</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr data-s="miss"><td class="feat">Account hub<small>web status</small></td><td class="web">CommerceStub — no sign-in, profile, addresses, wallet, or loyalty UI</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note"><b>Mobile-only:</b> identity header, loyalty pass card, order history, addresses, language preference, sign-out (full local wipe + server logout).</td></tr>
+      <tr data-s="miss"><td class="feat">Order tracking<small>web status</small></td><td class="web">CommerceStub at /track-order</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note"><b>Mobile-only:</b> order list (pull-to-refresh), detail with live-stage timeline ("Now"), all 12 contract statuses handled, totals breakdown, reference id.</td></tr>
+      <tr data-s="plus"><td class="feat">Push order updates<small>＋ mobile</small></td><td class="web">—</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note">APNs/FCM device registration, foreground banners, tap → order detail stack reset. Android asks POST_NOTIFICATIONS once on first Home arrival (13+).</td></tr>
+      <tr data-s="plus"><td class="feat">Delivery Live Activity<small>＋ iOS</small></td><td class="web">—</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-na">·</span></td><td class="note">Lock-screen banner + Dynamic Island, ActivityKit push-driven, stage-tinted icons. No Android equivalent (by design).</td></tr>
+      <tr data-s="plus"><td class="feat">Phone + OTP auth<small>＋ mobile</small></td><td class="web">— (no web login surface)</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note">E.164 validation, 6-digit OTP, expired-request restart, keychain/DataStore token storage with single-flight refresh.</td></tr>
+      <tr data-s="plus"><td class="feat">Sign in with Apple<small>＋ iOS</small></td><td class="web">—</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-na">·</span></td><td class="note">Required by App Store given third-party login exists; full-name scope, shared credential funnel.</td></tr>
+      <tr data-s="plus"><td class="feat">Saved addresses<small>＋ mobile</small></td><td class="web">—</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note">Full CRUD (GET/POST/PATCH/DELETE), default toggle, mirrored locally so checkout stays in sync; add-address sheet reachable from checkout.</td></tr>
+      <tr data-s="plus"><td class="feat">Biometric gate<small>＋ mobile</small></td><td class="web">—</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note">Cold-start Face ID/fingerprint unlock when a session exists; dead session routes to sign-in, never silently continues.</td></tr>
+      <tr data-s="warn"><td class="feat">Wallet / loyalty pass</td><td class="web">Eligibility logic in <code>lib/loyalty</code> + wallet libs, server-side only — no UI</td><td class="st"><span class="chip c-warn">◐</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">iOS displays the pass card in Account. Android Google Wallet parity deferred (needs Wallet issuer setup — on the register).</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 6. CONTENT -->
+  <h2 class="area"><span class="num">06</span> Stories / Journal</h2>
+  <p class="area-sub">Reading works everywhere; the web's pillar taxonomy (9 pillars, 4 dedicated routes) has no mobile representation.</p>
+  <table class="mx">
+    <thead><tr><th>Feature</th><th>Web implementation</th><th>iOS</th><th>Android</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr data-s="warn"><td class="feat">Stories hub<small>pillar taxonomy</small></td><td class="web">9 pillars in fixed editorial order, Roman numerals, featured card + hairline rows, count eyebrow</td><td class="st"><span class="chip c-warn">◐</span></td><td class="st"><span class="chip c-warn">◐</span></td><td class="note">Apps render a flat newest-first list (hero card + rows, pillar chip per card). No grouping or pillar browse.</td></tr>
+      <tr data-s="miss"><td class="feat">Pillar listing pages<small>/stories/farms etc.</small></td><td class="web">4 static pillar routes with the same featured+rows rhythm</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">Could be a filter chip row on the stories list — data (pillar field) already ships in the mobile contract.</td></tr>
+      <tr data-s="ok"><td class="feat">Story reader</td><td class="web">Magazine masthead + Lexical rich-text renderer + back link</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Flattened Lexical body as styled text (adapted); offline fallback to cached excerpt on iOS; error/retry on both.</td></tr>
+      <tr data-s="ok"><td class="feat">"From the journal" rail<small>home entry</small></td><td class="web">Stories hub linked via pillars strip</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">3 newest stories as cards on Home, "See all" action, section hidden until sync.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 7. LEADS -->
+  <h2 class="area"><span class="num">07</span> Lead Capture (Gift · Wedding · Corporate)</h2>
+  <p class="area-sub">The one whole category where web leads. Mobile's enquiry screen covers the wedding/corporate basics; the gift-box builder has no mobile presence at all.</p>
+  <table class="mx">
+    <thead><tr><th>Feature</th><th>Web implementation</th><th>iOS</th><th>Android</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr data-s="miss"><td class="feat">Build-a-gift configurator</td><td class="web">Quote configurator: occasion, 4/8/16-piece box, budget band, needed-by date, dietary notes, message card → lead + WhatsApp fallback</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">No gift surface on either app. The drafts API (30-day TTL) was built for exactly this and has <b>no consumer on any platform</b>.</td></tr>
+      <tr data-s="warn"><td class="feat">Weddings enquiry</td><td class="web">3 fieldsets: contact, event (date/city/guests/budget), preferences (mithai/packaging/message)</td><td class="st"><span class="chip c-warn">◐</span></td><td class="st"><span class="chip c-warn">◐</span></td><td class="note">Apps: name/phone/email/message + date/city/guests. Missing: budget band, packaging preference.</td></tr>
+      <tr data-s="warn"><td class="feat">Corporate enquiry</td><td class="web">Contact, company + GSTIN (15-char pattern), quantity, deadline, occasion, branding, message</td><td class="st"><span class="chip c-warn">◐</span></td><td class="st"><span class="chip c-warn">◐</span></td><td class="note">Apps: company, quantity, needed-by. Missing: GSTIN, occasion, branding. iOS quirk: blank email passes client validation but the server 400s (server requires email).</td></tr>
+      <tr data-s="ok"><td class="feat">Lead submission API</td><td class="web">POST /api/leads — validation, Payload create, Resend email</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Both apps post to the same public endpoint (bare-JSON response), phone pre-filled from session, leadId reference shown on success.</td></tr>
+      <tr data-s="ok"><td class="feat">Form UX backbone</td><td class="web">useActionState + mutation, toast, thank-you panel with reference id, alert error region</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Native equivalents: success panel + reference id, inline validation, disabled-while-sending.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 8. GLOBAL -->
+  <h2 class="area"><span class="num">08</span> Global Experience (i18n · Themes · Shell · Support)</h2>
+  <p class="area-sub">Localization is the apps' surprising win — 9 wired locales vs the web's 3. Theming, analytics, and support touchpoints remain web-only.</p>
+  <table class="mx">
+    <thead><tr><th>Feature</th><th>Web implementation</th><th>iOS</th><th>Android</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr data-s="plus"><td class="feat">Localization<small>＋ mobile leads</small></td><td class="web">3 locales (en/hi/kn), URL-prefixed routing, header switcher, hreflang alternates</td><td class="st"><span class="chip c-plus">＋</span></td><td class="st"><span class="chip c-plus">＋</span></td><td class="note"><b>Apps ship 9 locales</b> (en, hi, kn + ta/te/mr/gu/bn/pa drafts) with in-app switchers (AppleLanguages / AppCompatDelegate). Web-only: hreflang, URL-shareable locale. Indic drafts pending native review.</td></tr>
+      <tr data-s="miss"><td class="feat">Theme system + switcher<small>8 palettes</small></td><td class="web">CSS-variable themes, FOUC-free boot script, "Theme Studio" dropdown with previews (env/admin-gated)</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">Single baked-in brand palette per app. Deliberate for v1 — native theming is a larger lift than a data-attribute swap.</td></tr>
+      <tr data-s="warn"><td class="feat">WhatsApp support<small>touchpoints</small></td><td class="web">Brand bar, footer, PDP (product/pack/price prefilled), cart (full order prefilled), gift builder, stubs — 8+ touchpoints, number from Payload</td><td class="st"><span class="chip c-warn">◐</span></td><td class="st"><span class="chip c-warn">◐</span></td><td class="note">One touchpoint each (iOS: "Need help" on order detail; Android: Account). Number correctly sourced from <code>GET /brand</code>, but no prefilled context and no PDP/cart entry points.</td></tr>
+      <tr data-s="miss"><td class="feat">Unified search UI<small>API exists</small></td><td class="web">GET /api/search across 5 collections — no web UI either (built for mobile)</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">Live endpoint returns {kind, slug, label, snippet}; neither app has a global search surface to consume it.</td></tr>
+      <tr data-s="miss"><td class="feat">Session drafts<small>API exists</small></td><td class="web">/api/drafts — 30-day-TTL create/fetch/update</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">Built for the gift builder; zero consumers anywhere today.</td></tr>
+      <tr data-s="ok"><td class="feat">Navigation shell</td><td class="web">Two-tier header, mobile hamburger overlay, segment-aware active states, "Order now" CTA</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Adapted: 4-tab bottom bar (Home/Catalog/Orders/Account) with per-tab back-stack preservation; toolbar entries on pushed screens.</td></tr>
+      <tr data-s="miss"><td class="feat">Announcement bar<small>"Handcrafted daily…"</small></td><td class="web">BrandBar: promise strip + kitchen count + clickable WhatsApp</td><td class="st"><span class="chip c-miss">✗</span></td><td class="st"><span class="chip c-miss">✗</span></td><td class="note">No equivalent strip; brand promise copy absent from apps.</td></tr>
+      <tr data-s="na"><td class="feat">Site footer + legal</td><td class="web">4 link columns, FSSAI-pending strip, Privacy/Terms/Accessibility</td><td class="st"><span class="chip c-na">·</span></td><td class="st"><span class="chip c-na">·</span></td><td class="note">N/A structurally on mobile — but note web's own Help/Company footer links are <b>dead routes</b> today.</td></tr>
+      <tr data-s="ok"><td class="feat">Accessibility</td><td class="web">Skip link, aria-live regions, focus styles, contrast</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">Native idioms: iOS 44 pt tap floors + VoiceOver labels/traits (fixed the segmented-control audit failure); Android TalkBack labels + content descriptions + FSSAI dot contrast.</td></tr>
+      <tr data-s="ok"><td class="feat">Toast / feedback</td><td class="web">Sonner toasts (add-to-cart, lead success)</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">"Added to cart" flip animations, snackbars, foreground push snackbars (Android).</td></tr>
+      <tr data-s="ok"><td class="feat">Dead-end / error states</td><td class="web">Branded 404, empty states, "kitchen is quiet"</td><td class="st"><span class="chip c-ok">✓</span></td><td class="st"><span class="chip c-ok">✓</span></td><td class="note">ContentUnavailableView / error-retry everywhere; iOS home gained error+retry after the infinite-spinner blocker fix.</td></tr>
+      <tr data-s="na"><td class="feat">Analytics pipeline<small>19 events → GA4/Pixel</small></td><td class="web">dataLayer + fbq, IDs from Payload with env fallback</td><td class="st"><span class="chip c-na">·</span></td><td class="st"><span class="chip c-na">·</span></td><td class="note">Mobile equivalent (Firebase) is externally gated on a Firebase project + google-services.json — code lands ready, stays inert. On the deferred register.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 9. MOBILE-ONLY -->
+  <h2 class="area"><span class="num">09</span> Mobile-Only Capabilities</h2>
+  <p class="area-sub">Everything the apps do that the web cannot — the reason the apps exist.</p>
+  <div class="mo-grid">
+    <div class="mo"><h5>Verified checkout end-to-end <span class="tag t-both">both</span></h5><p>Address → pincode tier gating → fresh-tier slot picker → Razorpay with server-side HMAC verification (fail-closed) → confirmation with track-order.</p></div>
+    <div class="mo"><h5>Push notifications <span class="tag t-both">both</span></h5><p>Order-stage pushes with foreground banners and tap-to-order routing; once-per-install permission ask, denial never blocks ordering.</p></div>
+    <div class="mo"><h5>Delivery Live Activity <span class="tag t-ios">iOS</span></h5><p>Lock-screen banner + Dynamic Island, ActivityKit push-driven updates, stage-tinted status icons.</p></div>
+    <div class="mo"><h5>Offline-first catalog <span class="tag t-both">both</span></h5><p>Full catalog cached with ETag conditional refresh (304 extends freshness); iOS background-refresh task every 6 h; works airplane-mode.</p></div>
+    <div class="mo"><h5>OTP auth + token lifecycle <span class="tag t-both">both</span></h5><p>Phone→OTP sign-in, single-flight token refresh (rotated refresh tokens), dead-session routing, full sign-out wipe.</p></div>
+    <div class="mo"><h5>Sign in with Apple <span class="tag t-ios">iOS</span></h5><p>SIWA beside the phone flow with shared credential funnel — an App Store requirement once any third-party login exists.</p></div>
+    <div class="mo"><h5>Saved addresses <span class="tag t-both">both</span></h5><p>Server CRUD with default toggle, locally mirrored so the checkout picker never drifts.</p></div>
+    <div class="mo"><h5>Biometric lock <span class="tag t-both">both</span></h5><p>Face ID / fingerprint gate on cold start when a session exists.</p></div>
+    <div class="mo"><h5>Order lifecycle UI <span class="tag t-both">both</span></h5><p>List + detail with live-stage timeline across all 12 contract statuses, pull-to-refresh, friendly server-error mapping.</p></div>
+    <div class="mo"><h5>Deep links <span class="tag t-ios">iOS</span></h5><p><code>mishran://order/{id}</code> and <code>mishran://account</code> with clean stack resets; unknown hosts ignored.</p></div>
+    <div class="mo"><h5>9-locale i18n with switcher <span class="tag t-both">both</span></h5><p>Six locales beyond the web's three (ta/te/mr/gu/bn/pa) with instant in-app switching.</p></div>
+    <div class="mo"><h5>Loyalty pass display <span class="tag t-ios">iOS</span></h5><p>Wallet pass card in Account; Google Wallet parity deferred pending issuer setup.</p></div>
+  </div>
+
+  <!-- 10. RECOMMENDATIONS -->
+  <h2 class="area"><span class="num">10</span> Recommended Next Steps</h2>
+  <p class="area-sub">Ordered by user value ÷ effort. None block the current TestFlight/testing pass.</p>
+  <table class="mx">
+    <thead><tr><th style="width:6%">#</th><th style="width:38%">Item</th><th style="width:12%">Platform</th><th>Why / effort</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="feat">Cart count badge on toolbar / bottom bar</td><td>iOS + Android</td><td class="note">Highest visibility-per-line-of-code gap; users can't tell the cart is non-empty from Home today.</td></tr>
+      <tr><td>2</td><td class="feat">Catalog sort (Featured / A–Z / Z–A)</td><td>iOS + Android</td><td class="note">Full catalog already cached client-side — pure UI + comparator work.</td></tr>
+      <tr><td>3</td><td class="feat">Search across description/tags (or wire /api/search)</td><td>iOS + Android</td><td class="note">Endpoint is live and unused; client-side field-widening is the quick version.</td></tr>
+      <tr><td>4</td><td class="feat">WhatsApp touchpoints on PDP + cart with prefilled context</td><td>iOS + Android</td><td class="note">Web already has the message-composition patterns to port; number plumbing (GET /brand) is done.</td></tr>
+      <tr><td>5</td><td class="feat">Story pillar filter chips on the journal list</td><td>iOS + Android</td><td class="note">Pillar data already ships in the contract; unblocks porting the pillars strip later.</td></tr>
+      <tr><td>6</td><td class="feat">Wedding/corporate field parity (budget, packaging, GSTIN)</td><td>iOS + Android</td><td class="note">Small form additions; also fixes the iOS blank-email 400 mismatch (client should require email).</td></tr>
+      <tr><td>7</td><td class="feat">Merch "Enquire" button on web → real route</td><td>Web</td><td class="note">Web is behind mobile here; wire it to the existing lead flow.</td></tr>
+      <tr><td>8</td><td class="feat">Fix dead footer/help links + /sweets 404 CTA</td><td>Web</td><td class="note">Found during audit: Help/Company routes, /about, /careers, /press, /wholesale, /privacy, /terms, /accessibility don't exist; the 404 page's "Browse sweets" CTA points at unwired /sweets.</td></tr>
+      <tr><td>9</td><td class="feat">Gift-box builder on mobile (drafts API consumer)</td><td>iOS + Android (later)</td><td class="note">Biggest missing web feature; the 30-day drafts API was built for it. Scope after launch feedback.</td></tr>
+      <tr><td>10</td><td class="feat">Firebase Analytics + FCM E2E</td><td>Android (+iOS)</td><td class="note">Externally gated: needs Firebase project + google-services.json. Code lands ready.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <h4>Externally gated (no action possible without setup)</h4>
+    <ul>
+      <li><b>Firebase project</b> + <code>google-services.json</code> — analytics + push E2E on Android.</li>
+      <li><b>Google Wallet issuer</b> setup — loyalty pass parity on Android.</li>
+      <li><b>MSG91 production keys</b> — real OTP SMS (test bypass <code>+918088983014 / 424242</code> active until then; remove the two env vars when keys land).</li>
+    </ul>
+  </div>
+
+  <footer>
+    <span>Method: 3 parallel code inventories (web ~60 / iOS ~45 / Android ~50 features) + live verification against production · inventories grounded in main @ f640133 lineage, worktree mishran-mobile</span>
+    <span>Generated Aug 15, 2026 · Mishran platform parity audit</span>
+  </footer>
+</div>
+
+<script>
+  const btns = document.querySelectorAll('button.f');
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    const s = b.dataset.s;
+    document.querySelectorAll('tr[data-s]').forEach(tr => {
+      tr.classList.toggle('hide', s !== 'all' && tr.dataset.s !== s);
+    });
+  }));
+</script>
+</body>
+</html>
