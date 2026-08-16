@@ -6,16 +6,26 @@
 // order (GET /orders/[id]) through the shared <OrderDetail /> island, so
 // the receipt the customer just paid for and the one in /account can never
 // drift. A missing orderId (direct visit) gets honest copy + a way out.
+//
+// Also marks the cart draft "converted" (best-effort — a reminder about a
+// completed order is worse than a lost marker) so the abandonment cron
+// never emails about a cart that checked out.
 
+import {useEffect} from "react";
 import {useTranslations} from "next-intl";
 import {useSearchParams} from "next/navigation";
 import {Link} from "@/i18n/navigation";
 import {OrderDetail} from "@/components/account/OrderDetail";
+import {markCartDraftConverted} from "@/lib/web/cartDraftSync";
 
 export function CheckoutSuccess() {
   const t = useTranslations("Checkout.success");
   const params = useSearchParams();
   const orderId = params.get("orderId");
+
+  useEffect(() => {
+    void markCartDraftConverted();
+  }, []);
 
   return (
     <div className="mt-10 space-y-10">

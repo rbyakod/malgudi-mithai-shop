@@ -13,6 +13,7 @@ import {useTranslations} from "next-intl";
 import {useAuth} from "@/context/AuthContext";
 import {SignInPrompt} from "@/components/account/SignInPrompt";
 import {AddressBook} from "@/components/account/AddressBook";
+import {LoyaltyCard} from "@/components/account/LoyaltyCard";
 import {OrdersList} from "@/components/account/OrdersList";
 
 export function AccountView() {
@@ -39,6 +40,9 @@ export function AccountView() {
 
   return (
     <div className="mt-10 space-y-14">
+      {/* Loyalty state — hides itself when the endpoint is unavailable. */}
+      <LoyaltyCard />
+
       {/* Profile */}
       <section
         aria-labelledby="account-profile-heading"
