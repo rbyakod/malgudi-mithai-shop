@@ -10,22 +10,34 @@ import Foundation
 import AnyCodable
 #endif
 
-/** Brand support contact for the apps&#39; help surfaces. Only WhatsApp fields from the analytics-settings global are exposed — analytics IDs (GA4/Pixel/Hotjar) deliberately do NOT appear on this public endpoint. Falls back to the shared placeholder number when unset.  */
+/** Brand support contact + display copy for the apps&#39; help surfaces and home masthead. Only WhatsApp fields from the analytics-settings global are exposed — analytics IDs (GA4/Pixel/Hotjar) deliberately do NOT appear on this public endpoint. WhatsApp falls back to the shared placeholder number when unset; brand copy fields are null when the brand-settings global omits them (apps render localized fallback copy in that case).  */
 public struct Brand: Codable, JSONEncodable, Hashable {
 
     /** Display form, e.g. +91-98765-43210. */
     public var whatsappNumber: String
     /** Digits only, for wa.me deep links. */
     public var whatsappDigits: String
+    /** Brand name from the brand-settings global, null when unset. */
+    public var brandName: String?
+    /** One-line tagline from the brand-settings global, null when unset. */
+    public var tagline: String?
+    /** Short positioning statement from the brand-settings global, null when unset. */
+    public var positioning: String?
 
-    public init(whatsappNumber: String, whatsappDigits: String) {
+    public init(whatsappNumber: String, whatsappDigits: String, brandName: String? = nil, tagline: String? = nil, positioning: String? = nil) {
         self.whatsappNumber = whatsappNumber
         self.whatsappDigits = whatsappDigits
+        self.brandName = brandName
+        self.tagline = tagline
+        self.positioning = positioning
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case whatsappNumber
         case whatsappDigits
+        case brandName
+        case tagline
+        case positioning
     }
 
     // Encodable protocol methods
@@ -34,6 +46,9 @@ public struct Brand: Codable, JSONEncodable, Hashable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(whatsappNumber, forKey: .whatsappNumber)
         try container.encode(whatsappDigits, forKey: .whatsappDigits)
+        try container.encodeIfPresent(brandName, forKey: .brandName)
+        try container.encodeIfPresent(tagline, forKey: .tagline)
+        try container.encodeIfPresent(positioning, forKey: .positioning)
     }
 }
 

@@ -24,8 +24,29 @@ export async function GET(req: NextRequest) {
       typeof raw === 'string' && raw.trim().length > 0 ? raw.trim() : FALLBACK_WHATSAPP;
     const whatsappDigits = toWaDigits(whatsappNumber);
 
+    // Display copy for the apps' home masthead / announcement strip, from
+    // the same global the web BrandHero reads. Nullable: apps render their
+    // localized fallback copy when the admin leaves these unset. As with
+    // the analytics global above, only these three display fields cross
+    // the wire — logo/defaultTheme and anything else in brand-settings
+    // stays server-side.
+    const brand = await payload.findGlobal({ slug: 'brand-settings' });
+    const brandFields = brand as {
+      brandName?: unknown;
+      tagline?: unknown;
+      positioning?: unknown;
+    };
+    const copyField = (v: unknown): string | null =>
+      typeof v === 'string' && v.trim().length > 0 ? v.trim() : null;
+
     return jsonResponse(
-      { whatsappNumber, whatsappDigits },
+      {
+        whatsappNumber,
+        whatsappDigits,
+        brandName: copyField(brandFields.brandName),
+        tagline: copyField(brandFields.tagline),
+        positioning: copyField(brandFields.positioning),
+      },
       { headers: { 'X-Request-Id': traceId } },
     );
   } catch (err) {

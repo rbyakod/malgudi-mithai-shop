@@ -2029,16 +2029,25 @@ export interface components {
             updatedAt?: string | null;
         };
         /**
-         * @description Brand support contact for the apps' help surfaces. Only WhatsApp
-         *     fields from the analytics-settings global are exposed — analytics
-         *     IDs (GA4/Pixel/Hotjar) deliberately do NOT appear on this public
-         *     endpoint. Falls back to the shared placeholder number when unset.
+         * @description Brand support contact + display copy for the apps' help surfaces
+         *     and home masthead. Only WhatsApp fields from the analytics-settings
+         *     global are exposed — analytics IDs (GA4/Pixel/Hotjar) deliberately
+         *     do NOT appear on this public endpoint. WhatsApp falls back to the
+         *     shared placeholder number when unset; brand copy fields are null
+         *     when the brand-settings global omits them (apps render localized
+         *     fallback copy in that case).
          */
         Brand: {
             /** @description Display form, e.g. +91-98765-43210. */
             whatsappNumber: string;
             /** @description Digits only, for wa.me deep links. */
             whatsappDigits: string;
+            /** @description Brand name from the brand-settings global, null when unset. */
+            brandName?: string | null;
+            /** @description One-line tagline from the brand-settings global, null when unset. */
+            tagline?: string | null;
+            /** @description Short positioning statement from the brand-settings global, null when unset. */
+            positioning?: string | null;
         };
         /**
          * @description One resolved slide of the admin-curated `home-hero` global — the
