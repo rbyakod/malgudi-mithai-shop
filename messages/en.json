@@ -329,7 +329,21 @@
     "orderTitle": "Ready when you are",
     "orderNote": "Checkout prices your order with our kitchen in real time; you pay after reviewing the final total.",
     "whatsapp": "Order on WhatsApp",
-    "proceed": "Proceed to checkout"
+    "proceed": "Proceed to checkout",
+    "estimateFreeProgress": "Add {amount} more for free delivery",
+    "estimateDeliveryFree": "Free delivery",
+    "estimateFeeFree": "FREE",
+    "upsellTitle": "Ships pan-India",
+    "upsellAdd": "Add",
+    "upsellAddLabel": "Add {name} to cart",
+    "emailNudgeTitle": "Email me this cart",
+    "emailNudgeLabel": "Email address",
+    "emailNudgePlaceholder": "you@example.com",
+    "emailNudgeConsent": "Email me my cart and occasional updates",
+    "emailNudgeSubmit": "Save",
+    "emailNudgeSuccess": "Saved — we'll keep an eye on your cart",
+    "emailNudgeInvalid": "Please enter a valid email address.",
+    "restoredNote": "Your saved cart is back — pick up right where you left off."
   },
   "Checkout": {
     "eyebrow": "Mishran · Commerce",
@@ -471,7 +485,17 @@
     "signInCta": "Sign in",
     "profileEyebrow": "Profile",
     "noName": "Mishran customer",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "loyalty": {
+      "eyebrow": "Loyalty",
+      "tierSilver": "Silver member",
+      "tierGold": "Gold member",
+      "progress": "{delivered} delivered · {more} more for Silver",
+      "benefitNone": "Two delivered orders earn Silver; five earn Gold.",
+      "benefitSilver": "Silver — early access to seasonal boxes and priority slots.",
+      "benefitGold": "Gold — priority slots, seasonal boxes first, and a little extra in every order.",
+      "deliveredLabel": "{count} delivered"
+    }
   },
   "Addresses": {
     "heading": "Delivery addresses",
@@ -543,7 +567,18 @@
       "returned": "Returned",
       "failed_delivery": "Delivery failed",
       "abandoned": "Abandoned"
-    }
+    },
+    "reorderHeading": "Order again",
+    "reorderCta": "Order again",
+    "reorderAdded": "Added to your cart — taking you there…",
+    "reviewsHeading": "Rate your sweets",
+    "reviewStarsLabel": "Rate {name}",
+    "reviewStarLabel": "{count} stars",
+    "reviewBodyLabel": "Your note (optional)",
+    "reviewBodyPlaceholder": "What did you think?",
+    "reviewSubmit": "Submit review",
+    "reviewReceived": "Thanks — review received for moderation",
+    "reviewError": "Couldn't save that — please try again."
   },
   "TrackOrder": {
     "eyebrow": "Mishran · Orders",
