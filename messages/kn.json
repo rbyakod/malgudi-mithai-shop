@@ -224,6 +224,28 @@
     },
     "count": "{count, plural, one {# sweet} other {# sweets}}"
   },
+  "Gifts": {
+    "title": "Gifts",
+    "blurb": "Hampers, keepsake boxes, and curated assortments — gifting that carries the house's craft, not just its sweets.",
+    "itemCount": "{count, plural, one {# gift} other {# gifts}}",
+    "empty": "Our gifting collection is being restocked — please check back shortly.",
+    "taxNote": "Inclusive of all taxes",
+    "buildCta": "Build a custom gift",
+    "inTheBox": "In the box",
+    "fillWith": "Fill it with",
+    "addOns": "Add-ons",
+    "packaging": "Packaging",
+    "curated": "Curated assortments"
+  },
+  "Occasions": {
+    "title": "Occasions",
+    "eyebrow": "For every celebration",
+    "blurb": "Diwali, weddings, Rakhi, milestone Mondays — each occasion carries its own edit of sweets and boxes.",
+    "itemCount": "{count, plural, one {# occasion} other {# occasions}}",
+    "empty": "Occasions are being curated — please check back shortly.",
+    "recommended": "For this occasion",
+    "browseGifts": "Browse all gifts"
+  },
   "Leads": {
     "_todo": "TODO: translate to Kannada — currently English stubs (Task 14 pattern).",
     "common": {

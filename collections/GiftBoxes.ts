@@ -34,6 +34,23 @@ export const GiftBoxes: CollectionConfig = {
     },
     { name: "compartmentLayout", type: "textarea" },
     {
+      name: "displayPrice",
+      type: "text",
+      admin: {
+        description:
+          'Display-only price label, e.g. "₹2,600". Powers the gifts hub card price and the Product JSON-LD offer when it parses.',
+      },
+    },
+    {
+      name: "excerpt",
+      type: "textarea",
+      localized: true,
+      admin: {
+        description:
+          "Short blurb for hub cards and the PDP intro. Falls back to nothing when empty.",
+      },
+    },
+    {
       name: "compatibleMithai",
       type: "relationship",
       relationTo: "mithai-products",
