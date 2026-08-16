@@ -13,11 +13,14 @@ vi.mock('../../../../../../lib/container', () => ({
 }));
 
 // Mock lib/config to avoid the required-env schema.parse crash in the test
-// environment; expose the delivery-fee fields the route reads.
+// environment; expose the delivery-fee + free-delivery-threshold fields the
+// route reads (production defaults: ₹49/₹99 fees, ₹999/₹1,999 thresholds).
 vi.mock('../../../../../../lib/config', () => ({
   config: {
     deliveryFeeFreshPaise: 4900,
     deliveryFeeShelfStablePaise: 9900,
+    freeDeliveryThresholdFreshPaise: 99900,
+    freeDeliveryThresholdShelfStablePaise: 199900,
   },
 }));
 
@@ -67,6 +70,14 @@ vi.mock('../../../../../../payload.config', () => ({ default: {} }));
 
 import { POST } from './route';
 
+// The route types its arg as NextRequest; tests build plain Requests.
+// (Only the new free-delivery tests use this — the legacy tests above
+// predate it and keep their existing casts.)
+import type { NextRequest } from 'next/server';
+function asReq(req: Request): NextRequest {
+  return req as unknown as NextRequest;
+}
+
 function authedReq(body: unknown): Request {
   return new Request('http://localhost/api/mobile/v1/cart/validate', {
     method: 'POST',
@@ -97,10 +108,10 @@ describe('POST /cart/validate', () => {
   });
 
   it('returns 200 with a priced cart snapshot for a valid body', async () => {
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 2 }],
       pincode: '560001',
-    }) as any);
+    })));
 
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -171,10 +182,10 @@ describe('POST /cart/validate', () => {
 
   it('applies the fresh-tier delivery fee to fresh pincodes', async () => {
     pincodeDocs = [{ pincode: '110001', tier: 'fresh', city: 'New Delhi', active: true }];
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 1 }],
       pincode: '110001',
-    }) as any);
+    })));
 
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -297,5 +308,55 @@ describe('POST /cart/validate', () => {
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.error.code).toBe('VALIDATION');
+  });
+
+  it('waives the delivery fee at the fresh-tier free-delivery threshold (₹999)', async () => {
+    pincodeDocs = [{ pincode: '110001', tier: 'fresh', city: 'New Delhi', active: true }];
+    // 2 x ₹920 = ₹1,840 ≥ ₹999 fresh threshold → fee ₹0.
+    const res = await POST(asReq(authedReq({
+      items: [{ productId: 'p1', quantity: 2 }],
+      pincode: '110001',
+    })));
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.totals).toEqual({
+      itemsTotalInPaise: 184000,
+      deliveryFeeInPaise: 0,
+      taxesInPaise: 0,
+      discountInPaise: 0,
+      totalInPaise: 184000,
+    });
+    // The persisted snapshot carries the same fee-0 totals.
+    expect(snapshotCreates[0]).toMatchObject({
+      totals: { deliveryFeeInPaise: 0, totalInPaise: 184000 },
+    });
+  });
+
+  it('keeps the fresh fee below the threshold (₹920 < ₹999)', async () => {
+    pincodeDocs = [{ pincode: '110001', tier: 'fresh', city: 'New Delhi', active: true }];
+    const res = await POST(asReq(authedReq({
+      items: [{ productId: 'p1', quantity: 1 }],
+      pincode: '110001',
+    })));
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.totals.deliveryFeeInPaise).toBe(4900);
+    expect(body.data.totals.totalInPaise).toBe(92000 + 4900);
+  });
+
+  it('does not inherit the fresh waiver on the shelf tier (₹1,840 < ₹1,999 shelf threshold)', async () => {
+    // Same cart as the fresh-waiver test: clears ₹999 but not ₹1,999 — a
+    // shelf cart must still pay the ₹99 courier fee.
+    const res = await POST(asReq(authedReq({
+      items: [{ productId: 'p1', quantity: 2 }],
+      pincode: '560001',
+    })));
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.totals.deliveryFeeInPaise).toBe(9900);
+    expect(body.data.totals.totalInPaise).toBe(184000 + 9900);
   });
 });

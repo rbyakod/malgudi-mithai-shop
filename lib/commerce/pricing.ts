@@ -79,22 +79,47 @@ export type TotalsLine = { priceInPaise: number; quantity: number };
 export type DeliveryFees = { freshPaise: number; shelfStablePaise: number };
 
 /**
+ * Per-tier free-delivery thresholds (conversion batch). A subtotal at or
+ * above the tier's threshold waives the delivery fee. A threshold of 0
+ * (or unset) disables the waiver for that tier — the fee always applies.
+ */
+export type FreeDeliveryThresholds = {
+  freshPaise: number;
+  shelfStablePaise: number;
+};
+
+/**
  * Subtotal + flat delivery fee by serviceability tier (user decision:
  * ₹49 fresh / ₹99 shelf-stable by default, env-tunable via lib/config).
  * Fresh-tier service is same-city and cheaper; any other tier value
  * (shelf, unknown) prices at the shelf-stable rate. Taxes/discount are 0
  * (see file header).
+ *
+ * With `freeThresholds`, a subtotal at or above the tier's threshold
+ * (and a threshold > 0) zeroes the delivery fee. A null/undefined tier
+ * never qualifies (mirrors the UI rule "tier known"). No new totals
+ * field — callers infer the waiver from subtotal + threshold.
  */
 export function computeTotals(
   lines: TotalsLine[],
   tier: string | null | undefined,
   fees: DeliveryFees,
+  freeThresholds?: FreeDeliveryThresholds,
 ): OrderTotals {
   const itemsTotalInPaise = lines.reduce(
     (sum, line) => sum + line.priceInPaise * line.quantity,
     0,
   );
-  const deliveryFeeInPaise = tier === 'fresh' ? fees.freshPaise : fees.shelfStablePaise;
+  let deliveryFeeInPaise = tier === 'fresh' ? fees.freshPaise : fees.shelfStablePaise;
+  const threshold =
+    tier === 'fresh'
+      ? freeThresholds?.freshPaise
+      : tier != null
+        ? freeThresholds?.shelfStablePaise
+        : undefined;
+  if (threshold != null && threshold > 0 && itemsTotalInPaise >= threshold) {
+    deliveryFeeInPaise = 0;
+  }
   return {
     itemsTotalInPaise,
     deliveryFeeInPaise,

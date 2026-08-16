@@ -144,15 +144,21 @@ vi.mock("payload", () => ({
 
 vi.mock("../../payload.config", () => ({ default: {} }));
 
-// create-order imports lib/config for the keyId fallback; mock it so the
-// required-env schema.parse never runs in this environment.
-vi.mock("../../lib/config", () => ({
-  config: {
+// create-order imports lib/config for the keyId fallback (and validate
+// reads the free-delivery thresholds); mock it so the required-env
+// schema.parse never runs in this environment. Mutable holder: the
+// free-delivery test flips thresholds per-case; everything else runs with
+// them disabled (0) so the fee-based totals below stay deterministic.
+const { configMock } = vi.hoisted(() => ({
+  configMock: {
     deliveryFeeFreshPaise: 4900,
     deliveryFeeShelfStablePaise: 9900,
     razorpayKeyId: "rzp_test_integration_key",
+    freeDeliveryThresholdFreshPaise: 0,
+    freeDeliveryThresholdShelfStablePaise: 0,
   },
 }));
+vi.mock("../../lib/config", () => ({ config: configMock }));
 
 // Getter-based container: returns the REAL instances assigned in beforeAll.
 vi.mock("../../lib/container", () => ({
@@ -306,6 +312,9 @@ describe("full checkout flow (integration)", () => {
   beforeEach(() => {
     resetStores();
     seedCatalog();
+    // Threshold tests flip these per-case; always start disabled.
+    configMock.freeDeliveryThresholdFreshPaise = 0;
+    configMock.freeDeliveryThresholdShelfStablePaise = 0;
     // Fresh fake services per test so instance-level overrides (e.g.
     // verifySignatureResult) never leak across cases.
     const otp = new FakeOtpService();
@@ -411,6 +420,49 @@ describe("full checkout flow (integration)", () => {
     const fetched = ((await rGet.json()) as { data: { status: string; customerId: string } }).data;
     expect(fetched.status).toBe("confirmed");
     expect(fetched.customerId).toBe(customerId);
+  });
+
+  it("validate waives the delivery fee at the fresh-tier free-delivery threshold", async () => {
+    // 2 x ₹920 = ₹1,840 ≥ the ₹999 fresh threshold → fee ₹0 end-to-end.
+    configMock.freeDeliveryThresholdFreshPaise = 99900;
+    try {
+      const rCart = await validateCart(
+        req(
+          "POST",
+          "/cart/validate",
+          { items: [{ productId: PRODUCT_ID, quantity: 2 }], pincode: "110001" },
+          // bootstrap() needs its own snapshot; mint a fresh login here so
+          // the threshold flip cannot leak into the other cases.
+          await (async () => {
+            const rSend = await sendOtp(req("POST", "/auth/otp/send", { phone: PHONE }) as never);
+            const requestId = ((await rSend.json()) as { data: { requestId: string } }).data.requestId;
+            const rVerify = await verifyOtp(
+              req("POST", "/auth/otp/verify", { requestId, code: ctx.capturedCode }) as never,
+            );
+            const vBody = (await rVerify.json()) as { data: { accessToken: string } };
+            return { authorization: `Bearer ${vBody.data.accessToken}` };
+          })(),
+        ) as never,
+      );
+      expect(rCart.status).toBe(200);
+      const body = (await rCart.json()) as {
+        data: { snapshotId: string; totals: Record<string, number> };
+      };
+      expect(body.data.totals).toEqual({
+        itemsTotalInPaise: 184000,
+        deliveryFeeInPaise: 0,
+        taxesInPaise: 0,
+        discountInPaise: 0,
+        totalInPaise: 184000,
+      });
+      // The persisted snapshot carries the waived fee (create-order trusts it).
+      expect(ctx.stores.snapshots.get(body.data.snapshotId)?.totals).toMatchObject({
+        deliveryFeeInPaise: 0,
+        totalInPaise: 184000,
+      });
+    } finally {
+      configMock.freeDeliveryThresholdFreshPaise = 0;
+    }
   });
 
   it("idempotent replay of create-order returns cached response and creates no duplicate order", async () => {
