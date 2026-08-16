@@ -19,6 +19,13 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
 }
 
+// ISR for every [locale] route: the layout's BrandBar + SiteFooter read
+// Payload globals (analytics-settings.whatsappNumber etc.) server-side;
+// without this, fully-static children bake those values at build time and
+// admin edits never surface until the next deploy. 60s matches the
+// convention already used by stories/merch/qsr pages.
+export const revalidate = 60;
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
