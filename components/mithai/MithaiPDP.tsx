@@ -31,6 +31,7 @@ import {isFullWidthLayout} from "@/lib/storefront-layout";
 import {readStorefrontLayoutMode} from "@/lib/storefront-layout-server";
 import {readWhatsappNumber} from "@/components/commerce/CommerceStub";
 import {FALLBACK_WHATSAPP} from "@/lib/whatsapp";
+import {flattenLexical} from "@/lib/api/richText";
 
 type Props = {
   slug: string;
@@ -67,6 +68,7 @@ export async function MithaiPDP({slug, locale}: Props) {
         name?: string;
         slug?: string;
         family?: string;
+        story?: unknown;
         ingredients?: string;
         allergens?: string[] | null;
         shelfLife?: string;
@@ -104,6 +106,9 @@ export async function MithaiPDP({slug, locale}: Props) {
       : doc!.freshnessStatus
     : null;
   const packSizes = derivePackSizes(doc!.displayPrice ?? "", doc!.weight);
+  // Payload's lexical field (or a plain string for older fixtures) → the
+  // italic standfirst the magazine spread below leads with.
+  const storyText = flattenLexical(doc!.story);
   const isVegetarian = (doc!.dietaryTags ?? []).some(
     (tag) => tag.toLowerCase() === "vegetarian",
   );
@@ -231,6 +236,22 @@ export async function MithaiPDP({slug, locale}: Props) {
         {/* Story + honest label column */}
         <section className="mt-12 grid gap-10 lg:grid-cols-[0.6fr_0.4fr] lg:gap-16">
           <div>
+            {storyText ? (
+              <div className={doc!.ingredients ? "mb-10" : undefined}>
+                {storyText.split("\n").map((paragraph, i) => (
+                  <p
+                    key={i}
+                    className={
+                      i === 0
+                        ? "font-display text-2xl font-light italic leading-relaxed text-text-heading"
+                        : "mt-4 font-display text-xl font-light italic leading-relaxed text-text-muted"
+                    }
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            ) : null}
             {doc!.ingredients ? (
               <>
                 <h2 className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
