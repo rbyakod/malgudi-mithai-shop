@@ -22,6 +22,8 @@ const FOOTER_COLUMNS: {heading: string; links: {label: string; href: string}[]}[
     heading: "Shop",
     links: [
       {label: "Mithai", href: "/mithai"},
+      {label: "Gifts", href: "/gifts"},
+      {label: "Occasions", href: "/occasions"},
       {label: "Build a Gift", href: "/build-a-gift"},
       {label: "QSR", href: "/qsr"},
       {label: "Snacks", href: "/snacks"},

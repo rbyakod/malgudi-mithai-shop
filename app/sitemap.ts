@@ -11,6 +11,8 @@
 //   - qsr-menu-items   (no drafts → no filter)
 //   - snack-products   (no drafts → no filter)
 //   - merch-products   (no drafts → no filter)
+//   - gift-boxes       (no drafts → no filter; slugless, slugify(name))
+//   - occasions        (no drafts → no filter; slugless, slugify(name))
 //
 // Drafts handling — when a collection has `versions: {drafts: true}`,
 // Payload exposes a system `_status` field. We filter to `_status:
@@ -20,7 +22,9 @@
 // Priority/lastModified per task-20-brief.md + task-24 should-fix:
 //   - home: 1.0
 //   - vertical hubs (/mithai, /qsr, /snacks, /merch): 0.9
+//   - gifting hubs (/gifts, /occasions): 0.8
 //   - vertical PDPs (/mithai/X, /qsr/X, /snacks/X, /merch/X): 0.8
+//   - gifting PDPs (/gifts/X, /occasions/X): 0.7
 //   - /stories hub: 0.7; story pillars + details: 0.6
 //   - /build-a-gift: 0.6
 //   - lead pages (/weddings, /corporate, /about): 0.5
@@ -60,6 +64,8 @@ const VERTICAL_HUBS: Hub[] = [
   {path: "qsr", priority: 0.9},
   {path: "snacks", priority: 0.9},
   {path: "merch", priority: 0.9},
+  {path: "gifts", priority: 0.8},
+  {path: "occasions", priority: 0.8},
   {path: "stories", priority: 0.7},
 ];
 
@@ -208,6 +214,44 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "weekly",
         priority: 0.8,
       });
+    }
+  }
+
+  // Gift box details — no drafts, no slug field; URL is slugify(name).
+  // Payload runs without a `localization` config so `name` is canonical:
+  // one find serves every locale's URL.
+  {
+    const r = await payload.find({collection: "gift-boxes", limit: 200});
+    for (const doc of r.docs as Doc[]) {
+      if (!doc.name) continue;
+      const slug = slugify(doc.name);
+      if (!slug) continue;
+      for (const locale of LOCALES) {
+        entries.push({
+          url: `${base}/${locale}/gifts/${slug}`,
+          lastModified: doc.updatedAt ? new Date(doc.updatedAt) : now,
+          changeFrequency: "weekly",
+          priority: 0.7,
+        });
+      }
+    }
+  }
+
+  // Occasion details — same slugless scheme as gifts.
+  {
+    const r = await payload.find({collection: "occasions", limit: 200});
+    for (const doc of r.docs as Doc[]) {
+      if (!doc.name) continue;
+      const slug = slugify(doc.name);
+      if (!slug) continue;
+      for (const locale of LOCALES) {
+        entries.push({
+          url: `${base}/${locale}/occasions/${slug}`,
+          lastModified: doc.updatedAt ? new Date(doc.updatedAt) : now,
+          changeFrequency: "weekly",
+          priority: 0.7,
+        });
+      }
     }
   }
 

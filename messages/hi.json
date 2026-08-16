@@ -197,6 +197,54 @@
     "breadcrumbHome": "मिश्रण",
     "notFound": "यह एक नहीं मिला।"
   },
+  "Search": {
+    "label": "खोजें",
+    "placeholder": "मिठाई खोजें — काजू, गुलाब, पेड़ा…",
+    "searching": "खोजा जा रहा है…",
+    "noResults": "इस खोज से कोई मिठाई नहीं मिली।",
+    "clear": "फ़िल्टर हटाएँ"
+  },
+  "MithaiHub": {
+    "familyLabel": "श्रेणी",
+    "familyAll": "सभी",
+    "family": {
+      "classic": "क्लासिक",
+      "original": "ओरिजिनल",
+      "sugar-free": "शुगर-फ़्री",
+      "regional": "क्षेत्रीय",
+      "seasonal": "मौसमी"
+    },
+    "freshnessLabel": "ताज़गी",
+    "freshnessAll": "कोई भी ताज़गी",
+    "freshness": {
+      "made-daily": "रोज़ बनी",
+      "made-to-order": "ऑर्डर पर बनी",
+      "batch-frozen": "फ़्रोज़न बैच"
+    },
+    "count": "{count, plural, one {# मिठाई} other {# मिठाइयाँ}}"
+  },
+  "Gifts": {
+    "title": "तोहफ़े",
+    "blurb": "हैम्पर, संभालकर रखने लायक डिब्बे और चुनी हुई मिठाइयाँ — ऐसा तोहफ़ा जो घर की कारीगरी लेकर जाए।",
+    "itemCount": "{count, plural, one {# तोहफ़ा} other {# तोहफ़े}}",
+    "empty": "हमारा तोहफ़ा संग्रह फिर से तैयार हो रहा है — कृपया थोड़ी देर बाद देखें।",
+    "taxNote": "सभी करों सहित",
+    "buildCta": "अपना तोहफ़ा बनाएँ",
+    "inTheBox": "डिब्बे में क्या है",
+    "fillWith": "इन मिठाइयों से भरें",
+    "addOns": "साथ में जोड़ें",
+    "packaging": "पैकेजिंग",
+    "curated": "चुनी हुई मिठाई-व्यवस्थाएँ"
+  },
+  "Occasions": {
+    "title": "अवसर",
+    "eyebrow": "हर जश्न के लिए",
+    "blurb": "दिवाली, शादियाँ, राखी, खास मौक़े — हर अवसर के लिए उसकी अपनी चुनी हुई मिठाइयाँ और डिब्बे।",
+    "itemCount": "{count, plural, one {# अवसर} other {# अवसर}}",
+    "empty": "अवसर सूची तैयार हो रही है — कृपया थोड़ी देर बाद देखें।",
+    "recommended": "इस अवसर के लिए",
+    "browseGifts": "सारे तोहफ़े देखें"
+  },
   "Leads": {
     "common": {
       "submit": "भेजें",

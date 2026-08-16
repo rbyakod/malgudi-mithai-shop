@@ -18,12 +18,16 @@ const TEST_SLUG = `test-sitemap-kaju-${process.pid}-${Date.now()}`;
 const TEST_QSR_NAME = `Sitemap Qsr Test ${TEST_SLUG}`;
 const TEST_SNACK_NAME = `Sitemap Snack Test ${TEST_SLUG}`;
 const TEST_MERCH_NAME = `Sitemap Merch Test ${TEST_SLUG}`;
+const TEST_GIFT_NAME = `Sitemap Gift Test ${TEST_SLUG}`;
+const TEST_OCCASION_NAME = `Sitemap Occasion Test ${TEST_SLUG}`;
 
 describe("sitemap", () => {
   let createdId: string | undefined;
   let createdQsrId: string | undefined;
   let createdSnackId: string | undefined;
   let createdMerchId: string | undefined;
+  let createdGiftId: string | undefined;
+  let createdOccasionId: string | undefined;
 
   beforeAll(async () => {
     const {getPayload} = await import("@/lib/payload-client");
@@ -74,6 +78,20 @@ describe("sitemap", () => {
       data: {name: TEST_MERCH_NAME, type: "tool", availability: "enquiry-only"},
     })) as {id: string};
     createdMerchId = createdMerch.id;
+
+    // Gift box + occasion (Batch 7): slugless collections whose detail URL
+    // is slugify(name) under /gifts and /occasions.
+    const createdGift = (await payload.create({
+      collection: "gift-boxes",
+      data: {name: TEST_GIFT_NAME, size: "custom", displayPrice: "₹2,600"},
+    })) as {id: string};
+    createdGiftId = createdGift.id;
+
+    const createdOccasion = (await payload.create({
+      collection: "occasions",
+      data: {name: TEST_OCCASION_NAME},
+    })) as {id: string};
+    createdOccasionId = createdOccasion.id;
   });
 
   afterAll(async () => {
@@ -84,6 +102,8 @@ describe("sitemap", () => {
       ["qsr-menu-items", createdQsrId],
       ["snack-products", createdSnackId],
       ["merch-products", createdMerchId],
+      ["gift-boxes", createdGiftId],
+      ["occasions", createdOccasionId],
     ] as const) {
       if (!id) continue;
       try {
@@ -135,6 +155,25 @@ describe("sitemap", () => {
     expect(urls.some((u: string) => u.includes(`/en/qsr/${qsrSlug}`))).toBe(true);
     expect(urls.some((u: string) => u.includes(`/en/snacks/${snackSlug}`))).toBe(true);
     expect(urls.some((u: string) => u.includes(`/en/merch/${merchSlug}`))).toBe(true);
+  });
+
+  it("emits gift and occasion hub + detail URLs (Batch 7)", async () => {
+    const {default: sitemap} = await import("@/app/sitemap");
+    const result = await sitemap();
+    const urls = result.map((u: {url: string}) => u.url);
+    // Hubs.
+    expect(urls.some((u: string) => u.endsWith("/en/gifts"))).toBe(true);
+    expect(urls.some((u: string) => u.endsWith("/en/occasions"))).toBe(true);
+    // Details — slugless collections, URL is slugify(name), emitted for
+    // every locale from the single canonical name.
+    const slugify = (s: string) =>
+      s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    const giftSlug = slugify(TEST_GIFT_NAME);
+    const occasionSlug = slugify(TEST_OCCASION_NAME);
+    for (const locale of ["en", "hi", "kn"]) {
+      expect(urls.some((u: string) => u.endsWith(`/${locale}/gifts/${giftSlug}`))).toBe(true);
+      expect(urls.some((u: string) => u.endsWith(`/${locale}/occasions/${occasionSlug}`))).toBe(true);
+    }
   });
 
   it("emits URLs for cart, lead pages, help/legal pages, and story pillars", async () => {

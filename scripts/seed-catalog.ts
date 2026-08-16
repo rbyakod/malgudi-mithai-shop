@@ -203,10 +203,24 @@ type GiftBox = {
   name: string;
   size: "4-piece" | "8-piece" | "16-piece" | "custom";
   compartmentLayout: string;
+  displayPrice?: string;
+  excerpt?: string;
   images: string[];
   source: string;
   sourceUrl: string;
 };
+
+// Card blurb for a gift box. The scrape parks its marketing copy in
+// `compartmentLayout`; the excerpt is its first sentence, hard-cut at 200
+// chars. Admins curate it in /admin — this only seeds a sane default.
+export function deriveGiftExcerpt(source: string | undefined): string | null {
+  if (!source) return null;
+  const text = source.replace(/\s+/g, " ").trim();
+  if (!text) return null;
+  const sentenceEnd = text.search(/[.!?]/);
+  const first = sentenceEnd > 0 ? text.slice(0, sentenceEnd + 1) : text;
+  return first.length > 200 ? `${first.slice(0, 197).trimEnd()}…` : first;
+}
 
 type Stats = { created: number; updated: number; mediaOk: number; mediaSkip: number };
 
@@ -308,6 +322,8 @@ async function seedGifts(payload: Awaited<ReturnType<typeof getPayload>>, stats:
         name: p.name,
         size: p.size,
         compartmentLayout: p.compartmentLayout || null,
+        displayPrice: p.displayPrice ?? null,
+        excerpt: p.excerpt ?? deriveGiftExcerpt(p.compartmentLayout),
         images: imageIds.map((id) => ({ image: id })),
       },
       stats,
