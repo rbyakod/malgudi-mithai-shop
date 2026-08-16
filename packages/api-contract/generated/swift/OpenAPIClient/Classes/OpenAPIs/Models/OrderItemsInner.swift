@@ -18,15 +18,18 @@ public struct OrderItemsInner: Codable, JSONEncodable, Hashable {
     public var slug: String
     public var name: String
     public var quantity: Int
+    /** Pack-size label the line was priced against (cart ids of the form `${productId}:${packLabel}`). Copied through from the cart snapshot so one-tap reorder re-adds the exact pack. Null/absent on base-pack lines and legacy orders.  */
+    public var packLabel: String?
     public var unit: String
     public var priceInPaise: Int
     public var image: String?
 
-    public init(productId: String, slug: String, name: String, quantity: Int, unit: String, priceInPaise: Int, image: String? = nil) {
+    public init(productId: String, slug: String, name: String, quantity: Int, packLabel: String? = nil, unit: String, priceInPaise: Int, image: String? = nil) {
         self.productId = productId
         self.slug = slug
         self.name = name
         self.quantity = quantity
+        self.packLabel = packLabel
         self.unit = unit
         self.priceInPaise = priceInPaise
         self.image = image
@@ -37,6 +40,7 @@ public struct OrderItemsInner: Codable, JSONEncodable, Hashable {
         case slug
         case name
         case quantity
+        case packLabel
         case unit
         case priceInPaise
         case image
@@ -50,6 +54,7 @@ public struct OrderItemsInner: Codable, JSONEncodable, Hashable {
         try container.encode(slug, forKey: .slug)
         try container.encode(name, forKey: .name)
         try container.encode(quantity, forKey: .quantity)
+        try container.encodeIfPresent(packLabel, forKey: .packLabel)
         try container.encode(unit, forKey: .unit)
         try container.encode(priceInPaise, forKey: .priceInPaise)
         try container.encodeIfPresent(image, forKey: .image)

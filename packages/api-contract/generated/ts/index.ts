@@ -1526,6 +1526,147 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/account/loyalty": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the customer's loyalty standing (no wallet-pass side effects)
+         * @description Plain loyalty-state read for surfaces that show progress rather than mint a pass: deliveredCount plus the resolved tier (null below Silver, "silver" at >=2 delivered, "gold" at >=5) and the tier thresholds. Unlike /account/loyalty-pass this never 404s below the threshold and never writes WalletPasses.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK — loyalty standing. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                deliveredCount: number;
+                                /** @enum {string|null} */
+                                tier: "silver" | "gold" | null;
+                                /** @description Delivered orders needed for Silver (2). */
+                                silverAtDelivered: number;
+                                /** @description Delivered orders needed for Gold (5). */
+                                goldAtDelivered: number;
+                            };
+                        };
+                    };
+                };
+                /** @description Unauthorized. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upsert the customer's review for one product (capture-only)
+         * @description Creates or updates ONE review per (customer, product). Body is zod-validated (rating 1-5 required); verifiedPurchase is server-stamped — true with the linked order when the customer has a delivered order containing the product. Reviews start as "pending" for moderation and are not displayed anywhere yet. 201 on create, 200 on update.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ReviewInput"];
+                };
+            };
+            responses: {
+                /** @description OK — existing (customer, product) review updated. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Review"];
+                        };
+                    };
+                };
+                /** @description Created — new review row. */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Review"];
+                        };
+                    };
+                };
+                /** @description Unauthorized. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Not Found — product no longer exists. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unprocessable Entity — invalid body such as a rating outside 1-5 or a missing productId. */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/wallet/register-pass-device": {
         parameters: {
             query?: never;
@@ -2181,6 +2322,13 @@ export interface components {
                 slug: string;
                 name: string;
                 quantity: number;
+                /**
+                 * @description Pack-size label the line was priced against (cart ids of
+                 *     the form `${productId}:${packLabel}`). Copied through from
+                 *     the cart snapshot so one-tap reorder re-adds the exact
+                 *     pack. Null/absent on base-pack lines and legacy orders.
+                 */
+                packLabel?: string | null;
                 unit: string;
                 priceInPaise: number;
                 image?: string | null;
@@ -2237,6 +2385,30 @@ export interface components {
             serialNumber: string;
             /** @description APNs .pass update token issued by Wallet. */
             pushToken: string;
+        };
+        ReviewInput: {
+            /** @description Product being reviewed (mithai-products id). */
+            productId: string;
+            rating: number;
+            /** @description Optional free-text review. */
+            body?: string;
+            /** @description Optional display name; falls back to the customer record. */
+            authorName?: string;
+        };
+        Review: {
+            id: string;
+            productId: string;
+            rating: number;
+            body?: string | null;
+            authorName?: string | null;
+            /** @description Server-stamped true when the customer has a delivered order containing the product. */
+            verifiedPurchase: boolean;
+            /** @description Linked delivered order when verifiedPurchase is true. */
+            orderId?: string | null;
+            /** @enum {string} */
+            status: "pending" | "approved" | "rejected";
+            /** @description True when a new review row was created; false when an existing (customer, product) review was updated. */
+            created: boolean;
         };
     };
     responses: never;

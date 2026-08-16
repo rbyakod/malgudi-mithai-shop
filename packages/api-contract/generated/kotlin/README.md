@@ -70,12 +70,14 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
 | *CatalogApi* | [**catalogSnacksGet**](docs/CatalogApi.md#catalogsnacksget) | **GET** /catalog/snacks |  |
 | *CatalogApi* | [**catalogSnacksSlugGet**](docs/CatalogApi.md#catalogsnacksslugget) | **GET** /catalog/snacks/{slug} |  |
 | *HeroApi* | [**heroGet**](docs/HeroApi.md#heroget) | **GET** /hero |  |
+| *LoyaltyApi* | [**accountLoyaltyGet**](docs/LoyaltyApi.md#accountloyaltyget) | **GET** /account/loyalty | Read the customer's loyalty standing (no wallet-pass side effects) |
 | *LoyaltyApi* | [**accountLoyaltyPassGet**](docs/LoyaltyApi.md#accountloyaltypassget) | **GET** /account/loyalty-pass | Generate / refresh the customer's Apple Wallet loyalty pass (signed URL) |
 | *NotificationsApi* | [**notificationsRegisterDevicePost**](docs/NotificationsApi.md#notificationsregisterdevicepost) | **POST** /notifications/register-device | Register / refresh a push token (idempotent upsert) |
 | *OrdersApi* | [**ordersGet**](docs/OrdersApi.md#ordersget) | **GET** /orders |  |
 | *OrdersApi* | [**ordersIdGet**](docs/OrdersApi.md#ordersidget) | **GET** /orders/{id} |  |
 | *PaymentsApi* | [**paymentsRazorpayCreateOrderPost**](docs/PaymentsApi.md#paymentsrazorpaycreateorderpost) | **POST** /payments/razorpay/create-order |  |
 | *PaymentsApi* | [**paymentsRazorpayVerifyPost**](docs/PaymentsApi.md#paymentsrazorpayverifypost) | **POST** /payments/razorpay/verify |  |
+| *ReviewsApi* | [**reviewsPost**](docs/ReviewsApi.md#reviewspost) | **POST** /reviews | Upsert the customer's review for one product (capture-only) |
 | *StoriesApi* | [**storiesGet**](docs/StoriesApi.md#storiesget) | **GET** /stories |  |
 | *StoriesApi* | [**storiesSlugGet**](docs/StoriesApi.md#storiesslugget) | **GET** /stories/{slug} |  |
 | *WalletApi* | [**walletRegisterPassDevicePost**](docs/WalletApi.md#walletregisterpassdevicepost) | **POST** /wallet/register-pass-device | Register a device token for Apple Wallet .pass updates (idempotent) |
@@ -85,6 +87,8 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
 <a id="documentation-for-models"></a>
 ## Documentation for Models
 
+ - [com.mishran.api.models.AccountLoyaltyGet200Response](docs/AccountLoyaltyGet200Response.md)
+ - [com.mishran.api.models.AccountLoyaltyGet200ResponseData](docs/AccountLoyaltyGet200ResponseData.md)
  - [com.mishran.api.models.AccountLoyaltyPassGet200Response](docs/AccountLoyaltyPassGet200Response.md)
  - [com.mishran.api.models.AccountLoyaltyPassGet200ResponseData](docs/AccountLoyaltyPassGet200ResponseData.md)
  - [com.mishran.api.models.Address](docs/Address.md)
@@ -154,6 +158,9 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
  - [com.mishran.api.models.RazorpayVerifyRequest](docs/RazorpayVerifyRequest.md)
  - [com.mishran.api.models.RazorpayVerifyResponse](docs/RazorpayVerifyResponse.md)
  - [com.mishran.api.models.RefreshResponse](docs/RefreshResponse.md)
+ - [com.mishran.api.models.Review](docs/Review.md)
+ - [com.mishran.api.models.ReviewInput](docs/ReviewInput.md)
+ - [com.mishran.api.models.ReviewsPost200Response](docs/ReviewsPost200Response.md)
  - [com.mishran.api.models.ServiceableResponse](docs/ServiceableResponse.md)
  - [com.mishran.api.models.Snack](docs/Snack.md)
  - [com.mishran.api.models.SnackRetailer](docs/SnackRetailer.md)

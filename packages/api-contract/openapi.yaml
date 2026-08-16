@@ -537,6 +537,13 @@ components:
               slug: { type: string }
               name: { type: string }
               quantity: { type: integer, minimum: 1 }
+              packLabel:
+                type: [string, 'null']
+                description: |
+                  Pack-size label the line was priced against (cart ids of
+                  the form `${productId}:${packLabel}`). Copied through from
+                  the cart snapshot so one-tap reorder re-adds the exact
+                  pack. Null/absent on base-pack lines and legacy orders.
               unit: { type: string }
               priceInPaise: { type: integer, minimum: 0 }
               image:
@@ -604,6 +611,45 @@ components:
       properties:
         serialNumber: { type: string, minLength: 1, description: Pass serial (also the pass.json serial). }
         pushToken: { type: string, minLength: 1, description: APNs .pass update token issued by Wallet. }
+
+    # ---- Conversion batch, Batch A ----
+    ReviewInput:
+      type: object
+      required: [productId, rating]
+      properties:
+        productId:
+          type: string
+          minLength: 1
+          description: Product being reviewed (mithai-products id).
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        body:
+          type: string
+          maxLength: 2000
+          description: Optional free-text review.
+        authorName:
+          type: string
+          maxLength: 120
+          description: Optional display name; falls back to the customer record.
+    Review:
+      type: object
+      required: [id, productId, rating, verifiedPurchase, status, created]
+      properties:
+        id: { type: string }
+        productId: { type: string }
+        rating: { type: integer, minimum: 1, maximum: 5 }
+        body: { type: [string, 'null'] }
+        authorName: { type: [string, 'null'] }
+        verifiedPurchase:
+          type: boolean
+          description: Server-stamped true when the customer has a delivered order containing the product.
+        orderId: { type: [string, 'null'], description: Linked delivered order when verifiedPurchase is true. }
+        status: { type: string, enum: [pending, approved, rejected] }
+        created:
+          type: boolean
+          description: True when a new review row was created; false when an existing (customer, product) review was updated.
 
 security:
   - bearerAuth: []
@@ -1471,6 +1517,76 @@ paths:
                       tier: { type: string, enum: [silver, gold] }
         '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
         '404': { description: Not Found — not eligible (fewer than 2 delivered orders)., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /account/loyalty:
+    get:
+      tags: [Loyalty]
+      summary: Read the customer's loyalty standing (no wallet-pass side effects)
+      description: >
+        Plain loyalty-state read for surfaces that show progress rather
+        than mint a pass: deliveredCount plus the resolved tier (null below
+        Silver, "silver" at >=2 delivered, "gold" at >=5) and the tier
+        thresholds. Unlike /account/loyalty-pass this never 404s below the
+        threshold and never writes WalletPasses.
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK — loyalty standing.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [deliveredCount, tier, silverAtDelivered, goldAtDelivered]
+                    properties:
+                      deliveredCount: { type: integer, minimum: 0 }
+                      tier: { type: [string, 'null'], enum: [silver, gold, null] }
+                      silverAtDelivered: { type: integer, description: Delivered orders needed for Silver (2). }
+                      goldAtDelivered: { type: integer, description: Delivered orders needed for Gold (5). }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+  /reviews:
+    post:
+      tags: [Reviews]
+      summary: Upsert the customer's review for one product (capture-only)
+      description: >
+        Creates or updates ONE review per (customer, product). Body is
+        zod-validated (rating 1-5 required); verifiedPurchase is
+        server-stamped — true with the linked order when the customer has
+        a delivered order containing the product. Reviews start as
+        "pending" for moderation and are not displayed anywhere yet.
+        201 on create, 200 on update.
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReviewInput' }
+      responses:
+        '200':
+          description: OK — existing (customer, product) review updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Review' }
+        '201':
+          description: Created — new review row.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Review' }
+        '401': { description: Unauthorized., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '404': { description: Not Found — product no longer exists., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { description: Unprocessable Entity — invalid body such as a rating outside 1-5 or a missing productId., content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
 
   /wallet/register-pass-device:
     post:

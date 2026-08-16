@@ -51,12 +51,14 @@ Class | Method | HTTP request | Description
 *CatalogAPI* | [**catalogSnacksGet**](docs/CatalogAPI.md#catalogsnacksget) | **GET** /catalog/snacks | 
 *CatalogAPI* | [**catalogSnacksSlugGet**](docs/CatalogAPI.md#catalogsnacksslugget) | **GET** /catalog/snacks/{slug} | 
 *HeroAPI* | [**heroGet**](docs/HeroAPI.md#heroget) | **GET** /hero | 
+*LoyaltyAPI* | [**accountLoyaltyGet**](docs/LoyaltyAPI.md#accountloyaltyget) | **GET** /account/loyalty | Read the customer&#39;s loyalty standing (no wallet-pass side effects)
 *LoyaltyAPI* | [**accountLoyaltyPassGet**](docs/LoyaltyAPI.md#accountloyaltypassget) | **GET** /account/loyalty-pass | Generate / refresh the customer&#39;s Apple Wallet loyalty pass (signed URL)
 *NotificationsAPI* | [**notificationsRegisterDevicePost**](docs/NotificationsAPI.md#notificationsregisterdevicepost) | **POST** /notifications/register-device | Register / refresh a push token (idempotent upsert)
 *OrdersAPI* | [**ordersGet**](docs/OrdersAPI.md#ordersget) | **GET** /orders | 
 *OrdersAPI* | [**ordersIdGet**](docs/OrdersAPI.md#ordersidget) | **GET** /orders/{id} | 
 *PaymentsAPI* | [**paymentsRazorpayCreateOrderPost**](docs/PaymentsAPI.md#paymentsrazorpaycreateorderpost) | **POST** /payments/razorpay/create-order | 
 *PaymentsAPI* | [**paymentsRazorpayVerifyPost**](docs/PaymentsAPI.md#paymentsrazorpayverifypost) | **POST** /payments/razorpay/verify | 
+*ReviewsAPI* | [**reviewsPost**](docs/ReviewsAPI.md#reviewspost) | **POST** /reviews | Upsert the customer&#39;s review for one product (capture-only)
 *StoriesAPI* | [**storiesGet**](docs/StoriesAPI.md#storiesget) | **GET** /stories | 
 *StoriesAPI* | [**storiesSlugGet**](docs/StoriesAPI.md#storiesslugget) | **GET** /stories/{slug} | 
 *WalletAPI* | [**walletRegisterPassDevicePost**](docs/WalletAPI.md#walletregisterpassdevicepost) | **POST** /wallet/register-pass-device | Register a device token for Apple Wallet .pass updates (idempotent)
@@ -65,6 +67,8 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [AccountLoyaltyGet200Response](docs/AccountLoyaltyGet200Response.md)
+ - [AccountLoyaltyGet200ResponseData](docs/AccountLoyaltyGet200ResponseData.md)
  - [AccountLoyaltyPassGet200Response](docs/AccountLoyaltyPassGet200Response.md)
  - [AccountLoyaltyPassGet200ResponseData](docs/AccountLoyaltyPassGet200ResponseData.md)
  - [Address](docs/Address.md)
@@ -134,6 +138,9 @@ Class | Method | HTTP request | Description
  - [RazorpayVerifyRequest](docs/RazorpayVerifyRequest.md)
  - [RazorpayVerifyResponse](docs/RazorpayVerifyResponse.md)
  - [RefreshResponse](docs/RefreshResponse.md)
+ - [Review](docs/Review.md)
+ - [ReviewInput](docs/ReviewInput.md)
+ - [ReviewsPost200Response](docs/ReviewsPost200Response.md)
  - [ServiceableResponse](docs/ServiceableResponse.md)
  - [Snack](docs/Snack.md)
  - [SnackRetailer](docs/SnackRetailer.md)

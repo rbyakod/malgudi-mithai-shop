@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **slug** | **String** |  | 
 **name** | **String** |  | 
 **quantity** | **Int** |  | 
+**packLabel** | **String** | Pack-size label the line was priced against (cart ids of the form &#x60;${productId}:${packLabel}&#x60;). Copied through from the cart snapshot so one-tap reorder re-adds the exact pack. Null/absent on base-pack lines and legacy orders.  | [optional] 
 **unit** | **String** |  | 
 **priceInPaise** | **Int** |  | 
 **image** | **String** |  | [optional] 

@@ -36,6 +36,7 @@ import com.squareup.moshi.JsonClass
  * @param quantity 
  * @param unit 
  * @param priceInPaise 
+ * @param packLabel Pack-size label the line was priced against (cart ids of the form `${productId}:${packLabel}`). Copied through from the cart snapshot so one-tap reorder re-adds the exact pack. Null/absent on base-pack lines and legacy orders. 
  * @param image 
  */
 
@@ -59,6 +60,10 @@ data class OrderItemsInner (
 
     @Json(name = "priceInPaise")
     val priceInPaise: kotlin.Int,
+
+    /* Pack-size label the line was priced against (cart ids of the form `${productId}:${packLabel}`). Copied through from the cart snapshot so one-tap reorder re-adds the exact pack. Null/absent on base-pack lines and legacy orders.  */
+    @Json(name = "packLabel")
+    val packLabel: kotlin.String? = null,
 
     @Json(name = "image")
     val image: kotlin.String? = null

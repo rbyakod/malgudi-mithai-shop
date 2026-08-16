@@ -13,6 +13,51 @@ import AnyCodable
 open class LoyaltyAPI {
 
     /**
+     Read the customer's loyalty standing (no wallet-pass side effects)
+     
+     - parameter apiResponseQueue: The queue on which api response is dispatched.
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    @discardableResult
+    open class func accountLoyaltyGet(apiResponseQueue: DispatchQueue = OpenAPIClientAPI.apiResponseQueue, completion: @escaping ((_ data: AccountLoyaltyGet200Response?, _ error: Error?) -> Void)) -> RequestTask {
+        return accountLoyaltyGetWithRequestBuilder().execute(apiResponseQueue) { result in
+            switch result {
+            case let .success(response):
+                completion(response.body, nil)
+            case let .failure(error):
+                completion(nil, error)
+            }
+        }
+    }
+
+    /**
+     Read the customer's loyalty standing (no wallet-pass side effects)
+     - GET /account/loyalty
+     - Plain loyalty-state read for surfaces that show progress rather than mint a pass: deliveredCount plus the resolved tier (null below Silver, \"silver\" at >=2 delivered, \"gold\" at >=5) and the tier thresholds. Unlike /account/loyalty-pass this never 404s below the threshold and never writes WalletPasses. 
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - returns: RequestBuilder<AccountLoyaltyGet200Response> 
+     */
+    open class func accountLoyaltyGetWithRequestBuilder() -> RequestBuilder<AccountLoyaltyGet200Response> {
+        let localVariablePath = "/account/loyalty"
+        let localVariableURLString = OpenAPIClientAPI.basePath + localVariablePath
+        let localVariableParameters: [String: Any]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<AccountLoyaltyGet200Response>.Type = OpenAPIClientAPI.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
+
+    /**
      Generate / refresh the customer's Apple Wallet loyalty pass (signed URL)
      
      - parameter apiResponseQueue: The queue on which api response is dispatched.
