@@ -19,6 +19,8 @@ export interface OrderItem {
   slug: string;
   name: string;
   quantity: number;
+  /** Pack-size label the line was priced against; null/absent for base-pack lines. */
+  packLabel?: string | null;
   unit: string;
   priceInPaise: number;
   image?: string;

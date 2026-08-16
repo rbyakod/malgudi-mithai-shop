@@ -136,6 +136,30 @@ describe("PayloadOrderService", () => {
       const again = await svc.getById(order.id, "cust-1");
       expect(again).not.toBeNull();
     });
+
+    it("copies packLabel through from snapshot items so reorder can re-add the exact pack", async () => {
+      const svc = new PayloadOrderService();
+      const order = await svc.createFromSnapshot(
+        snapshot({
+          items: [
+            // Derived-pack line: packLabel present (web PDP selector).
+            { productId: "p1", slug: "kaju-katli", name: "Kaju Katli", quantity: 2, packLabel: "500g", unit: "500g", priceInPaise: 55000 },
+            // Base-pack line: packLabel absent.
+            { productId: "p2", slug: "mysore-pak", name: "Mysore Pak", quantity: 1, unit: "250g", priceInPaise: 40000 },
+          ],
+        }),
+        "cust-1",
+        "web",
+      );
+
+      expect(order.items[0]!.packLabel).toBe("500g");
+      expect(order.items[1]!.packLabel).toBeNull();
+
+      // Persisted shape round-trips through the store (mapDoc serializes it).
+      const reread = await svc.getById(order.id, "cust-1");
+      expect(reread!.items[0]!.packLabel).toBe("500g");
+      expect(reread!.items[1]!.packLabel).toBeNull();
+    });
   });
 
   describe("getById", () => {

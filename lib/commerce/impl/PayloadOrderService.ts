@@ -41,7 +41,19 @@ export class PayloadOrderService implements OrderService {
       collection: "orders",
       data: {
         customerId,
-        items: snapshot.items,
+        // Copy snapshot items through explicitly so packLabel (the exact
+        // pack a reorder must re-add, `${productId}:${packLabel}`) survives
+        // the Orders.items schema rather than being stripped as unknown.
+        items: snapshot.items.map((item) => ({
+          productId: item.productId,
+          slug: item.slug,
+          name: item.name,
+          quantity: item.quantity,
+          packLabel: item.packLabel ?? null,
+          unit: item.unit,
+          priceInPaise: item.priceInPaise,
+          image: item.image ?? null,
+        })),
         totals: snapshot.totals,
         status: "pending_payment",
         paymentStatus: "pending",

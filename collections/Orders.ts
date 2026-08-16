@@ -43,6 +43,12 @@ export const Orders: CollectionConfig = {
         { name: "slug", type: "text", required: true },
         { name: "name", type: "text", required: true },
         { name: "quantity", type: "number", required: true, min: 1 },
+        // Pack-size label the line was priced against (cart ids of the
+        // form `${productId}:${packLabel}`). Optional — legacy/test orders
+        // and base-pack lines carry none; reorder falls back to the base
+        // pack for those. Copied through from cart snapshots at
+        // create-order time.
+        { name: "packLabel", type: "text" },
         { name: "unit", type: "text", required: true },
         { name: "priceInPaise", type: "number", required: true, min: 0 },
         { name: "image", type: "text" },
