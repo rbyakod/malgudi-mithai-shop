@@ -12,7 +12,23 @@ vi.mock('../../../../../../lib/container', () => ({
   },
 }));
 
-// Mutable fixture holders so each test can shape Payload responses.
+// Mock lib/config to avoid the required-env schema.parse crash in the test
+// environment; expose the delivery-fee fields the route reads.
+vi.mock('../../../../../../lib/config', () => ({
+  config: {
+    deliveryFeeFreshPaise: 4900,
+    deliveryFeeShelfStablePaise: 9900,
+  },
+}));
+
+// Mutable fixture holders so each test can shape Payload responses. The
+// snapshot `create` calls are captured so tests can assert exactly what the
+// route persisted (stamped items, totals, normalized slot).
+const { snapshotCreates, payloadCreate } = vi.hoisted(() => ({
+  snapshotCreates: [] as Array<Record<string, unknown>>,
+  payloadCreate: vi.fn(),
+}));
+
 let pincodeDocs: any[] = [];
 let productById: Record<string, any> = {};
 
@@ -33,10 +49,12 @@ vi.mock('payload', () => {
     // for the route to surface as snapshotId. Real persistence is exercised
     // via integration tests against Mongo.
     if (args && args.collection === 'snapshots') {
+      snapshotCreates.push(args.data);
       return { id: 'snap-mock-1', ...args.data };
     }
     return { id: 'mock-1' };
   });
+  payloadCreate.mockImplementation(create);
   const payloadStub = { find: find, findByID: findByID, create: create };
   const getPayload = vi.fn(async function () {
     return payloadStub;
@@ -68,12 +86,17 @@ describe('POST /cart/validate', () => {
         id: 'p1',
         slug: 'kaju-katli',
         name: 'Kaju Katli',
-        freshnessStatus: 'made-daily',
+        freshnessStatus: 'made-to-order',
+        displayPrice: '₹920 / 250g',
+        weight: '250 g',
+        images: [{ image: { url: '/api/media/file/kaju-katli.jpg' } }],
       },
     };
+    snapshotCreates.length = 0;
+    payloadCreate.mockClear();
   });
 
-  it('returns 200 with a cart snapshot for a valid body', async () => {
+  it('returns 200 with a priced cart snapshot for a valid body', async () => {
     const res = await POST(authedReq({
       items: [{ productId: 'p1', quantity: 2 }],
       pincode: '560001',
@@ -91,11 +114,156 @@ describe('POST /cart/validate', () => {
       slug: 'kaju-katli',
       name: 'Kaju Katli',
       quantity: 2,
-      freshnessStatus: 'made-daily',
+      freshnessStatus: 'made-to-order',
+      packLabel: null,
+      unit: '250g',
+      priceInPaise: 92000,
     });
-    // NOTE: totals are zero today; real pricing lands in Phase 8.
-    expect(body.data.totals.totalInPaise).toBe(0);
-    expect(body.data.totals.itemsTotalInPaise).toBe(0);
+    expect(body.data.items[0].image).toContain('/api/media/file/kaju-katli.jpg');
+    // Real totals: 2 x ₹920 + shelf-tier ₹99 delivery.
+    expect(body.data.totals).toEqual({
+      itemsTotalInPaise: 184000,
+      deliveryFeeInPaise: 9900,
+      taxesInPaise: 0,
+      discountInPaise: 0,
+      totalInPaise: 193900,
+    });
+  });
+
+  it('persists the snapshot with the same stamped items + totals', async () => {
+    await POST(authedReq({
+      items: [{ productId: 'p1', quantity: 2 }],
+      pincode: '560001',
+    }) as any);
+
+    expect(snapshotCreates).toHaveLength(1);
+    expect(snapshotCreates[0]).toMatchObject({
+      customerId: 'c1',
+      pincode: '560001',
+      pincodeTier: 'shelf',
+      totals: { totalInPaise: 193900 },
+    });
+    expect((snapshotCreates[0] as { items: Array<Record<string, unknown>> }).items[0]).toMatchObject({
+      unit: '250g',
+      priceInPaise: 92000,
+      packLabel: null,
+    });
+  });
+
+  it('prices a packLabel line against the derived pack ladder', async () => {
+    productById.p1.displayPrice = '₹1,109 / 1 kg';
+    const res = await POST(authedReq({
+      items: [{ productId: 'p1', quantity: 1, packLabel: '500g' }],
+      pincode: '560001',
+    }) as any);
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    // 500g derived from ₹1,109/1kg: 1109/2 = 554.5 → ₹550 (round-to-₹10).
+    expect(body.data.items[0]).toMatchObject({
+      packLabel: '500g',
+      unit: '500g',
+      priceInPaise: 55000,
+    });
+    expect(body.data.totals.itemsTotalInPaise).toBe(55000);
+    expect(body.data.totals.totalInPaise).toBe(55000 + 9900);
+  });
+
+  it('applies the fresh-tier delivery fee to fresh pincodes', async () => {
+    pincodeDocs = [{ pincode: '110001', tier: 'fresh', city: 'New Delhi', active: true }];
+    const res = await POST(authedReq({
+      items: [{ productId: 'p1', quantity: 1 }],
+      pincode: '110001',
+    }) as any);
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.pincodeTier).toBe('fresh');
+    expect(body.data.totals).toEqual({
+      itemsTotalInPaise: 92000,
+      deliveryFeeInPaise: 4900,
+      taxesInPaise: 0,
+      discountInPaise: 0,
+      totalInPaise: 96900,
+    });
+  });
+
+  it('normalizes iOS relative slot tokens when persisting the snapshot', async () => {
+    const res = await POST(authedReq({
+      items: [{ productId: 'p1', quantity: 1 }],
+      pincode: '560001',
+      slot: { date: 'today', window: 'evening' },
+    }) as any);
+
+    expect(res.status).toBe(200);
+    expect(snapshotCreates[0]).toMatchObject({
+      slot: { date: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/), window: '16:00-20:00' },
+    });
+  });
+
+  it('passes Android slot shapes through unchanged', async () => {
+    const res = await POST(authedReq({
+      items: [{ productId: 'p1', quantity: 1 }],
+      pincode: '560001',
+      slot: { date: '2026-09-05', window: '10:00-14:00' },
+    }) as any);
+
+    expect(res.status).toBe(200);
+    expect(snapshotCreates[0]).toMatchObject({
+      slot: { date: '2026-09-05', window: '10:00-14:00' },
+    });
+  });
+
+  it('rejects made-daily items on a shelf-tier pincode, naming the line (422 PINCODE_NOT_SERVICEABLE)', async () => {
+    productById.p1.freshnessStatus = 'made-daily';
+    const res = await POST(authedReq({
+      items: [{ productId: 'p1', quantity: 1 }],
+      pincode: '560001',
+    }) as any);
+
+    expect(res.status).toBe(422);
+    const body = await res.json();
+    expect(body.error.code).toBe('PINCODE_NOT_SERVICEABLE');
+    expect(body.error.message).toContain('Kaju Katli');
+    // Nothing persisted for a rejected cart.
+    expect(snapshotCreates).toHaveLength(0);
+  });
+
+  it('accepts made-daily items on a fresh-tier pincode', async () => {
+    productById.p1.freshnessStatus = 'made-daily';
+    pincodeDocs = [{ pincode: '110001', tier: 'fresh', city: 'New Delhi', active: true }];
+    const res = await POST(authedReq({
+      items: [{ productId: 'p1', quantity: 1 }],
+      pincode: '110001',
+    }) as any);
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ data: { pincodeTier: 'fresh' } });
+  });
+
+  it('rejects unpriceable (on-request) lines with 422 VALIDATION', async () => {
+    productById.p1.displayPrice = '₹ on request / pack';
+    const res = await POST(authedReq({
+      items: [{ productId: 'p1', quantity: 1 }],
+      pincode: '560001',
+    }) as any);
+
+    expect(res.status).toBe(422);
+    const body = await res.json();
+    expect(body.error.code).toBe('VALIDATION');
+    expect(body.error.message).toContain('not priced for online ordering');
+  });
+
+  it('rejects a stale packLabel that no longer derives (422 VALIDATION)', async () => {
+    const res = await POST(authedReq({
+      items: [{ productId: 'p1', quantity: 1, packLabel: '2 kg' }],
+      pincode: '560001',
+    }) as any);
+
+    expect(res.status).toBe(422);
+    const body = await res.json();
+    expect(body.error.code).toBe('VALIDATION');
+    expect(body.error.message).toContain('not priced for online ordering');
   });
 
   it('returns 404 PRODUCT_NOT_FOUND when a product no longer exists', async () => {

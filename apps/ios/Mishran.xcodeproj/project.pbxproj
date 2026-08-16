@@ -13,7 +13,6 @@
 		05B5B4F2503A3175CC8E60C6 /* EnquiryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2584F0BB6B155A1C8E473AF3 /* EnquiryView.swift */; };
 		0823B05C7F0CC88D994A7B59 /* OrderDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6836CBCA9A6BB2BBD587BF74 /* OrderDetailViewModel.swift */; };
 		0BB50EF4FF9169EB606587D8 /* RazorpayCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82730F53B7A9C3AE55E3ADCD /* RazorpayCoordinatorTests.swift */; };
-		0C0978B66C483D07DF80120A /* MishranWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0E3A1DC42EEC805AE45A09D0 /* MishranWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0F8936B3B493D50EC8605D2E /* KeychainAndBiometricTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D12DD757BE134A9B7406611 /* KeychainAndBiometricTests.swift */; };
 		11E5D63EF7D33F646CFE7B67 /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E15EA367D070805A633A6C /* Authenticator.swift */; };
 		123C7729529020F117F69B2E /* CartBadgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBE2E36C2FF8DB8FE4C528E /* CartBadgeTests.swift */; };
@@ -40,7 +39,6 @@
 		3B37B227CCC16B07DB05BB90 /* HomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0560626CB3904256FA3B6F7D /* HomeViewModelTests.swift */; };
 		3B9C5158DBB467780360AF16 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182B18816247C3A1DF844972 /* AccountView.swift */; };
 		3C6BBC4702DF7FD8E6EDC2C2 /* VerticalCatalogViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8FDA1C41F05C1B08848412 /* VerticalCatalogViewModelTests.swift */; };
-		3FA3C06D7881044374DC07F4 /* MishranWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A315D15A3808CB76567E34F2 /* MishranWidgetsBundle.swift */; };
 		3FAA8FDEBCBA2525DDDE120D /* ProductDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3958B3310C55B430C1A8788B /* ProductDetailViewModel.swift */; };
 		425D41BA0C51A30BEAB5B3DD /* CatalogRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA54984EE19823EDAE55EBC /* CatalogRepositoryTests.swift */; };
 		42AD67CE5DCFB830108782EB /* MerchDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD29D81E58338EE216FD8BF /* MerchDetailView.swift */; };
@@ -61,7 +59,6 @@
 		59ADC11FAB6700259C9586D5 /* CartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3C9B2094A54AD694C17BCB /* CartView.swift */; };
 		59B2B9B58C01BA97CC40881D /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4774C4B2CF65897F30615C9 /* AuthViewModelTests.swift */; };
 		59CABF02059982C0319380D1 /* AddressesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7587EDC2C7CEECBE6E6DCB /* AddressesView.swift */; };
-		5AC1FA98BEE5500384D1C8D5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 73441BCE6386DC927C453A59 /* Localizable.strings */; };
 		5B8F9E4A5AE9D02AA556EC8B /* StoryFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71DEECC6232626E489020B03 /* StoryFormatting.swift */; };
 		5D0BD8A2DEA298E5516DD416 /* SlotPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56520E6F1D7EFAAB5C70A16B /* SlotPicker.swift */; };
 		5DCF00EBFACD0A6E0F37D9DF /* DTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0E622CC322FD71D228D9A1 /* DTOs.swift */; };
@@ -78,7 +75,6 @@
 		6EB5EA093AE6BE70603F11C0 /* WhatsAppMessagesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993DC165EB67D40067AC7ADE /* WhatsAppMessagesTests.swift */; };
 		70D91A7E60501EDD5F1E5E82 /* RazorpayCheckout in Frameworks */ = {isa = PBXBuildFile; productRef = 231294D2DC7536DD79AE9C48 /* RazorpayCheckout */; };
 		71A09F51493AA909ACF73DAD /* OrderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7F44D92EAA043CCF853F9D /* OrderListView.swift */; };
-		721D5519FC94CE225A22E89D /* DeliveryActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75C7CF7D17CA0225AAABD5AD /* DeliveryActivity.swift */; };
 		74641FE7A551132C119ADE0E /* AccessibilityHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650E7C3E56C1E00A96507EC /* AccessibilityHelpers.swift */; };
 		7546055FCC0B770CA6412842 /* WalletPassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2B5903318B7854CFD9D7D0 /* WalletPassView.swift */; };
 		761CCC593D07CFC0546F0BA0 /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42DE5E76A474C16C34FC4633 /* APIClientTests.swift */; };
@@ -100,7 +96,6 @@
 		8C7788A86A5962A26D96F3A0 /* OrderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB199895148C72A88679FE4 /* OrderDetailView.swift */; };
 		8E2667EF644522F496C20C20 /* MishranApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DB1B710CA72B53C3537FB5 /* MishranApp.swift */; };
 		8E35FCFDCBD80F8F6E3E7E36 /* PushPermissionRequester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CBE5C7BE6081E0ECFE196FD /* PushPermissionRequester.swift */; };
-		94F0A8D1DE402F9A13C5284D /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824C93F1D0932E5DEA6A05C8 /* DeliveryAttributes.swift */; };
 		95803D6C83C1B4DC3A1E71E4 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */; };
 		9C4704FA753E12516E498B4C /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9208638C5D1818D4CF0731 /* SeedData.swift */; };
 		9C7A6B6FB71F40282BEF70AD /* RazorpayCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557BDC90C27B02C28EE85F24 /* RazorpayCoordinator.swift */; };
@@ -113,7 +108,6 @@
 		A3985EE883EE06FF0E9483AD /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE06CF24565A57CA9FCAA9AD /* APIError.swift */; };
 		A94C62C4F095C3301CF0FC6B /* CartLineItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA138DEEE85AFEF2A870BE4 /* CartLineItem.swift */; };
 		AAF00B9D39423E4775B46DB9 /* CartBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94BC9203F9C887E0A98FFC1 /* CartBadge.swift */; };
-		AB77F26895DC86FE1D682E47 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C76981C6A001264A75F07C84 /* Localization.swift */; };
 		ABF0BF37C890C6A8E909992C /* SwiftDataModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */; };
 		ADD7CCDC3C37DC330F12A408 /* DeepLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */; };
 		ADDD31EEBF7044E2271A6D70 /* GiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFEE24CEDB6D3216CF15F79 /* GiftViewModel.swift */; };
@@ -153,7 +147,6 @@
 		F2BD4A59463083692303DBE5 /* ProductCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B64F03123BBD6412145B49 /* ProductCard.swift */; };
 		F4576857819DFBE595478C4A /* PhoneEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58465808FD09EC9AEA493F2D /* PhoneEntryView.swift */; };
 		F9E33442E81A26DFA754E798 /* ProductRemoteImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6990934CD0E6C33B903BC5 /* ProductRemoteImage.swift */; };
-		FD1E949F34E4447AF512873C /* MishranTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15083CDE49B78AEB7CE5C9D /* MishranTokens.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -171,28 +164,7 @@
 			remoteGlobalIDString = D1B295700D76C68137328D08;
 			remoteInfo = Mishran;
 		};
-		F24B081B90A44357CF4BC5CC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 068F6588F6E5AA439AA8F934 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = FD40144A4FCD7156C6005614;
-			remoteInfo = MishranWidgets;
-		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		479A4BD0B8E1DA9D8CF6A543 /* Embed Foundation Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				0C0978B66C483D07DF80120A /* MishranWidgets.appex in Embed Foundation Extensions */,
-			);
-			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0560626CB3904256FA3B6F7D /* HomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModelTests.swift; sourceTree = "<group>"; };
@@ -204,7 +176,6 @@
 		0C7F44D92EAA043CCF853F9D /* OrderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderListView.swift; sourceTree = "<group>"; };
 		0D6EE45F8BABD45F7382D47E /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		0D7373C10CB51D179ED6EB5D /* BuyNowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyNowButton.swift; sourceTree = "<group>"; };
-		0E3A1DC42EEC805AE45A09D0 /* MishranWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = MishranWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		10B29822DDA008F5A6BAD2EB /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
 		131DE0E7667A8BBA133CE155 /* FilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSheet.swift; sourceTree = "<group>"; };
 		17F6E1F7404D245F24FE9B87 /* SwiftDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModels.swift; sourceTree = "<group>"; };
@@ -266,7 +237,6 @@
 		73CA588F28105AAD3CD802E4 /* te */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = te; path = te.lproj/Localizable.strings; sourceTree = "<group>"; };
 		745D2202FC87FD86095D2787 /* QsrDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QsrDetailView.swift; sourceTree = "<group>"; };
 		74A4A9D1DB2500B7A437F297 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
-		75C7CF7D17CA0225AAABD5AD /* DeliveryActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveryActivity.swift; sourceTree = "<group>"; };
 		7779E5F4D784B9B2DF80DF7A /* AddressesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesViewModel.swift; sourceTree = "<group>"; };
 		7A2B5903318B7854CFD9D7D0 /* WalletPassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletPassView.swift; sourceTree = "<group>"; };
 		7ACC75BEA637550855532CA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -293,7 +263,6 @@
 		9FE3F782C4272E71BD283282 /* Mishran.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Mishran.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1788F125B460F96BB7E6C4F /* StoryReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryReaderView.swift; sourceTree = "<group>"; };
 		A2C05DD9A4CCADB52C9273BA /* ThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTests.swift; sourceTree = "<group>"; };
-		A315D15A3808CB76567E34F2 /* MishranWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MishranWidgetsBundle.swift; sourceTree = "<group>"; };
 		A48A5980852C073E51B9FBFF /* ProductDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailViewModelTests.swift; sourceTree = "<group>"; };
 		A6568E092C76DE87C87CC8B6 /* AppleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInButton.swift; sourceTree = "<group>"; };
 		A6575E90C61D6190AA687E88 /* AccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTests.swift; sourceTree = "<group>"; };
@@ -459,7 +428,6 @@
 				B5B5DF2A3F7F9D39FBB3A74E /* Mishran */,
 				F74AB2076E8EB487B7552C9F /* MishranTests */,
 				6FCE1B0A562DFF922CA88B6C /* MishranUITests */,
-				721A3EFDA3ADF0A0CD37121D /* MishranWidgets */,
 				CEAA4CCE4A3E1D6A2C15B94B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -521,7 +489,6 @@
 		67EACA78FC84220DADB2E69E /* LiveActivity */ = {
 			isa = PBXGroup;
 			children = (
-				75C7CF7D17CA0225AAABD5AD /* DeliveryActivity.swift */,
 				824C93F1D0932E5DEA6A05C8 /* DeliveryAttributes.swift */,
 				9B0148C12898D2AEFEC886FA /* LiveActivityManager.swift */,
 			);
@@ -554,14 +521,6 @@
 				C59BEECC5B82F1F33C74B8B9 /* RevocationFlowUITest.swift */,
 			);
 			path = MishranUITests;
-			sourceTree = "<group>";
-		};
-		721A3EFDA3ADF0A0CD37121D /* MishranWidgets */ = {
-			isa = PBXGroup;
-			children = (
-				A315D15A3808CB76567E34F2 /* MishranWidgetsBundle.swift */,
-			);
-			path = MishranWidgets;
 			sourceTree = "<group>";
 		};
 		776F30C265809D50C6E72A5F /* Enquiry */ = {
@@ -674,7 +633,6 @@
 				9FE3F782C4272E71BD283282 /* Mishran.app */,
 				BEDC8DC14F2500F2AA893CD2 /* MishranTests.xctest */,
 				9D530C7E3563C4D49DEF96BB /* MishranUITests.xctest */,
-				0E3A1DC42EEC805AE45A09D0 /* MishranWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -855,12 +813,10 @@
 				7453360AB9162D9E0B5671C8 /* Sources */,
 				FDB4F1096A02DB0888F80F9E /* Resources */,
 				F6633F932A26180FAE92E672 /* Frameworks */,
-				479A4BD0B8E1DA9D8CF6A543 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				3D5038DA2CADE41350BE8880 /* PBXTargetDependency */,
 			);
 			name = Mishran;
 			packageProductDependencies = (
@@ -869,24 +825,6 @@
 			productName = Mishran;
 			productReference = 9FE3F782C4272E71BD283282 /* Mishran.app */;
 			productType = "com.apple.product-type.application";
-		};
-		FD40144A4FCD7156C6005614 /* MishranWidgets */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8C17AB7493B02FB9E3703230 /* Build configuration list for PBXNativeTarget "MishranWidgets" */;
-			buildPhases = (
-				53FF4AD6C0F7CD72FC828248 /* Sources */,
-				0B863088A5010A6D1FDCE013 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = MishranWidgets;
-			packageProductDependencies = (
-			);
-			productName = MishranWidgets;
-			productReference = 0E3A1DC42EEC805AE45A09D0 /* MishranWidgets.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -907,10 +845,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					D1B295700D76C68137328D08 = {
-						DevelopmentTeam = 2X7B7DMV95;
-						ProvisioningStyle = Automatic;
-					};
-					FD40144A4FCD7156C6005614 = {
 						DevelopmentTeam = 2X7B7DMV95;
 						ProvisioningStyle = Automatic;
 					};
@@ -942,7 +876,6 @@
 			projectRoot = "";
 			targets = (
 				D1B295700D76C68137328D08 /* Mishran */,
-				FD40144A4FCD7156C6005614 /* MishranWidgets */,
 				2C49B580602E129C08366052 /* MishranUITests */,
 				5AC9D4BAA9624C10E8CE992B /* MishranTests */,
 			);
@@ -950,14 +883,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0B863088A5010A6D1FDCE013 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5AC1FA98BEE5500384D1C8D5 /* Localizable.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		FDB4F1096A02DB0888F80F9E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -981,18 +906,6 @@
 				BD20E249EB84D2D509889488 /* MishranUITests.swift in Sources */,
 				01426908FD705FCA1750E7E6 /* NavigationUITests.swift in Sources */,
 				274321063DC6FE5E8BCE2D14 /* RevocationFlowUITest.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		53FF4AD6C0F7CD72FC828248 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				721D5519FC94CE225A22E89D /* DeliveryActivity.swift in Sources */,
-				94F0A8D1DE402F9A13C5284D /* DeliveryAttributes.swift in Sources */,
-				AB77F26895DC86FE1D682E47 /* Localization.swift in Sources */,
-				FD1E949F34E4447AF512873C /* MishranTokens.swift in Sources */,
-				3FA3C06D7881044374DC07F4 /* MishranWidgetsBundle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1148,11 +1061,6 @@
 			target = D1B295700D76C68137328D08 /* Mishran */;
 			targetProxy = D6FDDAC23AFC7BB1872B10D1 /* PBXContainerItemProxy */;
 		};
-		3D5038DA2CADE41350BE8880 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = FD40144A4FCD7156C6005614 /* MishranWidgets */;
-			targetProxy = F24B081B90A44357CF4BC5CC /* PBXContainerItemProxy */;
-		};
 		85D45F8570359B26880A3BD7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D1B295700D76C68137328D08 /* Mishran */;
@@ -1282,40 +1190,11 @@
 			};
 			name = Release;
 		};
-		6E97DFD42A186BD04434B993 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = MishranWidgets/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mishran.app.widgets;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
-		B26ED18855ECDA452B50A49D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = MishranWidgets/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mishran.app.widgets;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
 		B9992C26BF51DB96EC658F0C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1375,6 +1254,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1454,15 +1334,6 @@
 			buildConfigurations = (
 				F25864720AE3EF36D3D3F0D5 /* Debug */,
 				B9992C26BF51DB96EC658F0C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		8C17AB7493B02FB9E3703230 /* Build configuration list for PBXNativeTarget "MishranWidgets" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B26ED18855ECDA452B50A49D /* Debug */,
-				6E97DFD42A186BD04434B993 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

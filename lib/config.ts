@@ -53,6 +53,12 @@ const schema = z.object({
   apnsKeyId: z.string().optional(),
   apnsPrivateKey: z.string().optional(),
   apnsBundleId: z.string().optional(),
+  // Commerce delivery fees (commerce launch, Batch 2). Flat fee by
+  // serviceability tier — fresh (same-city) vs shelf-stable (courier).
+  // coerce so plain-string env values parse; defaults are the user-decided
+  // ₹49 / ₹99.
+  deliveryFeeFreshPaise: z.coerce.number().int().min(0).default(4900),
+  deliveryFeeShelfStablePaise: z.coerce.number().int().min(0).default(9900),
 });
 
 export type Config = z.infer<typeof schema> & {
@@ -105,6 +111,8 @@ const env = {
   apnsKeyId: process.env.APNS_KEY_ID,
   apnsPrivateKey: process.env.APNS_PRIVATE_KEY,
   apnsBundleId: process.env.APNS_BUNDLE_ID,
+  deliveryFeeFreshPaise: process.env.DELIVERY_FEE_FRESH_PAISE,
+  deliveryFeeShelfStablePaise: process.env.DELIVERY_FEE_SHELF_STABLE_PAISE,
 };
 
 export const config: Config = {

@@ -13,9 +13,9 @@
 
 import {useEffect, useRef, useState} from "react";
 import {useTranslations} from "next-intl";
+import {checkServiceability, PINCODE_RE} from "@/lib/web/serviceability";
 
 const STORAGE_KEY = "mithran-pincode-v1";
-const PINCODE_RE = /^[0-9]{6}$/;
 
 type SavedResult = {
   pincode: string;
@@ -63,30 +63,29 @@ export function PincodeCheck() {
     const controller = new AbortController();
     abortRef.current = controller;
     setState({kind: "checking"});
+    // The fetch + response interpretation lives in lib/web/serviceability —
+    // shared with the account address book and checkout.
     try {
-      const res = await fetch(
-        `/api/mobile/v1/catalog/serviceable?pincode=${pincode}`,
-        {signal: controller.signal},
-      );
-      if (res.status === 422) {
-        setState({kind: "invalid"});
-        return;
-      }
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const body = (await res.json()) as {
-        data?: {serviceable?: boolean; tier?: "fresh" | "shelf"; city?: string; slaDays?: number};
-      };
-      const d = body.data;
-      if (d?.serviceable && d.tier && d.city && typeof d.slaDays === "number") {
-        const result = {pincode, tier: d.tier, city: d.city, slaDays: d.slaDays};
+      const result = await checkServiceability(pincode, controller.signal);
+      if (result.kind === "ok") {
+        const saved = {
+          pincode: result.pincode,
+          tier: result.tier,
+          city: result.city,
+          slaDays: result.slaDays,
+        };
         try {
-          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
         } catch {
           // ignore quota errors
         }
-        setState({kind: "ok", result});
-      } else {
+        setState({kind: "ok", result: saved});
+      } else if (result.kind === "notServiceable") {
         setState({kind: "notServiceable", pincode});
+      } else if (result.kind === "invalid") {
+        setState({kind: "invalid"});
+      } else {
+        setState({kind: "error"});
       }
     } catch (e) {
       if ((e as Error).name === "AbortError") return;

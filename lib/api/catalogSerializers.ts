@@ -44,7 +44,7 @@ export function absoluteMediaURL(url: string): string {
 }
 
 /** Upload-ref array → string[] (populated url → ref id → bare string). */
-function flattenImages(images: unknown): string[] {
+export function flattenImages(images: unknown): string[] {
   return (Array.isArray(images) ? images : [])
     .map((i: any) => i?.image?.url ?? i?.image ?? i?.url ?? i)
     .filter((u: unknown): u is string => typeof u === 'string')

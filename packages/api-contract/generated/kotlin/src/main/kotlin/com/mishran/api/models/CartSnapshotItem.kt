@@ -35,6 +35,10 @@ import com.squareup.moshi.JsonClass
  * @param name 
  * @param quantity 
  * @param freshnessStatus 
+ * @param packLabel Pack-size label the line was priced against (present when the request's CartItem carried one); null for base-price lines. 
+ * @param unit Pack identity of the priced line, e.g. \"500g\" / \"1 kg\" / \"250 g\". 
+ * @param priceInPaise Server-resolved line price in paise (per unit, not x quantity).
+ * @param image First product image URL (absolute), when one exists.
  */
 
 
@@ -53,7 +57,23 @@ data class CartSnapshotItem (
     val quantity: kotlin.Int,
 
     @Json(name = "freshnessStatus")
-    val freshnessStatus: CartSnapshotItem.FreshnessStatus?
+    val freshnessStatus: CartSnapshotItem.FreshnessStatus?,
+
+    /* Pack-size label the line was priced against (present when the request's CartItem carried one); null for base-price lines.  */
+    @Json(name = "packLabel")
+    val packLabel: kotlin.String? = null,
+
+    /* Pack identity of the priced line, e.g. \"500g\" / \"1 kg\" / \"250 g\".  */
+    @Json(name = "unit")
+    val unit: kotlin.String? = null,
+
+    /* Server-resolved line price in paise (per unit, not x quantity). */
+    @Json(name = "priceInPaise")
+    val priceInPaise: kotlin.Int? = null,
+
+    /* First product image URL (absolute), when one exists. */
+    @Json(name = "image")
+    val image: kotlin.String? = null
 
 ) {
 

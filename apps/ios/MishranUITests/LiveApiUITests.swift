@@ -81,7 +81,9 @@ final class LiveApiUITests: XCTestCase {
         let increment = app.buttons["Increase quantity"]
         XCTAssertTrue(increment.waitForExistence(timeout: 5), "Stepper should exist")
         increment.tap()
-        let addToCart = app.buttons["Add to cart"]
+        // Identifier, not label: the PDP has two "Add to cart" buttons
+        // (in-content + sticky buy bar) and a label query is ambiguous.
+        let addToCart = app.buttons["pdp.add-to-cart.sticky"]
         XCTAssertTrue(addToCart.waitForExistence(timeout: 5), "Add-to-cart button should exist")
         addToCart.tap()
 

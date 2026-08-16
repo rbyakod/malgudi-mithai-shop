@@ -100,6 +100,12 @@ vi.mock('payload', () => ({
 
 vi.mock('../../../../../../../payload.config', () => ({ default: {} }));
 
+// Mock lib/config (required-env schema.parse crashes in the test env); the
+// route reads razorpayKeyId as the keyId fallback.
+vi.mock('../../../../../../../lib/config', () => ({
+  config: { razorpayKeyId: 'rzp_test_config_fallback' },
+}));
+
 // Mock container with a fake PaymentService we can spy on + a stub
 // jwtService so requireCustomer resolves for our fake token.
 vi.mock('../../../../../../../lib/container', () => ({
@@ -183,6 +189,7 @@ describe('POST /payments/razorpay/create-order', () => {
 
   it('returns 200 with orderId + razorpayOrderId + amountInPaise + keyId on happy path', async () => {
     seedSnapshot();
+    const originalKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID = 'rzp_test_key';
 
     const res = await POST(authedReq(VALID_BODY) as any);
@@ -200,6 +207,45 @@ describe('POST /payments/razorpay/create-order', () => {
     expect(order.status).toBe('pending_payment');
     expect(order.razorpayOrderId).toBe('order_rp_test_1');
     expect(order.source).toBe('mobile-android'); // default when no X-Client-Source
+    expect(stores.payments.values().next().value?.amountInPaise).toBe(85000);
+
+    if (originalKey === undefined) delete process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+    else process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID = originalKey;
+  });
+
+  it('falls back to config.razorpayKeyId when NEXT_PUBLIC_RAZORPAY_KEY_ID is unset', async () => {
+    seedSnapshot();
+    const originalKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+    delete process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+
+    const res = await POST(authedReq(VALID_BODY) as any);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    // Same value RAZORPAY_KEY_ID holds on the server — keyId must never be
+    // undefined or the client cannot open the Razorpay widget.
+    expect(body.data.keyId).toBe('rzp_test_config_fallback');
+
+    if (originalKey !== undefined) process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID = originalKey;
+  });
+
+  it('rejects a stale zero-total snapshot with 422 and creates no order', async () => {
+    seedSnapshot({
+      totals: {
+        itemsTotalInPaise: 0,
+        deliveryFeeInPaise: 0,
+        taxesInPaise: 0,
+        discountInPaise: 0,
+        totalInPaise: 0,
+      },
+    });
+    const res = await POST(authedReq(VALID_BODY) as any);
+    expect(res.status).toBe(422);
+    const body = await res.json();
+    expect(body.error.code).toBe('VALIDATION');
+    expect(body.error.message).toContain('re-validate');
+    // No side effects: no order row, no Razorpay call.
+    expect(stores.orders.size).toBe(0);
+    expect(paymentCalls.createOrder).toBe(0);
   });
 
   it('returns 401 when auth is missing', async () => {

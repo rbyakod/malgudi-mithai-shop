@@ -144,6 +144,16 @@ vi.mock("payload", () => ({
 
 vi.mock("../../payload.config", () => ({ default: {} }));
 
+// create-order imports lib/config for the keyId fallback; mock it so the
+// required-env schema.parse never runs in this environment.
+vi.mock("../../lib/config", () => ({
+  config: {
+    deliveryFeeFreshPaise: 4900,
+    deliveryFeeShelfStablePaise: 9900,
+    razorpayKeyId: "rzp_test_integration_key",
+  },
+}));
+
 // Getter-based container: returns the REAL instances assigned in beforeAll.
 vi.mock("../../lib/container", () => ({
   container: {
@@ -241,8 +251,15 @@ function seedCatalog() {
     slug: "kaju-katli",
     name: "Kaju Katli",
     freshnessStatus: "made-to-order",
+    displayPrice: "₹920 / 250g",
+    weight: "250 g",
   });
 }
+
+// Server-priced expectation for the seeded catalog: 2 x ₹920 + fresh-tier
+// ₹49 delivery. Every downstream assertion (snapshot totals, order items,
+// payment amount) must agree on this number.
+const EXPECTED_TOTAL_IN_PAISE = 184000 + 4900;
 
 // Bootstrap the authenticated prefix of the flow: send OTP, capture the code,
 // verify it, validate a cart. Returns the auth headers + snapshotId.
@@ -303,6 +320,23 @@ describe("full checkout flow (integration)", () => {
   it("logs in → validates cart → creates order → verifies payment → confirms", async () => {
     const { auth, snapshotId, customerId } = await bootstrap();
 
+    // The validated snapshot carries server-side pricing truth.
+    const snapshot = ctx.stores.snapshots.get(snapshotId);
+    expect(snapshot?.totals).toEqual({
+      itemsTotalInPaise: 184000,
+      deliveryFeeInPaise: 4900,
+      taxesInPaise: 0,
+      discountInPaise: 0,
+      totalInPaise: EXPECTED_TOTAL_IN_PAISE,
+    });
+    expect((snapshot?.items as Array<Record<string, unknown>>)[0]).toMatchObject({
+      productId: PRODUCT_ID,
+      quantity: 2,
+      unit: "250g",
+      priceInPaise: 92000,
+      packLabel: null,
+    });
+
     // create-order (idempotent)
     const rCreate = await createOrder(
       req(
@@ -318,14 +352,23 @@ describe("full checkout flow (integration)", () => {
     };
     const { orderId, razorpayOrderId } = createBody.data;
     expect(razorpayOrderId).toMatch(/^order_fake_/);
+    // The Razorpay order is charged the priced total — never a placeholder 0.
+    expect(createBody.data.amountInPaise).toBe(EXPECTED_TOTAL_IN_PAISE);
     // order exists in pending_payment before payment is verified
     const pendingOrder = ctx.stores.orders.get(orderId);
     expect(pendingOrder?.status).toBe("pending_payment");
     expect(pendingOrder?.paymentStatus).toBe("pending");
-    // a payments row was created in 'created' state
+    // order items carry the per-line pricing the snapshot stamped
+    expect((pendingOrder?.items as Array<Record<string, unknown>>)[0]).toMatchObject({
+      productId: PRODUCT_ID,
+      unit: "250g",
+      priceInPaise: 92000,
+    });
+    // a payments row was created in 'created' state, for the priced total
     const pendingPay = Array.from(ctx.stores.payments.values())[0];
     expect(pendingPay?.status).toBe("created");
     expect(pendingPay?.providerOrderId).toBe(razorpayOrderId);
+    expect(pendingPay?.amountInPaise).toBe(EXPECTED_TOTAL_IN_PAISE);
 
     // verify payment → transitions pending_payment → confirmed
     const rVerify = await verifyPayment(

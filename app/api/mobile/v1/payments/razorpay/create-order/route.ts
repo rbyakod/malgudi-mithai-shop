@@ -41,6 +41,9 @@ import { ApiError, ErrorCode } from '../../../../../../../lib/api/errors';
 import { PayloadOrderService } from '../../../../../../../lib/commerce/impl/PayloadOrderService';
 import type { OrderCreateSnapshot } from '../../../../../../../lib/commerce/OrderService';
 import type { OrderSource } from '../../../../../../../lib/commerce/types';
+// Env-validated app config (RAZORPAY_KEY_ID). Named to avoid colliding with
+// the Payload `config` import above.
+import { config as appConfig } from '../../../../../../../lib/config';
 
 const Body = z.object({
   snapshotId: z.string().min(1),
@@ -113,6 +116,17 @@ export async function POST(req: NextRequest) {
         slot: snapshotDoc.slot as OrderCreateSnapshot['slot'],
       };
 
+      // Stale pre-pricing snapshots (zero/missing total) must never reach
+      // Razorpay — a ₹0 order looks paid the moment it is created. The
+      // client re-validates the cart to mint a priced snapshot.
+      if (!snapshot.totals || !(snapshot.totals.totalInPaise > 0)) {
+        throw new ApiError(
+          ErrorCode.VALIDATION,
+          'Cart snapshot has no payable total — re-validate the cart',
+          { fieldErrors: { snapshotId: parsed.data.snapshotId } },
+        );
+      }
+
       // Create order in our DB.
       const order = await orderService.createFromSnapshot(snapshot, customerId, source);
 
@@ -153,7 +167,11 @@ export async function POST(req: NextRequest) {
         orderId: order.id,
         razorpayOrderId: providerOrderId,
         amountInPaise: order.totals.totalInPaise,
-        keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        // The checkout widget's key id. NEXT_PUBLIC_RAZORPAY_KEY_ID is the
+        // canonical source but is build-time inlined and may be unset on a
+        // box that only configured RAZORPAY_KEY_ID — fall back to it (same
+        // value in test mode) so keyId never comes back undefined.
+        keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? appConfig.razorpayKeyId,
       });
     } catch (err) {
       return errorResponse(err, traceId);

@@ -1,9 +1,16 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Path depth: app/api/mobile/v1/auth/otp/send/ = 7 dirs deep -> 7 ../ to repo root.
+
+// Hoisted send spy so bypass tests can assert whether the SMS provider path
+// ran (vi.mock factories close over this, not over top-level consts).
+const { otpSend } = vi.hoisted(() => ({
+  otpSend: vi.fn().mockResolvedValue({ messageId: 'msg-1' }),
+}));
+
 vi.mock('../../../../../../../lib/container', () => ({
   container: {
-    otpService: { send: vi.fn().mockResolvedValue({ messageId: 'msg-1' }) },
+    otpService: { send: otpSend },
     rateLimiter: { check: vi.fn().mockResolvedValue(undefined) },
   },
 }));
@@ -34,29 +41,71 @@ vi.mock('argon2', () => ({
 
 import { POST as sendHandler } from './route';
 
+function makeReq(phone: string) {
+  return new Request('http://localhost/api/mobile/v1/auth/otp/send', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ phone }),
+  }) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
 describe('POST /auth/otp/send', () => {
+  const ORIGINAL_BYPASS = process.env.OTP_BYPASS_PHONE;
+
+  beforeEach(() => {
+    otpSend.mockClear();
+    // Default: seam off — the provider path is the baseline.
+    delete process.env.OTP_BYPASS_PHONE;
+  });
+
+  afterEach(() => {
+    // Restore the runner's original env so cases never leak across files.
+    if (ORIGINAL_BYPASS === undefined) delete process.env.OTP_BYPASS_PHONE;
+    else process.env.OTP_BYPASS_PHONE = ORIGINAL_BYPASS;
+  });
+
   it('returns 200 with requestId on valid phone', async () => {
-    const req = new Request('http://localhost/api/mobile/v1/auth/otp/send', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ phone: '+919999999999' }),
-    });
-    const res = await sendHandler(req as any);
+    const res = await sendHandler(makeReq('+919999999999'));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.requestId).toBe('otp-1');
     expect(body.data.expiresAt).toBeTruthy();
+    expect(otpSend).toHaveBeenCalledWith('+919999999999', expect.any(String));
   });
 
   it('rejects invalid phone with 422', async () => {
-    const req = new Request('http://localhost/api/mobile/v1/auth/otp/send', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ phone: 'bad' }),
-    });
-    const res = await sendHandler(req as any);
+    const res = await sendHandler(makeReq('bad'));
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.error.code).toBe('VALIDATION');
+  });
+
+  it('skips the SMS provider when the phone is in the comma-separated bypass list', async () => {
+    process.env.OTP_BYPASS_PHONE = '+918088983014,+919812345678';
+    const res = await sendHandler(makeReq('+919812345678'));
+    expect(res.status).toBe(200);
+    expect(otpSend).not.toHaveBeenCalled();
+  });
+
+  it('tolerates whitespace around bypass list entries', async () => {
+    process.env.OTP_BYPASS_PHONE = ' +918088983014 , +919812345678 ';
+    const res = await sendHandler(makeReq('+918088983014'));
+    expect(res.status).toBe(200);
+    expect(otpSend).not.toHaveBeenCalled();
+  });
+
+  it('sends via the provider when the phone is not in the bypass list', async () => {
+    process.env.OTP_BYPASS_PHONE = '+918088983014,+919812345678';
+    const res = await sendHandler(makeReq('+919999999999'));
+    expect(res.status).toBe(200);
+    expect(otpSend).toHaveBeenCalledTimes(1);
+    expect(otpSend).toHaveBeenCalledWith('+919999999999', expect.any(String));
+  });
+
+  it('disables the bypass seam entirely when the env is empty', async () => {
+    process.env.OTP_BYPASS_PHONE = '';
+    const res = await sendHandler(makeReq('+918088983014'));
+    expect(res.status).toBe(200);
+    expect(otpSend).toHaveBeenCalledTimes(1);
   });
 });

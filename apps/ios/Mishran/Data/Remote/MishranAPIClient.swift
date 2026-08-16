@@ -226,8 +226,10 @@ actor MishranAPIClient {
         if endpoint.body != nil {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         }
-        // Analytics taxonomy parity with the Android client.
-        request.setValue("ios", forHTTPHeaderField: "X-Client-Source")
+        // Analytics taxonomy parity with the Android client. Must match the
+        // server's allow-list (mobile-android|mobile-ios|web) — a bare "ios"
+        // fails create-order's X-Client-Source validation with 422.
+        request.setValue("mobile-ios", forHTTPHeaderField: "X-Client-Source")
         for (name, value) in endpoint.headers {
             request.setValue(value, forHTTPHeaderField: name)
         }

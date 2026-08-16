@@ -10,12 +10,14 @@
 /**
  * Static fallback when the Payload global is missing or empty.
  * Canonical value — keep in sync across all consumers via this single export.
+ * Owner's number (2026-08-15) until a dedicated support line exists; the
+ * Payload `analytics-settings.whatsappNumber` global overrides this in prod.
  */
-export const FALLBACK_WHATSAPP = "+91-98765-43210";
+export const FALLBACK_WHATSAPP = "+91-80889-83014";
 
 /**
  * Normalize a WhatsApp number string to digits only.
- * `+91-98765-43210` → `919876543210`. Empty/invalid input → empty string.
+ * `+91-80889-83014` → `918088983014`. Empty/invalid input → empty string.
  *
  * Used to build wa.me deep links (which require digits only, no `+` or
  * punctuation).

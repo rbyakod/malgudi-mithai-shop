@@ -18,18 +18,31 @@ public struct CartSnapshotItem: Codable, JSONEncodable, Hashable {
         case batchFrozen = "batch-frozen"
     }
     public static let quantityRule = NumericRule<Int>(minimum: 1, exclusiveMinimum: false, maximum: nil, exclusiveMaximum: false, multipleOf: nil)
+    public static let priceInPaiseRule = NumericRule<Int>(minimum: 0, exclusiveMinimum: false, maximum: nil, exclusiveMaximum: false, multipleOf: nil)
     public var productId: String
     public var slug: String
     public var name: String
     public var quantity: Int
     public var freshnessStatus: FreshnessStatus?
+    /** Pack-size label the line was priced against (present when the request's CartItem carried one); null for base-price lines.  */
+    public var packLabel: String?
+    /** Pack identity of the priced line, e.g. \"500g\" / \"1 kg\" / \"250 g\".  */
+    public var unit: String?
+    /** Server-resolved line price in paise (per unit, not x quantity). */
+    public var priceInPaise: Int?
+    /** First product image URL (absolute), when one exists. */
+    public var image: String?
 
-    public init(productId: String, slug: String, name: String, quantity: Int, freshnessStatus: FreshnessStatus?) {
+    public init(productId: String, slug: String, name: String, quantity: Int, freshnessStatus: FreshnessStatus?, packLabel: String? = nil, unit: String? = nil, priceInPaise: Int? = nil, image: String? = nil) {
         self.productId = productId
         self.slug = slug
         self.name = name
         self.quantity = quantity
         self.freshnessStatus = freshnessStatus
+        self.packLabel = packLabel
+        self.unit = unit
+        self.priceInPaise = priceInPaise
+        self.image = image
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -38,6 +51,10 @@ public struct CartSnapshotItem: Codable, JSONEncodable, Hashable {
         case name
         case quantity
         case freshnessStatus
+        case packLabel
+        case unit
+        case priceInPaise
+        case image
     }
 
     // Encodable protocol methods
@@ -49,6 +66,10 @@ public struct CartSnapshotItem: Codable, JSONEncodable, Hashable {
         try container.encode(name, forKey: .name)
         try container.encode(quantity, forKey: .quantity)
         try container.encode(freshnessStatus, forKey: .freshnessStatus)
+        try container.encodeIfPresent(packLabel, forKey: .packLabel)
+        try container.encodeIfPresent(unit, forKey: .unit)
+        try container.encodeIfPresent(priceInPaise, forKey: .priceInPaise)
+        try container.encodeIfPresent(image, forKey: .image)
     }
 }
 

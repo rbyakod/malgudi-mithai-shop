@@ -32,7 +32,7 @@ open class CartAPI {
 
     /**
      - POST /cart/validate
-     - Validate the customer's cart: authenticate, re-check pincode serviceability, re-fetch each product to confirm it still exists, persist a tamper-evident cart snapshot, and return the snapshot id + shape valid for 10 minutes.  NOTE: totals are all zero today — commerce / variant pricing on MithaiProducts is deferred to Phase 8. This endpoint gives mobile clients a stable contract for cart shape + availability now. 
+     - Validate the customer's cart: authenticate, re-check pincode serviceability, re-fetch each product to confirm it still exists, price every line server-side (optional per-item packLabel prices the matching derived pack size; unpriceable lines like \"on request\" are rejected 422), enforce the fresh-tier rule (made-daily items only ship to fresh-tier pincodes), normalize iOS relative slot tokens, persist a tamper-evident cart snapshot with real totals (subtotal + flat delivery fee by tier; taxes 0, MRP inclusive of GST), and return the snapshot id + shape valid for 10 minutes. 
      - Bearer Token:
        - type: http
        - name: bearerAuth

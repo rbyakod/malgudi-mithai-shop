@@ -41,7 +41,8 @@ function labelFor(grams: number): string {
 }
 
 // "₹920 / 250g" → 920; "₹1,084 / 500g" → 1084; "₹ on request / pack" → null.
-function parsePrice(displayPrice: string): number | null {
+// Exported for lib/commerce/pricing.ts (paise variant) — one parser, not two.
+export function parsePrice(displayPrice: string): number | null {
   const pricePart = displayPrice.split("/")[0]!;
   const m = pricePart.replace(/[₹,\s]/g, "").match(/^\d+(\.\d+)?$/);
   return m ? Number(m[0]) : null;

@@ -211,6 +211,9 @@ struct ProductDetailView: View {
                 .foregroundStyle(Color.mishranBrandCanvas)
                 .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
                 .accessibilityLabel(L("product.add_to_cart"))
+                // Distinct from the in-content AddToCartButton so XCUITest
+                // queries stay unambiguous (both read "Add to cart" to VO).
+                .accessibilityIdentifier("pdp.add-to-cart.sticky")
             }
             .padding(.horizontal, .mishranSpacingLg)
             .padding(.vertical, .mishranSpacingSm)
