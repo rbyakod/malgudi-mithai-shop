@@ -18,10 +18,12 @@ test("mithai hub lists seeded kaju katli", async ({page}) => {
 });
 
 test("mithai hub quick add adds the selected item to cart", async ({page}) => {
-  await page.addInitScript(() => {
-    window.localStorage.removeItem("mithai-cart-v1");
-  });
-  await page.goto("/en/mithai");
+  // Each Playwright test gets a fresh context (empty localStorage), so no
+  // cart wipe is needed — an addInitScript here would re-run on the /cart
+  // navigation below and erase the item before the page hydrates.
+  // /mithai now renders the search island (MediaCards, no quick add), so
+  // quick-add coverage runs against /snacks — the CatalogBrowser surface.
+  await page.goto("/en/snacks");
 
   const firstCard = page.locator("article").first();
   const productName = await firstCard.locator("h3").innerText();

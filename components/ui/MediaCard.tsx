@@ -27,9 +27,21 @@ type Props = {
   /** Optional glyph for the fallback block. Defaults to first letter of
    *  title. */
   glyph?: string;
+  /** Optional price line under the title (e.g. "₹920 / 250 g"). */
+  priceLabel?: string | null;
+  /** Optional one-or-two-line blurb under the price/title. */
+  blurb?: string | null;
 };
 
-export function MediaCard({title, href, image, tag, glyph}: Props) {
+export function MediaCard({
+  title,
+  href,
+  image,
+  tag,
+  glyph,
+  priceLabel,
+  blurb,
+}: Props) {
   const monogram = (glyph ?? title?.[0] ?? "·").toUpperCase();
 
   return (
@@ -74,6 +86,16 @@ export function MediaCard({title, href, image, tag, glyph}: Props) {
       <h3 className="mt-2 font-display text-xl font-medium leading-snug tracking-tight text-text-heading">
         {title}
       </h3>
+
+      {/* Optional price + blurb (mirrors the CatalogBrowser card meta) */}
+      {priceLabel ? (
+        <p className="mt-3 text-[11px] text-text-muted">{priceLabel}</p>
+      ) : null}
+      {blurb ? (
+        <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-text-muted">
+          {blurb}
+        </p>
+      ) : null}
 
       {/* Thin gold rule + View affordance */}
       <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-gold opacity-80 transition-opacity group-hover:opacity-100">

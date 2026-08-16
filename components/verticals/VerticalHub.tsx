@@ -22,6 +22,12 @@ import {
   readCatalogPageSize,
   readStorefrontLayoutMode,
 } from "@/lib/storefront-layout-server";
+import {pdpHref} from "@/lib/verticals/pdpHref";
+import {
+  fallbackDocImage,
+  firstDocImage,
+  type VerticalMediaKey,
+} from "@/lib/verticals/catalogMedia";
 
 type CollectionSlug =
   | "mithai-products"
@@ -29,7 +35,7 @@ type CollectionSlug =
   | "snack-products"
   | "merch-products";
 
-type VerticalKey = "mithai" | "qsr" | "snacks" | "merch";
+type VerticalKey = VerticalMediaKey;
 
 type Props = {
   collection: CollectionSlug;
@@ -45,98 +51,9 @@ const TAG_FIELD: Record<CollectionSlug, string> = {
   "merch-products": "type",
 };
 
-// Which vertical route segment each collection maps to.
-const VERTICAL_PATH: Record<CollectionSlug, string> = {
-  "mithai-products": "mithai",
-  "qsr-menu-items": "qsr",
-  "snack-products": "snacks",
-  "merch-products": "merch",
-};
-
-const VERTICAL_FALLBACK_IMAGE: Record<VerticalKey, string | null> = {
-  mithai: "/images/kaju-katli-box.jpg",
-  qsr: "/images/gulab-jamun.jpg",
-  snacks: "/images/besan-laddoo.jpg",
-  merch: null,
-};
-
-const FALLBACK_IMAGE_BY_SLUG: Record<string, string> = {
-  "assorted-box": "/images/assorted-box.jpg",
-  "badam-barfi": "/images/badam-barfi.jpg",
-  "badam-burfi": "/images/badam-barfi.jpg",
-  "besan-laddoo": "/images/besan-laddoo.jpg",
-  "besan-laddu": "/images/besan-laddoo.jpg",
-  "gulab-jamun": "/images/gulab-jamun.jpg",
-  "ista-roll": "/images/ista-roll.jpg",
-  "kaju-katli": "/images/kaju-katli.jpg",
-  "kaju-katli-box": "/images/kaju-katli-box.jpg",
-  "mango-peda": "/images/mango-peda.jpg",
-  "motichoor-laddoo": "/images/motichoor-laddoo.jpg",
-  "motichur-laddoo": "/images/motichoor-laddoo.jpg",
-  "rasgulla": "/images/rasgulla.jpg",
-  "rasmalai": "/images/rasmalai.jpg",
-  "sugarfree-kaju": "/images/sugarfree-kaju.jpg",
-};
-
-// Slugify a doc name for the URL — only used for the slugless collections
-// (qsr / snacks / merch). Mithai has a real `slug` field and uses it as-is.
-function slugifyName(s: string): string {
-  return s
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-// Build the PDP href for a doc. Mithai uses its real slug; the slugless
-// collections derive the URL from slugify(name).
-function pdpHref(
-  doc: Record<string, unknown>,
-  collection: CollectionSlug,
-): string {
-  const vertical = VERTICAL_PATH[collection];
-  if (collection === "mithai-products") {
-    const slug = doc.slug as string | undefined;
-    return slug ? `/${vertical}/${slug}` : "#";
-  }
-  const name = (doc.name as string | undefined) ?? "";
-  return name ? `/${vertical}/${slugifyName(name)}` : "#";
-}
-
-// Pull the first media URL out of a doc, handling both the array shape
-// (mithai/snacks/merch: `images: [{image: {url}}]`) and the singular shape
-// (qsr: `image: {url}`).
-function firstImage(
-  doc: Record<string, unknown>,
-  collection: CollectionSlug,
-): string | null {
-  if (collection === "qsr-menu-items") {
-    const img = doc.image;
-    if (img && typeof img === "object" && "url" in img) {
-      return (img as {url?: string}).url ?? null;
-    }
-    return null;
-  }
-  const images = doc.images as Array<{image?: unknown} | null> | null;
-  const image = images?.[0]?.image;
-  if (image && typeof image === "object" && "url" in image) {
-    return (image as {url?: string}).url ?? null;
-  }
-  return null;
-}
-
-function fallbackImage(
-  doc: Record<string, unknown>,
-  vertical: VerticalKey,
-): string | null {
-  const name =
-    (doc.slug as string | undefined) ??
-    (doc.name as string | undefined) ??
-    (doc.title as string | undefined) ??
-    "";
-  const slug = slugifyName(name);
-  return FALLBACK_IMAGE_BY_SLUG[slug] ?? VERTICAL_FALLBACK_IMAGE[vertical];
-}
+// PDP hrefs live in lib/verticals/pdpHref.ts; card media extraction and
+// static artwork fallbacks in lib/verticals/catalogMedia.ts (shared with the
+// /mithai search hub and the gifts/occasions surfaces).
 
 export async function VerticalHub({collection, vertical}: Props) {
   const t = await getTranslations(`Verticals.${vertical}`);
@@ -175,8 +92,12 @@ export async function VerticalHub({collection, vertical}: Props) {
   // the collection's natural order (newest-first) is preserved.
   docs = [...docs].sort(
     (a, b) =>
-      Number(Boolean(firstImage(b, collection) ?? fallbackImage(b, vertical))) -
-      Number(Boolean(firstImage(a, collection) ?? fallbackImage(a, vertical))),
+      Number(
+        Boolean(firstDocImage(b, collection) ?? fallbackDocImage(b, vertical)),
+      ) -
+      Number(
+        Boolean(firstDocImage(a, collection) ?? fallbackDocImage(a, vertical)),
+      ),
   );
 
   const items: CatalogItem[] = docs.map((doc) => {
@@ -202,7 +123,7 @@ export async function VerticalHub({collection, vertical}: Props) {
       id: String(doc.id ?? name),
       title: name,
       href: pdpHref(doc, collection),
-      image: firstImage(doc, collection) ?? fallbackImage(doc, vertical),
+      image: firstDocImage(doc, collection) ?? fallbackDocImage(doc, vertical),
       tag: (doc[tagField] as string | null | undefined) ?? null,
       priceLabel,
       description,

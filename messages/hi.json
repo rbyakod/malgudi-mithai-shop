@@ -197,6 +197,32 @@
     "breadcrumbHome": "मिश्रण",
     "notFound": "यह एक नहीं मिला।"
   },
+  "Search": {
+    "label": "खोजें",
+    "placeholder": "मिठाई खोजें — काजू, गुलाब, पेड़ा…",
+    "searching": "खोजा जा रहा है…",
+    "noResults": "इस खोज से कोई मिठाई नहीं मिली।",
+    "clear": "फ़िल्टर हटाएँ"
+  },
+  "MithaiHub": {
+    "familyLabel": "श्रेणी",
+    "familyAll": "सभी",
+    "family": {
+      "classic": "क्लासिक",
+      "original": "ओरिजिनल",
+      "sugar-free": "शुगर-फ़्री",
+      "regional": "क्षेत्रीय",
+      "seasonal": "मौसमी"
+    },
+    "freshnessLabel": "ताज़गी",
+    "freshnessAll": "कोई भी ताज़गी",
+    "freshness": {
+      "made-daily": "रोज़ बनी",
+      "made-to-order": "ऑर्डर पर बनी",
+      "batch-frozen": "फ़्रोज़न बैच"
+    },
+    "count": "{count, plural, one {# मिठाई} other {# मिठाइयाँ}}"
+  },
   "Leads": {
     "common": {
       "submit": "भेजें",

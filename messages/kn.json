@@ -198,6 +198,32 @@
     "breadcrumbHome": "Mishran",
     "notFound": "We couldn't find that one."
   },
+  "Search": {
+    "label": "Search",
+    "placeholder": "Search sweets — kaju, gulab, peda…",
+    "searching": "Searching…",
+    "noResults": "No sweets match that search.",
+    "clear": "Clear filters"
+  },
+  "MithaiHub": {
+    "familyLabel": "Family",
+    "familyAll": "All",
+    "family": {
+      "classic": "Classic",
+      "original": "Original",
+      "sugar-free": "Sugar-free",
+      "regional": "Regional",
+      "seasonal": "Seasonal"
+    },
+    "freshnessLabel": "Freshness",
+    "freshnessAll": "Any freshness",
+    "freshness": {
+      "made-daily": "Made daily",
+      "made-to-order": "Made to order",
+      "batch-frozen": "Batch frozen"
+    },
+    "count": "{count, plural, one {# sweet} other {# sweets}}"
+  },
   "Leads": {
     "_todo": "TODO: translate to Kannada — currently English stubs (Task 14 pattern).",
     "common": {
