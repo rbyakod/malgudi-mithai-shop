@@ -55,8 +55,13 @@ fi
 # CFBundleVersion to "1", so without this every archive would collide with
 # the first upload. Stamp BOTH plists (app + widget extension must match)
 # AFTER xcodegen, which would otherwise rewrite them from project.yml.
+# MishranWidgets/Info.plist is a committed EMPTY shell since the appex
+# removal (630bce3) — it carries no CFBundleVersion, so Set fails there;
+# fall back to Add (and skip missing files) instead of aborting the run.
 for PLIST in Mishran/Info.plist MishranWidgets/Info.plist; do
-  /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD" "$PLIST"
+  [ -f "$PLIST" ] || continue
+  /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD" "$PLIST" 2>/dev/null ||
+    /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $BUILD" "$PLIST"
 done
 
 xcodebuild archive \
