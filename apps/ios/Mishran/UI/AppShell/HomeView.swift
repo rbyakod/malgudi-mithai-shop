@@ -243,9 +243,14 @@ struct HomeView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: .mishranSpacingMd) {
                     ForEach(viewModel.bestSellers, id: \.id) { product in
-                        ProductCard(product: product) {
-                            router.push(.productDetail(slug: product.slug))
-                        }
+                        // onTap MUST be labeled: an unlabeled trailing
+                        // closure binds onQuickAdd (the last closure param,
+                        // legacy backward scan) — wiring quick-add onto the
+                        // rail and leaving the card tap dead.
+                        ProductCard(
+                            product: product,
+                            onTap: { router.push(.productDetail(slug: product.slug)) }
+                        )
                         .frame(width: 180)
                     }
                 }

@@ -362,9 +362,12 @@ struct ProductDetailView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: .mishranSpacingMd) {
                     ForEach(crossSell) { sibling in
-                        ProductCard(product: sibling) {
-                            onSelectProduct?(sibling.slug)
-                        }
+                        // onTap labeled — see HomeView.bestSellersRail (an
+                        // unlabeled trailing closure would bind onQuickAdd).
+                        ProductCard(
+                            product: sibling,
+                            onTap: { onSelectProduct?(sibling.slug) }
+                        )
                         .frame(width: 180)
                     }
                 }

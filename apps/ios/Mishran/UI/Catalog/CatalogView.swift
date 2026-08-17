@@ -102,9 +102,14 @@ struct CatalogView: View {
                     .padding(.horizontal, .mishranSpacingSm)
                     .frame(minHeight: 44)
                     .contentShape(Rectangle())
+                    // A11y identity rides the label CONTENT, not the Menu:
+                    // iOS 17 surfaces the menu's native button as a separate
+                    // element, and modifiers on the Menu leave that twin
+                    // unlabeled (the a11y audit fails on it). Labeling inside
+                    // makes every exposed element read "Sort".
+                    .accessibilityLabel(L("catalog.sort.label"))
+                    .accessibilityValue(viewModel.sort.displayName)
             }
-            .accessibilityLabel(L("catalog.sort.label"))
-            .accessibilityValue(viewModel.sort.displayName)
         }
         .padding(.horizontal, .mishranSpacingSm)
     }

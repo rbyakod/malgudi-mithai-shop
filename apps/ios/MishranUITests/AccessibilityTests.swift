@@ -27,7 +27,11 @@ final class AccessibilityTests: XCTestCase {
     }
 
     /// The audit contract: labeled + ≥44pt in both dimensions. Skips
-    /// elements the system reports as off-screen (zero frame).
+    /// elements the system reports as off-screen (zero frame), and skips an
+    /// unlabeled element that exactly duplicates a LABELED button's frame —
+    /// iOS 17 SwiftUI Menus surface their internal anchor UIButton to
+    /// XCUITest as such a twin; VoiceOver exposes only the labeled control,
+    /// so the duplicate is an Apple artifact, not a real target.
     private func auditButtons(
         _ app: XCUIApplication,
         context: String,
@@ -36,9 +40,19 @@ final class AccessibilityTests: XCTestCase {
     ) {
         XCTAssertTrue(app.buttons.firstMatch.waitForExistence(timeout: 5), "no buttons to audit (\(context))")
         let buttons = app.buttons.allElementsBoundByIndex
+        func frameKey(_ f: CGRect) -> String {
+            "\(f.origin.x),\(f.origin.y),\(f.size.width),\(f.size.height)"
+        }
+        var labeledFrames = Set<String>()
+        for button in buttons
+        where button.exists && button.frame != .zero
+            && !button.label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            labeledFrames.insert(frameKey(button.frame))
+        }
         var audited = 0
         for button in buttons where button.exists && button.frame != .zero {
             let label = button.label.trimmingCharacters(in: .whitespacesAndNewlines)
+            if label.isEmpty && labeledFrames.contains(frameKey(button.frame)) { continue }
             XCTAssertFalse(
                 label.isEmpty,
                 "\(context): unlabeled tappable element at \(button.frame)",
@@ -88,14 +102,25 @@ final class AccessibilityTests: XCTestCase {
         let card = app.buttons["Kaju Katli, ₹720/kg"]
         XCTAssertTrue(card.waitForExistence(timeout: 5))
         card.tap()
-        let add = app.buttons["Add to cart"]
+        // The PDP exposes TWO "Add to cart" buttons (in-content + sticky
+        // buy bar, identifier pdp.add-to-cart.sticky). Target the in-content
+        // one — only it flips to the "Added to cart" confirmation.
+        let add = app.buttons.matching(
+            NSPredicate(format: "label == %@ AND identifier != %@", "Add to cart", "pdp.add-to-cart.sticky")
+        ).firstMatch
         XCTAssertTrue(add.waitForExistence(timeout: 5))
         add.tap()
         XCTAssertTrue(app.buttons["Added to cart"].waitForExistence(timeout: 5))
         // The toolbar belongs to the catalog root — hop back before Cart.
         app.navigationBars.buttons.firstMatch.tap()
-        XCTAssertTrue(app.buttons["Cart"].waitForExistence(timeout: 5))
-        app.buttons["Cart"].tap()
+        // After the add, the toolbar badge relabels "Cart" → "Cart, N items"
+        // (CartBadgeCount.label); the prefix match covers both states and
+        // landing on the counted form proves the add reached the store.
+        let cartButton = app.buttons.matching(
+            NSPredicate(format: "label BEGINSWITH 'Cart'")
+        ).firstMatch
+        XCTAssertTrue(cartButton.waitForExistence(timeout: 5))
+        cartButton.tap()
         XCTAssertTrue(app.buttons["Checkout"].waitForExistence(timeout: 5))
         auditButtons(app, context: "cart")
     }
