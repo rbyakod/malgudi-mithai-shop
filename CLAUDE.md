@@ -1,4 +1,15 @@
 @AGENTS.md
+
+## User guide maintenance (standing rule)
+
+`docs/user-guide.md` documents every user-facing feature across the three
+surfaces — web storefront, iOS app, Android app. Whenever a feature is
+added, changed, or removed on ANY platform, update the guide in the SAME
+change, before commit. The guide is a deliverable, not documentation debt:
+the product owner relies on it as the record of what exists and how to use
+it. Keep entries customer-facing (what the user sees and does) and keep the
+platform-difference notes accurate.
+
 # Project: Malgudi Sweets – Next.js storefront
 
 You are helping professional and polished ecommerce-style site for an Indian sweet shop (mithai).  
