@@ -189,6 +189,11 @@ struct ProductDTO: Decodable, Equatable, Identifiable, Hashable {
     let storage: String?
     let images: [String]?
     let story: String?
+    /// Karigar display name — only present when the server populated the
+    /// relationship (PDP provenance strip; null when the field is a bare id).
+    let karigarName: String?
+    /// e.g. "Made to order in 24h" — freshness promise + trust strip.
+    let leadTime: String?
     let updatedAt: String?
 }
 
@@ -213,7 +218,8 @@ extension ProductDTO {
         self.init(id: id, slug: slug, name: name, family: family, displayPrice: displayPrice,
                   weight: weight, featured: featured,
                   freshnessStatus: nil, dietaryTags: nil, allergens: nil, ingredients: nil,
-                  shelfLife: nil, storage: nil, images: images, story: nil, updatedAt: nil)
+                  shelfLife: nil, storage: nil, images: images, story: nil,
+                  karigarName: nil, leadTime: nil, updatedAt: nil)
     }
 }
 

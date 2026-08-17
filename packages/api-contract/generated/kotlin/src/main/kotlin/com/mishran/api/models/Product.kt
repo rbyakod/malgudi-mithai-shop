@@ -46,6 +46,8 @@ import com.squareup.moshi.JsonClass
  * @param images 
  * @param story 
  * @param karigar Karigar (artisan) relationship id, if any.
+ * @param karigarName Karigar display name for the PDP provenance strip. Present only when the relationship is populated; null when the field holds a bare id or is unset. 
+ * @param leadTime e.g. \"Made to order in 24h\" — freshness promise + trust strip.
  * @param updatedAt 
  */
 
@@ -103,6 +105,14 @@ data class Product (
     /* Karigar (artisan) relationship id, if any. */
     @Json(name = "karigar")
     val karigar: kotlin.String? = null,
+
+    /* Karigar display name for the PDP provenance strip. Present only when the relationship is populated; null when the field holds a bare id or is unset.  */
+    @Json(name = "karigarName")
+    val karigarName: kotlin.String? = null,
+
+    /* e.g. \"Made to order in 24h\" — freshness promise + trust strip. */
+    @Json(name = "leadTime")
+    val leadTime: kotlin.String? = null,
 
     @Json(name = "updatedAt")
     val updatedAt: kotlin.String? = null

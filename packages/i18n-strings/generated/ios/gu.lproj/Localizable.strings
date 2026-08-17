@@ -295,3 +295,12 @@
 "enquiry.field.gstin" = "GSTIN";
 "enquiry.field.occasion" = "પ્રસંગ";
 "enquiry.field.branding" = "બ્રાન્ડિંગ";
+"product.trust.fresh_daily" = "દરરોજ સવારે તાજું બનાવેલું";
+"product.trust.fresh_to_order" = "ઓર્ડર મુજબ બનાવેલું, વિનંતી મુજબ અંતિમ રૂપ";
+"product.trust.frozen" = "તાજું પૂર્ણ કરી, શ્રેષ્ઠ સ્થિતિમાં ફ્રોઝન";
+"product.trust.shelf_life" = "{shelfLife} શેલ્ફ લાઇફ";
+"product.trust.vegetarian" = "શુદ્ધ શાકાહારી";
+"product.trust.sugar_free" = "સાકરમુક્ત";
+"product.cross_sell.title" = "આ {family} સંગ્રહમાંથી વધુ";
+"product.provenance.karigar" = "કારીગર";
+"product.provenance.freshness" = "તાજગી";

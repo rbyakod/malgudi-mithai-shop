@@ -182,6 +182,15 @@ components:
         karigar:
           type: [string, 'null']
           description: Karigar (artisan) relationship id, if any.
+        karigarName:
+          type: [string, 'null']
+          description: >
+            Karigar display name for the PDP provenance strip. Present only
+            when the relationship is populated; null when the field holds a
+            bare id or is unset.
+        leadTime:
+          type: [string, 'null']
+          description: 'e.g. "Made to order in 24h" — freshness promise + trust strip.'
         updatedAt:
           type: [string, 'null']
           format: date-time

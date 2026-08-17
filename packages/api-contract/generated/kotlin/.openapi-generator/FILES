@@ -212,9 +212,3 @@ src/main/kotlin/com/mishran/api/models/StoriesGet200ResponseData.kt
 src/main/kotlin/com/mishran/api/models/StoriesSlugGet200Response.kt
 src/main/kotlin/com/mishran/api/models/Story.kt
 src/main/kotlin/com/mishran/api/models/StoryDetail.kt
-src/test/kotlin/com/mishran/api/apis/ReviewsApiTest.kt
-src/test/kotlin/com/mishran/api/models/AccountLoyaltyGet200ResponseDataTest.kt
-src/test/kotlin/com/mishran/api/models/AccountLoyaltyGet200ResponseTest.kt
-src/test/kotlin/com/mishran/api/models/ReviewInputTest.kt
-src/test/kotlin/com/mishran/api/models/ReviewTest.kt
-src/test/kotlin/com/mishran/api/models/ReviewsPost200ResponseTest.kt

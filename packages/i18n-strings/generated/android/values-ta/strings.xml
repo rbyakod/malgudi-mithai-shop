@@ -296,4 +296,13 @@
   <string name="enquiry_field_gstin">GSTIN</string>
   <string name="enquiry_field_occasion">சந்தர்ப்பம்</string>
   <string name="enquiry_field_branding">பிராண்டிங்</string>
+  <string name="product_trust_fresh_daily">தினமும் காலையில் புதிதாக தயாரிக்கப்படுகிறது</string>
+  <string name="product_trust_fresh_to_order">ஆர்டருக்கு ஏற்ப தயாரிக்கப்படும், கோரிக்கையின் பேரில் முடிக்கப்படும்</string>
+  <string name="product_trust_frozen">புதிதாக முடிக்கப்பட்டு, சிறந்த நேரத்தில் உறையவைக்கப்பட்டது</string>
+  <string name="product_trust_shelf_life">%1$s ஷெல்ஃப் ஆயுள்</string>
+  <string name="product_trust_vegetarian">சைவம்</string>
+  <string name="product_trust_sugar_free">சர்க்கரை இல்லாதது</string>
+  <string name="product_cross_sell_title">இந்த %1$s தொகுப்பில் இருந்து மேலும் இனிப்புகள்</string>
+  <string name="product_provenance_karigar">கைவினைஞர்</string>
+  <string name="product_provenance_freshness">புத்துணர்ச்சி</string>
 </resources>

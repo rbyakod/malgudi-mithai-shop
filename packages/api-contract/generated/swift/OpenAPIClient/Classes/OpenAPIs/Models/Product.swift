@@ -45,9 +45,13 @@ public struct Product: Codable, JSONEncodable, Hashable {
     public var story: String?
     /** Karigar (artisan) relationship id, if any. */
     public var karigar: String?
+    /** Karigar display name for the PDP provenance strip. Present only when the relationship is populated; null when the field holds a bare id or is unset.  */
+    public var karigarName: String?
+    /** e.g. \"Made to order in 24h\" — freshness promise + trust strip. */
+    public var leadTime: String?
     public var updatedAt: Date?
 
-    public init(id: String, slug: String, name: String, family: Family, displayPrice: String? = nil, weight: String? = nil, featured: Bool? = nil, freshnessStatus: FreshnessStatus? = nil, dietaryTags: [String]? = nil, allergens: [String]? = nil, ingredients: String? = nil, shelfLife: String? = nil, storage: String? = nil, images: [String]? = nil, story: String? = nil, karigar: String? = nil, updatedAt: Date? = nil) {
+    public init(id: String, slug: String, name: String, family: Family, displayPrice: String? = nil, weight: String? = nil, featured: Bool? = nil, freshnessStatus: FreshnessStatus? = nil, dietaryTags: [String]? = nil, allergens: [String]? = nil, ingredients: String? = nil, shelfLife: String? = nil, storage: String? = nil, images: [String]? = nil, story: String? = nil, karigar: String? = nil, karigarName: String? = nil, leadTime: String? = nil, updatedAt: Date? = nil) {
         self.id = id
         self.slug = slug
         self.name = name
@@ -64,6 +68,8 @@ public struct Product: Codable, JSONEncodable, Hashable {
         self.images = images
         self.story = story
         self.karigar = karigar
+        self.karigarName = karigarName
+        self.leadTime = leadTime
         self.updatedAt = updatedAt
     }
 
@@ -84,6 +90,8 @@ public struct Product: Codable, JSONEncodable, Hashable {
         case images
         case story
         case karigar
+        case karigarName
+        case leadTime
         case updatedAt
     }
 
@@ -107,6 +115,8 @@ public struct Product: Codable, JSONEncodable, Hashable {
         try container.encodeIfPresent(images, forKey: .images)
         try container.encodeIfPresent(story, forKey: .story)
         try container.encodeIfPresent(karigar, forKey: .karigar)
+        try container.encodeIfPresent(karigarName, forKey: .karigarName)
+        try container.encodeIfPresent(leadTime, forKey: .leadTime)
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
     }
 }

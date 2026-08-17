@@ -294,5 +294,14 @@
   "enquiry.field.packaging": "Packaging",
   "enquiry.field.gstin": "GSTIN",
   "enquiry.field.occasion": "Occasion",
-  "enquiry.field.branding": "Branding"
+  "enquiry.field.branding": "Branding",
+  "product.trust.fresh_daily": "Made fresh each morning",
+  "product.trust.fresh_to_order": "Made to order, finished on request",
+  "product.trust.frozen": "Finished fresh, frozen at peak",
+  "product.trust.shelf_life": "{shelfLife} shelf life",
+  "product.trust.vegetarian": "Vegetarian",
+  "product.trust.sugar_free": "Sugar-free",
+  "product.cross_sell.title": "More from the {family} collection",
+  "product.provenance.karigar": "Karigar",
+  "product.provenance.freshness": "Freshness"
 }

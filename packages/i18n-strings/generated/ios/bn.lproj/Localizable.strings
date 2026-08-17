@@ -295,3 +295,12 @@
 "enquiry.field.gstin" = "GSTIN";
 "enquiry.field.occasion" = "উপলক্ষ্য";
 "enquiry.field.branding" = "ব্র্যান্ডিং";
+"product.trust.fresh_daily" = "প্রতিদিন সকালে তাজা তৈরি";
+"product.trust.fresh_to_order" = "অর্ডার অনুযায়ী তৈরি, অনুরোধে শেষ করা";
+"product.trust.frozen" = "তাজা করে শেষ করা, সেরা সময়ে ফ্রোজেন";
+"product.trust.shelf_life" = "{shelfLife} শেলফ লাইফ";
+"product.trust.vegetarian" = "নিরামিষ";
+"product.trust.sugar_free" = "চিনিমুক্ত";
+"product.cross_sell.title" = "এই {family} সংগ্রহ থেকে আরও";
+"product.provenance.karigar" = "কারিগর";
+"product.provenance.freshness" = "তাজা ভাব";

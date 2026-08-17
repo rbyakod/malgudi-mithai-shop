@@ -77,7 +77,19 @@ final class LiveApiUITests: XCTestCase {
         let price = app.staticTexts["₹1,109 / 1 kg"]
         XCTAssertTrue(price.waitForExistence(timeout: 10), "Detail should show the live price")
 
-        // 4. Quantity stepper (default 1 → 2), then add to cart.
+        // 4. Web-parity PDP sections: the trust strip (Gond laddu carries a
+        //    freshness status in the live catalog) and the same-family
+        //    cross-sell rail (catalog cache is warm from step 1-2).
+        XCTAssertTrue(
+            app.descendants(matching: .any)["pdp.trust-strip"].firstMatch.waitForExistence(timeout: 5),
+            "PDP should render the trust strip"
+        )
+        XCTAssertTrue(
+            app.descendants(matching: .any)["pdp.cross-sell"].firstMatch.waitForExistence(timeout: 10),
+            "PDP should render the same-family cross-sell rail"
+        )
+
+        // 5. Quantity stepper (default 1 → 2), then add to cart.
         let increment = app.buttons["Increase quantity"]
         XCTAssertTrue(increment.waitForExistence(timeout: 5), "Stepper should exist")
         increment.tap()

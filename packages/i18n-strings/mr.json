@@ -294,5 +294,14 @@
   "enquiry.field.packaging": "पॅकेजिंग",
   "enquiry.field.gstin": "GSTIN",
   "enquiry.field.occasion": "प्रसंग",
-  "enquiry.field.branding": "ब्रँडिंग"
+  "enquiry.field.branding": "ब्रँडिंग",
+  "product.trust.fresh_daily": "दररोज सकाळी ताजे बनवले जाते",
+  "product.trust.fresh_to_order": "ऑर्डरनुसार बनवले, विनंतीनुसार शेवटी",
+  "product.trust.frozen": "ताजे पूर्ण करून, उच्च दर्जावर गोठवले",
+  "product.trust.shelf_life": "{shelfLife} शेल्फ आयु",
+  "product.trust.vegetarian": "शुद्ध शाकाहारी",
+  "product.trust.sugar_free": "साखरमुक्त",
+  "product.cross_sell.title": "या {family} संग्रहातील आणखी",
+  "product.provenance.karigar": "करीगर",
+  "product.provenance.freshness": "ताजेपण"
 }

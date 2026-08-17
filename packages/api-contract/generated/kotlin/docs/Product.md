@@ -20,6 +20,8 @@
 | **images** | **kotlin.collections.List&lt;kotlin.String&gt;** |  |  [optional] |
 | **story** | **kotlin.String** |  |  [optional] |
 | **karigar** | **kotlin.String** | Karigar (artisan) relationship id, if any. |  [optional] |
+| **karigarName** | **kotlin.String** | Karigar display name for the PDP provenance strip. Present only when the relationship is populated; null when the field holds a bare id or is unset.  |  [optional] |
+| **leadTime** | **kotlin.String** | e.g. \&quot;Made to order in 24h\&quot; — freshness promise + trust strip. |  [optional] |
 | **updatedAt** | **kotlin.String** |  |  [optional] |
 
 

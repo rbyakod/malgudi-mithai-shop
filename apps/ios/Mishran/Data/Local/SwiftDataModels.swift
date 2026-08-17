@@ -26,6 +26,11 @@ final class ProductEntity {
     var storage: String?
     var images: [String]?
     var story: String?
+    /// Karigar display name (PDP provenance strip) — null when the server
+    /// sent a bare relationship id. Optional add → lightweight migration.
+    var karigarName: String?
+    /// e.g. "Made to order in 24h" — freshness promise + trust strip.
+    var leadTime: String?
     var updatedAt: String?
 
     init(
@@ -44,6 +49,8 @@ final class ProductEntity {
         storage: String? = nil,
         images: [String]? = nil,
         story: String? = nil,
+        karigarName: String? = nil,
+        leadTime: String? = nil,
         updatedAt: String? = nil
     ) {
         self.id = id
@@ -61,6 +68,8 @@ final class ProductEntity {
         self.storage = storage
         self.images = images
         self.story = story
+        self.karigarName = karigarName
+        self.leadTime = leadTime
         self.updatedAt = updatedAt
     }
 
@@ -81,6 +90,8 @@ final class ProductEntity {
             storage: dto.storage,
             images: dto.images,
             story: dto.story,
+            karigarName: dto.karigarName,
+            leadTime: dto.leadTime,
             updatedAt: dto.updatedAt
         )
     }

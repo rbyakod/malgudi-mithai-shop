@@ -1,8 +1,10 @@
 // ProductDetailView.swift — Task 16.4 / P1 parity (Mishran Mobile Apps v1).
-// P3 parity: the pincode delivery-check section under the buy area, the
-// "Ask on WhatsApp" row (prefilled product enquiry off the cached brand
-// number), and the sticky bottom buy bar (compact-width idiom; the app is
-// iPhone-only, so the bar applies unconditionally).
+// P3 parity: pincode delivery check, "Ask on WhatsApp", sticky buy bar.
+// Web-PDP parity restructure: 4:5 hero with serif-initial fallback, family
+// eyebrow + translated freshness promise (replaces the raw enum capsule),
+// trust strip, provenance rows (karigar · lead time · shelf life), story as
+// an italic editorial lead + ingredients section, honest-label rows, and a
+// same-family cross-sell rail (mirrors components/mithai/MithaiPDP.tsx).
 import SwiftData
 import SwiftUI
 
@@ -11,6 +13,9 @@ struct ProductDetailView: View {
     var onAddedToCart: (() -> Void)? = nil
     /// P1: Buy now adds the selected pack and jumps straight to checkout.
     var onBuyNow: (() -> Void)? = nil
+    /// Cross-sell navigation: sibling cards push another productDetail
+    /// route (wired from DestinationView, which owns the Router).
+    var onSelectProduct: ((String) -> Void)? = nil
 
     /// P3: pincode serviceability check (restores the last saved result).
     @State private var deliveryCheck: DeliveryCheckModel
@@ -18,50 +23,59 @@ struct ProductDetailView: View {
     /// read, resolved once per appearance; the URL itself is composed at
     /// tap time so the prefill reflects the CURRENT pack + quantity.
     @State private var whatsappDigits: String?
+    /// Same-family siblings for the cross-sell rail (prefix 4); loaded
+    /// cache-first off the ambient context, fetched once when empty.
+    @State private var crossSell: [ProductEntity] = []
     @Environment(\.openURL) private var openURL
+    /// Kept for the cross-sell cache reads (cache-first, like the repo).
+    private let context: ModelContext
 
     init(
         slug: String,
         client: MishranAPIClient,
         context: ModelContext,
         onAddedToCart: (() -> Void)? = nil,
-        onBuyNow: (() -> Void)? = nil
+        onBuyNow: (() -> Void)? = nil,
+        onSelectProduct: ((String) -> Void)? = nil
     ) {
         _viewModel = State(initialValue: ProductDetailViewModel(slug: slug, client: client, context: context))
         _deliveryCheck = State(initialValue: DeliveryCheckModel(client: client))
+        self.context = context
         self.onAddedToCart = onAddedToCart
         self.onBuyNow = onBuyNow
+        self.onSelectProduct = onSelectProduct
     }
 
     var body: some View {
         ScrollView {
             if let product = viewModel.product {
                 VStack(alignment: .leading, spacing: .mishranSpacingLg) {
-                    // v1 renders a single hero image (first catalog photo).
-                    ProductRemoteImage(imageURL: product.images?.first)
-                        .frame(height: 240)
-                        .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusMd))
-                        .accessibilityHidden(true)
+                    hero(for: product)
 
+                    // Header: family eyebrow → name → price → freshness
+                    // promise (translated; unknown statuses render raw).
                     VStack(alignment: .leading, spacing: .mishranSpacingSm) {
-                        Text(product.name)
-                            .font(.mishranDisplay.weight(.semibold))
-                        HStack(spacing: .mishranSpacingSm) {
-                            // Selected pack swaps the price line (P1).
-                            if let price = viewModel.priceLine {
-                                Text(price)
-                                    .font(.mishranBodyXl)
-                            }
-                            if let freshness = product.freshnessStatus {
-                                Text(freshness)
-                                    .font(.mishranBodySm)
-                                    .padding(.horizontal, .mishranSpacingSm)
-                                    .padding(.vertical, 4)
-                                    .background(Capsule().fill(Color.mishranBrandAccent.opacity(0.14)))
-                            }
+                        if !product.family.isEmpty {
+                            Text(Self.familyLabel(for: product.family))
+                                .font(.mishranBodySm.weight(.medium))
+                                .textCase(.uppercase)
+                                .tracking(1.8)
+                                .foregroundStyle(Color.mishranBrandAccent)
                         }
-                        .foregroundStyle(Color.mishranBrandInk)
+                        Text(product.name)
+                            .font(.mishranDisplay.weight(.light))
+                        if let price = viewModel.priceLine {
+                            Text(price)
+                                .font(.mishranBodyXl)
+                        }
+                        if let promise = Self.freshnessPromise(for: product.freshnessStatus) {
+                            Text(promise)
+                                .font(.mishranBodyMd.weight(.light))
+                                .italic()
+                                .foregroundStyle(Color.mishranNeutral500)
+                        }
                     }
+                    .foregroundStyle(Color.mishranBrandInk)
 
                     if !viewModel.packSizes.isEmpty {
                         PackSizePicker(options: viewModel.packSizes, selection: packSelection)
@@ -70,21 +84,6 @@ struct ProductDetailView: View {
                         Text(L("product.pack_estimate"))
                             .font(.mishranBodySm)
                             .foregroundStyle(.secondary)
-                    }
-
-                    if let tags = product.dietaryTags, !tags.isEmpty {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: .mishranSpacingSm) {
-                                ForEach(tags, id: \.self) { tag in
-                                    Text(tag.capitalized)
-                                        .font(.mishranBodySm)
-                                        .padding(.horizontal, .mishranSpacingSm)
-                                        .padding(.vertical, 4)
-                                        .background(Capsule().strokeBorder(Color.mishranBrandAccent.opacity(0.4)))
-                                        .accessibilityLabel("Dietary: \(tag)")
-                                }
-                            }
-                        }
                     }
 
                     QuantitySelector(quantity: $viewModel.quantity)
@@ -103,8 +102,15 @@ struct ProductDetailView: View {
                         }
                     }
 
+                    // Trust strip — real fields only, quiet uppercase
+                    // microcopy (freshness · shelf life · lead time · diet).
+                    let trustItems = Self.trustStripItems(for: product)
+                    if !trustItems.isEmpty {
+                        trustStrip(trustItems)
+                    }
+
                     // P3: pincode serviceability (between the buy area and
-                    // the detail rows — the web PDP's placement).
+                    // the editorial sections — the web PDP's placement).
                     DeliveryCheckSection(model: deliveryCheck)
 
                     // P3: prefilled product enquiry over WhatsApp.
@@ -122,15 +128,17 @@ struct ProductDetailView: View {
                     .accessibilityLabel(L("product.whatsapp.ask"))
                     .accessibilityHint("Opens WhatsApp with this product prefilled")
 
-                    ForEach(detailRows(for: product), id: \.label) { row in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(row.label)
-                                .font(.mishranBodyMd.weight(.semibold))
-                            Text(row.value)
-                                .font(.mishranBodyMd)
-                                .foregroundStyle(.secondary)
-                        }
-                        .accessibilityElement(children: .combine)
+                    let provenance = Self.provenanceRows(for: product)
+                    if !provenance.isEmpty {
+                        provenanceBlock(provenance)
+                    }
+
+                    storySection(for: product)
+
+                    honestLabelSection(for: product)
+
+                    if !crossSell.isEmpty {
+                        crossSellRail
                     }
                 }
                 .padding(.mishranSpacingLg)
@@ -151,6 +159,7 @@ struct ProductDetailView: View {
                 .padding(.top, .mishranSpacingLg)
             }
         }
+        .background(Color.mishranBrandCanvas)
         .navigationTitle(viewModel.product?.name ?? "Sweet")
         .navigationBarTitleDisplayMode(.inline)
         // P3: sticky buy bar (web's buy-rail counterpart). safeAreaInset
@@ -173,7 +182,291 @@ struct ProductDetailView: View {
             let repository = BrandRepository(client: MishranAPIClient())
             whatsappDigits = await repository.whatsappDigits()
         }
+        // Re-runs when the loaded product's slug appears: cross-sell reads
+        // the same-family cache rows (direct PDP entrylands fetch once).
+        .task(id: viewModel.product?.slug) {
+            await loadCrossSell()
+        }
     }
+
+    // MARK: Hero
+
+    /// 4:5 editorial hero (web's aspect-[4/5]). Real photo when the doc has
+    /// one; otherwise the designed fallback — brand gradient + serif initial.
+    private func hero(for product: ProductEntity) -> some View {
+        Group {
+            if let imageURL = product.images?.first {
+                ProductRemoteImage(imageURL: imageURL)
+                    .aspectRatio(4 / 5, contentMode: .fill)
+                    .frame(maxWidth: .infinity)
+                    .clipped()
+            } else {
+                ZStack {
+                    LinearGradient(
+                        colors: [
+                            Color.mishranBrandAccent.opacity(0.25),
+                            Color.mishranBrandPop.opacity(0.15),
+                            Color.mishranBrandCanvas,
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    Text(String((product.name.first ?? "·")).uppercased())
+                        .font(.system(size: 96, weight: .light, design: .serif))
+                        .italic()
+                        .foregroundStyle(Color.mishranBrandAccent)
+                }
+                .aspectRatio(4 / 5, contentMode: .fill)
+                .frame(maxWidth: .infinity)
+                .clipped()
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusLg))
+        .accessibilityHidden(true)
+    }
+
+    // MARK: Trust strip
+
+    private func trustStrip(_ items: [String]) -> some View {
+        VStack(alignment: .leading, spacing: .mishranSpacingSm) {
+            Divider()
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: .mishranSpacingSm) {
+                    ForEach(Array(items.enumerated()), id: \.offset) { index, item in
+                        if index > 0 {
+                            Text("·")
+                        }
+                        Text(item)
+                            .tracking(1.2)
+                    }
+                }
+            }
+        }
+        .font(.mishranBodySm.weight(.medium))
+        .textCase(.uppercase)
+        .foregroundStyle(Color.mishranBrandAccent.opacity(0.9))
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("pdp.trust-strip")
+    }
+
+    // MARK: Provenance
+
+    private struct ProvenanceRow {
+        let label: String
+        let value: String
+    }
+
+    private func provenanceBlock(_ rows: [ProvenanceRow]) -> some View {
+        VStack(alignment: .leading, spacing: .mishranSpacingMd) {
+            Divider()
+            ForEach(rows, id: \.label) { row in
+                VStack(alignment: .leading, spacing: .mishranSpacingXs) {
+                    Text(row.label)
+                        .font(.mishranBodySm.weight(.medium))
+                        .textCase(.uppercase)
+                        .tracking(1.8)
+                        .foregroundStyle(Color.mishranBrandAccent.opacity(0.8))
+                    Text(row.value)
+                        .font(.mishranBodyXl.weight(.light))
+                        .foregroundStyle(Color.mishranBrandInk)
+                }
+                .accessibilityElement(children: .combine)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("pdp.provenance")
+    }
+
+    // MARK: Story + ingredients
+
+    /// Story as the magazine lead: paragraphs split on newline, the first
+    /// larger and ink, the rest quieter — then the ingredients heading.
+    private func storySection(for product: ProductEntity) -> some View {
+        VStack(alignment: .leading, spacing: .mishranSpacingLg) {
+            let paragraphs = Self.storyParagraphs(for: product.story)
+            if !paragraphs.isEmpty {
+                VStack(alignment: .leading, spacing: .mishranSpacingSm) {
+                    ForEach(Array(paragraphs.enumerated()), id: \.offset) { index, paragraph in
+                        Text(paragraph)
+                            .font(index == 0 ? .mishranBodyXxl.weight(.light) : .mishranBodyXl.weight(.light))
+                            .italic()
+                            .foregroundStyle(index == 0 ? Color.mishranBrandInk : Color.mishranNeutral500)
+                    }
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityIdentifier("pdp.story")
+            }
+            if let ingredients = product.ingredients {
+                VStack(alignment: .leading, spacing: .mishranSpacingSm) {
+                    Text(L("product.ingredients"))
+                        .font(.mishranBodySm.weight(.medium))
+                        .textCase(.uppercase)
+                        .tracking(1.8)
+                        .foregroundStyle(Color.mishranBrandAccent)
+                    Text(ingredients)
+                        .font(.mishranBodyXl.weight(.light))
+                        .foregroundStyle(Color.mishranBrandInk)
+                }
+            }
+        }
+    }
+
+    // MARK: Honest label
+
+    /// Allergens + storage — rows render only when the doc carries the
+    /// data (no empty "—" placeholders), mirroring the web's aside.
+    private func honestLabelSection(for product: ProductEntity) -> some View {
+        let rows = Self.honestLabelRows(for: product)
+        return Group {
+            if !rows.isEmpty {
+                VStack(alignment: .leading, spacing: .mishranSpacingMd) {
+                    ForEach(rows, id: \.label) { row in
+                        VStack(alignment: .leading, spacing: .mishranSpacingXs) {
+                            Text(row.label)
+                                .font(.mishranBodySm.weight(.medium))
+                                .textCase(.uppercase)
+                                .tracking(1.8)
+                                .foregroundStyle(Color.mishranBrandAccent)
+                            Text(row.value)
+                                .font(.mishranBodyMd)
+                                .foregroundStyle(Color.mishranNeutral500)
+                        }
+                        .accessibilityElement(children: .combine)
+                    }
+                }
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("pdp.honest-label")
+            }
+        }
+    }
+
+    // MARK: Cross-sell
+
+    /// "More from the {family} collection" — same-family siblings from the
+    /// catalog cache, capped at 4 like the web rail.
+    private var crossSellRail: some View {
+        VStack(alignment: .leading, spacing: .mishranSpacingMd) {
+            Divider()
+            Text(L("product.cross_sell.title", Self.familyLabel(for: viewModel.product?.family ?? "")))
+                .font(.mishranBodyMd.weight(.semibold))
+                .foregroundStyle(Color.mishranBrandInk)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: .mishranSpacingMd) {
+                    ForEach(crossSell) { sibling in
+                        ProductCard(product: sibling) {
+                            onSelectProduct?(sibling.slug)
+                        }
+                        .frame(width: 180)
+                    }
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("pdp.cross-sell")
+    }
+
+    private func loadCrossSell() async {
+        guard let product = viewModel.product else { return }
+        let cache = CatalogCache(context: context)
+        var siblings = cache
+            .cachedProducts()
+            .filter { $0.family == product.family && $0.slug != product.slug }
+        if siblings.isEmpty {
+            // Direct PDP entry on a cold store: pull the catalog once
+            // (seeds the shared cache for later screens too).
+            let repository = CatalogRepository(client: MishranAPIClient(), cache: cache)
+            await repository.getCatalog()
+            siblings = repository
+                .products
+                .filter { $0.family == product.family && $0.slug != product.slug }
+        }
+        crossSell = Array(siblings.prefix(4))
+    }
+
+    // MARK: Field → copy maps (mirrors MithaiPDP.tsx FRESHNESS_KEY/DIETARY_KEY)
+
+    /// Translated freshness promise; unknown statuses render verbatim.
+    private static func freshnessPromise(for status: String?) -> String? {
+        guard let status, !status.isEmpty else { return nil }
+        switch status {
+        case "made-daily": return L("product.trust.fresh_daily")
+        case "made-to-order": return L("product.trust.fresh_to_order")
+        case "batch-frozen": return L("product.trust.frozen")
+        default: return status
+        }
+    }
+
+    /// Uppercase trust-strip items — only the fields the doc carries.
+    private static func trustStripItems(for product: ProductEntity) -> [String] {
+        var items: [String] = []
+        if let promise = freshnessPromise(for: product.freshnessStatus) {
+            items.append(promise)
+        }
+        if let shelfLife = product.shelfLife {
+            items.append(L("product.trust.shelf_life", shelfLife))
+        }
+        if let leadTime = product.leadTime {
+            items.append(leadTime)
+        }
+        items.append(contentsOf: (product.dietaryTags ?? []).map(dietaryLabel))
+        return items
+    }
+
+    /// Known dietary tags localize; admin-entered free text renders verbatim.
+    private static func dietaryLabel(for tag: String) -> String {
+        switch tag.lowercased() {
+        case "vegetarian": return L("product.trust.vegetarian")
+        case "sugar-free": return L("product.trust.sugar_free")
+        default: return tag.capitalized
+        }
+    }
+
+    private static func provenanceRows(for product: ProductEntity) -> [ProvenanceRow] {
+        var rows: [ProvenanceRow] = []
+        if let karigarName = product.karigarName {
+            rows.append(ProvenanceRow(label: L("product.provenance.karigar"), value: karigarName))
+        }
+        if let leadTime = product.leadTime {
+            rows.append(ProvenanceRow(label: L("product.provenance.freshness"), value: leadTime))
+        }
+        if let shelfLife = product.shelfLife {
+            rows.append(ProvenanceRow(label: L("product.shelf_life"), value: shelfLife))
+        }
+        return rows
+    }
+
+    private static func honestLabelRows(for product: ProductEntity) -> [ProvenanceRow] {
+        var rows: [ProvenanceRow] = []
+        if let allergens = product.allergens, !allergens.isEmpty {
+            rows.append(ProvenanceRow(label: L("product.allergens"), value: allergens.joined(separator: ", ")))
+        }
+        if let storage = product.storage {
+            rows.append(ProvenanceRow(label: L("product.storage"), value: storage))
+        }
+        return rows
+    }
+
+    private static func storyParagraphs(for story: String?) -> [String] {
+        guard let story else { return [] }
+        return story
+            .components(separatedBy: "\n")
+            .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+    }
+
+    /// Localized family display name (catalog.family.* — same table the
+    /// catalog filter chips use); unknown values fall back to capitalized.
+    private static func familyLabel(for family: String) -> String {
+        switch family {
+        case "classic": return L("catalog.family.classic")
+        case "original": return L("catalog.family.originals")
+        case "sugar-free": return L("catalog.family.sugar_free")
+        case "regional": return L("catalog.family.regional")
+        case "seasonal": return L("catalog.family.seasonal")
+        default: return family.isEmpty ? family : family.capitalized
+        }
+    }
+
+    // MARK: Buy bar
 
     /// Bottom bar: truncated name + "qty × price" + Add to cart. The
     /// in-content Buy now button stays as-is — the bar is the always-visible
@@ -247,22 +540,5 @@ struct ProductDetailView: View {
             get: { viewModel.selectedPack },
             set: { if let pack = $0 { viewModel.selectPack(pack) } }
         )
-    }
-
-    private struct DetailRow {
-        let label: String
-        let value: String
-    }
-
-    private func detailRows(for product: ProductEntity) -> [DetailRow] {
-        var rows: [DetailRow] = []
-        if let story = product.story { rows.append(DetailRow(label: "Story", value: story)) }
-        if let ingredients = product.ingredients { rows.append(DetailRow(label: L("product.ingredients"), value: ingredients)) }
-        if let shelfLife = product.shelfLife { rows.append(DetailRow(label: "Shelf life", value: shelfLife)) }
-        if let storage = product.storage { rows.append(DetailRow(label: "Storage", value: storage)) }
-        if let allergens = product.allergens, !allergens.isEmpty {
-            rows.append(DetailRow(label: "Allergens", value: allergens.joined(separator: ", ")))
-        }
-        return rows
     }
 }

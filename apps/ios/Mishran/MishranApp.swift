@@ -185,7 +185,8 @@ struct DestinationView: View {
                 slug: slug,
                 client: MishranAPIClient(),
                 context: context,
-                onBuyNow: { router.push(.checkout) }
+                onBuyNow: { router.push(.checkout) },
+                onSelectProduct: { sibling in router.push(.productDetail(slug: sibling)) }
             )
         case let .catalog(vertical, family):
             CatalogDestination(router: router, context: context, vertical: vertical, family: family)

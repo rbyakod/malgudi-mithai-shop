@@ -295,3 +295,12 @@
 "enquiry.field.gstin" = "GSTIN";
 "enquiry.field.occasion" = "సందర్భం";
 "enquiry.field.branding" = "బ్రాండింగ్";
+"product.trust.fresh_daily" = "ప్రతి ఉదయం తాజాగా తయారు";
+"product.trust.fresh_to_order" = "ఆర్డరు ప్రకారం తయారు, అభ్యర్థనపై పూర్తి";
+"product.trust.frozen" = "తాజాగా పూర్తి, ఉన్నత స్థితిలో ఫ్రోజన్";
+"product.trust.shelf_life" = "{shelfLife} షెల్ఫ్ లైఫ్";
+"product.trust.vegetarian" = "శాకాహారం";
+"product.trust.sugar_free" = "చక్కెర లేనిది";
+"product.cross_sell.title" = "ఈ {family} సేకరణ నుండి మరిన్ని";
+"product.provenance.karigar" = "కారీగర్";
+"product.provenance.freshness" = "తాజాదనం";

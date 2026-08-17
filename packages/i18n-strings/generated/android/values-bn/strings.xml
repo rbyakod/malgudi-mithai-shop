@@ -296,4 +296,13 @@
   <string name="enquiry_field_gstin">GSTIN</string>
   <string name="enquiry_field_occasion">উপলক্ষ্য</string>
   <string name="enquiry_field_branding">ব্র্যান্ডিং</string>
+  <string name="product_trust_fresh_daily">প্রতিদিন সকালে তাজা তৈরি</string>
+  <string name="product_trust_fresh_to_order">অর্ডার অনুযায়ী তৈরি, অনুরোধে শেষ করা</string>
+  <string name="product_trust_frozen">তাজা করে শেষ করা, সেরা সময়ে ফ্রোজেন</string>
+  <string name="product_trust_shelf_life">%1$s শেলফ লাইফ</string>
+  <string name="product_trust_vegetarian">নিরামিষ</string>
+  <string name="product_trust_sugar_free">চিনিমুক্ত</string>
+  <string name="product_cross_sell_title">এই %1$s সংগ্রহ থেকে আরও</string>
+  <string name="product_provenance_karigar">কারিগর</string>
+  <string name="product_provenance_freshness">তাজা ভাব</string>
 </resources>

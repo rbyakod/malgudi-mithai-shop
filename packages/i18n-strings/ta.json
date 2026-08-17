@@ -294,5 +294,14 @@
   "enquiry.field.packaging": "பேக்கேஜிங்",
   "enquiry.field.gstin": "GSTIN",
   "enquiry.field.occasion": "சந்தர்ப்பம்",
-  "enquiry.field.branding": "பிராண்டிங்"
+  "enquiry.field.branding": "பிராண்டிங்",
+  "product.trust.fresh_daily": "தினமும் காலையில் புதிதாக தயாரிக்கப்படுகிறது",
+  "product.trust.fresh_to_order": "ஆர்டருக்கு ஏற்ப தயாரிக்கப்படும், கோரிக்கையின் பேரில் முடிக்கப்படும்",
+  "product.trust.frozen": "புதிதாக முடிக்கப்பட்டு, சிறந்த நேரத்தில் உறையவைக்கப்பட்டது",
+  "product.trust.shelf_life": "{shelfLife} ஷெல்ஃப் ஆயுள்",
+  "product.trust.vegetarian": "சைவம்",
+  "product.trust.sugar_free": "சர்க்கரை இல்லாதது",
+  "product.cross_sell.title": "இந்த {family} தொகுப்பில் இருந்து மேலும் இனிப்புகள்",
+  "product.provenance.karigar": "கைவினைஞர்",
+  "product.provenance.freshness": "புத்துணர்ச்சி"
 }

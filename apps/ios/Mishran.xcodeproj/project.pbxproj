@@ -836,16 +836,16 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					2C49B580602E129C08366052 = {
-						DevelopmentTeam = 2X7B7DMV95;
+						DevelopmentTeam = "${APPLE_TEAM_ID}";
 						ProvisioningStyle = Automatic;
 						TestTargetID = D1B295700D76C68137328D08;
 					};
 					5AC9D4BAA9624C10E8CE992B = {
-						DevelopmentTeam = 2X7B7DMV95;
+						DevelopmentTeam = "${APPLE_TEAM_ID}";
 						ProvisioningStyle = Automatic;
 					};
 					D1B295700D76C68137328D08 = {
-						DevelopmentTeam = 2X7B7DMV95;
+						DevelopmentTeam = "${APPLE_TEAM_ID}";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -1228,7 +1228,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 2X7B7DMV95;
+				DEVELOPMENT_TEAM = "${APPLE_TEAM_ID}";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1288,7 +1288,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 2X7B7DMV95;
+				DEVELOPMENT_TEAM = "${APPLE_TEAM_ID}";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

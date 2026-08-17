@@ -2087,6 +2087,10 @@ export interface components {
             story?: string | null;
             /** @description Karigar (artisan) relationship id, if any. */
             karigar?: string | null;
+            /** @description Karigar display name for the PDP provenance strip. Present only when the relationship is populated; null when the field holds a bare id or is unset. */
+            karigarName?: string | null;
+            /** @description e.g. "Made to order in 24h" — freshness promise + trust strip. */
+            leadTime?: string | null;
             /** Format: date-time */
             updatedAt?: string | null;
         };

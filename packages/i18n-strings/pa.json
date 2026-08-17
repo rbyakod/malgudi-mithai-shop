@@ -294,5 +294,14 @@
   "enquiry.field.packaging": "ਪੈਕੇਜਿੰਗ",
   "enquiry.field.gstin": "GSTIN",
   "enquiry.field.occasion": "ਮੌਕਾ",
-  "enquiry.field.branding": "ਬ੍ਰਾਂਡਿੰਗ"
+  "enquiry.field.branding": "ਬ੍ਰਾਂਡਿੰਗ",
+  "product.trust.fresh_daily": "ਹਰ ਸਵੇਰ ਤਾਜ਼ਾ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ",
+  "product.trust.fresh_to_order": "ਆਰਡਰ ਮੁਤਾਬਕ ਬਣਾਇਆ, ਬੇਨਤੀ ਉੱਤੇ ਮੁਕੰਮਲ",
+  "product.trust.frozen": "ਤਾਜ਼ਾ ਮੁਕੰਮਲ ਕਰਕੇ, ਸਿਖਰ ਸਮੇਂ ਫਰੋਜ਼ਨ",
+  "product.trust.shelf_life": "{shelfLife} ਸ਼ੈਲਫ਼ ਲਾਈਫ਼",
+  "product.trust.vegetarian": "ਸ਼ੁੱਧ ਸ਼ਾਕਾਹਾਰੀ",
+  "product.trust.sugar_free": "ਖੰਡ ਤੋਂ ਮੁਕਤ",
+  "product.cross_sell.title": "ਇਸ {family} ਸੰਗ੍ਰਹ ਤੋਂ ਹੋਰ",
+  "product.provenance.karigar": "ਕਾਰੀਗਰ",
+  "product.provenance.freshness": "ਤਾਜ਼ਗੀ"
 }

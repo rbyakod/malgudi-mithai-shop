@@ -296,4 +296,13 @@
   <string name="enquiry_field_gstin">GSTIN</string>
   <string name="enquiry_field_occasion">Occasion</string>
   <string name="enquiry_field_branding">Branding</string>
+  <string name="product_trust_fresh_daily">Made fresh each morning</string>
+  <string name="product_trust_fresh_to_order">Made to order, finished on request</string>
+  <string name="product_trust_frozen">Finished fresh, frozen at peak</string>
+  <string name="product_trust_shelf_life">%1$s shelf life</string>
+  <string name="product_trust_vegetarian">Vegetarian</string>
+  <string name="product_trust_sugar_free">Sugar-free</string>
+  <string name="product_cross_sell_title">More from the %1$s collection</string>
+  <string name="product_provenance_karigar">Karigar</string>
+  <string name="product_provenance_freshness">Freshness</string>
 </resources>

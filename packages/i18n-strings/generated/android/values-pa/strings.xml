@@ -296,4 +296,13 @@
   <string name="enquiry_field_gstin">GSTIN</string>
   <string name="enquiry_field_occasion">ਮੌਕਾ</string>
   <string name="enquiry_field_branding">ਬ੍ਰਾਂਡਿੰਗ</string>
+  <string name="product_trust_fresh_daily">ਹਰ ਸਵੇਰ ਤਾਜ਼ਾ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ</string>
+  <string name="product_trust_fresh_to_order">ਆਰਡਰ ਮੁਤਾਬਕ ਬਣਾਇਆ, ਬੇਨਤੀ ਉੱਤੇ ਮੁਕੰਮਲ</string>
+  <string name="product_trust_frozen">ਤਾਜ਼ਾ ਮੁਕੰਮਲ ਕਰਕੇ, ਸਿਖਰ ਸਮੇਂ ਫਰੋਜ਼ਨ</string>
+  <string name="product_trust_shelf_life">%1$s ਸ਼ੈਲਫ਼ ਲਾਈਫ਼</string>
+  <string name="product_trust_vegetarian">ਸ਼ੁੱਧ ਸ਼ਾਕਾਹਾਰੀ</string>
+  <string name="product_trust_sugar_free">ਖੰਡ ਤੋਂ ਮੁਕਤ</string>
+  <string name="product_cross_sell_title">ਇਸ %1$s ਸੰਗ੍ਰਹ ਤੋਂ ਹੋਰ</string>
+  <string name="product_provenance_karigar">ਕਾਰੀਗਰ</string>
+  <string name="product_provenance_freshness">ਤਾਜ਼ਗੀ</string>
 </resources>

@@ -296,4 +296,13 @@
   <string name="enquiry_field_gstin">GSTIN</string>
   <string name="enquiry_field_occasion">ಸಂದರ್ಭ</string>
   <string name="enquiry_field_branding">ಬ್ರಾಂಡಿಂಗ್</string>
+  <string name="product_trust_fresh_daily">ಪ್ರತಿ ಬೆಳಿಗ್ಗೆ ತಾಜಾ ತಯಾರಿ</string>
+  <string name="product_trust_fresh_to_order">ಆರ್ಡರ್‌ಗೆ ತಕ್ಕಂತೆ, ಕೋರಿಕೆಯ ಮೇರೆಗೆ ಅಂತಿಮ ರೂಪ</string>
+  <string name="product_trust_frozen">ತಾಜಾ ತಯಾರಿ, ಉತ್ತಮ ಹಂತದಲ್ಲಿ ಫ್ರೀಜ್ ಮಾಡಿದವು</string>
+  <string name="product_trust_shelf_life">%1$s ಶೆಲ್ಫ್ ಅವಧಿ</string>
+  <string name="product_trust_vegetarian">ಶುದ್ಧ ಸಸ್ಯಾಹಾರಿ</string>
+  <string name="product_trust_sugar_free">ಸಕ್ಕರೆ ಮುಕ್ತ</string>
+  <string name="product_cross_sell_title">%1$s ಸಂಗ್ರಹದ ಇನ್ನಷ್ಟು ಮಿಠಾಯಿಗಳು</string>
+  <string name="product_provenance_karigar">ಕುಶಲಕರ್ಮಿ</string>
+  <string name="product_provenance_freshness">ತಾಜಾತನ</string>
 </resources>

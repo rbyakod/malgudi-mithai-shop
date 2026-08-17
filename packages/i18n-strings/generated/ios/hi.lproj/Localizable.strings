@@ -295,3 +295,12 @@
 "enquiry.field.gstin" = "GSTIN";
 "enquiry.field.occasion" = "अवसर";
 "enquiry.field.branding" = "ब्रांडिंग";
+"product.trust.fresh_daily" = "हर सुबह ताज़ा बना";
+"product.trust.fresh_to_order" = "ऑर्डर पर बना, अनुरोध पर तैयार";
+"product.trust.frozen" = "ताज़ा बनाकर पीक पर फ़्रोज़न";
+"product.trust.shelf_life" = "{shelfLife} शेल्फ़ लाइफ़";
+"product.trust.vegetarian" = "शुद्ध शाकाहारी";
+"product.trust.sugar_free" = "शुगर-फ़्री";
+"product.cross_sell.title" = "इस {family} संग्रह की और मिठाइयाँ";
+"product.provenance.karigar" = "करीगर";
+"product.provenance.freshness" = "ताज़गी";

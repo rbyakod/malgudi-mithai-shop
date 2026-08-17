@@ -13,9 +13,12 @@ struct MishranThemeModifier: ViewModifier {
             .foregroundStyle(Color.mishranBrandInk)
             .tint(Color.mishranBrandAccent)
             .background(Color.mishranBrandCanvas)
-            // Cream canvas, not pure white, in dark mode too — the brand
-            // stays warm; full dark palette is a deliberate v2 decision.
-            .preferredColorScheme(nil)
+            // Lock light: brand tokens (canvas/ink/accent) are fixed light
+            // values, and pushed screens draw the system background over
+            // the canvas — following system dark mode left nav bars, scroll
+            // backgrounds, and .secondary text black/washed-out while cards
+            // stayed cream. A real dark palette is a deliberate v2 decision.
+            .preferredColorScheme(.light)
             .environment(\.layoutDirection, .leftToRight)
     }
 }

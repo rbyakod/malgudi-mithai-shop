@@ -77,6 +77,12 @@ export function serializeProduct(p: any) {
     images: flattenImages(p.images),
     story: flattenLexical(p.story),
     karigar: typeof p.karigar === 'object' ? p.karigar?.id ?? null : p.karigar ?? null,
+    // Karigar display name for the PDP provenance strip — only meaningful
+    // when the relationship arrives populated (id-string → null, apps fall
+    // back to hiding the row).
+    karigarName: typeof p.karigar === 'object' ? p.karigar?.name ?? null : null,
+    // e.g. "Made to order in 24h" — drives the freshness promise + trust strip.
+    leadTime: p.leadTime ?? null,
     updatedAt: p.updatedAt ?? null,
   };
 }

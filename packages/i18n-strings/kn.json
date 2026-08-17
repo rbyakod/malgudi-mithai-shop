@@ -294,5 +294,14 @@
   "enquiry.field.packaging": "ಪ್ಯಾಕೇಜಿಂಗ್",
   "enquiry.field.gstin": "GSTIN",
   "enquiry.field.occasion": "ಸಂದರ್ಭ",
-  "enquiry.field.branding": "ಬ್ರಾಂಡಿಂಗ್"
+  "enquiry.field.branding": "ಬ್ರಾಂಡಿಂಗ್",
+  "product.trust.fresh_daily": "ಪ್ರತಿ ಬೆಳಿಗ್ಗೆ ತಾಜಾ ತಯಾರಿ",
+  "product.trust.fresh_to_order": "ಆರ್ಡರ್‌ಗೆ ತಕ್ಕಂತೆ, ಕೋರಿಕೆಯ ಮೇರೆಗೆ ಅಂತಿಮ ರೂಪ",
+  "product.trust.frozen": "ತಾಜಾ ತಯಾರಿ, ಉತ್ತಮ ಹಂತದಲ್ಲಿ ಫ್ರೀಜ್ ಮಾಡಿದವು",
+  "product.trust.shelf_life": "{shelfLife} ಶೆಲ್ಫ್ ಅವಧಿ",
+  "product.trust.vegetarian": "ಶುದ್ಧ ಸಸ್ಯಾಹಾರಿ",
+  "product.trust.sugar_free": "ಸಕ್ಕರೆ ಮುಕ್ತ",
+  "product.cross_sell.title": "{family} ಸಂಗ್ರಹದ ಇನ್ನಷ್ಟು ಮಿಠಾಯಿಗಳು",
+  "product.provenance.karigar": "ಕುಶಲಕರ್ಮಿ",
+  "product.provenance.freshness": "ತಾಜಾತನ"
 }

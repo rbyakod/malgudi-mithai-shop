@@ -296,4 +296,13 @@
   <string name="enquiry_field_gstin">GSTIN</string>
   <string name="enquiry_field_occasion">प्रसंग</string>
   <string name="enquiry_field_branding">ब्रँडिंग</string>
+  <string name="product_trust_fresh_daily">दररोज सकाळी ताजे बनवले जाते</string>
+  <string name="product_trust_fresh_to_order">ऑर्डरनुसार बनवले, विनंतीनुसार शेवटी</string>
+  <string name="product_trust_frozen">ताजे पूर्ण करून, उच्च दर्जावर गोठवले</string>
+  <string name="product_trust_shelf_life">%1$s शेल्फ आयु</string>
+  <string name="product_trust_vegetarian">शुद्ध शाकाहारी</string>
+  <string name="product_trust_sugar_free">साखरमुक्त</string>
+  <string name="product_cross_sell_title">या %1$s संग्रहातील आणखी</string>
+  <string name="product_provenance_karigar">करीगर</string>
+  <string name="product_provenance_freshness">ताजेपण</string>
 </resources>

@@ -296,4 +296,13 @@
   <string name="enquiry_field_gstin">GSTIN</string>
   <string name="enquiry_field_occasion">సందర్భం</string>
   <string name="enquiry_field_branding">బ్రాండింగ్</string>
+  <string name="product_trust_fresh_daily">ప్రతి ఉదయం తాజాగా తయారు</string>
+  <string name="product_trust_fresh_to_order">ఆర్డరు ప్రకారం తయారు, అభ్యర్థనపై పూర్తి</string>
+  <string name="product_trust_frozen">తాజాగా పూర్తి, ఉన్నత స్థితిలో ఫ్రోజన్</string>
+  <string name="product_trust_shelf_life">%1$s షెల్ఫ్ లైఫ్</string>
+  <string name="product_trust_vegetarian">శాకాహారం</string>
+  <string name="product_trust_sugar_free">చక్కెర లేనిది</string>
+  <string name="product_cross_sell_title">ఈ %1$s సేకరణ నుండి మరిన్ని</string>
+  <string name="product_provenance_karigar">కారీగర్</string>
+  <string name="product_provenance_freshness">తాజాదనం</string>
 </resources>
