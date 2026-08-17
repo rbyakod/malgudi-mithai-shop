@@ -10,6 +10,15 @@ the product owner relies on it as the record of what exists and how to use
 it. Keep entries customer-facing (what the user sees and does) and keep the
 platform-difference notes accurate.
 
+## HTML companions for markdown docs (standing rule)
+
+Every new `.md` doc also ships a polished self-contained HTML companion at
+the same path (e.g. `docs/user-guide.md` → `docs/user-guide.html`) with
+sidebar navigation and section anchors; substantive `.md` edits refresh the
+companion in the same change. Match the house style already in `docs/`
+(cream/maroon/gold tokens, serif display headings, dark sidebar with
+scroll-spy, no external CDNs) — see `docs/user-guide.html`.
+
 # Project: Malgudi Sweets – Next.js storefront
 
 You are helping professional and polished ecommerce-style site for an Indian sweet shop (mithai).  
