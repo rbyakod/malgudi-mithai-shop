@@ -51,6 +51,10 @@ targets:
       # `pnpm codegen:swift` in packages/brand-tokens.
       - path: ../../packages/brand-tokens/generated/swift
         group: Generated
+      # Country codes for the sign-in country picker (CountryCodes enum).
+      # Regenerate with `pnpm codegen:swift` in packages/country-codes.
+      - path: ../../packages/country-codes/generated/swift
+        group: Generated
       # Generated i18n tables (Task 20.3 sweep): 9 locales of flat
       # dot-key Localizable.strings, consumed at runtime by the L() helper
       # (Mishran/Support/Localization.swift). Regenerate with

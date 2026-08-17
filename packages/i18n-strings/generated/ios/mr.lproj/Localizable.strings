@@ -8,7 +8,10 @@
 "nav.cart" = "कार्ट";
 "auth.phone.title" = "तुमचा फोन नंबर प्रविष्ट करा";
 "auth.phone.subtitle" = "6 अंकांचा कोड पाठवला जाईल";
-"auth.phone.placeholder" = "+91 90000 00000";
+"auth.phone.country.label" = "देश";
+"auth.phone.country.search" = "देश किंवा कोड शोधा";
+"auth.phone.national.placeholder" = "90000 00000";
+"auth.phone.error.invalid" = "निवडलेल्या देशासाठी वैध मोबाईल क्रमांक प्रविष्ट करा.";
 "auth.phone.cta" = "OTP पाठवा";
 "auth.otp.title" = "तुम्हीच आहात हे पुष्टी करा";
 "auth.otp.subtitle" = "{phone} ला पाठवलेला कोड प्रविष्ट करा";

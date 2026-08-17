@@ -9,7 +9,10 @@
   <string name="nav_cart">Cart</string>
   <string name="auth_phone_title">Enter your phone number</string>
   <string name="auth_phone_subtitle">We\'ll send you a 6-digit code</string>
-  <string name="auth_phone_placeholder">+91 90000 00000</string>
+  <string name="auth_phone_country_label">Country</string>
+  <string name="auth_phone_country_search">Search country or code</string>
+  <string name="auth_phone_national_placeholder">90000 00000</string>
+  <string name="auth_phone_error_invalid">Enter a valid mobile number for the selected country.</string>
   <string name="auth_phone_cta">Send OTP</string>
   <string name="auth_otp_title">Verify it\'s you</string>
   <string name="auth_otp_subtitle">Enter the code we sent to %1$s</string>

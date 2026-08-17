@@ -45,17 +45,57 @@ final class AuthViewModelTests: XCTestCase {
     // MARK: (a) phone validation — contract: ^\+[1-9]\d{6,14}$
 
     func testPhoneValidation() {
+        // The static regex the composed value is checked against — unchanged.
+        XCTAssertTrue(AuthViewModel.phoneIsValid("+919876543210"))
+        XCTAssertFalse(AuthViewModel.phoneIsValid("9876543210"))   // missing +
+        XCTAssertFalse(AuthViewModel.phoneIsValid("+0123456789"))  // leading 0 after +
+        XCTAssertFalse(AuthViewModel.phoneIsValid("+12345"))       // too short
+        XCTAssertFalse(AuthViewModel.phoneIsValid(""))             // empty
+
+        // Default country is India (+91); the composed value is what validates.
         let vm = makeViewModel()
-        vm.phone = "+919876543210"
+        XCTAssertEqual(vm.selectedCountry.iso2, "IN")
+        vm.nationalNumber = "9876543210"
+        XCTAssertEqual(vm.phone, "+919876543210")
         XCTAssertTrue(vm.isPhoneValid)
-        vm.phone = "9876543210"   // missing +
+        vm.nationalNumber = "1234"  // +911234 — 6 digits total, under the contract's 7
         XCTAssertFalse(vm.isPhoneValid)
-        vm.phone = "+0123456789"  // leading 0 after +
-        XCTAssertFalse(vm.isPhoneValid)
-        vm.phone = "+12345"       // too short
-        XCTAssertFalse(vm.isPhoneValid)
-        vm.phone = ""             // empty
-        XCTAssertFalse(vm.isPhoneValid)
+    }
+
+    // MARK: (a2) country selection + paste decomposition
+
+    func testCountrySelectionComposesE164() {
+        let vm = makeViewModel()
+        vm.selectCountry(CountryCodes.byIso2("US")!)
+        vm.setNationalNumber("6301234567")
+        XCTAssertEqual(vm.phone, "+16301234567")
+
+        vm.selectCountry(CountryCodes.byIso2("AE")!)
+        XCTAssertEqual(vm.phone, "+9716301234567")
+    }
+
+    func testPastedE164DecomposesToCountryPlusRemainder() {
+        let vm = makeViewModel()
+        vm.setNationalNumber("+919876543210")
+        XCTAssertEqual(vm.selectedCountry.iso2, "IN")
+        XCTAssertEqual(vm.nationalNumber, "9876543210")
+        XCTAssertEqual(vm.phone, "+919876543210")
+
+        // NANP tie: many countries share "1" — the primary owner (US) wins.
+        vm.setNationalNumber("+16301234567")
+        XCTAssertEqual(vm.selectedCountry.iso2, "US")
+        XCTAssertEqual(vm.nationalNumber, "6301234567")
+
+        // "+44" cluster resolves to the primary owner (GB).
+        vm.setNationalNumber("+447911123456")
+        XCTAssertEqual(vm.selectedCountry.iso2, "GB")
+        XCTAssertEqual(vm.phone, "+447911123456")
+    }
+
+    func testNationalNumberStripsFormattingNoise() {
+        let vm = makeViewModel()
+        vm.setNationalNumber("98-765 43210")
+        XCTAssertEqual(vm.nationalNumber, "9876543210")
     }
 
     // MARK: (b) OTP request triggers API call + stage moves to code entry
@@ -65,14 +105,15 @@ final class AuthViewModelTests: XCTestCase {
             200, [:], json(#"{"data":{"requestId":"req_1","expiresAt":"2026-08-13T12:00:00Z"}}"#)
         )
         let vm = makeViewModel()
-        vm.phone = "+919876543210"
+        vm.nationalNumber = "9876543210"
         await vm.sendCode()
 
         XCTAssertEqual(MockURLProtocol.calls["/auth/otp/send"], 1)
         XCTAssertEqual(vm.requestId, "req_1")
         XCTAssertEqual(vm.stage, .otp)
         XCTAssertNil(vm.errorMessage)
-        // Request body carries the phone (URLProtocol exposes it as a stream).
+        // Request body carries the COMPOSED E.164 (country chip + national
+        // digits) — URLProtocol exposes it as a stream.
         let request = MockURLProtocol.lastRequests["/auth/otp/send"]
         let body = request.flatMap(MockURLProtocol.body(of:))
         XCTAssertTrue(String(data: body ?? Data(), encoding: .utf8)?.contains("+919876543210") == true)
@@ -80,7 +121,7 @@ final class AuthViewModelTests: XCTestCase {
 
     func testSendCodeRejectsInvalidPhoneLocally() async {
         let vm = makeViewModel()
-        vm.phone = "not-a-phone"
+        vm.setNationalNumber("not-a-phone")  // filters to "" → composed "+91"
         await vm.sendCode()
         XCTAssertNil(MockURLProtocol.calls["/auth/otp/send"])
         XCTAssertNotNil(vm.errorMessage)
@@ -95,7 +136,7 @@ final class AuthViewModelTests: XCTestCase {
             json(#"{"data":{"accessToken":"acc_1","refreshToken":"ref_1","customer":{"id":"c1","phone":"+919876543210","name":null,"email":null,"locale":"en","createdAt":"2026-01-01T00:00:00Z"}}}"#)
         )
         let vm = makeViewModel()
-        vm.phone = "+919876543210"
+        vm.nationalNumber = "9876543210"
         vm.requestId = "req_1"
         vm.code = "123456"
         await vm.verify()
@@ -132,7 +173,7 @@ final class AuthViewModelTests: XCTestCase {
             429, [:], json(#"{"error":{"code":"RATE_LIMITED","message":"Too many attempts"}}"#)
         )
         let vm = makeViewModel()
-        vm.phone = "+919876543210"
+        vm.nationalNumber = "9876543210"
         await vm.sendCode()
         XCTAssertEqual(vm.errorCode, .rateLimited)
         XCTAssertEqual(vm.errorMessage, "Too many attempts")

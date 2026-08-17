@@ -16,9 +16,18 @@ final class AuthViewModel {
 
     // MARK: input state
 
-    var phone = ""
+    /// Dial-code chip selection. India (+91) by default — the storefront's
+    /// home market.
+    var selectedCountry: CountryCode = CountryCodes.fallback
+    /// National number — local digits only, no dial code, no formatting.
+    var nationalNumber = ""
     var code = ""
     var requestId: String?
+
+    /// Composed E.164 (e.g. +919876543210) — sent to the API and shown on
+    /// the OTP screen subtitle. Derived, so the country chip and the national
+    /// field can never drift out of sync.
+    var phone: String { selectedCountry.dialPrefixed + nationalNumber }
 
     // MARK: output state
 
@@ -50,9 +59,41 @@ final class AuthViewModel {
         return regex.firstMatch(in: phone, options: [], range: range) != nil
     }
 
+    func selectCountry(_ country: CountryCode) {
+        selectedCountry = country
+    }
+
+    /// National-number input. ASCII digits only, capped at 15 (E.164 caps the
+    /// FULL number at 15; this just guards absurd paste). A pasted full E.164
+    /// number ("+919876543210") decomposes via longest dial-prefix match into
+    /// a country selection + remainder, so pasting from contacts still lands
+    /// on the right E.164 instead of double-prefixing.
+    func setNationalNumber(_ raw: String) {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.hasPrefix("+") {
+            let digits = asciiDigits(trimmed)
+            if let (country, rest) = CountryCodes.longestDialPrefix(digits) {
+                selectedCountry = country
+                nationalNumber = String(rest.prefix(Self.maxNationalDigits))
+            } else {
+                nationalNumber = String(digits.prefix(Self.maxNationalDigits))
+            }
+            return
+        }
+        nationalNumber = String(asciiDigits(trimmed).prefix(Self.maxNationalDigits))
+    }
+
+    private func asciiDigits(_ s: String) -> String {
+        // Character.isNumber accepts non-ASCII digits (Devanagari etc.) —
+        // the server contract wants plain ASCII.
+        s.filter { c in c.asciiValue.map { (0x30...0x39).contains($0) } == true }
+    }
+
+    private static let maxNationalDigits = 15
+
     func sendCode() async {
         guard isPhoneValid else {
-            errorMessage = "Enter your phone number with country code, e.g. +919876543210."
+            errorMessage = L("auth.phone.error.invalid")
             errorCode = .validation
             return
         }

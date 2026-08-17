@@ -8,7 +8,10 @@
 "nav.cart" = "ಬುಟ್ಟಿ";
 "auth.phone.title" = "ನಿಮ್ಮ ದೂರವಾಣಿ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ";
 "auth.phone.subtitle" = "ನಿಮಗೆ 6 ಅಂಕಿಯ ಸಂಕೇತ ಕಳುಹಿಸಲಾಗುವದು";
-"auth.phone.placeholder" = "+91 90000 00000";
+"auth.phone.country.label" = "ದೇಶ";
+"auth.phone.country.search" = "ದೇಶ ಅಥವಾ ಕೋಡ್ ಹುಡುಕಿ";
+"auth.phone.national.placeholder" = "90000 00000";
+"auth.phone.error.invalid" = "ಆಯ್ಕೆಮಾಡಿದ ದೇಶಕ್ಕೆ ಸರಿಯಾದ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ.";
 "auth.phone.cta" = "OTP ಕಳುಹಿಸಿ";
 "auth.otp.title" = "ನೀವೇ ಎಂದು ದೃಢೀಕರಿಸಿ";
 "auth.otp.subtitle" = "{phone} ಗೆ ಕಳುಹಿಸಿದ ಸಂಕೇತ ನಮೂದಿಸಿ";

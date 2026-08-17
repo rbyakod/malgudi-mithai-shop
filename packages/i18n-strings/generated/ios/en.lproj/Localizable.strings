@@ -8,7 +8,10 @@
 "nav.cart" = "Cart";
 "auth.phone.title" = "Enter your phone number";
 "auth.phone.subtitle" = "We'll send you a 6-digit code";
-"auth.phone.placeholder" = "+91 90000 00000";
+"auth.phone.country.label" = "Country";
+"auth.phone.country.search" = "Search country or code";
+"auth.phone.national.placeholder" = "90000 00000";
+"auth.phone.error.invalid" = "Enter a valid mobile number for the selected country.";
 "auth.phone.cta" = "Send OTP";
 "auth.otp.title" = "Verify it's you";
 "auth.otp.subtitle" = "Enter the code we sent to {phone}";

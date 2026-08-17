@@ -1,6 +1,7 @@
 // PhoneEntryView.swift — Task 15.1 (Mishran Mobile Apps v1).
-// Phone-entry half of the sign-in flow. Brand-themed; loads the keyboard as
-// a phone pad. Sign in with Apple joins this screen in Task 15.2.
+// Phone-entry half of the sign-in flow: country dial-code chip + national
+// number (the view model composes the E.164). Brand-themed; the national
+// field loads a number pad. Sign in with Apple joins below.
 import SwiftUI
 
 struct PhoneEntryView: View {
@@ -8,6 +9,8 @@ struct PhoneEntryView: View {
     var onSent: (() -> Void)? = nil
     /// SIWA completes the whole sign-in in one step (no OTP stage).
     var onSignedIn: (() -> Void)? = nil
+
+    @State private var showCountryPicker = false
 
     var body: some View {
         VStack(spacing: .mishranSpacingLg) {
@@ -23,9 +26,40 @@ struct PhoneEntryView: View {
                 .font(.mishranBodyLg)
                 .foregroundStyle(.secondary)
 
-            TextField(L("auth.phone.placeholder"), text: $viewModel.phone)
+            HStack(spacing: .mishranSpacingSm) {
+                Button {
+                    showCountryPicker = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(viewModel.selectedCountry.flagEmoji)
+                        Text(viewModel.selectedCountry.dialPrefixed)
+                            .foregroundStyle(Color.mishranBrandInk)
+                        Image(systemName: "chevron.down")
+                            .font(.mishranBodySm.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+                    .font(.mishranBodyLg.weight(.semibold))
+                    .padding(.mishranSpacingSm)
+                    .frame(minHeight: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: .mishranRadiusMd)
+                            .fill(Color.mishranBrandSurface)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: .mishranRadiusMd)
+                            .strokeBorder(Color.mishranBrandAccent.opacity(0.4), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(L("auth.phone.country.label"))
+                .accessibilityHint(L("auth.phone.country.search"))
+
+                TextField(L("auth.phone.national.placeholder"), text: Binding(
+                    get: { viewModel.nationalNumber },
+                    set: { viewModel.setNationalNumber($0) }
+                ))
                 .font(.mishranBodyXl)
-                .keyboardType(.phonePad)
+                .keyboardType(.numberPad)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .padding(.mishranSpacingMd)
@@ -37,9 +71,9 @@ struct PhoneEntryView: View {
                     RoundedRectangle(cornerRadius: .mishranRadiusMd)
                         .strokeBorder(Color.mishranBrandAccent.opacity(0.4), lineWidth: 1)
                 )
-                .accessibilityLabel("Phone number with country code")
-                .accessibilityHint("Example: +919876543210")
+                .accessibilityLabel(L("auth.phone.label"))
                 .onSubmit { Task { await submitTapped() } }
+            }
 
             if let message = viewModel.errorMessage {
                 Text(message)
@@ -81,6 +115,11 @@ struct PhoneEntryView: View {
             Spacer()
         }
         .padding(.mishranSpacingLg)
+        .sheet(isPresented: $showCountryPicker) {
+            CountryPickerSheet(selected: viewModel.selectedCountry) {
+                viewModel.selectCountry($0)
+            }
+        }
     }
 
     private func submitTapped() async {

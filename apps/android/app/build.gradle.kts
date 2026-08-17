@@ -161,6 +161,11 @@ android {
     sourceSets["main"].kotlin.srcDir(
         layout.projectDirectory.dir("../../../packages/api-contract/generated/kotlin/src/main/kotlin/com/mishran/api/models"),
     )
+    //   - country codes for the sign-in country picker
+    //     (com.mishran.app.ui.auth.Countries).
+    sourceSets["main"].kotlin.srcDir(
+        layout.projectDirectory.dir("../../../packages/country-codes/generated/kotlin"),
+    )
     sourceSets["main"].res.srcDir(
         layout.projectDirectory.dir("../../../packages/i18n-strings/generated/android"),
     )

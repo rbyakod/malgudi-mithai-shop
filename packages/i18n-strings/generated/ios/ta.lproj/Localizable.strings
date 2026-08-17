@@ -8,7 +8,10 @@
 "nav.cart" = "கூடை";
 "auth.phone.title" = "உங்கள் தொலைபேசி எண்ணை உள்ளிடுங்கள்";
 "auth.phone.subtitle" = "6 இலக்க குறியீடு அனுப்பப்படும்";
-"auth.phone.placeholder" = "+91 90000 00000";
+"auth.phone.country.label" = "நாடு";
+"auth.phone.country.search" = "நாடு அல்லது குறியீட்டைத் தேடுங்கள்";
+"auth.phone.national.placeholder" = "90000 00000";
+"auth.phone.error.invalid" = "தேர்ந்தெடுத்த நாட்டிற்கான சரியான கைபேசி எண்ணை உள்ளிடுங்கள்.";
 "auth.phone.cta" = "OTP அனுப்பு";
 "auth.otp.title" = "நீங்களே என்பதை உறுதிசெய்யுங்கள்";
 "auth.otp.subtitle" = "{phone} க்கு அனுப்பப்பட்ட குறியீட்டை உள்ளிடுங்கள்";

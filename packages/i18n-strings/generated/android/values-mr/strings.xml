@@ -9,7 +9,10 @@
   <string name="nav_cart">कार्ट</string>
   <string name="auth_phone_title">तुमचा फोन नंबर प्रविष्ट करा</string>
   <string name="auth_phone_subtitle">6 अंकांचा कोड पाठवला जाईल</string>
-  <string name="auth_phone_placeholder">+91 90000 00000</string>
+  <string name="auth_phone_country_label">देश</string>
+  <string name="auth_phone_country_search">देश किंवा कोड शोधा</string>
+  <string name="auth_phone_national_placeholder">90000 00000</string>
+  <string name="auth_phone_error_invalid">निवडलेल्या देशासाठी वैध मोबाईल क्रमांक प्रविष्ट करा.</string>
   <string name="auth_phone_cta">OTP पाठवा</string>
   <string name="auth_otp_title">तुम्हीच आहात हे पुष्टी करा</string>
   <string name="auth_otp_subtitle">%1$s ला पाठवलेला कोड प्रविष्ट करा</string>

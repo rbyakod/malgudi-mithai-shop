@@ -23,7 +23,7 @@ Payments SMS is not live yet, so there is one shared test login:
 
 | Field    | Value          |
 |----------|----------------|
-| Phone    | `+918088983014` |
+| Phone    | `+918088983014` (the app defaults to India **+91** — just type `8088983014`) |
 | OTP code | `424242`       |
 
 Everyone shares this account for now (orders all land on it). When you want
@@ -53,7 +53,7 @@ screenshot. Anything broken before checkout matters most right now.
 > We're testing our sweets app! 🍯
 > 1. On your Android phone, open: https://mishran.pranavb.com/download/mishran-latest.apk
 > 2. Allow the download, then Install (say yes to "unknown apps" — it's our own site).
-> 3. Open **Mishran** → sign in with phone **+918088983014**, code **424242**.
+> 3. Open **Mishran** → sign in with phone **8088983014** (country chip already **India +91**), code **424242**.
 > 4. Browse, add to cart, and try checkout — payment is in test mode, use card
 >    4111 1111 1111 1111 with any future expiry.
 > Tell Ravi what worked and what didn't — screenshots help!

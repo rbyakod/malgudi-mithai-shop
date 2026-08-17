@@ -4,6 +4,9 @@
 # the OTP from the staging OTP log endpoint into MAESTRO_OTP, the phone
 # number comes from MAESTRO_PHONE. run-flows.sh skips this flow when
 # either is unset.
+# Task 83: the entry field is now national-only (the country chip defaults
+# to India/+91). A FULL E.164 in MAESTRO_PHONE still works — the field's
+# paste path decomposes it via longest dial-prefix.
 appId: com.mishran.app
 name: Sign in with phone + OTP
 env:
@@ -14,9 +17,9 @@ env:
     arguments:
       "-authScreen": true
 - assertVisible: "Sign in to order fresh mithai."
-- tapOn: "Phone number with country code"
+- tapOn: "Phone number"
 - inputText: ${MAESTRO_PHONE}
-- tapOn: "Send code"
+- tapOn: "Send OTP"
 - assertVisible: "6-digit code"
 - inputText: ${MAESTRO_OTP}
 - tapOn: "Verify"

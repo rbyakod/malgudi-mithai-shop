@@ -193,36 +193,45 @@ struct ProductDetailView: View {
 
     /// 4:5 editorial hero (web's aspect-[4/5]). Real photo when the doc has
     /// one; otherwise the designed fallback — brand gradient + serif initial.
+    ///
+    /// The 4:5 box is fixed by `Color.clear.aspectRatio(.fit)` off the width
+    /// the ScrollView proposes — never by `.fill` on the content itself: a
+    /// vertical ScrollView proposes (width, nil), and with no definite
+    /// height a scaledToFill image under `.fill` falls back toward its
+    /// natural pixel size, rendering the hero enormous (#84). The overlay
+    /// merely cover-crops into the already-fixed box.
     private func hero(for product: ProductEntity) -> some View {
-        Group {
-            if let imageURL = product.images?.first {
-                ProductRemoteImage(imageURL: imageURL)
-                    .aspectRatio(4 / 5, contentMode: .fill)
-                    .frame(maxWidth: .infinity)
-                    .clipped()
-            } else {
-                ZStack {
-                    LinearGradient(
-                        colors: [
-                            Color.mishranBrandAccent.opacity(0.25),
-                            Color.mishranBrandPop.opacity(0.15),
-                            Color.mishranBrandCanvas,
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    Text(String((product.name.first ?? "·")).uppercased())
-                        .font(.system(size: 96, weight: .light, design: .serif))
-                        .italic()
-                        .foregroundStyle(Color.mishranBrandAccent)
+        Color.clear
+            .aspectRatio(4 / 5, contentMode: .fit)
+            .frame(maxWidth: .infinity)
+            .overlay {
+                if let imageURL = product.images?.first {
+                    ProductRemoteImage(imageURL: imageURL)
+                } else {
+                    heroFallback(for: product)
                 }
-                .aspectRatio(4 / 5, contentMode: .fill)
-                .frame(maxWidth: .infinity)
-                .clipped()
             }
+            .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusLg))
+            .accessibilityHidden(true)
+    }
+
+    /// No-photo hero: brand gradient with the product's serif initial.
+    private func heroFallback(for product: ProductEntity) -> some View {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color.mishranBrandAccent.opacity(0.25),
+                    Color.mishranBrandPop.opacity(0.15),
+                    Color.mishranBrandCanvas,
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            Text(String((product.name.first ?? "·")).uppercased())
+                .font(.system(size: 96, weight: .light, design: .serif))
+                .italic()
+                .foregroundStyle(Color.mishranBrandAccent)
         }
-        .clipShape(RoundedRectangle(cornerRadius: .mishranRadiusLg))
-        .accessibilityHidden(true)
     }
 
     // MARK: Trust strip

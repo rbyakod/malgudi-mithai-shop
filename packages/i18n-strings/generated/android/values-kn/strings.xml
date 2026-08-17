@@ -9,7 +9,10 @@
   <string name="nav_cart">ಬುಟ್ಟಿ</string>
   <string name="auth_phone_title">ನಿಮ್ಮ ದೂರವಾಣಿ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ</string>
   <string name="auth_phone_subtitle">ನಿಮಗೆ 6 ಅಂಕಿಯ ಸಂಕೇತ ಕಳುಹಿಸಲಾಗುವದು</string>
-  <string name="auth_phone_placeholder">+91 90000 00000</string>
+  <string name="auth_phone_country_label">ದೇಶ</string>
+  <string name="auth_phone_country_search">ದೇಶ ಅಥವಾ ಕೋಡ್ ಹುಡುಕಿ</string>
+  <string name="auth_phone_national_placeholder">90000 00000</string>
+  <string name="auth_phone_error_invalid">ಆಯ್ಕೆಮಾಡಿದ ದೇಶಕ್ಕೆ ಸರಿಯಾದ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ.</string>
   <string name="auth_phone_cta">OTP ಕಳುಹಿಸಿ</string>
   <string name="auth_otp_title">ನೀವೇ ಎಂದು ದೃಢೀಕರಿಸಿ</string>
   <string name="auth_otp_subtitle">%1$s ಗೆ ಕಳುಹಿಸಿದ ಸಂಕೇತ ನಮೂದಿಸಿ</string>

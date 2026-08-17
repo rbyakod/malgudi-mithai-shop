@@ -9,7 +9,10 @@
   <string name="nav_cart">కార్ట్</string>
   <string name="auth_phone_title">మీ ఫోన్ నంబర్‌ను నమోదు చేయండి</string>
   <string name="auth_phone_subtitle">6 అంకెల కోడ్ పంపబడుతుంది</string>
-  <string name="auth_phone_placeholder">+91 90000 00000</string>
+  <string name="auth_phone_country_label">దేశం</string>
+  <string name="auth_phone_country_search">దేశం లేదా కోడ్ వెతకండి</string>
+  <string name="auth_phone_national_placeholder">90000 00000</string>
+  <string name="auth_phone_error_invalid">ఎంచుకున్న దేశానికి సరైన మొబైల్ నంబర్ నమోదు చేయండి.</string>
   <string name="auth_phone_cta">OTP పంపండి</string>
   <string name="auth_otp_title">మీరేనని నిర్ధారించండి</string>
   <string name="auth_otp_subtitle">%1$s కు పంపిన కోడ్‌ను నమోదు చేయండి</string>

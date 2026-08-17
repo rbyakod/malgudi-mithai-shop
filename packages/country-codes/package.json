@@ -1,0 +1,17 @@
+{
+  "name": "@mishran/country-codes",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "codegen:kotlin": "tsx scripts/codegen-kotlin.ts",
+    "codegen:swift": "tsx scripts/codegen-swift.ts",
+    "codegen": "pnpm codegen:kotlin && pnpm codegen:swift",
+    "build": "pnpm codegen",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "tsx": "^4",
+    "typescript": "^5",
+    "vitest": "^4"
+  }
+}

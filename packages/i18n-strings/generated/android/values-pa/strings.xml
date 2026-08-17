@@ -9,7 +9,10 @@
   <string name="nav_cart">ਕਾਰਟ</string>
   <string name="auth_phone_title">ਆਪਣਾ ਫੋਨ ਨੰਬਰ ਦਾਖਲ ਕਰੋ</string>
   <string name="auth_phone_subtitle">6 ਅੰਕਾਂ ਦਾ ਕੋਡ ਭੇਜਿਆ ਜਾਵੇਗਾ</string>
-  <string name="auth_phone_placeholder">+91 90000 00000</string>
+  <string name="auth_phone_country_label">ਦੇਸ਼</string>
+  <string name="auth_phone_country_search">ਦੇਸ਼ ਜਾਂ ਕੋਡ ਖੋਜੋ</string>
+  <string name="auth_phone_national_placeholder">90000 00000</string>
+  <string name="auth_phone_error_invalid">ਚੁਣੇ ਦੇਸ਼ ਲਈ ਸਹੀ ਮੋਬਾਈਲ ਨੰਬਰ ਦਾਖਲ ਕਰੋ।</string>
   <string name="auth_phone_cta">OTP ਭੇਜੋ</string>
   <string name="auth_otp_title">ਤਸਦੀਕ ਕਰੋ ਕਿ ਤੁਸੀਂ ਹੀ ਹੋ</string>
   <string name="auth_otp_subtitle">%1$s ਨੂੰ ਭੇਜਿਆ ਕੋਡ ਦਾਖਲ ਕਰੋ</string>

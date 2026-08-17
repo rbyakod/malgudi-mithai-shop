@@ -9,7 +9,10 @@
   <string name="nav_cart">கூடை</string>
   <string name="auth_phone_title">உங்கள் தொலைபேசி எண்ணை உள்ளிடுங்கள்</string>
   <string name="auth_phone_subtitle">6 இலக்க குறியீடு அனுப்பப்படும்</string>
-  <string name="auth_phone_placeholder">+91 90000 00000</string>
+  <string name="auth_phone_country_label">நாடு</string>
+  <string name="auth_phone_country_search">நாடு அல்லது குறியீட்டைத் தேடுங்கள்</string>
+  <string name="auth_phone_national_placeholder">90000 00000</string>
+  <string name="auth_phone_error_invalid">தேர்ந்தெடுத்த நாட்டிற்கான சரியான கைபேசி எண்ணை உள்ளிடுங்கள்.</string>
   <string name="auth_phone_cta">OTP அனுப்பு</string>
   <string name="auth_otp_title">நீங்களே என்பதை உறுதிசெய்யுங்கள்</string>
   <string name="auth_otp_subtitle">%1$s க்கு அனுப்பப்பட்ட குறியீட்டை உள்ளிடுங்கள்</string>

@@ -8,7 +8,10 @@
 "nav.cart" = "ਕਾਰਟ";
 "auth.phone.title" = "ਆਪਣਾ ਫੋਨ ਨੰਬਰ ਦਾਖਲ ਕਰੋ";
 "auth.phone.subtitle" = "6 ਅੰਕਾਂ ਦਾ ਕੋਡ ਭੇਜਿਆ ਜਾਵੇਗਾ";
-"auth.phone.placeholder" = "+91 90000 00000";
+"auth.phone.country.label" = "ਦੇਸ਼";
+"auth.phone.country.search" = "ਦੇਸ਼ ਜਾਂ ਕੋਡ ਖੋਜੋ";
+"auth.phone.national.placeholder" = "90000 00000";
+"auth.phone.error.invalid" = "ਚੁਣੇ ਦੇਸ਼ ਲਈ ਸਹੀ ਮੋਬਾਈਲ ਨੰਬਰ ਦਾਖਲ ਕਰੋ।";
 "auth.phone.cta" = "OTP ਭੇਜੋ";
 "auth.otp.title" = "ਤਸਦੀਕ ਕਰੋ ਕਿ ਤੁਸੀਂ ਹੀ ਹੋ";
 "auth.otp.subtitle" = "{phone} ਨੂੰ ਭੇਜਿਆ ਕੋਡ ਦਾਖਲ ਕਰੋ";
