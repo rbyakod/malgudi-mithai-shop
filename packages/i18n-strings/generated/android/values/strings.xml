@@ -323,4 +323,15 @@
   <string name="product_cross_sell_title">More from the %1$s collection</string>
   <string name="product_provenance_karigar">Karigar</string>
   <string name="product_provenance_freshness">Freshness</string>
+  <string name="cart_free_delivery_progress">Add %1$s more for free delivery</string>
+  <string name="cart_free_delivery_unlocked">Free delivery unlocked</string>
+  <string name="cart_delivery_at_checkout">Delivery calculated at checkout</string>
+  <string name="reviews_title">Customer reviews</string>
+  <string name="reviews_stars_label">%1$s out of 5 stars</string>
+  <string name="reviews_summary_one">%1$s · 1 review</string>
+  <string name="reviews_summary_other">%1$s · %2$s reviews</string>
+  <string name="reviews_verified">Verified purchase</string>
+  <string name="reviews_anonymous">Anonymous</string>
+  <string name="reviews_empty">No reviews yet</string>
+  <string name="reviews_more">+ %1$s more</string>
 </resources>

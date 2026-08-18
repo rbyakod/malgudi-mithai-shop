@@ -321,5 +321,16 @@
   "product.trust.sugar_free": "চিনিমুক্ত",
   "product.cross_sell.title": "এই {family} সংগ্রহ থেকে আরও",
   "product.provenance.karigar": "কারিগর",
-  "product.provenance.freshness": "তাজা ভাব"
+  "product.provenance.freshness": "তাজা ভাব",
+  "cart.free_delivery_progress": "ফ্রি ডেলিভারির জন্য আরও {amount} যোগ করুন",
+  "cart.free_delivery_unlocked": "ফ্রি ডেলিভারি আনলক হয়েছে",
+  "cart.delivery_at_checkout": "ডেলিভারি চার্জ চেকআউটে নির্ধারিত হবে",
+  "reviews.title": "গ্রাহক রিভিউ",
+  "reviews.stars_label": "৫-এর মধ্যে {rating} স্টার",
+  "reviews.summary_one": "{rating} · ১টি রিভিউ",
+  "reviews.summary_other": "{rating} · {count}টি রিভিউ",
+  "reviews.verified": "ভেরিফায়েড কেনা",
+  "reviews.anonymous": "অজ্ঞাতনামা",
+  "reviews.empty": "এখনও কোনো রিভিউ নেই",
+  "reviews.more": "+ আরও {count}"
 }

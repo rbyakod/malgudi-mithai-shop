@@ -322,3 +322,14 @@
 "product.cross_sell.title" = "More from the {family} collection";
 "product.provenance.karigar" = "Karigar";
 "product.provenance.freshness" = "Freshness";
+"cart.free_delivery_progress" = "Add {amount} more for free delivery";
+"cart.free_delivery_unlocked" = "Free delivery unlocked";
+"cart.delivery_at_checkout" = "Delivery calculated at checkout";
+"reviews.title" = "Customer reviews";
+"reviews.stars_label" = "{rating} out of 5 stars";
+"reviews.summary_one" = "{rating} · 1 review";
+"reviews.summary_other" = "{rating} · {count} reviews";
+"reviews.verified" = "Verified purchase";
+"reviews.anonymous" = "Anonymous";
+"reviews.empty" = "No reviews yet";
+"reviews.more" = "+ {count} more";

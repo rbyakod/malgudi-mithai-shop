@@ -322,3 +322,14 @@
 "product.cross_sell.title" = "ਇਸ {family} ਸੰਗ੍ਰਹ ਤੋਂ ਹੋਰ";
 "product.provenance.karigar" = "ਕਾਰੀਗਰ";
 "product.provenance.freshness" = "ਤਾਜ਼ਗੀ";
+"cart.free_delivery_progress" = "ਮੁਫ਼ਤ ਡਿਲੀਵਰੀ ਲਈ ਹੋਰ {amount} ਜੋਡੋ";
+"cart.free_delivery_unlocked" = "ਮੁਫ਼ਤ ਡਿਲੀਵਰੀ ਅਨਲਾਕ ਹੋ ਗਈ";
+"cart.delivery_at_checkout" = "ਡਿਲੀਵਰੀ ਫ਼ੀਸ ਚੈਕਆਊਟ ਸਮੇਂ ਤੈਅ ਹੋਵੇਗੀ";
+"reviews.title" = "ਗਾਹਕ ਸਮੀਖਿਆਵਾਂ";
+"reviews.stars_label" = "5 ਵਿੱਚੋਂ {rating} ਸਟਾਰ";
+"reviews.summary_one" = "{rating} · 1 ਸਮੀਖਿਆ";
+"reviews.summary_other" = "{rating} · {count} ਸਮੀਖਿਆਵਾਂ";
+"reviews.verified" = "ਤਸਦੀਕ ਸ਼ੁਦਾ ਖਰੀਦ";
+"reviews.anonymous" = "ਗੁਮਨਾਮ";
+"reviews.empty" = "ਹਾਲੇ ਕੋਈ ਸਮੀਖਿਆ ਨਹੀਂ";
+"reviews.more" = "+ ਹੋਰ {count}";

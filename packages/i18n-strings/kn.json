@@ -321,5 +321,16 @@
   "product.trust.sugar_free": "ಸಕ್ಕರೆ ಮುಕ್ತ",
   "product.cross_sell.title": "{family} ಸಂಗ್ರಹದ ಇನ್ನಷ್ಟು ಮಿಠಾಯಿಗಳು",
   "product.provenance.karigar": "ಕುಶಲಕರ್ಮಿ",
-  "product.provenance.freshness": "ತಾಜಾತನ"
+  "product.provenance.freshness": "ತಾಜಾತನ",
+  "cart.free_delivery_progress": "ಉಚಿತ ವಿತರಣೆಗಾಗಿ ಇನ್ನು {amount} ಸೇರಿಸಿ",
+  "cart.free_delivery_unlocked": "ಉಚಿತ ವಿತರಣೆ ಅನ್‌ಲಾಕ್ ಆಗಿದೆ",
+  "cart.delivery_at_checkout": "ವಿತರಣಾ ಶುಲ್ಕ ಚೆಕ್‌ಔಟ್‌ನಲ್ಲಿ ನಿಗದಿಯಾಗುತ್ತದೆ",
+  "reviews.title": "ಗ್ರಾಹಕರ ವಿಮರ್ಶೆಗಳು",
+  "reviews.stars_label": "5 ರಲ್ಲಿ {rating} ನಕ್ಷತ್ರಗಳು",
+  "reviews.summary_one": "{rating} · 1 ವಿಮರ್ಶೆ",
+  "reviews.summary_other": "{rating} · {count} ವಿಮರ್ಶೆಗಳು",
+  "reviews.verified": "ಪರಿಶೀಲಿಸಿದ ಖರೀದಿ",
+  "reviews.anonymous": "ಅನಾಮಧೇಯ",
+  "reviews.empty": "ಇನ್ನೂ ಯಾವುದೇ ವಿಮರ್ಶೆ ಇಲ್ಲ",
+  "reviews.more": "+ ಇನ್ನೂ {count}"
 }

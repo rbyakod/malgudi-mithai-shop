@@ -323,4 +323,15 @@
   <string name="product_cross_sell_title">આ %1$s સંગ્રહમાંથી વધુ</string>
   <string name="product_provenance_karigar">કારીગર</string>
   <string name="product_provenance_freshness">તાજગી</string>
+  <string name="cart_free_delivery_progress">મફત ડિલિવરી માટે વધુ %1$s ઉમેરો</string>
+  <string name="cart_free_delivery_unlocked">મફત ડિલિવરી અનલોક થઈ</string>
+  <string name="cart_delivery_at_checkout">ડિલિવરી ચાર્જ ચેકઆઉટ પર નક્કી થશે</string>
+  <string name="reviews_title">ગ્રાહક સમીક્ષાઓ</string>
+  <string name="reviews_stars_label">5માંથી %1$s સ્ટાર</string>
+  <string name="reviews_summary_one">%1$s · 1 સમીક્ષા</string>
+  <string name="reviews_summary_other">%1$s · %2$s સમીક્ષાઓ</string>
+  <string name="reviews_verified">ચકાસાયેલી ખરીદી</string>
+  <string name="reviews_anonymous">અનામી</string>
+  <string name="reviews_empty">હજુ કોઈ સમીક્ષા નથી</string>
+  <string name="reviews_more">+ વધુ %1$s</string>
 </resources>

@@ -323,4 +323,15 @@
   <string name="product_cross_sell_title">इस %1$s संग्रह की और मिठाइयाँ</string>
   <string name="product_provenance_karigar">करीगर</string>
   <string name="product_provenance_freshness">ताज़गी</string>
+  <string name="cart_free_delivery_progress">मुफ़्त डिलीवरी के लिए और %1$s जोड़ें</string>
+  <string name="cart_free_delivery_unlocked">मुफ़्त डिलीवरी अनलॉक हो गई</string>
+  <string name="cart_delivery_at_checkout">डिलीवरी शुल्क चेकआउट पर तय होगा</string>
+  <string name="reviews_title">ग्राहक समीक्षाएँ</string>
+  <string name="reviews_stars_label">5 में से %1$s स्टार</string>
+  <string name="reviews_summary_one">%1$s · 1 समीक्षा</string>
+  <string name="reviews_summary_other">%1$s · %2$s समीक्षाएँ</string>
+  <string name="reviews_verified">सत्यापित खरीद</string>
+  <string name="reviews_anonymous">गुमनाम</string>
+  <string name="reviews_empty">अभी कोई समीक्षा नहीं</string>
+  <string name="reviews_more">+ और %1$s</string>
 </resources>

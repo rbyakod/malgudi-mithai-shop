@@ -322,3 +322,14 @@
 "product.cross_sell.title" = "ఈ {family} సేకరణ నుండి మరిన్ని";
 "product.provenance.karigar" = "కారీగర్";
 "product.provenance.freshness" = "తాజాదనం";
+"cart.free_delivery_progress" = "ఫ్రీ డెలివరీ కోసం మరింత {amount} జోడించండి";
+"cart.free_delivery_unlocked" = "ఫ్రీ డెలివరీ అన్‌లాక్ అయింది";
+"cart.delivery_at_checkout" = "డెలివరీ ఫీజు చెక్అవుట్‌లో నిర్ణయించబడుతుంది";
+"reviews.title" = "కస్టమర్ రివ్యూలు";
+"reviews.stars_label" = "5లో {rating} స్టార్‌లు";
+"reviews.summary_one" = "{rating} · 1 రివ్యూ";
+"reviews.summary_other" = "{rating} · {count} రివ్యూలు";
+"reviews.verified" = "ధృవీకరించిన కొనుగోలు";
+"reviews.anonymous" = "అనామకం";
+"reviews.empty" = "ఇంకా రివ్యూలు లేవు";
+"reviews.more" = "+ మరిన్ని {count}";

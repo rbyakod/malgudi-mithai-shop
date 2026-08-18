@@ -322,3 +322,14 @@
 "product.cross_sell.title" = "இந்த {family} தொகுப்பில் இருந்து மேலும் இனிப்புகள்";
 "product.provenance.karigar" = "கைவினைஞர்";
 "product.provenance.freshness" = "புத்துணர்ச்சி";
+"cart.free_delivery_progress" = "இலவச டெலிவரிக்கு மேலும் {amount} சேர்க்கவும்";
+"cart.free_delivery_unlocked" = "இலவச டெலிவரி அன்லாக் ஆனது";
+"cart.delivery_at_checkout" = "டெலிவரி கட்டணம் செக்அவுட்டில் தீர்மானிக்கப்படும்";
+"reviews.title" = "வாடிக்கையாளர் விமர்சனங்கள்";
+"reviews.stars_label" = "5இல் {rating} நட்சத்திரங்கள்";
+"reviews.summary_one" = "{rating} · 1 விமர்சனம்";
+"reviews.summary_other" = "{rating} · {count} விமர்சனங்கள்";
+"reviews.verified" = "சரிபார்க்கப்பட்ட வாங்குதல்";
+"reviews.anonymous" = "அநாமதேயம்";
+"reviews.empty" = "இன்னும் விமர்சனங்கள் இல்லை";
+"reviews.more" = "+ மேலும் {count}";

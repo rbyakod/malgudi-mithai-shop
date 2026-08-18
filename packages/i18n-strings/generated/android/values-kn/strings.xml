@@ -323,4 +323,15 @@
   <string name="product_cross_sell_title">%1$s ಸಂಗ್ರಹದ ಇನ್ನಷ್ಟು ಮಿಠಾಯಿಗಳು</string>
   <string name="product_provenance_karigar">ಕುಶಲಕರ್ಮಿ</string>
   <string name="product_provenance_freshness">ತಾಜಾತನ</string>
+  <string name="cart_free_delivery_progress">ಉಚಿತ ವಿತರಣೆಗಾಗಿ ಇನ್ನು %1$s ಸೇರಿಸಿ</string>
+  <string name="cart_free_delivery_unlocked">ಉಚಿತ ವಿತರಣೆ ಅನ್‌ಲಾಕ್ ಆಗಿದೆ</string>
+  <string name="cart_delivery_at_checkout">ವಿತರಣಾ ಶುಲ್ಕ ಚೆಕ್‌ಔಟ್‌ನಲ್ಲಿ ನಿಗದಿಯಾಗುತ್ತದೆ</string>
+  <string name="reviews_title">ಗ್ರಾಹಕರ ವಿಮರ್ಶೆಗಳು</string>
+  <string name="reviews_stars_label">5 ರಲ್ಲಿ %1$s ನಕ್ಷತ್ರಗಳು</string>
+  <string name="reviews_summary_one">%1$s · 1 ವಿಮರ್ಶೆ</string>
+  <string name="reviews_summary_other">%1$s · %2$s ವಿಮರ್ಶೆಗಳು</string>
+  <string name="reviews_verified">ಪರಿಶೀಲಿಸಿದ ಖರೀದಿ</string>
+  <string name="reviews_anonymous">ಅನಾಮಧೇಯ</string>
+  <string name="reviews_empty">ಇನ್ನೂ ಯಾವುದೇ ವಿಮರ್ಶೆ ಇಲ್ಲ</string>
+  <string name="reviews_more">+ ಇನ್ನೂ %1$s</string>
 </resources>

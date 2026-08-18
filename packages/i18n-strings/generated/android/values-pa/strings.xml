@@ -323,4 +323,15 @@
   <string name="product_cross_sell_title">ਇਸ %1$s ਸੰਗ੍ਰਹ ਤੋਂ ਹੋਰ</string>
   <string name="product_provenance_karigar">ਕਾਰੀਗਰ</string>
   <string name="product_provenance_freshness">ਤਾਜ਼ਗੀ</string>
+  <string name="cart_free_delivery_progress">ਮੁਫ਼ਤ ਡਿਲੀਵਰੀ ਲਈ ਹੋਰ %1$s ਜੋਡੋ</string>
+  <string name="cart_free_delivery_unlocked">ਮੁਫ਼ਤ ਡਿਲੀਵਰੀ ਅਨਲਾਕ ਹੋ ਗਈ</string>
+  <string name="cart_delivery_at_checkout">ਡਿਲੀਵਰੀ ਫ਼ੀਸ ਚੈਕਆਊਟ ਸਮੇਂ ਤੈਅ ਹੋਵੇਗੀ</string>
+  <string name="reviews_title">ਗਾਹਕ ਸਮੀਖਿਆਵਾਂ</string>
+  <string name="reviews_stars_label">5 ਵਿੱਚੋਂ %1$s ਸਟਾਰ</string>
+  <string name="reviews_summary_one">%1$s · 1 ਸਮੀਖਿਆ</string>
+  <string name="reviews_summary_other">%1$s · %2$s ਸਮੀਖਿਆਵਾਂ</string>
+  <string name="reviews_verified">ਤਸਦੀਕ ਸ਼ੁਦਾ ਖਰੀਦ</string>
+  <string name="reviews_anonymous">ਗੁਮਨਾਮ</string>
+  <string name="reviews_empty">ਹਾਲੇ ਕੋਈ ਸਮੀਖਿਆ ਨਹੀਂ</string>
+  <string name="reviews_more">+ ਹੋਰ %1$s</string>
 </resources>

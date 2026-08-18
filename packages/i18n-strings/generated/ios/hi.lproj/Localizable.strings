@@ -322,3 +322,14 @@
 "product.cross_sell.title" = "इस {family} संग्रह की और मिठाइयाँ";
 "product.provenance.karigar" = "करीगर";
 "product.provenance.freshness" = "ताज़गी";
+"cart.free_delivery_progress" = "मुफ़्त डिलीवरी के लिए और {amount} जोड़ें";
+"cart.free_delivery_unlocked" = "मुफ़्त डिलीवरी अनलॉक हो गई";
+"cart.delivery_at_checkout" = "डिलीवरी शुल्क चेकआउट पर तय होगा";
+"reviews.title" = "ग्राहक समीक्षाएँ";
+"reviews.stars_label" = "5 में से {rating} स्टार";
+"reviews.summary_one" = "{rating} · 1 समीक्षा";
+"reviews.summary_other" = "{rating} · {count} समीक्षाएँ";
+"reviews.verified" = "सत्यापित खरीद";
+"reviews.anonymous" = "गुमनाम";
+"reviews.empty" = "अभी कोई समीक्षा नहीं";
+"reviews.more" = "+ और {count}";

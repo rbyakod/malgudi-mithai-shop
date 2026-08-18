@@ -323,4 +323,15 @@
   <string name="product_cross_sell_title">இந்த %1$s தொகுப்பில் இருந்து மேலும் இனிப்புகள்</string>
   <string name="product_provenance_karigar">கைவினைஞர்</string>
   <string name="product_provenance_freshness">புத்துணர்ச்சி</string>
+  <string name="cart_free_delivery_progress">இலவச டெலிவரிக்கு மேலும் %1$s சேர்க்கவும்</string>
+  <string name="cart_free_delivery_unlocked">இலவச டெலிவரி அன்லாக் ஆனது</string>
+  <string name="cart_delivery_at_checkout">டெலிவரி கட்டணம் செக்அவுட்டில் தீர்மானிக்கப்படும்</string>
+  <string name="reviews_title">வாடிக்கையாளர் விமர்சனங்கள்</string>
+  <string name="reviews_stars_label">5இல் %1$s நட்சத்திரங்கள்</string>
+  <string name="reviews_summary_one">%1$s · 1 விமர்சனம்</string>
+  <string name="reviews_summary_other">%1$s · %2$s விமர்சனங்கள்</string>
+  <string name="reviews_verified">சரிபார்க்கப்பட்ட வாங்குதல்</string>
+  <string name="reviews_anonymous">அநாமதேயம்</string>
+  <string name="reviews_empty">இன்னும் விமர்சனங்கள் இல்லை</string>
+  <string name="reviews_more">+ மேலும் %1$s</string>
 </resources>

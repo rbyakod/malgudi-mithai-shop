@@ -321,5 +321,16 @@
   "product.trust.sugar_free": "સાકરમુક્ત",
   "product.cross_sell.title": "આ {family} સંગ્રહમાંથી વધુ",
   "product.provenance.karigar": "કારીગર",
-  "product.provenance.freshness": "તાજગી"
+  "product.provenance.freshness": "તાજગી",
+  "cart.free_delivery_progress": "મફત ડિલિવરી માટે વધુ {amount} ઉમેરો",
+  "cart.free_delivery_unlocked": "મફત ડિલિવરી અનલોક થઈ",
+  "cart.delivery_at_checkout": "ડિલિવરી ચાર્જ ચેકઆઉટ પર નક્કી થશે",
+  "reviews.title": "ગ્રાહક સમીક્ષાઓ",
+  "reviews.stars_label": "5માંથી {rating} સ્ટાર",
+  "reviews.summary_one": "{rating} · 1 સમીક્ષા",
+  "reviews.summary_other": "{rating} · {count} સમીક્ષાઓ",
+  "reviews.verified": "ચકાસાયેલી ખરીદી",
+  "reviews.anonymous": "અનામી",
+  "reviews.empty": "હજુ કોઈ સમીક્ષા નથી",
+  "reviews.more": "+ વધુ {count}"
 }

@@ -323,4 +323,15 @@
   <string name="product_cross_sell_title">ఈ %1$s సేకరణ నుండి మరిన్ని</string>
   <string name="product_provenance_karigar">కారీగర్</string>
   <string name="product_provenance_freshness">తాజాదనం</string>
+  <string name="cart_free_delivery_progress">ఫ్రీ డెలివరీ కోసం మరింత %1$s జోడించండి</string>
+  <string name="cart_free_delivery_unlocked">ఫ్రీ డెలివరీ అన్‌లాక్ అయింది</string>
+  <string name="cart_delivery_at_checkout">డెలివరీ ఫీజు చెక్అవుట్‌లో నిర్ణయించబడుతుంది</string>
+  <string name="reviews_title">కస్టమర్ రివ్యూలు</string>
+  <string name="reviews_stars_label">5లో %1$s స్టార్‌లు</string>
+  <string name="reviews_summary_one">%1$s · 1 రివ్యూ</string>
+  <string name="reviews_summary_other">%1$s · %2$s రివ్యూలు</string>
+  <string name="reviews_verified">ధృవీకరించిన కొనుగోలు</string>
+  <string name="reviews_anonymous">అనామకం</string>
+  <string name="reviews_empty">ఇంకా రివ్యూలు లేవు</string>
+  <string name="reviews_more">+ మరిన్ని %1$s</string>
 </resources>

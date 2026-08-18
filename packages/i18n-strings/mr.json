@@ -321,5 +321,16 @@
   "product.trust.sugar_free": "साखरमुक्त",
   "product.cross_sell.title": "या {family} संग्रहातील आणखी",
   "product.provenance.karigar": "करीगर",
-  "product.provenance.freshness": "ताजेपण"
+  "product.provenance.freshness": "ताजेपण",
+  "cart.free_delivery_progress": "मोफत डिलिव्हरीसाठी आणखी {amount} जोडा",
+  "cart.free_delivery_unlocked": "मोफत डिलिव्हरी अनलॉक झाली",
+  "cart.delivery_at_checkout": "डिलिव्हरी शुल्क चेकआउटवर ठरवले जाईल",
+  "reviews.title": "ग्राहक समीक्षा",
+  "reviews.stars_label": "5 पैकी {rating} स्टार",
+  "reviews.summary_one": "{rating} · 1 समीक्षा",
+  "reviews.summary_other": "{rating} · {count} समीक्षा",
+  "reviews.verified": "सत्यापित खरेदी",
+  "reviews.anonymous": "अनामिक",
+  "reviews.empty": "अजून समीक्षा नाही",
+  "reviews.more": "+ आणखी {count}"
 }
