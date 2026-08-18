@@ -12,7 +12,13 @@
 //     serviceability endpoint checkout uses, with the result line (city ·
 //     tier · ETA), invalid/not-serviceable/error states, and a "Change" reset
 //     that keeps the field. A previously persisted check restores on entry.
+//     (B9 extracted the box into DeliveryCheckSection.kt so the cart's
+//     delivery sheet hosts the same UI.)
 //   - "Ask on WhatsApp" — opens wa.me with an English product-facts prefill.
+//
+// B11 adds the "Customer reviews" section under the content sections:
+// aggregate StarRow + summary, up to 5 newest approved rows with verified
+// badges, "+N more" — rendered only when reviews exist (no empty state).
 package com.mishran.app.ui.product
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -31,6 +37,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
@@ -45,11 +52,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedIconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -71,6 +77,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mishran.api.models.Product
 import com.mishran.app.R
+import com.mishran.app.ui.common.StarRow
 import com.mishran.app.ui.common.UiState
 import com.mishran.app.util.buildWhatsAppUrl
 
@@ -192,7 +199,13 @@ private fun ProductDetailContent(
                 )
             }
 
-            DeliveryCheckSection(viewModel = viewModel)
+            DeliveryCheckSection(
+                pincode = viewModel.pincode.collectAsState().value,
+                check = viewModel.deliveryCheck.collectAsState().value,
+                onPincodeChange = viewModel::onPincodeChange,
+                onCheck = viewModel::checkDelivery,
+                onReset = viewModel::resetDeliveryCheck,
+            )
 
             Section(stringResource(R.string.product_ingredients), product.ingredients)
             Section(stringResource(R.string.product_shelf_life), product.shelfLife)
@@ -201,6 +214,8 @@ private fun ProductDetailContent(
             product.allergens.orEmpty().takeIf { it.isNotEmpty() }?.let { allergens ->
                 Section(label = stringResource(R.string.product_allergens), body = allergens.joinToString(", "))
             }
+
+            ReviewsSection(viewModel = viewModel)
 
             WhatsAppAskRow(
                 onClick = {
@@ -298,126 +313,100 @@ private fun PackSizeRow(
 }
 
 /**
- * "Check delivery" box under the price/pack block. Idle (or Invalid/Error)
- * shows the pincode entry + Check; a landed Serviceable/NotServiceable answer
- * shows the result row with a "Change" reset that keeps the field's text.
- * Checking shows the spinner copy; Invalid/Error carry their own inline
- * messages under the field.
+ * Customer reviews (B11): renders NOTHING until the ViewModel holds a
+ * non-null [ReviewsUi] — loading, failure, and zero reviews all stay hidden
+ * (web parity, no empty state). Header/row styling mirrors the content
+ * sections above (titleSmall headers, bodyMedium copy, onSurfaceVariant meta).
  */
 @Composable
-private fun DeliveryCheckSection(viewModel: ProductDetailViewModel) {
-    val pincode by viewModel.pincode.collectAsState()
-    val check by viewModel.deliveryCheck.collectAsState()
+private fun ReviewsSection(viewModel: ProductDetailViewModel) {
+    val reviews by viewModel.reviews.collectAsState()
+    val data = reviews ?: return
+    val formattedRating = formatReviewRating(data.averageRating)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = stringResource(R.string.product_delivery_label),
+            text = stringResource(R.string.reviews_title),
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.semantics { heading() },
         )
-        when (val state = check) {
-            is DeliveryCheckState.Serviceable -> {
-                val tierLabel = when (state.tier) {
-                    TIER_SHELF_WIRE -> stringResource(R.string.product_delivery_tier_shelf)
-                    else -> stringResource(R.string.product_delivery_tier_fresh)
-                }
-                val daysLabel = deliveryDaysLabel(
-                    tier = state.tier,
-                    slaDays = state.slaDays,
-                    sameDayLabel = stringResource(R.string.product_delivery_same_day),
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(
-                            R.string.product_delivery_result,
-                            state.city.orEmpty(),
-                            tierLabel,
-                            daysLabel,
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.weight(1f),
-                    )
-                    TextButton(onClick = viewModel::resetDeliveryCheck) {
-                        Text(stringResource(R.string.product_delivery_change))
-                    }
-                }
-            }
-            is DeliveryCheckState.NotServiceable -> {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(
-                            R.string.product_delivery_not_serviceable,
-                            state.pincode,
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.weight(1f),
-                    )
-                    TextButton(onClick = viewModel::resetDeliveryCheck) {
-                        Text(stringResource(R.string.product_delivery_change))
-                    }
-                }
-            }
-            else -> {
-                // Entry form — also the shape shown for Checking (disabled),
-                // Invalid and Error (supporting text carries the difference).
-                OutlinedTextField(
-                    value = pincode,
-                    onValueChange = viewModel::onPincodeChange,
-                    label = { Text(stringResource(R.string.product_delivery_placeholder)) },
-                    isError = check is DeliveryCheckState.Invalid,
-                    singleLine = true,
-                    supportingText = when (check) {
-                        DeliveryCheckState.Invalid -> {
-                            { Text(stringResource(R.string.product_delivery_invalid)) }
-                        }
-                        DeliveryCheckState.Error -> {
-                            { Text(stringResource(R.string.product_delivery_error)) }
-                        }
-                        else -> null
-                    },
-                    trailingIcon = if (check is DeliveryCheckState.Checking) {
-                        {
-                            CircularProgressIndicator(
-                                modifier = Modifier.height(18.dp).width(18.dp),
-                                strokeWidth = 2.dp,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                if (check !is DeliveryCheckState.Checking) {
-                    Button(
-                        onClick = viewModel::checkDelivery,
-                        modifier = Modifier.fillMaxWidth().height(48.dp),
-                    ) {
-                        Text(stringResource(R.string.product_delivery_check))
-                    }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            StarRow(
+                rating = data.averageRating,
+                contentDescription = stringResource(R.string.reviews_stars_label, formattedRating),
+            )
+            Text(
+                text = if (data.total == 1) {
+                    stringResource(R.string.reviews_summary_one, formattedRating)
                 } else {
-                    Text(
-                        text = stringResource(R.string.product_delivery_checking),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    stringResource(
+                        R.string.reviews_summary_other,
+                        formattedRating,
+                        data.total.toString(),
                     )
-                }
-            }
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        data.rows.forEach { review ->
+            ReviewRowCard(review)
+        }
+        if (data.hiddenCount > 0) {
+            Text(
+                text = stringResource(R.string.reviews_more, data.hiddenCount.toString()),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
 
-/** The shelf tier's wire value (mirrors checkout's TIER_SHELF). */
-private const val TIER_SHELF_WIRE = "shelf"
+/** One review: author (+ verified badge) and date over the body. */
+@Composable
+private fun ReviewRowCard(review: ReviewRow) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = review.authorDisplayName
+                    ?: stringResource(R.string.reviews_anonymous),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            if (review.verifiedPurchase) {
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = RoundedCornerShape(50),
+                ) {
+                    Text(
+                        text = stringResource(R.string.reviews_verified),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                    )
+                }
+            }
+        }
+        if (review.dateLabel.isNotEmpty()) {
+            Text(
+                text = review.dateLabel,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (review.body.isNotBlank()) {
+            Text(
+                text = review.body,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+}
 
 /**
  * "Ask on WhatsApp" support row — same clickable-Card idiom as Account's rows.

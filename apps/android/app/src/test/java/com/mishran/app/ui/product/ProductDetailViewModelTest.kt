@@ -1,17 +1,22 @@
-// apps/android/app/src/test/java/com/mishran/app/ui/product/ProductDetailViewModelTest.kt — Task 9.4.
+// apps/android/app/src/test/java/com/mishran/app/ui/product/ProductDetailViewModelTest.kt — Task 9.4 / B11.
 //
 // JVM unit tests for the detail screen's state machine: Room→network lookup
 // mapping onto UiState, quantity stepper bounds, and retry. SavedStateHandle
-// is instantiated directly (it is plain Kotlin). NOTE: source-complete (no SDK).
+// is instantiated directly (it is plain Kotlin). B11 adds the reviews suite:
+// the wire-page mapping (row cap, hidden remainder, nullable author/body,
+// string dates) and the aggregate formatting helpers. NOTE: source-complete
+// (no SDK).
 package com.mishran.app.ui.product
 
 import androidx.lifecycle.SavedStateHandle
 import com.mishran.api.models.Product
 import com.mishran.api.models.ServiceableResponse
+import com.mishran.app.data.remote.api.ReviewsResponse
 import com.mishran.app.data.repository.AddressRepository
 import com.mishran.app.data.repository.BrandRepository
 import com.mishran.app.data.repository.CartRepository
 import com.mishran.app.data.repository.CatalogRepository
+import com.mishran.app.data.repository.ReviewRepository
 import com.mishran.app.data.repository.SettingsRepository
 import com.mishran.app.ui.common.UiState
 import io.mockk.coEvery
@@ -27,6 +32,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -39,6 +45,7 @@ class ProductDetailViewModelTest {
     private lateinit var addressRepository: AddressRepository
     private lateinit var settingsRepository: SettingsRepository
     private lateinit var brandRepository: BrandRepository
+    private lateinit var reviewRepository: ReviewRepository
 
     private val product = Product(
         id = "p1",
@@ -55,13 +62,15 @@ class ProductDetailViewModelTest {
         addressRepository = mockk()
         settingsRepository = mockk()
         brandRepository = mockk()
+        reviewRepository = mockk()
         // Parity batch: both init seams answer "nothing cached" by default,
         // and the product lookup answers the happy path — per-test stubs
-        // recorded later take precedence in mockk.
+        // recorded later take precedence in mockk. B11: no reviews by default.
         coEvery { repository.getProduct(any()) } returns product
         coEvery { settingsRepository.deliveryCheck() } returns null
         coEvery { settingsRepository.setDeliveryCheck(any()) } returns Unit
         coEvery { brandRepository.getSupportContact() } returns null
+        coEvery { reviewRepository.getProductReviews(any(), any()) } returns null
     }
 
     @After
@@ -73,6 +82,7 @@ class ProductDetailViewModelTest {
         addressRepository,
         settingsRepository,
         brandRepository,
+        reviewRepository,
         SavedStateHandle(mapOf("slug" to slug)),
     )
 
@@ -329,4 +339,146 @@ class ProductDetailViewModelTest {
         assertTrue(message.contains("₹720 / 500g"))
         assertTrue(message.contains("Quantity: 1"))
     }
+
+    // ---- B11: customer reviews ---------------------------------------------
+
+    @Test
+    fun `reviews load once the product resolves and surface the mapped page`() =
+        runTest(dispatcher) {
+            coEvery { reviewRepository.getProductReviews("p1", any()) } returns reviewPage()
+
+            val vm = viewModel()
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) { reviewRepository.getProductReviews("p1", any()) }
+            val reviews = vm.reviews.value
+            assertTrue(reviews != null)
+            assertEquals(2, reviews?.rows?.size)
+        }
+
+    @Test
+    fun `a review fetch failure leaves the section hidden`() = runTest(dispatcher) {
+        coEvery { reviewRepository.getProductReviews(any(), any()) } returns null
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        assertNull(vm.reviews.value)
+    }
+
+    @Test
+    fun `toReviewsUi maps rows with nullable author, string date and verified stamp`() {
+        val ui = reviewPage().toReviewsUi()!!
+
+        assertEquals(4.5, ui.averageRating, 0.0001)
+        assertEquals(2, ui.total)
+        assertEquals(0, ui.hiddenCount)
+        val named = ui.rows[0]
+        assertEquals("Meera", named.authorDisplayName)
+        assertEquals("17 Aug 2026", named.dateLabel)
+        assertEquals(5, named.rating)
+        assertEquals("Silvertop quality.", named.body)
+        assertTrue(named.verifiedPurchase)
+        // Anonymous author stays null so the UI renders the localized label.
+        assertNull(ui.rows[1].authorDisplayName)
+        assertFalse(ui.rows[1].verifiedPurchase)
+        // A null body (wire-nullable) maps to the empty string.
+        assertEquals("", ui.rows[1].body)
+    }
+
+    @Test
+    fun `toReviewsUi caps rows at five and folds the surplus into hiddenCount`() {
+        val page = ReviewsResponse.Page(
+            items = (1..7).map { index ->
+                publicReview(id = "r$index", createdAt = "2026-08-1${index % 10}T09:00:00Z")
+            },
+            averageRating = 3.7,
+            total = 12,
+            page = 1,
+            pageSize = 7,
+        )
+
+        val ui = page.toReviewsUi()!!
+
+        assertEquals(5, ui.rows.size)
+        assertEquals(7, ui.hiddenCount)
+        assertEquals(12, ui.total)
+    }
+
+    @Test
+    fun `toReviewsUi renders nothing for zero reviews or a missing aggregate`() {
+        assertNull(
+            ReviewsResponse.Page(
+                items = emptyList(),
+                averageRating = null,
+                total = 0,
+                page = 1,
+                pageSize = 5,
+            ).toReviewsUi(),
+        )
+        assertNull(
+            ReviewsResponse.Page(
+                items = listOf(publicReview()),
+                averageRating = null,
+                total = 1,
+                page = 1,
+                pageSize = 5,
+            ).toReviewsUi(),
+        )
+    }
+
+    @Test
+    fun `reviewDateLabel parses ISO offsets and hides unparseable dates`() {
+        assertEquals("17 Aug 2026", reviewDateLabel("2026-08-17T09:30:00Z"))
+        assertEquals("17 Aug 2026", reviewDateLabel("2026-08-17T15:00:00+05:30"))
+        assertEquals("", reviewDateLabel("not-a-date"))
+    }
+
+    @Test
+    fun `formatReviewRating always renders one decimal`() {
+        assertEquals("4.5", formatReviewRating(4.5))
+        assertEquals("4.0", formatReviewRating(4.0))
+        assertEquals("5.0", formatReviewRating(5.0))
+    }
+
+    private fun reviewPage() = ReviewsResponse.Page(
+        items = listOf(
+            publicReview(
+                id = "r1",
+                author = "Meera",
+                rating = 5,
+                body = "Silvertop quality.",
+                verified = true,
+                createdAt = "2026-08-17T09:30:00Z",
+            ),
+            publicReview(
+                id = "r2",
+                author = null,
+                rating = 4,
+                body = null,
+                verified = false,
+                createdAt = "2026-08-15T18:00:00Z",
+            ),
+        ),
+        averageRating = 4.5,
+        total = 2,
+        page = 1,
+        pageSize = 5,
+    )
+
+    private fun publicReview(
+        id: String = "r1",
+        author: String? = "Meera",
+        rating: Int = 5,
+        body: String? = "Fresh and lovely.",
+        verified: Boolean = true,
+        createdAt: String = "2026-08-17T09:30:00Z",
+    ) = ReviewsResponse.Item(
+        id = id,
+        rating = rating,
+        authorDisplayName = author,
+        verifiedPurchase = verified,
+        createdAt = createdAt,
+        body = body,
+    )
 }

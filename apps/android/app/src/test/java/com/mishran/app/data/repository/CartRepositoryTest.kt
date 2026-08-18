@@ -1,17 +1,22 @@
-// apps/android/app/src/test/java/com/mishran/app/data/repository/CartRepositoryTest.kt — Task 10.1 / P1 parity / parity batch (reorder).
+// apps/android/app/src/test/java/com/mishran/app/data/repository/CartRepositoryTest.kt — Task 10.1 / P1 parity / parity batch (reorder) / B9.
 //
 // JVM unit tests for the cart repository + the price-estimation helpers,
 // including the pack-scoped adds (P1 parity): base pack keeps the bare
 // product id, derived packs key "${productId}:${label}". The reorder adds
 // (parity batch) assert the same id contract straight from order-line args.
-// The DAO is mocked with an in-memory map keyed by productId so quantity
-// stacking is exercised through the real repository logic. NOTE:
-// source-complete (no SDK).
+// B9 adds the server-estimate seam: the request mapping (base ids + pack
+// labels, quantities summed per group) and the never-throw contract. The DAO
+// is mocked with an in-memory map keyed by productId so quantity stacking is
+// exercised through the real repository logic. NOTE: source-complete (no SDK).
 package com.mishran.app.data.repository
 
+import com.mishran.api.models.CartEstimate
+import com.mishran.api.models.CartEstimatePost200Response
+import com.mishran.api.models.CartItem
 import com.mishran.api.models.Product
 import com.mishran.app.data.local.dao.CartDao
 import com.mishran.app.data.local.entity.CartItemEntity
+import com.mishran.app.data.remote.api.MishranApi
 import com.mishran.app.ui.product.PackSize
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -29,6 +34,7 @@ import org.junit.Test
 class CartRepositoryTest {
 
     private lateinit var cartDao: CartDao
+    private lateinit var api: MishranApi
     private lateinit var repository: CartRepository
 
     private val table = mutableMapOf<String, CartItemEntity>()
@@ -45,7 +51,8 @@ class CartRepositoryTest {
     @Before
     fun setUp() {
         cartDao = mockk()
-        repository = CartRepository(cartDao)
+        api = mockk()
+        repository = CartRepository(cartDao, api)
 
         every { cartDao.observeItems() } answers { flowOf(table.values.sortedBy { it.addedAt }) }
         coEvery { cartDao.findByProductId(any()) } answers { table[firstArg<String>()] }
@@ -273,8 +280,8 @@ class CartRepositoryTest {
     @Test
     fun `estimateTotalPaise multiplies unit price by quantity and sums`() {
         val items = listOf(
-            line("₹720 / 500g", quantity = 2),   // 144000
-            line("₹1,200", quantity = 1),        // 120000
+            line("p1", "₹720 / 500g", quantity = 2),   // 144000
+            line("p2", "₹1,200", quantity = 1),        // 120000
         )
         assertEquals(264000L, estimateTotalPaise(items))
     }
@@ -282,19 +289,115 @@ class CartRepositoryTest {
     @Test
     fun `unpriced lines contribute zero but do not break the total`() {
         val items = listOf(
-            line("₹500", quantity = 1),
-            line(null, quantity = 3),
+            line("p1", "₹500", quantity = 1),
+            line("p2", null, quantity = 3),
         )
         assertEquals(50000L, estimateTotalPaise(items))
     }
 
-    private fun line(displayPrice: String?, quantity: Int) = CartItemEntity(
-        productId = "p-$quantity-$displayPrice",
-        slug = "slug",
-        name = "Sweet",
+    // ---- B9: server estimate (POST /cart/estimate) -------------------------
+
+    @Test
+    fun `estimate unwraps the data envelope and returns the CartEstimate`() = runTest {
+        val estimate = cartEstimate()
+        coEvery { api.estimateCart(any()) } returns CartEstimatePost200Response(estimate)
+
+        assertEquals(estimate, repository.estimate(table.values.toList(), pincode = "110001"))
+    }
+
+    @Test
+    fun `estimate maps lines to base ids with pack labels and sums per group`() = runTest {
+        val requestSlot = slot<com.mishran.api.models.CartEstimateRequest>()
+        coEvery { api.estimateCart(capture(requestSlot)) } returns
+            CartEstimatePost200Response(cartEstimate())
+
+        repository.estimate(
+            items = listOf(
+                line("p1", "₹720 / 500g", quantity = 2, packLabel = "500g"),
+                line("p1:1 kg", "₹1,440 / 1 kg", quantity = 1, packLabel = "1 kg"),
+                line("p1:1 kg", "₹1,440 / 1 kg", quantity = 2, packLabel = "1 kg"),
+                line("p2", "₹180 / 250g", quantity = 1, packLabel = null),
+            ),
+            pincode = "110001",
+        )
+
+        val request = requestSlot.captured
+        assertEquals("110001", request.pincode)
+        assertEquals(
+            listOf(
+                CartItem(productId = "p1", quantity = 2, packLabel = "500g"),
+                CartItem(productId = "p1", quantity = 3, packLabel = "1 kg"),
+                CartItem(productId = "p2", quantity = 1, packLabel = null),
+            ),
+            request.items,
+        )
+    }
+
+    @Test
+    fun `estimate sends a null pincode when none was persisted`() = runTest {
+        val requestSlot = slot<com.mishran.api.models.CartEstimateRequest>()
+        coEvery { api.estimateCart(capture(requestSlot)) } returns
+            CartEstimatePost200Response(cartEstimate())
+
+        repository.estimate(items = listOf(line("p2", "₹180", quantity = 1)), pincode = null)
+
+        assertNull(requestSlot.captured.pincode)
+    }
+
+    @Test
+    fun `estimate collapses to null on any failure so checkout never blocks`() = runTest {
+        coEvery { api.estimateCart(any()) } throws java.io.IOException("offline")
+
+        assertNull(repository.estimate(table.values.toList(), pincode = "110001"))
+    }
+
+    @Test
+    fun `estimateItems keys off the base id and the pack label`() {
+        val items = listOf(
+            line("p1", "₹720 / 500g", quantity = 2, packLabel = "500g"),
+            line("p1:1 kg", "₹1,440 / 1 kg", quantity = 1, packLabel = "1 kg"),
+            line("p1:1 kg", "₹1,440 / 1 kg", quantity = 4, packLabel = "1 kg"),
+            line("p2", "₹180", quantity = 1, packLabel = null),
+        )
+        assertEquals(
+            listOf(
+                CartItem(productId = "p1", quantity = 2, packLabel = "500g"),
+                CartItem(productId = "p1", quantity = 5, packLabel = "1 kg"),
+                CartItem(productId = "p2", quantity = 1, packLabel = null),
+            ),
+            estimateItems(items),
+        )
+    }
+
+    @Test
+    fun `baseCartProductId strips the pack suffix and keeps bare ids`() {
+        assertEquals("p1", baseCartProductId("p1:500g"))
+        assertEquals("p1", baseCartProductId("p1"))
+    }
+
+    private fun cartEstimate() = CartEstimate(
+        itemsTotalInPaise = 144000,
+        deliveryFeeInPaise = 4900,
+        discountInPaise = 0,
+        totalInPaise = 148900,
+        pincodeTier = "shelf",
+        freeDeliveryThresholdInPaise = 200000,
+        freeDeliveryEligible = false,
+    )
+
+    private fun line(
+        productId: String,
+        displayPrice: String?,
+        quantity: Int,
+        packLabel: String? = null,
+    ) = CartItemEntity(
+        productId = productId,
+        slug = "slug-$productId",
+        name = "Sweet $productId",
         imageUrl = null,
         displayPrice = displayPrice,
         quantity = quantity,
+        packLabel = packLabel,
         addedAt = 0L,
     )
 }

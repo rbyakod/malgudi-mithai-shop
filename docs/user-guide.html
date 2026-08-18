@@ -383,11 +383,12 @@
       and the <strong>karigar</strong> who made it (web + iOS).</li>
       <li><strong>Cross-sell rail</strong> — "More from the {family} collection"
       (web + iOS).</li>
-      <li><strong>Customer reviews</strong> (web) — below the cross-sell rail: the average star
-      rating, up to five approved reviews (newest first) with author display name, date, and a
-      gold <strong>Verified purchase</strong> badge when the review came from a real delivered
+      <li><strong>Customer reviews</strong> (web, iOS, Android) — the average star rating, up
+      to five approved reviews (newest first) with author display name, date, and a gold
+      <strong>Verified purchase</strong> badge when the review came from a real delivered
       order, plus a "+N more" note when there are extras. The section is hidden entirely on
-      products with no approved reviews yet.</li>
+      products with no approved reviews yet. On web and iOS it sits below the cross-sell
+      rail; on Android below the allergens section.</li>
     </ol>
     <p>Platform specifics: <strong>web</strong> has a sticky buy bar on mobile screens;
     <strong>iOS</strong> has a sticky bottom buy bar everywhere; <strong>Android</strong> keeps
@@ -428,11 +429,15 @@
       </li>
       <li><strong>iOS</strong>: quantity steppers, swipe-left to delete,
       <strong>Checkout</strong>, <strong>Send order on WhatsApp</strong>, <strong>Clear
-      cart</strong>. Delivery is "calculated at checkout" — the fee first appears on the
-      completed order.</li>
+      cart</strong>. With a checked pincode saved, the footer shows the live delivery fee and
+      a free-delivery progress line ("Add ₹x more for free delivery" / "Free delivery
+      unlocked"); without one it reads "calculated at checkout" with a <strong>Check</strong>
+      button that opens the delivery check, and the footer re-prices the moment it lands.</li>
       <li><strong>Android</strong>: same actions (− / + / remove / clear), an estimated total
       (with an "On request" note when prices are missing), Checkout, and Send order on
-      WhatsApp.</li>
+      WhatsApp. Delivery pricing matches iOS — a saved checked pincode shows the fee +
+      free-delivery progress; the <strong>Check</strong> affordance opens the delivery check
+      in a bottom sheet and re-prices on the spot.</li>
     </ul>
   </section>
 
@@ -669,9 +674,6 @@
     <div class="warn-box">
       <p class="box-title">So nobody hunts for what isn't there</p>
       <ul>
-        <li><strong>Apps don't show delivery fees or free-delivery thresholds in the cart</strong>
-        — fees appear on the priced order at checkout/after payment. Web shows the full
-        estimate.</li>
         <li><strong>No guest checkout on web</strong> — ordering there requires an account.
         Both apps let you browse and fill a cart without signing in; ordering asks.</li>
         <li><strong>Web Build-a-gift is a quote form</strong>, not an interactive box builder

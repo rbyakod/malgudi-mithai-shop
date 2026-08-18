@@ -9,6 +9,12 @@
 // it opens wa.me with every line enumerated + the estimated total (the
 // message builder is a pure function in CartViewModel). The caller owns the
 // ACTION_VIEW intent.
+//
+// B9: the footer gains a delivery line off the server's cart estimate —
+// with a saved pincode it prices the fee + free-delivery progress; without
+// one (or when the estimate fails) it shows the no-pincode copy beside a
+// "Check" affordance that opens the delivery sheet hosting the PDP's exact
+// check-delivery box.
 package com.mishran.app.ui.cart
 
 import androidx.compose.foundation.layout.Arrangement
@@ -33,13 +39,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +63,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mishran.app.R
 import com.mishran.app.data.local.entity.CartItemEntity
+import com.mishran.app.ui.product.DeliveryCheckSection
+import com.mishran.app.ui.product.DeliveryCheckState
 import com.mishran.app.util.buildWhatsAppUrl
 import java.util.Locale
 
@@ -62,6 +76,10 @@ fun CartScreen(
     viewModel: CartViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
+    val delivery by viewModel.delivery.collectAsState()
+    val sheetPincode by viewModel.pincode.collectAsState()
+    val sheetCheck by viewModel.deliveryCheck.collectAsState()
+    var showDeliverySheet by remember { mutableStateOf(false) }
 
     if (state.isEmpty) {
         EmptyCart(onBrowse)
@@ -107,6 +125,10 @@ fun CartScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
+                DeliverySummary(
+                    delivery = delivery,
+                    onOpenCheck = { showDeliverySheet = true },
+                )
                 Button(
                     onClick = onCheckout,
                     modifier = Modifier.fillMaxWidth().height(52.dp),
@@ -137,6 +159,110 @@ fun CartScreen(
                     Text(stringResource(R.string.cart_clear))
                 }
             }
+        }
+    }
+
+    if (showDeliverySheet) {
+        CartDeliverySheet(
+            pincode = sheetPincode,
+            check = sheetCheck,
+            onPincodeChange = viewModel::onPincodeChange,
+            onCheck = viewModel::checkDelivery,
+            onReset = viewModel::resetDeliveryCheck,
+            onDismiss = { showDeliverySheet = false },
+        )
+    }
+}
+
+/**
+ * The footer's delivery line (B9). Degraded (no pincode / estimate failure /
+ * unserviceable pincode) → the no-pincode copy plus the "Check" affordance;
+ * priced → the fee row (unlocked announced in the value slot) and, while
+ * below the threshold, the add-more progress line.
+ */
+@Composable
+private fun DeliverySummary(
+    delivery: CartDeliveryUi,
+    onOpenCheck: () -> Unit,
+) {
+    when (delivery) {
+        CartDeliveryUi.AtCheckout -> Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.cart_delivery_at_checkout),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f),
+            )
+            TextButton(onClick = onOpenCheck) {
+                Text(stringResource(R.string.product_delivery_check))
+            }
+        }
+        is CartDeliveryUi.Priced -> Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(stringResource(R.string.cart_delivery_fee), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    text = if (delivery.freeDeliveryEligible) {
+                        stringResource(R.string.cart_free_delivery_unlocked)
+                    } else {
+                        formatPaise(delivery.feeInPaise.toLong())
+                    },
+                    style = MaterialTheme.typography.titleSmall,
+                    color = if (delivery.freeDeliveryEligible) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
+                )
+            }
+            val progress = delivery.progress
+            if (progress is CartProgress.Remaining) {
+                Text(
+                    text = stringResource(
+                        R.string.cart_free_delivery_progress,
+                        formatPaise(progress.paise.toLong()),
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * The cart's delivery sheet (B9) — the PDP's check-delivery box verbatim, no
+ * new pincode UI. Auto-dismisses once a check lands serviceable: the footer
+ * behind it re-prices immediately with the fresh pincode.
+ */
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@Composable
+private fun CartDeliverySheet(
+    pincode: String,
+    check: DeliveryCheckState,
+    onPincodeChange: (String) -> Unit,
+    onCheck: () -> Unit,
+    onReset: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    LaunchedEffect(check) {
+        if (check is DeliveryCheckState.Serviceable) onDismiss()
+    }
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            DeliveryCheckSection(
+                pincode = pincode,
+                check = check,
+                onPincodeChange = onPincodeChange,
+                onCheck = onCheck,
+                onReset = onReset,
+            )
         }
     }
 }

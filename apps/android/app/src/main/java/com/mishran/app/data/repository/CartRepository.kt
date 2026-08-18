@@ -18,11 +18,22 @@
 // field the line renders (name, image, unit price, pack label). Its id
 // follows the same rule verbatim, so a reordered line merges with the line
 // that created it instead of duplicating it.
+//
+// B9 (cart estimates): `estimate` prices the cart on the server via the
+// PUBLIC POST /cart/estimate — guests included, nothing persisted. It is the
+// authoritative display number while browsing; the local label-scrape math
+// below (parsePaise / estimateTotalPaise) stays as the clearly-marked
+// OFFLINE-FAILURE FALLBACK the UI silently degrades to when the estimate
+// call fails (never blocks checkout).
 package com.mishran.app.data.repository
 
+import com.mishran.api.models.CartEstimate
+import com.mishran.api.models.CartEstimateRequest
+import com.mishran.api.models.CartItem
 import com.mishran.api.models.Product
 import com.mishran.app.data.local.dao.CartDao
 import com.mishran.app.data.local.entity.CartItemEntity
+import com.mishran.app.data.remote.api.MishranApi
 import com.mishran.app.ui.product.PackSize
 import com.mishran.app.ui.product.groupIndianDigits
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +46,7 @@ const val MAX_LINE_QUANTITY = 20
 @Singleton
 class CartRepository @Inject constructor(
     private val cartDao: CartDao,
+    private val api: MishranApi,
 ) {
 
     /** Live cart lines, oldest first. */
@@ -96,6 +108,25 @@ class CartRepository @Inject constructor(
     suspend fun clear() = cartDao.clear()
 
     suspend fun count(): Int = cartDao.count()
+
+    /**
+     * B9: server-priced cart estimate (POST /cart/estimate — public, works
+     * for signed-out guests). [pincode] is the persisted PDP delivery-check
+     * pincode when one exists, else null (the server then answers a null tier
+     * and the UI keeps its no-pincode copy). Returns null on ANY failure —
+     * transport, stale lines, rate limit — so the caller silently falls back
+     * to the local label-scrape estimate and the checkout flow never blocks.
+     */
+    suspend fun estimate(items: List<CartItemEntity>, pincode: String?): CartEstimate? = try {
+        api.estimateCart(
+            CartEstimateRequest(
+                items = estimateItems(items),
+                pincode = pincode,
+            ),
+        ).data
+    } catch (e: Exception) {
+        null
+    }
 }
 
 /**
@@ -157,3 +188,32 @@ internal fun parsePaise(displayPrice: String?): Long? {
 /** Estimated cart total in paise; lines without a parseable price contribute 0. */
 internal fun estimateTotalPaise(items: List<CartItemEntity>): Long =
     items.sumOf { (parsePaise(it.displayPrice) ?: 0L) * it.quantity }
+
+/**
+ * B9: cart lines → the estimate request's items. Unlike validate (which
+ * collapses every pack of a product into ONE base-id line), the estimate
+ * contract prices per packLabel, so lines group by (BASE product id, pack
+ * label) — "p1" + "p1:1 kg" become two priced lines off the same product,
+ * quantities summed within each group. Pack labels ride along only when the
+ * line carries one; the suffixed line id never leaves the device.
+ */
+internal fun estimateItems(items: List<CartItemEntity>): List<CartItem> =
+    items
+        .groupBy(
+            keySelector = { baseCartProductId(it.productId) to it.packLabel },
+            valueTransform = { it.quantity },
+        )
+        .map { (key, quantities) ->
+            CartItem(
+                productId = key.first,
+                quantity = quantities.sum(),
+                packLabel = key.second,
+            )
+        }
+
+/**
+ * Strip the pack suffix off a cart line id ("p1:500g" → "p1"; bare ids pass
+ * through) — the same rule PlaceOrderUseCase.baseProductId applies, restated
+ * locally so the estimate mapping above reads on its own.
+ */
+internal fun baseCartProductId(lineId: String): String = lineId.substringBefore(':')

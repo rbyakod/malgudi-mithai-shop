@@ -21,6 +21,8 @@ import com.mishran.api.models.BrandGet200Response
 import com.mishran.api.models.AuthOtpSendPost200Response
 import com.mishran.api.models.AuthOtpVerifyPost200Response
 import com.mishran.api.models.AuthRefreshPost200Response
+import com.mishran.api.models.CartEstimatePost200Response
+import com.mishran.api.models.CartEstimateRequest
 import com.mishran.api.models.CartValidatePost200Response
 import com.mishran.api.models.CartValidateRequest
 import com.mishran.api.models.CatalogMerchGet200Response
@@ -132,6 +134,22 @@ interface MishranApi {
     @GET("stories/{slug}")
     suspend fun getStory(@Path("slug") slug: String): StoriesSlugGet200Response
 
+    // ---- Reviews (B11) ---------------------------------------------------
+
+    /**
+     * Moderation-approved reviews for ONE product, newest first, public.
+     * `averageRating`/`total` cover ALL approved reviews (not just the page),
+     * so the PDP summary stays honest while only the first page is listed.
+     * Returns the app-local [ReviewsResponse] — see its kdoc for why the
+     * generated ReviewsGet200Response is unusable here.
+     */
+    @GET("reviews")
+    suspend fun getReviews(
+        @Query("productId") productId: String,
+        @Query("page") page: Int = 1,
+        @Query("pageSize") pageSize: Int = 5,
+    ): ReviewsResponse
+
     // ---- Verticals (P2 net-new: snacks / QSR / merch) --------------------
 
     /**
@@ -208,6 +226,17 @@ interface MishranApi {
 
     // ---- Cart + payments (Task 10.x) ------------------------------------
 
+    /**
+     * PUBLIC read-only pricing preview (B9) — the exact /cart/validate math
+     * (server-side line re-pricing, tier fee, free-delivery threshold waiver)
+     * with nothing persisted and NO sign-in required, so guest carts can show
+     * a delivery fee + threshold progress before checkout. A null `pincodeTier`
+     * in the response means "no/userviceable pincode" — the client then keeps
+     * its no-pincode copy.
+     */
+    @POST("cart/estimate")
+    suspend fun estimateCart(@Body body: CartEstimateRequest): CartEstimatePost200Response
+
     @POST("cart/validate")
     suspend fun validateCart(@Body body: CartValidateRequest): CartValidatePost200Response
 
@@ -277,6 +306,43 @@ data class DeleteResponse(
     val data: Data? = null,
 ) {
     data class Data(val ok: Boolean? = null)
+}
+
+/**
+ * GET /reviews 200 (B11): `{ "data": { items, averageRating, total, page,
+ * pageSize } }`. App-local for the same reason as [DeleteResponse]'s inner
+ * object, plus one harder constraint: the generated ReviewsGet200Response
+ * types `averageRating` as java.math.BigDecimal, which the reflective Moshi
+ * setup cannot decode at all ("Platform class … requires explicit
+ * JsonAdapter") — the call would throw on every 200. `averageRating` is a
+ * display-only one-decimal number, so Double loses nothing.
+ */
+data class ReviewsResponse(
+    val data: Page? = null,
+) {
+    /** One page of approved reviews + aggregates over ALL approved reviews. */
+    data class Page(
+        val items: List<Item> = emptyList(),
+        /** Mean rating across all approved reviews; null when there are none. */
+        val averageRating: Double? = null,
+        val total: Int = 0,
+        val page: Int = 1,
+        val pageSize: Int = 5,
+    )
+
+    /** A moderation-approved review as the public sees it. */
+    data class Item(
+        val id: String = "",
+        /** 1–5. */
+        val rating: Int = 0,
+        /** Null renders the localized "Anonymous" label. */
+        val authorDisplayName: String? = null,
+        /** Server-stamped: the author had a delivered order with the product. */
+        val verifiedPurchase: Boolean = false,
+        /** ISO string — the client parses and formats it. */
+        val createdAt: String? = null,
+        val body: String? = null,
+    )
 }
 
 /**

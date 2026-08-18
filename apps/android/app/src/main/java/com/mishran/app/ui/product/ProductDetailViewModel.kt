@@ -1,4 +1,4 @@
-// apps/android/app/src/main/java/com/mishran/app/ui/product/ProductDetailViewModel.kt — Task 9.4 / 10.1 / P1 parity / parity batch.
+// apps/android/app/src/main/java/com/mishran/app/ui/product/ProductDetailViewModel.kt — Task 9.4 / 10.1 / P1 parity / parity batch / B11.
 //
 // Detail-screen state: one-shot lookup (Room → network fallback → null) over
 // the shared UiState lifecycle, plus the quantity stepper (floored at 1 —
@@ -12,26 +12,32 @@
 //   - buyNow is the one-shot flow: same cart write, then `bought` fires and
 //     the screen navigates straight to checkout (no cart stop).
 //
-// Parity batch adds the two serviceability seams:
+// Parity batch adds the two serviceability seams (now delegated to the shared
+// [DeliveryCheckController] — see DeliveryCheckSection.kt):
 //   - "Check delivery": the same GET /catalog/serviceable the checkout uses
-//     (via AddressRepository), exposed as a small state machine (Idle /
-//     Checking / Result / NotServiceable / Invalid / Error). The last
-//     successful check persists in DataStore and RESTORES on later PDP visits
-//     without a refetch — the web's last-check memory.
+//     (via AddressRepository), with the last successful check persisted and
+//     restored on later PDP visits without a refetch.
 //   - "Ask on WhatsApp": the brand digits from BrandRepository (placeholder
 //     fallback handled there) + an English-composed product-facts message
 //     built by a pure function so it is unit-testable.
+//
+// B11 (reviews): once the product resolves, the first page of approved
+// reviews (GET /reviews, pageSize 5) loads alongside. Failures and empty
+// lists both surface as a null state so the section renders NOTHING — web
+// parity, no empty state.
 package com.mishran.app.ui.product
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mishran.api.models.Product
+import com.mishran.app.data.remote.api.ReviewsResponse
 import com.mishran.app.data.repository.AddressRepository
 import com.mishran.app.data.repository.BrandRepository
-import com.mishran.app.data.repository.PLACEHOLDER_WHATSAPP_DIGITS
-import com.mishran.app.data.repository.CartRepository
 import com.mishran.app.data.repository.CatalogRepository
+import com.mishran.app.data.repository.CartRepository
+import com.mishran.app.data.repository.PLACEHOLDER_WHATSAPP_DIGITS
+import com.mishran.app.data.repository.ReviewRepository
 import com.mishran.app.data.repository.SettingsRepository
 import com.mishran.app.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,76 +47,42 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
-/** Lifecycle of the PDP "Check delivery" box. */
-sealed interface DeliveryCheckState {
-    /** No check yet (or reset via "Change") — the entry form shows. */
-    data object Idle : DeliveryCheckState
-
-    /** A check is in flight. */
-    data object Checking : DeliveryCheckState
-
-    /** The pincode is serviceable; tier drives the label + ETA wording. */
-    data class Serviceable(
-        val pincode: String,
-        val tier: String,
-        val city: String?,
-        val slaDays: Int?,
-    ) : DeliveryCheckState
-
-    /** Reachable answer: this pincode is outside the network. */
-    data class NotServiceable(val pincode: String) : DeliveryCheckState
-
-    /** Client-side format rejection (not 6 digits) — no request goes out. */
-    data object Invalid : DeliveryCheckState
-
-    /** Transport/server failure — retryable via Check again. */
-    data object Error : DeliveryCheckState
-}
+/** One review row exactly as the PDP renders it (dates pre-formatted). */
+data class ReviewRow(
+    val id: String,
+    /** Author display name; null renders the localized "Anonymous" label. */
+    val authorDisplayName: String?,
+    /** "17 Aug 2026"-style label; empty when the wire date fails to parse. */
+    val dateLabel: String,
+    val rating: Int,
+    val body: String,
+    val verifiedPurchase: Boolean,
+)
 
 /**
- * What the delivery box remembers across PDP visits. Only SERVICEABLE results
- * persist — restoring "we don't deliver there" or a transient error would
- * present stale news as current, and the web's memory is the positive check.
+ * The PDP's customer-reviews section payload: aggregate over ALL approved
+ * reviews plus the (up to 5) rendered rows and how many were left unlisted.
  */
-data class DeliveryCheckSnapshot(
-    val pincode: String,
-    val tier: String,
-    val city: String?,
-    val slaDays: Int?,
-) {
-    /**
-     * Pipe-encode for the preferences DataStore: "pincode|tier|city|slaDays".
-     * Tier values ("fresh"/"shelf") are fixed enums and cities in the
-     * serviceability table carry no pipes, so the format is collision-free.
-     */
-    fun encode(): String = listOf(pincode, tier, city.orEmpty(), slaDays?.toString().orEmpty())
-        .joinToString("|")
-
-    companion object {
-        /** Decode [encode]'s output; null when malformed (never crash on prefs). */
-        fun decode(raw: String): DeliveryCheckSnapshot? {
-            val parts = raw.split("|")
-            if (parts.size != 4) return null
-            if (parts[0].isEmpty() || parts[1].isEmpty()) return null
-            return DeliveryCheckSnapshot(
-                pincode = parts[0],
-                tier = parts[1],
-                city = parts[2].takeIf { it.isNotEmpty() },
-                slaDays = parts[3].takeIf { it.isNotEmpty() }?.toIntOrNull(),
-            )
-        }
-    }
-}
+data class ReviewsUi(
+    val averageRating: Double,
+    val total: Int,
+    val rows: List<ReviewRow>,
+    val hiddenCount: Int,
+)
 
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
     private val repository: CatalogRepository,
     private val cartRepository: CartRepository,
-    private val addressRepository: AddressRepository,
-    private val settingsRepository: SettingsRepository,
+    addressRepository: AddressRepository,
+    settingsRepository: SettingsRepository,
     brandRepository: BrandRepository,
+    private val reviewRepository: ReviewRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -123,14 +95,18 @@ class ProductDetailViewModel @Inject constructor(
     private val _quantity = MutableStateFlow(MIN_QUANTITY)
     val quantity: StateFlow<Int> = _quantity.asStateFlow()
 
-    // ---- "Check delivery" (parity batch) ----------------------------------
+    // ---- "Check delivery" (parity batch; shared controller) --------------
+
+    private val deliveryCheckController = DeliveryCheckController(
+        addressRepository = addressRepository,
+        settingsRepository = settingsRepository,
+        scope = viewModelScope,
+    )
 
     /** The pincode field's text; survives state transitions so "Change" keeps it. */
-    private val _pincode = MutableStateFlow("")
-    val pincode: StateFlow<String> = _pincode.asStateFlow()
+    val pincode: StateFlow<String> = deliveryCheckController.pincode
 
-    private val _deliveryCheck = MutableStateFlow<DeliveryCheckState>(DeliveryCheckState.Idle)
-    val deliveryCheck: StateFlow<DeliveryCheckState> = _deliveryCheck.asStateFlow()
+    val deliveryCheck: StateFlow<DeliveryCheckState> = deliveryCheckController.deliveryCheck
 
     /**
      * wa.me digits for the Ask row: the brand number when /brand (or its
@@ -139,22 +115,14 @@ class ProductDetailViewModel @Inject constructor(
     private val _whatsappDigits = MutableStateFlow(PLACEHOLDER_WHATSAPP_DIGITS)
     val whatsappDigits: StateFlow<String> = _whatsappDigits.asStateFlow()
 
+    // ---- Customer reviews (B11) -------------------------------------------
+
+    /** Null while loading, on failure, or when the product has no reviews. */
+    private val _reviews = MutableStateFlow<ReviewsUi?>(null)
+    val reviews: StateFlow<ReviewsUi?> = _reviews.asStateFlow()
+
     init {
         load()
-        // Restore the last persisted check (no refetch — the web behavior):
-        // the snapshot populates the field AND the result row together.
-        viewModelScope.launch {
-            val snapshot = settingsRepository.deliveryCheck()?.let(DeliveryCheckSnapshot::decode)
-            if (snapshot != null) {
-                _pincode.value = snapshot.pincode
-                _deliveryCheck.value = DeliveryCheckState.Serviceable(
-                    pincode = snapshot.pincode,
-                    tier = snapshot.tier,
-                    city = snapshot.city,
-                    slaDays = snapshot.slaDays,
-                )
-            }
-        }
         viewModelScope.launch {
             brandRepository.getSupportContact()?.let { _whatsappDigits.value = it.whatsappDigits }
         }
@@ -167,62 +135,20 @@ class ProductDetailViewModel @Inject constructor(
             _state.value =
                 if (product == null) UiState.Error("That sweet could not be found.")
                 else UiState.Success(product)
+            // B11: reviews key off the product id, so they can only load once
+            // the product resolves. Failure/empty both map to null (hidden).
+            if (product != null) {
+                _reviews.value = reviewRepository.getProductReviews(product.id)?.toReviewsUi()
+            }
         }
     }
 
-    fun onPincodeChange(value: String) {
-        _pincode.value = value.take(DELIVERY_PINCODE_MAX_DIGITS)
-    }
+    fun onPincodeChange(value: String) = deliveryCheckController.onPincodeChange(value)
 
-    /**
-     * Run the check. A malformed pincode flips to Invalid without a request;
-     * a null response means offline or unreachable (Error), a serviceable
-     * false means a real not-serviceable answer. Successes persist.
-     */
-    fun checkDelivery() {
-        val candidate = _pincode.value.trim()
-        if (!isServiceablePincode(candidate)) {
-            _deliveryCheck.value = DeliveryCheckState.Invalid
-            return
-        }
-        if (_deliveryCheck.value is DeliveryCheckState.Checking) return
-        _deliveryCheck.value = DeliveryCheckState.Checking
-        viewModelScope.launch {
-            val response = try {
-                addressRepository.checkServiceability(candidate)
-            } catch (e: Exception) {
-                null
-            }
-            _deliveryCheck.value = when {
-                // The repository already collapses failures to null; the try
-                // is belt-and-braces so this state machine never throws.
-                response == null -> DeliveryCheckState.Error
-                response.serviceable -> DeliveryCheckState.Serviceable(
-                    pincode = candidate,
-                    tier = response.tier.orEmpty(),
-                    city = response.city,
-                    slaDays = response.slaDays,
-                )
-                else -> DeliveryCheckState.NotServiceable(candidate)
-            }
-            val serviceable = _deliveryCheck.value as? DeliveryCheckState.Serviceable
-            if (serviceable != null) {
-                settingsRepository.setDeliveryCheck(
-                    DeliveryCheckSnapshot(
-                        pincode = serviceable.pincode,
-                        tier = serviceable.tier,
-                        city = serviceable.city,
-                        slaDays = serviceable.slaDays,
-                    ).encode(),
-                )
-            }
-        }
-    }
+    fun checkDelivery() = deliveryCheckController.checkDelivery()
 
     /** "Change": back to the entry form, pincode kept for editing. */
-    fun resetDeliveryCheck() {
-        _deliveryCheck.value = DeliveryCheckState.Idle
-    }
+    fun resetDeliveryCheck() = deliveryCheckController.resetDeliveryCheck()
 
     fun incrementQuantity() {
         _quantity.value = (_quantity.value + 1).coerceAtMost(MAX_QUANTITY)
@@ -246,7 +172,7 @@ class ProductDetailViewModel @Inject constructor(
     }
 
     /**
-     * One-shot buy: the same cart write as [addToCart], then [bought] fires so
+     * One-shot buy: the same cart write as [addToCart], then `bought` fires so
      * the screen skips the cart and navigates straight to checkout.
      */
     fun buyNow(pack: PackSize? = null) {
@@ -269,33 +195,53 @@ class ProductDetailViewModel @Inject constructor(
         const val MIN_QUANTITY = 1
         // Backstop, not a product rule — the server re-validates at checkout.
         const val MAX_QUANTITY = 20
-
-        /** The pincode field accepts exactly this many digits. */
-        const val DELIVERY_PINCODE_MAX_DIGITS = 6
     }
 }
 
-/**
- * Indian pincodes: exactly 6 digits, first non-zero — the same rule checkout
- * applies (restated locally so the PDP's box does not import checkout's
- * internals for one regex).
- */
-internal fun isServiceablePincode(pincode: String): Boolean =
-    Regex("[1-9]\\d{5}").matches(pincode)
+/** How many review rows the PDP lists (one page; the rest becomes "+N more"). */
+internal const val REVIEWS_PAGE_SIZE = 5
 
 /**
- * The delivery result line's ETA segment: "same-day" for the fresh tier (the
- * localized label arrives as a parameter — resources are composable-only),
- * "<n> days" from the SLA otherwise, empty when the SLA is unknown.
+ * Wire page → section payload. Null (render nothing) when there are no
+ * reviews at all or the aggregate is missing — web parity, no empty state.
+ * Rows cap at [REVIEWS_PAGE_SIZE]; the surplus collapses into hiddenCount.
  */
-internal fun deliveryDaysLabel(tier: String, slaDays: Int?, sameDayLabel: String): String = when {
-    tier == TIER_FRESH -> sameDayLabel
-    slaDays != null -> "$slaDays days"
-    else -> ""
+internal fun ReviewsResponse.Page.toReviewsUi(): ReviewsUi? {
+    if (total == 0 || items.isEmpty()) return null
+    val average = averageRating ?: return null
+    val rows = items.take(REVIEWS_PAGE_SIZE).map { review ->
+        ReviewRow(
+            id = review.id,
+            authorDisplayName = review.authorDisplayName,
+            dateLabel = reviewDateLabel(review.createdAt.orEmpty()),
+            rating = review.rating,
+            body = review.body.orEmpty(),
+            verifiedPurchase = review.verifiedPurchase,
+        )
+    }
+    return ReviewsUi(
+        averageRating = average,
+        total = total,
+        rows = rows,
+        hiddenCount = (total - rows.size).coerceAtLeast(0),
+    )
 }
 
-/** The fresh tier's wire value — mirrors checkout's TIER_FRESH. */
-internal const val TIER_FRESH = "fresh"
+/**
+ * Review date label: ISO instant → "17 Aug 2026" (English month abbreviations
+ * — date labels stay locale-stable like the rest of the app's date rows).
+ * Unparseable wire values yield "" so the date line simply hides.
+ */
+internal fun reviewDateLabel(createdAt: String): String = runCatching {
+    OffsetDateTime.parse(createdAt).format(REVIEW_DATE_FORMAT)
+}.getOrDefault("")
+
+private val REVIEW_DATE_FORMAT: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH)
+
+/** One-decimal aggregate label — "4.5" (and "4.0", not "4"). */
+internal fun formatReviewRating(rating: Double): String =
+    String.format(Locale.ENGLISH, "%.1f", rating)
 
 /**
  * The "Ask on WhatsApp" prefill: plain English product facts (name, selected

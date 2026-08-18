@@ -161,17 +161,19 @@ Common to all platforms:
    → **Check**. Green means we deliver: "Delivers to {city} · Fresh ·
    same-day" or a shelf-stable variant with day counts. Red means not yet:
    "pan-India shipping coming soon." The result is remembered, so the next
-   product page (and on web, the cart's delivery estimate) reuses it.
+   product page (and on every platform, the cart's delivery estimate)
+   reuses it.
 7. **Trust information**: freshness, shelf life, lead time, dietary tags
    (web + iOS), ingredients, story, **allergens**, **storage**, and the
    **karigar** who made it (web + iOS).
 8. **Cross-sell rail** — "More from the {family} collection" (web + iOS).
-9. **Customer reviews** (web) — below the cross-sell rail: the average star
-   rating, up to five approved reviews (newest first) with author display
-   name, date, and a gold **Verified purchase** badge when the review came
-   from a real delivered order, plus a "+N more" note when there are
-   extras. The section is hidden entirely on products with no approved
-   reviews yet.
+9. **Customer reviews** (web, iOS, Android) — the average star rating, up
+   to five approved reviews (newest first) with author display name, date,
+   and a gold **Verified purchase** badge when the review came from a real
+   delivered order, plus a "+N more" note when there are extras. The
+   section is hidden entirely on products with no approved reviews yet.
+   On web and iOS it sits below the cross-sell rail; on Android below the
+   allergens section.
 
 Platform specifics: **web** has a sticky buy bar on mobile screens;
 **iOS** has a sticky bottom buy bar everywhere; **Android** keeps Add to
@@ -208,11 +210,16 @@ a running total. Carts persist on the device.
   - Unpriced items show an "On request" pill; the final total is always
     confirmed at checkout.
 - **iOS**: quantity steppers, swipe-left to delete, **Checkout**, **Send
-  order on WhatsApp**, **Clear cart**. Delivery is "calculated at
-  checkout" — the fee first appears on the completed order.
+  order on WhatsApp**, **Clear cart**. With a checked pincode saved, the
+  footer shows the live delivery fee and a free-delivery progress line
+  ("Add ₹x more for free delivery" / "Free delivery unlocked"); without
+  one it reads "calculated at checkout" with a **Check** button that
+  opens the delivery check, and the footer re-prices the moment it lands.
 - **Android**: same actions (− / + / remove / clear), an estimated total
   (with an "On request" note when prices are missing), Checkout, and Send
-  order on WhatsApp.
+  order on WhatsApp. Delivery pricing matches iOS — a saved checked
+  pincode shows the fee + free-delivery progress; the **Check** affordance
+  opens the delivery check in a bottom sheet and re-prices on the spot.
 
 ---
 
@@ -449,9 +456,6 @@ ask you to sign in there first, then reload.
 
 So nobody hunts for what isn't there:
 
-- **Apps don't show delivery fees or free-delivery thresholds in the
-  cart** — fees appear on the priced order at checkout/after payment. Web
-  shows the full estimate.
 - **No guest checkout on web** — ordering there requires an account. Both
   apps let you browse and fill a cart without signing in; ordering asks.
 - **Web Build-a-gift is a quote form**, not an interactive box builder
