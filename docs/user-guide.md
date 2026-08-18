@@ -18,7 +18,7 @@ Last updated: 2026-08-17.
 |---|---|---|---|
 | Where | https://mishran.pranavb.com | TestFlight (v0.1.0, build 202608171042 — processing) | https://mishran.pranavb.com/download/mishran-latest.apk |
 | Works best on | Any modern browser, mobile or desktop | iPhone, portrait only | Android 8.0+ phones |
-| Sign in required to order | Yes (phone OTP) | No — browse first, sign in to order | Yes, up front |
+| Sign in required to order | Yes (phone OTP) | No — browse first, sign in to order | No — browse first, sign in to order |
 | Languages | English, हिन्दी, ಕನ್ನಡ | 9 languages (see §12) | 9 languages (see §12) |
 | Appearance | Light | Light (locked) | Follows system light/dark |
 
@@ -56,7 +56,10 @@ There are no passwords anywhere — you sign in with a phone number and a
    over** returns to the phone screen.
 
 ### Android
-1. Sign-in is the first screen — there's no guest browsing.
+1. The app opens straight to Home — browse everything without signing in,
+   like iOS. When you try to order (**Checkout** from the cart, **Buy now**
+   on a product, or opening **Orders**), you're asked to sign in and then
+   returned to exactly what you were doing.
 2. Same country picker as iOS (default 🇮🇳 +91, searchable, paste-tolerant).
 3. **Send OTP** → the code field often **fills itself in** (SMS Retriever
    auto-read; no SMS permission is used). **Resend code** re-sends right on
@@ -250,15 +253,19 @@ reference and a **Track** button. A receipt SMS follows.
     yet).
 - **iOS**: Orders list → detail with a five-stage progress timeline
   (Confirmed → Packed → Dispatched → Out for delivery → Delivered), items,
-  totals, and **Need help** (WhatsApp). Starting a delivery-track on iOS
+  totals, **Need help** (WhatsApp), and **Order again** — every line goes
+  back into the cart (pack sizes honored) and you land in the cart to
+  review it. Starting a delivery-track on iOS
   also pins a **Live Activity** to your Lock Screen that updates as the
   order moves.
-- **Android**: Orders tab → same five-stage timeline, items, totals, and a
-  **Call support** button. Push notifications announce each stage
+- **Android**: Orders tab → same five-stage timeline, items, totals, a
+  **Call support** button, and **Reorder** — all items go back into the
+  cart (pack sizes honored) with a confirming toast ("Added to cart", or
+  "2 of 3 items added" if a line failed) and a **Go to cart** shortcut.
+  Push notifications announce each stage
   ("Packed with care", "Out for delivery", …) and tapping one opens that
   order. The Android **home-screen widget** ("Mishran order") shows your
   latest in-flight order and deep-links to it.
-- **Reorder**: web only today (apps don't have the button yet).
 
 ---
 
@@ -392,7 +399,6 @@ hours 9:00–21:00 IST, kitchens in Bengaluru), `/about`, `/privacy`,
 So nobody hunts for what isn't there:
 
 - **No COD** anywhere; Razorpay only.
-- **No reorder button in the apps** (web has it).
 - **No reviews display** anywhere yet — capture exists on delivered web
   orders only.
 - **No coupon/discount code field** at checkout (server-side discounts can
@@ -400,7 +406,7 @@ So nobody hunts for what isn't there:
 - **Apps don't show delivery fees or free-delivery thresholds in the
   cart** — fees appear on the priced order at checkout/after payment. Web
   shows the full estimate.
-- **No guest checkout on web** and no guest browsing on Android; iOS
-  allows browsing without sign-in.
+- **No guest checkout on web** — ordering there requires an account. Both
+  apps let you browse and fill a cart without signing in; ordering asks.
 - **Web Build-a-gift is a quote form**, not an interactive box builder
   (by design — the team prices every bespoke box before packing).

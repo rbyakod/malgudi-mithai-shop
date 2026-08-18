@@ -53,6 +53,9 @@ fun OrderListScreen(
     onOrderClick: (orderId: String) -> Unit,
     onBrowse: () -> Unit,
     onOpenCart: () -> Unit = {},
+    // B5: the guest session's sign-in CTA — wired to AUTH_PHONE with a
+    // redirect back here, so the verified session lands on the order list.
+    onSignIn: () -> Unit = {},
     viewModel: OrderListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -83,6 +86,9 @@ fun OrderListScreen(
             }
 
             when {
+                // Guest (B5): no session means no history to show — the sign-in
+                // CTA instead of a false "No orders yet." empty state.
+                state.needAuth -> NeedAuthOrders(onSignIn)
                 !state.loaded -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
@@ -192,6 +198,36 @@ private fun EmptyOrders(onBrowse: () -> Unit, onOpenCart: () -> Unit) {
         }
         OutlinedButton(onClick = onOpenCart, modifier = Modifier.padding(top = 8.dp)) {
             Text(stringResource(R.string.orders_go_to_cart))
+        }
+    }
+}
+
+/** Guest session (B5): sign-in CTA — same shape as the empty state. */
+@Composable
+private fun NeedAuthOrders(onSignIn: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            imageVector = Icons.Filled.ReceiptLong,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(64.dp),
+        )
+        Text(
+            text = stringResource(R.string.auth_sign_in_to_continue),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
+        )
+        Text(
+            text = stringResource(R.string.orders_empty_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Button(onClick = onSignIn, modifier = Modifier.padding(top = 24.dp)) {
+            Text(stringResource(R.string.auth_sign_in_to_continue))
         }
     }
 }

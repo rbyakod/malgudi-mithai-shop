@@ -21,6 +21,7 @@ import com.mishran.app.data.local.SecureTokenStore
 import com.mishran.app.data.remote.api.MishranApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -64,6 +65,15 @@ class AuthRepository @Inject constructor(
     /** True when a session exists (an access token is persisted). */
     suspend fun isLoggedIn(): Boolean =
         dataStore.data.first()[DataStoreKeys.ACCESS_TOKEN] != null
+
+    /**
+     * Live session flag for guest browsing (B5): emits false for guests, true
+     * once an access token lands (OTP verify, biometric restore). Distinct so
+     * unrelated preference writes don't re-emit — the orders tab refreshes on
+     * each true transition.
+     */
+    fun isLoggedInFlow(): Flow<Boolean> =
+        dataStore.data.map { it[DataStoreKeys.ACCESS_TOKEN] != null }.distinctUntilChanged()
 
     /** Signed-in phone (E.164), or null when no session / pre-phone-key session. */
     fun sessionPhone(): Flow<String?> =
@@ -156,4 +166,11 @@ class AuthRepository @Inject constructor(
         secureTokenStore.saveRefreshToken(refreshed.refreshToken)
         return true
     }
+}
+
+/** Hilt bridge for the Compose app root (outside any Hilt-scoped host). */
+@dagger.hilt.EntryPoint
+@dagger.hilt.InstallIn(dagger.hilt.components.SingletonComponent::class)
+interface AuthRepositoryEntryPoint {
+    fun authRepository(): AuthRepository
 }

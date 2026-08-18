@@ -47,6 +47,7 @@ import dagger.hilt.android.EntryPointAccessors
 import com.mishran.app.ui.auth.BiometricGate
 import com.mishran.app.ui.auth.OtpScreen
 import com.mishran.app.ui.auth.PhoneEntryScreen
+import com.mishran.app.data.repository.AuthRepositoryEntryPoint
 import com.mishran.app.data.repository.SettingsRepositoryEntryPoint
 import com.mishran.app.data.sync.PushRegistrationScheduler
 import com.mishran.app.push.PushEventBusEntryPoint
@@ -125,6 +126,22 @@ fun MishranAppRoot() {
     var confirmedOrderSlotLabel by remember { mutableStateOf<String?>(null) }
     var confirmedOrderSlaDays by remember { mutableStateOf<Int?>(null) }
 
+    // B5 guest browsing: the live session flag the ordering intercepts consult
+    // at tap time. Guests route to sign-in carrying a redirect back to the
+    // intercepted destination (see [Routes.orderingDestination]); signed-in
+    // users proceed untouched. Seeded true so a signed-in user who taps within
+    // the first DataStore read never sees a spurious sign-in hop — the flag
+    // settles in milliseconds.
+    val authRepository = remember {
+        EntryPointAccessors.fromApplication<AuthRepositoryEntryPoint>(
+            context.applicationContext,
+        ).authRepository()
+    }
+    var loggedIn by remember { mutableStateOf(true) }
+    LaunchedEffect(authRepository) {
+        authRepository.isLoggedInFlow().collect { loggedIn = it }
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
@@ -154,9 +171,12 @@ fun MishranAppRoot() {
         ) {
             composable(Routes.SPLASH) {
                 // Cold-start auth gate (Task 8.2): biometric-locked session →
-                // prompt → Home; plain session → Home; otherwise → phone entry.
-                // Either outcome pops SPLASH so the destination becomes the new
-                // back-stack root (Back from Home/AUTH_PHONE exits the app).
+                // prompt → Home; everyone else — plain session or guest — opens
+                // Home (B5 guest browsing). NeedLogin fires only on genuine
+                // biometric failures; ordering surfaces intercept guests
+                // themselves. Either outcome pops SPLASH so the destination
+                // becomes the new back-stack root (Back from Home/AUTH_PHONE
+                // exits the app).
                 BiometricGate(
                     onUnlocked = {
                         navController.navigate(Routes.HOME) {
@@ -167,7 +187,10 @@ fun MishranAppRoot() {
                         }
                     },
                     onNeedLogin = {
-                        navController.navigate(Routes.AUTH_PHONE) {
+                        // Built route (no redirect): the AUTH_PHONE pattern now
+                        // carries an optional redirectTo arg — same built-route
+                        // idiom as the bottom bar's CATALOG entry.
+                        navController.navigate(Routes.authPhone()) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 inclusive = true
                             }
@@ -176,9 +199,22 @@ fun MishranAppRoot() {
                     },
                 )
             }
-            composable(Routes.AUTH_PHONE) {
+            composable(
+                route = Routes.AUTH_PHONE,
+                arguments = listOf(
+                    navArgument("redirectTo") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                ),
+            ) { entry ->
+                // B5: `redirectTo` names the destination an ordering intercept
+                // was trying to reach — forwarded to OTP so the verified
+                // session lands back on it instead of Home.
+                val redirectTo = entry.arguments?.getString("redirectTo")
                 PhoneEntryScreen(onOtpSent = { requestId, phone ->
-                    navController.navigate(Routes.authOtp(requestId, phone))
+                    navController.navigate(Routes.authOtp(requestId, phone, redirectTo))
                 })
             }
             composable(
@@ -186,19 +222,37 @@ fun MishranAppRoot() {
                 arguments = listOf(
                     navArgument("requestId") { type = NavType.StringType },
                     navArgument("phone") { type = NavType.StringType },
+                    navArgument("redirectTo") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
                 ),
-            ) {
+            ) { entry ->
+                val redirectTo = entry.arguments?.getString("redirectTo")
                 OtpScreen(
                     onVerified = {
                         // Session exists now — upload the FCM token (Task 11.3).
                         PushRegistrationScheduler.enqueue(context)
-                        // Clear the entire back stack (splash + auth) so HOME is the
-                        // new root: Back from Home exits the app, never returns to login.
-                        navController.navigate(Routes.HOME) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                inclusive = true
+                        if (redirectTo == null) {
+                            // Plain sign-in: clear the entire back stack (splash +
+                            // auth) so HOME is the new root: Back from Home exits
+                            // the app, never returns to login.
+                            navController.navigate(Routes.HOME) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
                             }
-                            launchSingleTop = true
+                        } else {
+                            // B5 redirect: resume the intercepted destination.
+                            // Popping only past AUTH_PHONE keeps the underlying
+                            // stack (e.g. Home → Cart under a resumed checkout)
+                            // so Back behaves as if sign-in never happened.
+                            navController.navigate(redirectTo) {
+                                popUpTo(Routes.AUTH_PHONE) { inclusive = true }
+                                launchSingleTop = true
+                            }
                         }
                     },
                 )
@@ -269,9 +323,13 @@ fun MishranAppRoot() {
                 // the Room cart, then pops back to where the user came from.
                 // P1 parity: Buy now performs the same write (selected pack +
                 // qty) and goes straight to checkout — the one-shot flow.
+                // B5: guests are intercepted to sign-in with a redirect back
+                // (checkout resume), same as the cart's Checkout button.
                 ProductDetailScreen(
                     onAddedToCart = { navController.popBackStack() },
-                    onBuyNow = { navController.navigate(Routes.CHECKOUT) },
+                    onBuyNow = {
+                        navController.navigate(Routes.orderingDestination(Routes.CHECKOUT, loggedIn))
+                    },
                     // Parity batch: "Ask on WhatsApp" opens the wa.me link the
                     // screen composed (product facts + selected pack).
                     onWhatsApp = { url ->
@@ -295,7 +353,12 @@ fun MishranAppRoot() {
                         )
                         context.startActivity(chat)
                     },
-                    onCheckout = { navController.navigate(Routes.CHECKOUT) },
+                    // B5 guest intercept: a null session routes to sign-in
+                    // carrying redirectTo=checkout — the verified session lands
+                    // back here, never mid-flow on a 401.
+                    onCheckout = {
+                        navController.navigate(Routes.orderingDestination(Routes.CHECKOUT, loggedIn))
+                    },
                     onBrowse = {
                         navController.navigate(Routes.catalog()) {
                             popUpTo(navController.graph.findStartDestination().id) {
@@ -324,10 +387,14 @@ fun MishranAppRoot() {
             }
             composable(Routes.ORDERS) {
                 // Task 11.1: offline-first order history (Room cache + refresh).
+                // B5: a guest session renders the sign-in CTA inside the screen
+                // (a false "No orders yet." would mislead) — the CTA redirects
+                // back here once verified.
                 OrderListScreen(
                     onOrderClick = { orderId ->
                         navController.navigate(Routes.orderDetail(orderId))
                     },
+                    onSignIn = { navController.navigate(Routes.authPhone(redirectTo = Routes.ORDERS)) },
                     onOpenCart = { navController.navigate(Routes.CART) },
                     onBrowse = {
                         navController.navigate(Routes.catalog()) {
@@ -374,6 +441,8 @@ fun MishranAppRoot() {
                 // mishran://order/{id} push deep link. Support CTA dials the
                 // support line (placeholder number until launch). NavBackStackEntry's
                 // context is private, so grab the composition's instead.
+                // Parity batch: the reorder snackbar's Go-to-cart action hops
+                // to the cart, the same plain navigate as OrderList's CTA.
                 val context = LocalContext.current
                 OrderDetailScreen(
                     onCallSupport = {
@@ -383,6 +452,7 @@ fun MishranAppRoot() {
                         )
                         context.startActivity(dial)
                     },
+                    onGoToCart = { navController.navigate(Routes.CART) },
                 )
             }
             composable(Routes.ACCOUNT) {
@@ -404,7 +474,8 @@ fun MishranAppRoot() {
                         context.startActivity(chat)
                     },
                     onSignedOut = {
-                        navController.navigate(Routes.AUTH_PHONE) {
+                        // Built route (no redirect) — see the gate's onNeedLogin.
+                        navController.navigate(Routes.authPhone()) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 inclusive = true
                             }

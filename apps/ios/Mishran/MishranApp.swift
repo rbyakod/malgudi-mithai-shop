@@ -205,7 +205,9 @@ struct DestinationView: View {
         case .orders:
             OrderListView()
         case let .orderDetail(id):
-            OrderDetailView(orderId: id)
+            // Batch B4: the detail's Order-again row needs the Router to
+            // land on Route.cart after refilling the cart.
+            OrderDetailView(orderId: id, router: router)
         case .account:
             AccountView(router: router, onSignedOut: onSignedOut)
         case .addresses:

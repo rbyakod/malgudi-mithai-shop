@@ -159,6 +159,39 @@ final class ProductDetailViewModel {
         try? context.save()
     }
 
+    /// Batch B4 (reorder): order lines → cart lines, straight into the local
+    /// store (no server round-trip). The composite-id rule mirrors the PDP
+    /// add: a derived pack re-keys as `${productId}:${packLabel}` so the
+    /// reordered size merges with a fresh add of the same chip, while a nil
+    /// packLabel (base pack, or a pre-Batch-A order) falls back to the bare
+    /// productId exactly like quick add. Machine paise flows through
+    /// unchanged — order lines already carry unit priceInPaise. Returns the
+    /// number of lines inserted or merged (0 for an itemless order — the
+    /// caller then skips the cart trip).
+    nonisolated static func reorderToCart(_ items: [OrderItemDTO], in context: ModelContext) -> Int {
+        guard !items.isEmpty else { return 0 }
+        let cart = findOrCreateCart(in: context)
+        for item in items {
+            let lineId = item.packLabel.map { "\(item.productId):\($0)" } ?? item.productId
+            if let line = cart.items.first(where: { $0.productId == lineId }) {
+                line.quantity = min(line.quantity + max(item.quantity, 1), maxQuantity)
+            } else {
+                let line = CartItemEntity(
+                    productId: lineId,
+                    name: item.name,
+                    slug: item.slug,
+                    packLabel: item.packLabel,
+                    unitPricePaise: item.priceInPaise,
+                    quantity: min(max(item.quantity, 1), maxQuantity)
+                )
+                context.insert(line)
+                line.cart = cart
+            }
+        }
+        try? context.save()
+        return items.count
+    }
+
     /// Pack display label for a line — nil on the base pack (Android parity:
     /// "Null = base pack"), so cart rows show the chip only where it varies.
     nonisolated static func packLabel(pack: PackSize?, displayPrice: String?) -> String? {

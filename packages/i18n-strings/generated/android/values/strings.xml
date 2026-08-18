@@ -21,6 +21,7 @@
   <string name="auth_otp_resend">Resend code</string>
   <string name="auth_otp_countdown">Resend in %1$ss</string>
   <string name="auth_otp_wrong_number">Wrong number? Start over</string>
+  <string name="auth_sign_in_to_continue">Sign in to continue</string>
   <string name="auth_biometric_prompt">Use biometric to log in to Mishran</string>
   <string name="auth_biometric_title">Welcome back</string>
   <string name="auth_biometric_cta">Quick login</string>

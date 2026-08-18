@@ -20,6 +20,7 @@
   "auth.otp.resend": "कोड पुनः भेजें",
   "auth.otp.countdown": "{seconds} सेकंड में पुनः भेजें",
   "auth.otp.wrong_number": "गलत नंबर है? फिर से शुरू करें",
+  "auth.sign_in_to_continue": "जारी रखने के लिए साइन इन करें",
   "auth.biometric.prompt": "मिश्रण में लॉग इन करने के लिए बायोमेट्रिक का उपयोग करें",
   "auth.biometric.title": "वापसी पर स्वागत है",
   "auth.biometric.cta": "त्वरित लॉगिन",

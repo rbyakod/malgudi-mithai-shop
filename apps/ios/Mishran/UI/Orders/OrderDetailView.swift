@@ -2,6 +2,9 @@
 // Order header + happy-path timeline (live stage highlighted) + items +
 // totals. Side states (cancelled, payment_failed, …) render a banner
 // instead of the timeline — the contract has no history array in v1.
+// Batch B4: "Order again" re-adds every line to the local cart (pack-size
+// aware) and routes there.
+import SwiftData
 import SwiftUI
 
 struct OrderDetailView: View {
@@ -9,7 +12,11 @@ struct OrderDetailView: View {
     /// P1: wa.me support link off GET /brand (fallback number when offline).
     @State private var helpURL: URL?
     @Environment(\.openURL) private var openURL
+    @Environment(\.modelContext) private var context
     let orderId: String
+    /// Batch B4: reorder lands on Route.cart — same Router the shell passes
+    /// to AccountView/CheckoutDestination.
+    let router: Router
 
     var body: some View {
         Group {
@@ -99,6 +106,22 @@ struct OrderDetailView: View {
                     .disabled(helpURL == nil)
                     .accessibilityLabel(L("order.help"))
                     .accessibilityHint("Opens WhatsApp chat with Mishran support")
+
+                    // Batch B4: every line goes back into the local cart
+                    // (pack-aware, quantity-capped by reorderToCart) and the
+                    // trip to the cart is its own success feedback — same
+                    // no-toast contract as the catalog card's quick add.
+                    Button {
+                        let added = ProductDetailViewModel.reorderToCart(viewModel.order?.items ?? [], in: context)
+                        if added > 0 {
+                            router.push(.cart)
+                        }
+                    } label: {
+                        Label(L("orders.reorder"), systemImage: "cart.badge.plus")
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                    }
+                    .disabled((viewModel.order?.items.isEmpty ?? true))
+                    .accessibilityLabel(L("orders.reorder"))
                 }
             }
             .refreshable { await viewModel.load() }

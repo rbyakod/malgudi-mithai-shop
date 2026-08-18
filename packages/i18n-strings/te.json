@@ -20,6 +20,7 @@
   "auth.otp.resend": "కోడ్ మళ్లీ పంపండి",
   "auth.otp.countdown": "{seconds} సెకన్లలో మళ్లీ పంపండి",
   "auth.otp.wrong_number": "తప్పు నంబరా? మళ్లీ మొదలుపెట్టండి",
+  "auth.sign_in_to_continue": "కొనసాగించడానికి సైన్ ఇన్ చేయండి",
   "auth.biometric.prompt": "Mishran ను యాక్సెస్ చేయడానికి బయోమెట్రిక్ ఉపయోగించండి",
   "auth.biometric.title": "తిరిగి స్వాగతం",
   "auth.biometric.cta": "త్వరిత ప్రాప్తి",

@@ -38,20 +38,20 @@ class BiometricGateViewModelTest {
     fun tearDown() = Dispatchers.resetMain()
 
     @Test
-    fun `not enrolled and no session routes to login`() = runTest(dispatcher) {
+    fun `no session and no biometric gate unlocks as a guest`() = runTest(dispatcher) {
+        // B5 guest browsing: signed-out users open straight to Home — sign-in
+        // is forced only by the ordering intercepts, never at cold start.
         coEvery { authRepository.isBiometricLoginEnabled() } returns false
-        coEvery { authRepository.isLoggedIn() } returns false
 
         val vm = BiometricGateViewModel(authRepository, available())
         advanceUntilIdle()
 
-        assertEquals(GateState.NeedLogin, vm.state.value)
+        assertEquals(GateState.Unlocked, vm.state.value)
     }
 
     @Test
     fun `plain stored session skips straight to home`() = runTest(dispatcher) {
         coEvery { authRepository.isBiometricLoginEnabled() } returns false
-        coEvery { authRepository.isLoggedIn() } returns true
 
         val vm = BiometricGateViewModel(authRepository, available())
         advanceUntilIdle()

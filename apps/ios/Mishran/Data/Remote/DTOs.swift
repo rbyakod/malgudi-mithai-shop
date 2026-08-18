@@ -362,6 +362,11 @@ struct OrderItemDTO: Decodable, Equatable {
     let name: String
     let quantity: Int
     let unit: String?
+    /// Pack chip the line sold ("500g") when it was a derived size — the
+    /// Batch B4 reorder re-keys the cart line as `${productId}:${packLabel}`
+    /// so it merges with a fresh PDP add of the same chip. Nil = base pack
+    /// (or a pre-Batch-A order); the server omits/nulls the key there.
+    let packLabel: String?
     let priceInPaise: Int
     let image: String?
 }

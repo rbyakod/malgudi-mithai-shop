@@ -20,6 +20,7 @@
   "auth.otp.resend": "કોડ ફરી મોકલો",
   "auth.otp.countdown": "{seconds} સેકંડમાં ફરી મોકલો",
   "auth.otp.wrong_number": "ખોટો નંબર છે? ફરી શરૂ કરો",
+  "auth.sign_in_to_continue": "ચાલુ રાખવા માટે સાઇન ઇન કરો",
   "auth.biometric.prompt": "Mishran ઍક્સેસ કરવા બાયોમેટ્રિક વાપરો",
   "auth.biometric.title": "પાછું સ્વાગત",
   "auth.biometric.cta": "ઝડપી ઍક્સેસ",

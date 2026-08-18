@@ -235,4 +235,80 @@ final class ProductDetailViewModelTests: XCTestCase {
         XCTAssertEqual(items.count, 1)
         XCTAssertEqual(items[0].quantity, 20, "the stepper's max rides the quick-add upsert too")
     }
+
+    // MARK: Batch B4 reorder (order-detail Order again)
+
+    private func reorderItem(
+        productId: String = "p1",
+        packLabel: String?,
+        quantity: Int = 2,
+        priceInPaise: Int = 55_000
+    ) -> OrderItemDTO {
+        OrderItemDTO(
+            productId: productId,
+            slug: "kaju-katli",
+            name: "Kaju Katli",
+            quantity: quantity,
+            unit: packLabel,
+            packLabel: packLabel,
+            priceInPaise: priceInPaise,
+            image: "kaju-katli.jpg"
+        )
+    }
+
+    func testReorderDerivedPackKeysCompositeLineId() throws {
+        let added = ProductDetailViewModel.reorderToCart(
+            [reorderItem(packLabel: "500g")], in: container.mainContext
+        )
+
+        XCTAssertEqual(added, 1)
+        let items = try container.mainContext.fetch(FetchDescriptor<CartItemEntity>())
+        XCTAssertEqual(items.count, 1)
+        XCTAssertEqual(items[0].productId, "p1:500g", "derived packs key as `${productId}:${packLabel}`")
+        XCTAssertEqual(items[0].packLabel, "500g")
+        XCTAssertEqual(items[0].quantity, 2)
+        XCTAssertEqual(items[0].unitPricePaise, 55_000, "machine paise flows through unchanged")
+    }
+
+    func testReorderNilPackLabelFallsBackToBasePackLine() throws {
+        let added = ProductDetailViewModel.reorderToCart(
+            [reorderItem(packLabel: nil)], in: container.mainContext
+        )
+
+        XCTAssertEqual(added, 1)
+        let items = try container.mainContext.fetch(FetchDescriptor<CartItemEntity>())
+        XCTAssertEqual(items.map(\.productId), ["p1"], "no pack label → bare productId, no suffix")
+        XCTAssertEqual(items[0].packLabel, nil)
+    }
+
+    func testReorderMergesWithExistingCartLineInsteadOfDuplicating() throws {
+        // A quick-added base line at 2 …
+        ProductDetailViewModel.quickAddToCart(quickAddFixture(), quantity: 2, in: container.mainContext)
+
+        // … and the reordered base line (same bare id) increments it.
+        _ = ProductDetailViewModel.reorderToCart(
+            [reorderItem(packLabel: nil, quantity: 3)], in: container.mainContext
+        )
+
+        let items = try container.mainContext.fetch(FetchDescriptor<CartItemEntity>())
+        XCTAssertEqual(items.count, 1, "reorder merges by line id rather than duplicating")
+        XCTAssertEqual(items[0].quantity, 5)
+    }
+
+    func testReorderClampsAtMaxQuantityAndSkipsEmptyOrders() throws {
+        // Existing line at 18 + a reordered quantity of 5 → capped at 20.
+        ProductDetailViewModel.quickAddToCart(quickAddFixture(), quantity: 18, in: container.mainContext)
+        _ = ProductDetailViewModel.reorderToCart(
+            [reorderItem(packLabel: nil, quantity: 5)], in: container.mainContext
+        )
+        var items = try container.mainContext.fetch(FetchDescriptor<CartItemEntity>())
+        XCTAssertEqual(items[0].quantity, 20, "the cart stepper's max rides reorder too")
+
+        // An itemless order adds nothing — no new lines, no destructive side
+        // effects (the cart row the earlier inserts made survives untouched).
+        let added = ProductDetailViewModel.reorderToCart([], in: container.mainContext)
+        XCTAssertEqual(added, 0)
+        items = try container.mainContext.fetch(FetchDescriptor<CartItemEntity>())
+        XCTAssertEqual(items.count, 1, "nothing new, nothing destructive")
+    }
 }

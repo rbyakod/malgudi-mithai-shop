@@ -1,8 +1,9 @@
-// apps/android/app/src/test/java/com/mishran/app/data/repository/CartRepositoryTest.kt — Task 10.1 / P1 parity.
+// apps/android/app/src/test/java/com/mishran/app/data/repository/CartRepositoryTest.kt — Task 10.1 / P1 parity / parity batch (reorder).
 //
 // JVM unit tests for the cart repository + the price-estimation helpers,
 // including the pack-scoped adds (P1 parity): base pack keeps the bare
-// product id, derived packs key "${productId}:${label}".
+// product id, derived packs key "${productId}:${label}". The reorder adds
+// (parity batch) assert the same id contract straight from order-line args.
 // The DAO is mocked with an in-memory map keyed by productId so quantity
 // stacking is exercised through the real repository logic. NOTE:
 // source-complete (no SDK).
@@ -158,6 +159,99 @@ class CartRepositoryTest {
         assertEquals(1, table.getValue("p1").quantity)
         assertEquals(3, table.getValue("p1:1 kg").quantity)
         assertEquals(setOf("p1", "p1:1 kg"), table.keys)
+    }
+
+    // ---- Parity batch: reorder (addPackLine) ------------------------------
+
+    @Test
+    fun `a reorder line with a pack label keys product id and label`() = runTest {
+        repository.addPackLine(
+            productId = "p1",
+            slug = "kaju-katli",
+            name = "Kaju Katli",
+            imageUrl = "https://cdn.mishran.in/kaju-katli.jpg",
+            packLabel = "500g",
+            unitPricePaise = 72000,
+            unit = "500g",
+            quantity = 2,
+        )
+
+        val line = table.getValue("p1:500g")
+        assertEquals(2, line.quantity)
+        assertEquals("500g", line.packLabel)
+        assertEquals("Kaju Katli", line.name)
+        assertEquals("₹720 / 500g", line.displayPrice)
+        // The catalog-shaped label must round-trip through the estimate parser.
+        assertEquals(72000L, parsePaise(line.displayPrice))
+    }
+
+    @Test
+    fun `a reorder line without a pack label keeps the bare product id`() = runTest {
+        repository.addPackLine(
+            productId = "p1",
+            slug = "kaju-katli",
+            name = "Kaju Katli",
+            imageUrl = null,
+            packLabel = null,
+            unitPricePaise = 18000,
+            unit = "250g",
+            quantity = 1,
+        )
+
+        val line = table.getValue("p1")
+        assertEquals(1, line.quantity)
+        assertEquals(null, line.packLabel)
+        assertEquals("₹180 / 250g", line.displayPrice)
+    }
+
+    @Test
+    fun `a reorder line stacks quantity on the existing line instead of duplicating`() = runTest {
+        repository.addPackLine(
+            productId = "p1", slug = "kaju-katli", name = "Kaju Katli",
+            imageUrl = null, packLabel = "500g", unitPricePaise = 72000,
+            unit = "500g", quantity = 2,
+        )
+        // The same line reordered again — plus a base-pack add of the same
+        // product, which must NOT merge into the pack line.
+        repository.addPackLine(
+            productId = "p1", slug = "kaju-katli", name = "Kaju Katli",
+            imageUrl = null, packLabel = "500g", unitPricePaise = 72000,
+            unit = "500g", quantity = 3,
+        )
+        repository.addPackLine(
+            productId = "p1", slug = "kaju-katli", name = "Kaju Katli",
+            imageUrl = null, packLabel = null, unitPricePaise = 72000,
+            unit = "500g", quantity = 1,
+        )
+
+        assertEquals(5, table.getValue("p1:500g").quantity)
+        assertEquals(1, table.getValue("p1").quantity)
+        assertEquals(setOf("p1", "p1:500g"), table.keys)
+    }
+
+    @Test
+    fun `a reorder line never exceeds the quantity backstop`() = runTest {
+        repository.addPackLine(
+            productId = "p1", slug = "kaju-katli", name = "Kaju Katli",
+            imageUrl = null, packLabel = null, unitPricePaise = 72000,
+            unit = null, quantity = 15,
+        )
+        repository.addPackLine(
+            productId = "p1", slug = "kaju-katli", name = "Kaju Katli",
+            imageUrl = null, packLabel = null, unitPricePaise = 72000,
+            unit = null, quantity = 15,
+        )
+
+        assertEquals(MAX_LINE_QUANTITY, table.getValue("p1").quantity)
+    }
+
+    @Test
+    fun `packLinePriceLabel renders catalog-shaped labels`() {
+        assertEquals("₹720 / 500g", packLinePriceLabel(72000, "500g"))
+        assertEquals("₹1,440", packLinePriceLabel(144000, null))
+        // Indian grouping, blank unit dropped, sub-rupee remainder kept.
+        assertEquals("₹1,08,432", packLinePriceLabel(10843200, "  "))
+        assertEquals("₹12.50", packLinePriceLabel(1250, null))
     }
 
     // ---- parsePaise / estimateTotalPaise (pure functions) -----------------

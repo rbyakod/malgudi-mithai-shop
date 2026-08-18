@@ -21,6 +21,7 @@
   <string name="auth_otp_resend">ਕੋਡ ਦੁਬਾਰਾ ਭੇਜੋ</string>
   <string name="auth_otp_countdown">%1$s ਸਕਿੰਟਾਂ ਵਿੱਚ ਦੁਬਾਰਾ ਭੇਜੋ</string>
   <string name="auth_otp_wrong_number">ਗ਼ਲਤ ਨੰਬਰ? ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਕਰੋ</string>
+  <string name="auth_sign_in_to_continue">ਜਾਰੀ ਰੱਖਣ ਲਈ ਸਾਈਨ ਇਨ ਕਰੋ</string>
   <string name="auth_biometric_prompt">Mishran ਤੱਕ ਪਹੁੰਚਣ ਲਈ ਬਾਇਓਮੈਟ੍ਰਿਕ ਵਰਤੋ</string>
   <string name="auth_biometric_title">ਮੁੜ ਸਵਾਗਤ</string>
   <string name="auth_biometric_cta">ਤੇਜ਼ ਪਹੁੰਚ</string>

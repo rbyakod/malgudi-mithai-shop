@@ -217,7 +217,7 @@
         <tr><th>Sign in required to order</th>
             <td>Yes (phone OTP)</td>
             <td>No — browse first, sign in to order</td>
-            <td>Yes, up front</td></tr>
+            <td>No — browse first, sign in to order</td></tr>
         <tr><th>Languages</th>
             <td>English, हिन्दी, ಕನ್ನಡ</td>
             <td>9 languages <span class="pill">§12</span></td>
@@ -269,7 +269,10 @@
 
     <h3>Android</h3>
     <ol>
-      <li>Sign-in is the first screen — there's no guest browsing.</li>
+      <li>The app opens straight to Home — browse everything without signing in,
+      like iOS. When you try to order (<strong>Checkout</strong> from the cart,
+      <strong>Buy now</strong> on a product, or opening <strong>Orders</strong>),
+      you're asked to sign in and then returned to exactly what you were doing.</li>
       <li>Same country picker as iOS (default 🇮🇳 +91, searchable, paste-tolerant).</li>
       <li><strong>Send OTP</strong> → the code field often <strong>fills itself in</strong>
       (SMS Retriever auto-read; no SMS permission is used). <strong>Resend code</strong> re-sends
@@ -469,15 +472,19 @@
       and — once delivered — a <strong>star-rating review form</strong> per item (reviews are
       collected for moderation; they aren't displayed on the storefront yet).</li>
       <li><strong>iOS</strong>: Orders list → detail with a five-stage progress timeline
-      (Confirmed → Packed → Dispatched → Out for delivery → Delivered), items, totals, and
-      <strong>Need help</strong> (WhatsApp). Starting a delivery-track on iOS also pins a
+      (Confirmed → Packed → Dispatched → Out for delivery → Delivered), items, totals,
+      <strong>Need help</strong> (WhatsApp), and <strong>Order again</strong> — every line
+      goes back into the cart (pack sizes honored) and you land in the cart to review it.
+      Starting a delivery-track on iOS also pins a
       <strong>Live Activity</strong> to your Lock Screen that updates as the order moves.</li>
-      <li><strong>Android</strong>: Orders tab → same five-stage timeline, items, totals, and a
-      <strong>Call support</strong> button. Push notifications announce each stage ("Packed
+      <li><strong>Android</strong>: Orders tab → same five-stage timeline, items, totals, a
+      <strong>Call support</strong> button, and <strong>Reorder</strong> — all items go back
+      into the cart (pack sizes honored) with a confirming toast ("Added to cart", or
+      "2 of 3 items added" if a line failed) and a <strong>Go to cart</strong> shortcut.
+      Push notifications announce each stage ("Packed
       with care", "Out for delivery", …) and tapping one opens that order. The Android
       <strong>home-screen widget</strong> ("Mishran order") shows your latest in-flight order
       and deep-links to it.</li>
-      <li><strong>Reorder</strong>: web only today (apps don't have the button yet).</li>
     </ul>
   </section>
 
@@ -613,7 +620,6 @@
       <p class="box-title">So nobody hunts for what isn't there</p>
       <ul>
         <li><strong>No COD</strong> anywhere; Razorpay only.</li>
-        <li><strong>No reorder button in the apps</strong> (web has it).</li>
         <li><strong>No reviews display</strong> anywhere yet — capture exists on delivered web
         orders only.</li>
         <li><strong>No coupon/discount code field</strong> at checkout (server-side discounts
@@ -621,8 +627,8 @@
         <li><strong>Apps don't show delivery fees or free-delivery thresholds in the cart</strong>
         — fees appear on the priced order at checkout/after payment. Web shows the full
         estimate.</li>
-        <li><strong>No guest checkout on web</strong> and no guest browsing on Android; iOS
-        allows browsing without sign-in.</li>
+        <li><strong>No guest checkout on web</strong> — ordering there requires an account.
+        Both apps let you browse and fill a cart without signing in; ordering asks.</li>
         <li><strong>Web Build-a-gift is a quote form</strong>, not an interactive box builder
         (by design — the team prices every bespoke box before packing).</li>
       </ul>

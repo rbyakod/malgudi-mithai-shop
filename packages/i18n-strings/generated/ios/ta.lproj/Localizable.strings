@@ -20,6 +20,7 @@
 "auth.otp.resend" = "குறியீட்டை மீண்டும் அனுப்பு";
 "auth.otp.countdown" = "{seconds} விநாடிகளில் மீண்டும் அனுப்பு";
 "auth.otp.wrong_number" = "தவறான எண்ணா? மீண்டும் தொடங்கவும்";
+"auth.sign_in_to_continue" = "தொடர்வதற்கு உள்நுழையவும்";
 "auth.biometric.prompt" = "Mishran ஐ அணுக பயோமெட்ரிக் பயன்படுத்து";
 "auth.biometric.title" = "மீண்டும் வருக";
 "auth.biometric.cta" = "விரைவு அணுகல்";

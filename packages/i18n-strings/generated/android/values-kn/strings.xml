@@ -21,6 +21,7 @@
   <string name="auth_otp_resend">ಸಂಕೇತ ಮರುಕಳುಹಿಸಿ</string>
   <string name="auth_otp_countdown">%1$s ಸೆಕೆಂಡ್‌ಗಳಲ್ಲಿ ಮರುಕಳುಹಿಸಿ</string>
   <string name="auth_otp_wrong_number">ತಪ್ಪು ಸಂಖ್ಯೆಯೇ? ಮರುಪ್ರಾರಂಭಿಸಿ</string>
+  <string name="auth_sign_in_to_continue">ಮುಂದುವರಿಸಲು ಸೈನ್ ಇನ್ ಮಾಡಿ</string>
   <string name="auth_biometric_prompt">Mishran ಗೆ ಪ್ರವೇಶಿಸಲು ಬಯೋಮೆಟ್ರಿಕ್ ಬಳಸಿ</string>
   <string name="auth_biometric_title">ಮರಳಿ ಸ್ವಾಗತ</string>
   <string name="auth_biometric_cta">ತ್ವರಿತ ಪ್ರವೇಶ</string>

@@ -2,9 +2,14 @@
 //
 // Order detail: status header + delivery timeline (canonical happy-path
 // stages with the live one highlighted; side states render a banner), line
-// items, totals breakdown, slot line, and a support CTA. The same screen
+// items, totals breakdown, slot line, and the support CTA. The same screen
 // serves the Orders tab, the post-checkout Track-order CTA, and the
 // mishran://order/{id} push deep link.
+//
+// Parity batch (reorder): a Reorder CTA beside the support line puts every
+// order line back into the cart; the outcome lands as a bottom snackbar —
+// "Added to cart", or "n of m items added" when some lines failed — with a
+// "Go to cart" action that hops to the cart route.
 package com.mishran.app.ui.orders
 
 import androidx.compose.foundation.layout.Arrangement
@@ -24,14 +29,21 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -49,28 +61,62 @@ import com.mishran.app.ui.orderconfirmed.orderReferenceLabel
 @Composable
 fun OrderDetailScreen(
     onCallSupport: () -> Unit = {},
+    onGoToCart: () -> Unit = {},
     viewModel: OrderDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
 
-    when (val current = state) {
-        is UiState.Loading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+    // Reorder confirmation, anchored to the bottom like the catalog's quick-add
+    // snackbar. Static labels resolve up front (stringResource is
+    // composable-only — the collector runs in a coroutine, the same
+    // constraint CheckoutScreen notes); the partial message's counts are only
+    // known at event time, so it formats via the context's resources there.
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val addedLabel = stringResource(R.string.orders_reorder_added)
+    val goToCartLabel = stringResource(R.string.orders_go_to_cart)
+    LaunchedEffect(viewModel) {
+        viewModel.reordered.collect { event ->
+            val message = if (event.added == event.total) {
+                addedLabel
+            } else {
+                context.getString(R.string.orders_reorder_added_partial, event.added, event.total)
+            }
+            // Long duration so the Go-to-cart action is actually tappable.
+            val result = snackbarHostState.showSnackbar(
+                message = message,
+                actionLabel = goToCartLabel,
+                duration = SnackbarDuration.Long,
+            )
+            if (result == SnackbarResult.ActionPerformed) onGoToCart()
         }
-        is UiState.Error -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(current.message, style = MaterialTheme.typography.bodyLarge)
-                Button(onClick = viewModel::load, modifier = Modifier.padding(top = 16.dp)) {
-                    Text(stringResource(R.string.common_try_again))
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (val current = state) {
+            is UiState.Loading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            is UiState.Error -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(current.message, style = MaterialTheme.typography.bodyLarge)
+                    Button(onClick = viewModel::load, modifier = Modifier.padding(top = 16.dp)) {
+                        Text(stringResource(R.string.common_try_again))
+                    }
                 }
             }
+            is UiState.Success -> OrderDetailContent(
+                order = current.data,
+                onCallSupport = onCallSupport,
+                onReorder = viewModel::reorder,
+                modifier = Modifier.fillMaxSize(),
+            )
+            UiState.Idle -> Unit
         }
-        is UiState.Success -> OrderDetailContent(
-            order = current.data,
-            onCallSupport = onCallSupport,
-            modifier = Modifier.fillMaxSize(),
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter),
         )
-        UiState.Idle -> Unit
     }
 }
 
@@ -78,6 +124,7 @@ fun OrderDetailScreen(
 private fun OrderDetailContent(
     order: Order,
     onCallSupport: () -> Unit,
+    onReorder: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -166,8 +213,13 @@ private fun OrderDetailContent(
             }
         }
 
-        TextButton(onClick = onCallSupport) {
-            Text(stringResource(R.string.order_help_call))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = onReorder) {
+                Text(stringResource(R.string.orders_reorder))
+            }
+            TextButton(onClick = onCallSupport) {
+                Text(stringResource(R.string.order_help_call))
+            }
         }
     }
 }

@@ -7,7 +7,6 @@
 // truth — no drift between the manifest intent-filter and the NavHost.
 package com.mishran.app.navigation
 
-import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -19,9 +18,17 @@ import com.mishran.app.R
 
 object Routes {
     const val SPLASH = "splash"
-    const val AUTH_PHONE = "auth/phone"
+
+    /**
+     * Phone-entry sign-in. The optional `redirectTo` (B5 guest browsing)
+     * names the destination an ordering intercept was trying to reach — it
+     * rides along to OTP and back, so a freshly signed-in user resumes the
+     * intercepted action instead of landing on Home.
+     */
+    const val AUTH_PHONE = "auth/phone?redirectTo={redirectTo}"
+
     /** OTP verify; `phone` rides along so resend can re-send in place. */
-    const val AUTH_OTP = "auth/otp/{requestId}?phone={phone}"
+    const val AUTH_OTP = "auth/otp/{requestId}?phone={phone}&redirectTo={redirectTo}"
     const val HOME = "home"
     /** Pattern with optional family filter + vertical tab args (Home deep links). */
     const val CATALOG = "catalog?family={family}&vertical={vertical}"
@@ -47,12 +54,31 @@ object Routes {
     /** Deep-link URI pattern — must stay in lockstep with the manifest intent-filter. */
     const val ORDER_DEEPLINK_PATTERN = "mishran://order/{id}"
 
+    /** Built AUTH_PHONE route: bare "auth/phone" or with the redirect arg. */
+    fun authPhone(redirectTo: String? = null): String =
+        if (redirectTo == null) "auth/phone" else "auth/phone?redirectTo=${encodeArg(redirectTo)}"
+
     /**
      * Built AUTH_OTP route. The E.164 phone carries a "+", which some query
-     * parsers read as a space — encode it, and Navigation decodes on arg read.
+     * parsers read as a space — encode it, and Navigation decodes on arg read
+     * (its query parser also folds "+" back to a space, which form-encoding
+     * produces for literals). The B5 redirect (when an ordering intercept
+     * sent the user here) is forwarded so the verified session lands back on
+     * the intercepted action.
      */
-    fun authOtp(requestId: String, phone: String): String =
-        "auth/otp/$requestId?phone=${Uri.encode(phone)}"
+    fun authOtp(requestId: String, phone: String, redirectTo: String? = null): String =
+        "auth/otp/$requestId?phone=${encodeArg(phone)}" +
+            (redirectTo?.let { "&redirectTo=${encodeArg(it)}" } ?: "")
+
+    /**
+     * Destination for an ordering action (B5 guest browsing): the target
+     * itself when a session exists, else AUTH_PHONE carrying `redirectTo` so
+     * the post-login redirect resumes the intercepted action instead of
+     * dropping the user on Home. Pure — the NavGraph consults it at tap time
+     * against the live session flag.
+     */
+    fun orderingDestination(target: String, isLoggedIn: Boolean): String =
+        if (isLoggedIn) target else authPhone(redirectTo = target)
 
     /**
      * Built CATALOG route: bare "catalog" (all families, Mithai tab) or with
@@ -85,6 +111,13 @@ object Routes {
     fun merchItem(slug: String): String = "merch/$slug"
     fun orderConfirmed(id: String): String = "order-confirmed/$id"
     fun orderDetail(id: String): String = "order/$id"
+
+    /**
+     * Query-arg encoding via the JDK (form style: space → "+"), not
+     * android.net.Uri — keeps the builders pure so they run in JVM tests.
+     * Navigation's query decode folds "+" back to a space, round-tripping.
+     */
+    private fun encodeArg(value: String): String = java.net.URLEncoder.encode(value, "UTF-8")
 
     /** Routes that show the bottom navigation bar. */
     val topLevel: Set<String> = setOf(HOME, CATALOG, ORDERS, ACCOUNT)

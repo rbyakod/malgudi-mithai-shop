@@ -10,7 +10,9 @@
 //     drop onto Home. On cancel / lockout / failure we fall back to OTP sign-in.
 //   - If biometric login isn't enabled but a plain session still exists, we go
 //     straight Home (the first protected call 401s → TokenRefreshAuthenticator).
-//   - Otherwise → phone-entry sign-in.
+//   - Otherwise → straight Home as a guest (B5): ordering surfaces (checkout,
+//     buy-now, orders) intercept a null session and route to phone-entry
+//     sign-in carrying a post-login redirect back to the intercepted action.
 //
 // The decision + result handling live in [BiometricGateViewModel] (no Context,
 // unit-testable). Only the untestable BiometricPrompt mount stays in the
@@ -80,8 +82,10 @@ class BiometricGateViewModel @Inject constructor(
     }
 
     /**
-     * Decide the entry point. A biometric-gated session wins; a plain stored
-     * session is honored by skipping straight to Unlocked; otherwise sign-in.
+     * Decide the entry point. A biometric-gated session wins; everything else
+     * — a plain stored session or a signed-out guest — opens straight to Home
+     * (guest browsing). Ordering surfaces intercept a null session themselves,
+     * so [GateState.NeedLogin] now only fires on genuine biometric failures.
      */
     fun evaluate() {
         viewModelScope.launch {
@@ -92,8 +96,10 @@ class BiometricGateViewModel @Inject constructor(
                     BiometricStatus.Available -> GateState.Prompt
                     else -> GateState.NeedLogin
                 }
-                authRepository.isLoggedIn() -> GateState.Unlocked
-                else -> GateState.NeedLogin
+                // Guest browsing (B5): no biometric gate → straight to Home.
+                // NeedLogin is NOT used here — sign-in is forced only by the
+                // ordering intercepts or a genuine biometric failure above.
+                else -> GateState.Unlocked
             }
         }
     }

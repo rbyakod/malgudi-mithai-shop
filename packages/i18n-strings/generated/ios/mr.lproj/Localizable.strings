@@ -20,6 +20,7 @@
 "auth.otp.resend" = "कोड पुन्हा पाठवा";
 "auth.otp.countdown" = "{seconds} सेकंदांत पुन्हा पाठवा";
 "auth.otp.wrong_number" = "चुकीचा क्रमांक आहे? पुन्हा सुरू करा";
+"auth.sign_in_to_continue" = "सुरू ठेवण्यासाठी साइन इन करा";
 "auth.biometric.prompt" = "Mishran मध्ये प्रवेश करण्यासाठी बायोमेट्रिक वापरा";
 "auth.biometric.title" = "पुन्हा स्वागत";
 "auth.biometric.cta" = "जलद प्रवेश";

@@ -20,6 +20,7 @@
 "auth.otp.resend" = "ಸಂಕೇತ ಮರುಕಳುಹಿಸಿ";
 "auth.otp.countdown" = "{seconds} ಸೆಕೆಂಡ್‌ಗಳಲ್ಲಿ ಮರುಕಳುಹಿಸಿ";
 "auth.otp.wrong_number" = "ತಪ್ಪು ಸಂಖ್ಯೆಯೇ? ಮರುಪ್ರಾರಂಭಿಸಿ";
+"auth.sign_in_to_continue" = "ಮುಂದುವರಿಸಲು ಸೈನ್ ಇನ್ ಮಾಡಿ";
 "auth.biometric.prompt" = "Mishran ಗೆ ಪ್ರವೇಶಿಸಲು ಬಯೋಮೆಟ್ರಿಕ್ ಬಳಸಿ";
 "auth.biometric.title" = "ಮರಳಿ ಸ್ವಾಗತ";
 "auth.biometric.cta" = "ತ್ವರಿತ ಪ್ರವೇಶ";

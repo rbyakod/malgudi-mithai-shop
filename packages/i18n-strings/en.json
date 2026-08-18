@@ -20,6 +20,7 @@
   "auth.otp.resend": "Resend code",
   "auth.otp.countdown": "Resend in {seconds}s",
   "auth.otp.wrong_number": "Wrong number? Start over",
+  "auth.sign_in_to_continue": "Sign in to continue",
   "auth.biometric.prompt": "Use biometric to log in to Mishran",
   "auth.biometric.title": "Welcome back",
   "auth.biometric.cta": "Quick login",

@@ -21,6 +21,7 @@
   <string name="auth_otp_resend">कोड पुनः भेजें</string>
   <string name="auth_otp_countdown">%1$s सेकंड में पुनः भेजें</string>
   <string name="auth_otp_wrong_number">गलत नंबर है? फिर से शुरू करें</string>
+  <string name="auth_sign_in_to_continue">जारी रखने के लिए साइन इन करें</string>
   <string name="auth_biometric_prompt">मिश्रण में लॉग इन करने के लिए बायोमेट्रिक का उपयोग करें</string>
   <string name="auth_biometric_title">वापसी पर स्वागत है</string>
   <string name="auth_biometric_cta">त्वरित लॉगिन</string>
