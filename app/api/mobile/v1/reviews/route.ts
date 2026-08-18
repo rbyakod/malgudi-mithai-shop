@@ -1,7 +1,8 @@
 // app/api/mobile/v1/reviews/route.ts
-// Authenticated review capture — conversion batch, Batch A (A4).
+// Review capture + public display — conversion batch, Batch A (A4) +
+// known-gaps campaign B10 (public GET).
 //
-// POST upserts ONE review per (customer, product):
+// POST (authenticated) upserts ONE review per (customer, product):
 //   - zod-validated body {productId, rating 1-5, body?, authorName?},
 //   - product must exist (404 PRODUCT_NOT_FOUND otherwise),
 //   - verifiedPurchase is SERVER-STAMPED: true + linked order when the
@@ -13,12 +14,25 @@
 //   - the collection itself blocks create (access: create => false), so
 //     rows can only be born through this validated path.
 //
-// No public read/display yet — see collections/Reviews.ts.
+// GET (unauthenticated, B10) is the filtered public view for a product:
+//   - ?productId= required; page/pageSize (default 1/20, cap 50),
+//   - APPROVED rows only, newest first,
+//   - PublicReview carries a DISPLAY NAME only — authorName when captured,
+//     else the customer's saved name; never customer ids, phones, or
+//     emails. Depth stays 0; missing names resolve through one batched
+//     customers lookup,
+//   - averageRating is the mean over the product's approved ratings
+//     (null when there are none). Payload has no aggregate API, so it is
+//     computed from up to the first 1000 approved rows — per-product
+//     counts are tens today; revisit if a product ever crosses that.
+//     The collection stays admin-read; the route's explicit status filter
+//     IS the public view (overrideAccess on the local API).
 //
 // Path depth: app/api/mobile/v1/reviews/ = 5 dirs -> 5 `../` to root.
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { getPayload } from 'payload';
+import type { Where } from 'payload';
 import config from '../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../lib/api/errors';
@@ -146,6 +160,143 @@ export async function POST(req: NextRequest) {
         created,
       },
       { status: created ? 201 : 200, headers: { 'X-Request-Id': traceId } },
+    );
+  } catch (err) {
+    return errorResponse(err, traceId);
+  }
+}
+
+// ---- GET: public, approved-only product reviews (B10) ----------------------
+
+const Query = z.object({
+  productId: z.string().min(1),
+  page: z.coerce.number().int().min(1).optional(),
+  pageSize: z.coerce.number().int().min(1).max(50).optional(),
+});
+
+type PublicReview = {
+  id: string;
+  rating: number;
+  body: string | null;
+  authorDisplayName: string | null;
+  verifiedPurchase: boolean;
+  createdAt: string;
+};
+
+export async function GET(req: NextRequest) {
+  const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
+  try {
+    const url = new URL(req.url);
+    const parsed = Query.safeParse({
+      productId: url.searchParams.get('productId') ?? undefined,
+      page: url.searchParams.get('page') ?? undefined,
+      pageSize: url.searchParams.get('pageSize') ?? undefined,
+    });
+    if (!parsed.success) {
+      throw new ApiError(ErrorCode.VALIDATION, 'Invalid reviews query', {
+        fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string>,
+      });
+    }
+    const { productId } = parsed.data;
+    const page = parsed.data.page ?? 1;
+    const pageSize = parsed.data.pageSize ?? 20;
+
+    const payload = await getPayload({ config });
+
+    const approvedWhere: Where = {
+      and: [
+        { product: { equals: productId } },
+        { status: { equals: 'approved' } },
+      ],
+    };
+
+    const result = await payload.find({
+      collection: 'reviews',
+      where: approvedWhere,
+      sort: '-createdAt',
+      page,
+      limit: pageSize,
+      // The collection is admin-read; this route's explicit status filter
+      // is the public view (see file header). depth 0 keeps relations as
+      // plain ids so nothing beyond the display name can leak.
+      overrideAccess: true,
+      depth: 0,
+    });
+
+    type ReviewRow = {
+      id: string;
+      rating: number;
+      body: string | null;
+      authorName: string | null;
+      customer: unknown;
+      verifiedPurchase: boolean;
+      createdAt: string;
+    };
+    const rows = result.docs as unknown as ReviewRow[];
+
+    // Display name: captured authorName, else the customer's saved name.
+    // One batched lookup; PublicReview never carries the customer id.
+    const missingNameIds = [
+      ...new Set(
+        rows
+          .filter((r) => !r.authorName && typeof r.customer === 'string')
+          .map((r) => r.customer as string),
+      ),
+    ];
+    const customerNames = new Map<string, string>();
+    if (missingNameIds.length > 0) {
+      const customers = await payload.find({
+        collection: 'customers',
+        where: { id: { in: missingNameIds } },
+        limit: missingNameIds.length,
+        overrideAccess: true,
+        depth: 0,
+      });
+      for (const doc of customers.docs as Array<{ id: string; name?: string | null }>) {
+        if (doc.name) customerNames.set(doc.id, doc.name);
+      }
+    }
+
+    const items: PublicReview[] = rows.map((r) => ({
+      id: r.id,
+      rating: r.rating,
+      body: r.body ?? null,
+      authorDisplayName:
+        r.authorName ??
+        (typeof r.customer === 'string' ? customerNames.get(r.customer) ?? null : null),
+      verifiedPurchase: Boolean(r.verifiedPurchase),
+      createdAt: r.createdAt,
+    }));
+
+    // Average over ALL approved ratings for the product (not just the
+    // page). Computed from up to 1000 rows — see file header.
+    let averageRating: number | null = null;
+    if (result.totalDocs > 0) {
+      const aggregate = await payload.find({
+        collection: 'reviews',
+        where: approvedWhere,
+        limit: Math.min(Math.max(result.totalDocs, 1), 1000),
+        overrideAccess: true,
+        depth: 0,
+      });
+      const ratings = (aggregate.docs as unknown as Array<{ rating: number }>).map(
+        (d) => d.rating,
+      );
+      if (ratings.length > 0) {
+        averageRating =
+          Math.round((ratings.reduce((s, r) => s + r, 0) / ratings.length) * 10) / 10;
+      }
+    }
+
+    return jsonResponse(
+      {
+        items,
+        averageRating,
+        total: result.totalDocs,
+        page,
+        pageSize,
+      },
+      { headers: { 'X-Request-Id': traceId } },
     );
   } catch (err) {
     return errorResponse(err, traceId);

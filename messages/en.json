@@ -199,7 +199,15 @@
       "enquireDisabled": "Enquiries open soon"
     },
     "breadcrumbHome": "Mishran",
-    "notFound": "We couldn't find that one."
+    "notFound": "We couldn't find that one.",
+    "reviews": {
+      "title": "Customer reviews",
+      "starsLabel": "{rating} out of 5 stars",
+      "summary": "{rating} · {count, plural, one {# review} other {# reviews}}",
+      "verified": "Verified purchase",
+      "anonymous": "Anonymous",
+      "more": "+ {count} more"
+    }
   },
   "Search": {
     "label": "Search",
@@ -374,6 +382,11 @@
     "totalsItems": "Items",
     "totalsDelivery": "Delivery",
     "totalsDiscount": "Discount",
+    "couponLabel": "Coupon",
+    "couponPlaceholder": "Enter code",
+    "couponApply": "Apply",
+    "couponApplied": "coupon applied",
+    "couponRemove": "Remove",
     "totalsTotal": "Total",
     "taxNote": "Prices are MRP-inclusive of GST.",
     "payNow": "Pay {amount}",

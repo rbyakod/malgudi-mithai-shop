@@ -10,6 +10,7 @@ const { stores, jwtVerify } = vi.hoisted(() => ({
     'mithai-products': new Map<string, Record<string, unknown>>(),
     orders: new Map<string, Record<string, unknown>>(),
     reviews: new Map<string, Record<string, unknown>>(),
+    customers: new Map<string, Record<string, unknown>>(),
   },
   jwtVerify: vi.fn(async () => ({ customerId: 'cust-1', jti: 'jti-1' })),
 }));
@@ -30,31 +31,51 @@ vi.mock('payload', () => ({
       async ({
         collection,
         where,
+        sort,
+        page,
+        limit,
       }: {
         collection: string;
         where?: Record<string, unknown>;
+        sort?: string;
+        page?: number;
+        limit?: number;
       }) => {
         const col = (stores as Record<string, Map<string, Record<string, unknown>>>)[collection];
-        const all = col ? Array.from(col.values()) : [];
+        let all = col ? Array.from(col.values()) : [];
         const clauses =
           (where as { and?: Array<Record<string, unknown>> })?.and ?? (where ? [where] : []);
         const docs = all.filter((d) =>
           clauses.every((clause) =>
             Object.entries(clause).every(([field, cond]) => {
               const eq = (cond as { equals?: unknown }).equals;
+              const inList = (cond as { in?: unknown[] }).in;
               // Dot-notation match for array subfields (items.productId):
               // a doc matches when ANY array element's subfield equals.
               if (field.includes('.')) {
                 const [arrayField, sub] = field.split('.');
-                const arr = d[arrayField];
+                const arr = d[field.split('.')[0]];
                 if (!Array.isArray(arr)) return false;
                 return arr.some((el) => (el as Record<string, unknown>)?.[sub] === eq);
               }
+              if (inList !== undefined) return inList.includes(d[field]);
               return eq !== undefined ? d[field] === eq : true;
             }),
           ),
         );
-        return { docs, totalDocs: docs.length };
+        if (sort === '-createdAt') {
+          docs.sort(
+            (a, b) =>
+              Date.parse(String(b.createdAt ?? 0)) - Date.parse(String(a.createdAt ?? 0)),
+          );
+        }
+        const total = docs.length;
+        const pageLimit = limit ?? total;
+        const pageNo = page ?? 1;
+        return {
+          docs: docs.slice((pageNo - 1) * pageLimit, pageNo * pageLimit),
+          totalDocs: total,
+        };
       },
     ),
     create: vi.fn(
@@ -97,7 +118,7 @@ vi.mock('../../../../../lib/container', () => ({
 }));
 
 import type { NextRequest } from 'next/server';
-import { POST } from './route';
+import { GET, POST } from './route';
 
 // The route types its arg as NextRequest; tests build plain Requests.
 function asReq(req: Request): NextRequest {
@@ -245,5 +266,184 @@ describe('POST /reviews', () => {
     const body = await res.json();
     expect(body.data.authorName).toBe('Ravi B.');
     expect(Array.from(stores.reviews.values())[0]!.authorName).toBe('Ravi B.');
+  });
+});
+
+// ---- GET /reviews (B10): public, approved-only product reviews ---------------
+
+describe('GET /reviews', () => {
+  interface SeedReview {
+    id: string;
+    product?: string;
+    customer?: string;
+    authorName?: string | null;
+    rating: number;
+    body?: string | null;
+    status?: string;
+    verified?: boolean;
+    createdAt: string;
+  }
+
+  function seedReview(r: SeedReview) {
+    stores.reviews.set(r.id, {
+      id: r.id,
+      product: r.product ?? PRODUCT,
+      customer: r.customer ?? 'cust-1',
+      authorName: r.authorName ?? null,
+      rating: r.rating,
+      body: r.body ?? null,
+      verifiedPurchase: r.verified ?? false,
+      status: r.status ?? 'approved',
+      createdAt: r.createdAt,
+    });
+  }
+
+  function getReq(query: string): NextRequest {
+    return asReq(
+      new Request(`http://localhost/api/mobile/v1/reviews${query}`),
+    );
+  }
+
+  beforeEach(() => {
+    stores['mithai-products'].clear();
+    stores.orders.clear();
+    stores.reviews.clear();
+    stores.customers.clear();
+    seq = 0;
+    seedProduct();
+  });
+
+  it('returns approved rows only, newest first, with the average', async () => {
+    seedReview({ id: 'r1', rating: 5, createdAt: '2026-08-01T10:00:00.000Z' });
+    seedReview({ id: 'r2', rating: 3, createdAt: '2026-08-03T10:00:00.000Z' });
+    seedReview({ id: 'r3', rating: 4, status: 'pending', createdAt: '2026-08-05T10:00:00.000Z' });
+    seedReview({ id: 'r4', rating: 1, status: 'rejected', createdAt: '2026-08-06T10:00:00.000Z' });
+
+    const res = await GET(getReq(`?productId=${PRODUCT}`));
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.items.map((i: { id: string }) => i.id)).toEqual(['r2', 'r1']);
+    // (5 + 3) / 2 = 4 — pending/rejected rows never touch the average.
+    expect(body.data.averageRating).toBe(4);
+    expect(body.data.total).toBe(2);
+  });
+
+  it('paginates with pageSize and reports the full total', async () => {
+    for (let i = 1; i <= 5; i++) {
+      seedReview({
+        id: `p-${String(i).padStart(2, '0')}`,
+        rating: 5,
+        createdAt: `2026-08-${String(i).padStart(2, '0')}T10:00:00.000Z`,
+      });
+    }
+
+    const res = await GET(getReq(`?productId=${PRODUCT}&page=2&pageSize=2`));
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.items.map((i: { id: string }) => i.id)).toEqual(['p-03', 'p-02']);
+    expect(body.data.total).toBe(5);
+    expect(body.data.page).toBe(2);
+    expect(body.data.pageSize).toBe(2);
+  });
+
+  it('resolves the display name from authorName, else the customer name — never ids', async () => {
+    stores.customers.set('cust-2', { id: 'cust-2', name: 'Meera Rao', phone: '+9199999' });
+    stores.customers.set('cust-3', { id: 'cust-3', name: null, phone: '+9188888' });
+    seedReview({
+      id: 'n1',
+      customer: 'cust-1',
+      authorName: 'Ravi B.',
+      rating: 5,
+      createdAt: '2026-08-01T10:00:00.000Z',
+    });
+    seedReview({
+      id: 'n2',
+      customer: 'cust-2',
+      authorName: null,
+      rating: 4,
+      createdAt: '2026-08-02T10:00:00.000Z',
+    });
+    seedReview({
+      id: 'n3',
+      customer: 'cust-3',
+      authorName: null,
+      rating: 4,
+      createdAt: '2026-08-03T10:00:00.000Z',
+    });
+
+    const res = await GET(getReq(`?productId=${PRODUCT}`));
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    const byId = new Map(
+      body.data.items.map((i: { id: string; authorDisplayName: string | null }) => [
+        i.id,
+        i.authorDisplayName,
+      ]),
+    );
+    expect(byId.get('n1')).toBe('Ravi B.'); // captured name wins
+    expect(byId.get('n2')).toBe('Meera Rao'); // falls back to the saved name
+    expect(byId.get('n3')).toBeNull(); // nothing to show stays null
+    // PublicReview shape only — no customer ids/phones can leak.
+    for (const item of body.data.items) {
+      expect(Object.keys(item).sort()).toEqual([
+        'authorDisplayName',
+        'body',
+        'createdAt',
+        'id',
+        'rating',
+        'verifiedPurchase',
+      ]);
+    }
+  });
+
+  it('isolates products — another product\'s reviews never appear', async () => {
+    seedReview({ id: 'mine-1', product: PRODUCT, rating: 5, createdAt: '2026-08-01T10:00:00.000Z' });
+    seedReview({ id: 'other-1', product: 'p2', rating: 5, createdAt: '2026-08-02T10:00:00.000Z' });
+
+    const res = await GET(getReq(`?productId=${PRODUCT}`));
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.items.map((i: { id: string }) => i.id)).toEqual(['mine-1']);
+    expect(body.data.total).toBe(1);
+  });
+
+  it('returns an empty list and a null average when nothing is approved', async () => {
+    seedReview({ id: 'r1', rating: 5, status: 'pending', createdAt: '2026-08-01T10:00:00.000Z' });
+
+    const res = await GET(getReq(`?productId=${PRODUCT}`));
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.items).toEqual([]);
+    expect(body.data.averageRating).toBeNull();
+    expect(body.data.total).toBe(0);
+  });
+
+  it('rounds the average to one decimal', async () => {
+    seedReview({ id: 'a1', rating: 5, createdAt: '2026-08-01T10:00:00.000Z' });
+    seedReview({ id: 'a2', rating: 4, createdAt: '2026-08-02T10:00:00.000Z' });
+    seedReview({ id: 'a3', rating: 4, createdAt: '2026-08-03T10:00:00.000Z' });
+
+    const res = await GET(getReq(`?productId=${PRODUCT}`));
+
+    expect((await res.json()).data.averageRating).toBe(4.3); // 13/3 = 4.33…
+  });
+
+  it('rejects a missing productId with 422 VALIDATION', async () => {
+    const res = await GET(getReq(''));
+
+    expect(res.status).toBe(422);
+    expect((await res.json()).error.code).toBe('VALIDATION');
+  });
+
+  it('caps pageSize at 50 (422 above)', async () => {
+    const res = await GET(getReq(`?productId=${PRODUCT}&pageSize=51`));
+
+    expect(res.status).toBe(422);
+    expect((await res.json()).error.code).toBe('VALIDATION');
   });
 });

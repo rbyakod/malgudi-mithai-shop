@@ -27,6 +27,7 @@ import {getTranslations} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
 import {BuyModule} from "@/components/mithai/BuyModule";
 import {CrossSellRail} from "@/components/mithai/CrossSellRail";
+import {ProductReviews} from "@/components/reviews/ProductReviews";
 import {derivePackSizes} from "@/lib/mithai/packSizes";
 import {isFullWidthLayout} from "@/lib/storefront-layout";
 import {readStorefrontLayoutMode} from "@/lib/storefront-layout-server";
@@ -330,6 +331,10 @@ export async function MithaiPDP({slug, locale}: Props) {
           selfSlug={doc!.slug ?? slug}
           locale={locale}
         />
+
+        {/* Approved public reviews (B10) — self-fetching; renders nothing
+            when the product has no approved reviews yet. */}
+        <ProductReviews productId={String(doc!.id)} locale={locale} />
       </div>
     </article>
   );

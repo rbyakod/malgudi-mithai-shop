@@ -17,7 +17,7 @@ open class ReviewsAPI {
      
      - parameter productId: (query) mithai-products id. 
      - parameter page: (query)  (optional, default to 1)
-     - parameter pageSize: (query)  (optional, default to 10)
+     - parameter pageSize: (query)  (optional, default to 20)
      - parameter apiResponseQueue: The queue on which api response is dispatched.
      - parameter completion: completion handler to receive the data and the error objects
      */
@@ -39,7 +39,7 @@ open class ReviewsAPI {
      - Moderation-approved reviews only, newest first, paginated. productId is required. Authors appear as display names — customer ids and phones are never returned. averageRating and total cover ALL approved reviews for the product, not just this page. The write side stays capture-only (POST below, pending moderation). 
      - parameter productId: (query) mithai-products id. 
      - parameter page: (query)  (optional, default to 1)
-     - parameter pageSize: (query)  (optional, default to 10)
+     - parameter pageSize: (query)  (optional, default to 20)
      - returns: RequestBuilder<ReviewsGet200Response> 
      */
     open class func reviewsGetWithRequestBuilder(productId: String, page: Int? = nil, pageSize: Int? = nil) -> RequestBuilder<ReviewsGet200Response> {

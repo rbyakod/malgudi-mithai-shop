@@ -162,6 +162,12 @@ Common to all platforms:
    (web + iOS), ingredients, story, **allergens**, **storage**, and the
    **karigar** who made it (web + iOS).
 8. **Cross-sell rail** — "More from the {family} collection" (web + iOS).
+9. **Customer reviews** (web) — below the cross-sell rail: the average star
+   rating, up to five approved reviews (newest first) with author display
+   name, date, and a gold **Verified purchase** badge when the review came
+   from a real delivered order, plus a "+N more" note when there are
+   extras. The section is hidden entirely on products with no approved
+   reviews yet.
 
 Platform specifics: **web** has a sticky buy bar on mobile screens;
 **iOS** has a sticky bottom buy bar everywhere; **Android** keeps Add to
@@ -399,8 +405,6 @@ hours 9:00–21:00 IST, kitchens in Bengaluru), `/about`, `/privacy`,
 So nobody hunts for what isn't there:
 
 - **No COD** anywhere; Razorpay only.
-- **No reviews display** anywhere yet — capture exists on delivered web
-  orders only.
 - **No coupon/discount code field** at checkout (server-side discounts can
   still show up as a Discount row).
 - **Apps don't show delivery fees or free-delivery thresholds in the

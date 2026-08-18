@@ -43,7 +43,7 @@ try {
 | **page** | **kotlin.Int**|  | [optional] [default to 1] |
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **pageSize** | **kotlin.Int**|  | [optional] [default to 10] |
+| **pageSize** | **kotlin.Int**|  | [optional] [default to 20] |
 
 ### Return type
 

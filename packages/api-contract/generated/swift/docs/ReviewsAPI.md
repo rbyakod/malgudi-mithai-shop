@@ -24,7 +24,7 @@ import OpenAPIClient
 
 let productId = "productId_example" // String | mithai-products id.
 let page = 987 // Int |  (optional) (default to 1)
-let pageSize = 987 // Int |  (optional) (default to 10)
+let pageSize = 987 // Int |  (optional) (default to 20)
 
 // List approved reviews for one product (public)
 ReviewsAPI.reviewsGet(productId: productId, page: page, pageSize: pageSize) { (response, error) in
@@ -45,7 +45,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **productId** | **String** | mithai-products id. | 
  **page** | **Int** |  | [optional] [default to 1]
- **pageSize** | **Int** |  | [optional] [default to 10]
+ **pageSize** | **Int** |  | [optional] [default to 20]
 
 ### Return type
 

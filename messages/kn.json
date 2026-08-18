@@ -200,7 +200,15 @@
       "enquireDisabled": "ವಿಚಾರಣೆ ಶೀಘ್ರದಲ್ಲಿ ತೆರೆಯುತ್ತದೆ"
     },
     "breadcrumbHome": "ಮಿಶ್ರಣ್",
-    "notFound": "ಅದು ಸಿಗಲಿಲ್ಲ."
+    "notFound": "ಅದು ಸಿಗಲಿಲ್ಲ.",
+    "reviews": {
+      "title": "ಗ್ರಾಹಕರ ವಿಮರ್ಶೆಗಳು",
+      "starsLabel": "5 ರಲ್ಲಿ {rating} ಸ್ಟಾರ್",
+      "summary": "{rating} · {count, plural, one {# ವಿಮರ್ಶೆ} other {# ವಿಮರ್ಶೆಗಳು}}",
+      "verified": "ಪರಿಶೀಲಿಸಿದ ಖರೀದಿ",
+      "anonymous": "ಅನಾಮಧೇಯ",
+      "more": "+ {count} ಹೆಚ್ಚು"
+    }
   },
   "Search": {
     "label": "ಹುಡುಕಿ",
@@ -376,6 +384,11 @@
     "totalsItems": "ವಸ್ತುಗಳು",
     "totalsDelivery": "ವಿತರಣೆ",
     "totalsDiscount": "ರಿಯಾಯಿತಿ",
+    "couponLabel": "ಕೂಪನ್",
+    "couponPlaceholder": "ಕೋಡ್ ಬರೆಯಿರಿ",
+    "couponApply": "ಅನ್ವಯಿಸಿ",
+    "couponApplied": "ಕೂಪನ್ ಅನ್ವಯಿಸಲಾಗಿದೆ",
+    "couponRemove": "ತೆಗೆದುಹಾಕಿ",
     "totalsTotal": "ಒಟ್ಟು",
     "taxNote": "ಬೆಲೆಗಳಲ್ಲಿ GST ಸೇರಿದೆ (MRP).",
     "payNow": "{amount} ಪಾವತಿಸಿ",

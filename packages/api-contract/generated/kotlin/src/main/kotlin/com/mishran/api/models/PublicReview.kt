@@ -32,7 +32,7 @@ import com.squareup.moshi.JsonClass
  *
  * @param id 
  * @param rating 
- * @param authorDisplayName 
+ * @param authorDisplayName Captured authorName, else the customer's saved name; null when neither exists (render \"Anonymous\").
  * @param verifiedPurchase Server-stamped true when the author had a delivered order containing the product.
  * @param createdAt 
  * @param body 
@@ -47,8 +47,9 @@ data class PublicReview (
     @Json(name = "rating")
     val rating: kotlin.Int,
 
+    /* Captured authorName, else the customer's saved name; null when neither exists (render \"Anonymous\"). */
     @Json(name = "authorDisplayName")
-    val authorDisplayName: kotlin.String,
+    val authorDisplayName: kotlin.String?,
 
     /* Server-stamped true when the author had a delivered order containing the product. */
     @Json(name = "verifiedPurchase")

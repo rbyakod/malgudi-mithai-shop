@@ -199,7 +199,15 @@
       "enquireDisabled": "पूछताछ जल्द खुलेगी"
     },
     "breadcrumbHome": "मिश्रण",
-    "notFound": "यह एक नहीं मिला।"
+    "notFound": "यह एक नहीं मिला।",
+    "reviews": {
+      "title": "ग्राहक समीक्षाएँ",
+      "starsLabel": "5 में से {rating} स्टार",
+      "summary": "{rating} · {count, plural, one {# समीक्षा} other {# समीक्षाएँ}}",
+      "verified": "सत्यापित खरीद",
+      "anonymous": "गुमनाम",
+      "more": "+ {count} और"
+    }
   },
   "Search": {
     "label": "खोजें",
@@ -374,6 +382,11 @@
     "totalsItems": "वस्तुएँ",
     "totalsDelivery": "डिलीवरी",
     "totalsDiscount": "छूट",
+    "couponLabel": "कूपन",
+    "couponPlaceholder": "कोड लिखें",
+    "couponApply": "लागू करें",
+    "couponApplied": "कूपन लागू",
+    "couponRemove": "हटाएँ",
     "totalsTotal": "कुल",
     "taxNote": "कीमतों में GST (MRP-समावेशी) शामिल है।",
     "payNow": "{amount} का भुगतान करें",

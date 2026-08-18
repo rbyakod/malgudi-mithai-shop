@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 **id** | **String** |  | 
 **rating** | **Int** |  | 
 **body** | **String** |  | [optional] 
-**authorDisplayName** | **String** |  | 
+**authorDisplayName** | **String** | Captured authorName, else the customer&#39;s saved name; null when neither exists (render \&quot;Anonymous\&quot;). | 
 **verifiedPurchase** | **Bool** | Server-stamped true when the author had a delivered order containing the product. | 
 **createdAt** | **Date** |  | 
 

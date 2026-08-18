@@ -751,7 +751,9 @@ components:
         id: { type: string }
         rating: { type: integer, minimum: 1, maximum: 5 }
         body: { type: [string, 'null'] }
-        authorDisplayName: { type: string }
+        authorDisplayName:
+          type: [string, 'null']
+          description: Captured authorName, else the customer's saved name; null when neither exists (render "Anonymous").
         verifiedPurchase:
           type: boolean
           description: Server-stamped true when the author had a delivered order containing the product.
@@ -1796,7 +1798,7 @@ paths:
           schema: { type: integer, default: 1, minimum: 1 }
         - in: query
           name: pageSize
-          schema: { type: integer, default: 10, minimum: 1, maximum: 50 }
+          schema: { type: integer, default: 20, minimum: 1, maximum: 50 }
       responses:
         '200':
           description: OK — one page of approved reviews + aggregate rating.

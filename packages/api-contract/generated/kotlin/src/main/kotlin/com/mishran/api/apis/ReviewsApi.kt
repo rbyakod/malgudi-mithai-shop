@@ -62,7 +62,7 @@ open class ReviewsApi(basePath: kotlin.String = defaultBasePath, client: Call.Fa
      * Moderation-approved reviews only, newest first, paginated. productId is required. Authors appear as display names — customer ids and phones are never returned. averageRating and total cover ALL approved reviews for the product, not just this page. The write side stays capture-only (POST below, pending moderation). 
      * @param productId mithai-products id.
      * @param page  (optional, default to 1)
-     * @param pageSize  (optional, default to 10)
+     * @param pageSize  (optional, default to 20)
      * @return ReviewsGet200Response
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -72,7 +72,7 @@ open class ReviewsApi(basePath: kotlin.String = defaultBasePath, client: Call.Fa
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun reviewsGet(productId: kotlin.String, page: kotlin.Int? = 1, pageSize: kotlin.Int? = 10) : ReviewsGet200Response {
+    fun reviewsGet(productId: kotlin.String, page: kotlin.Int? = 1, pageSize: kotlin.Int? = 20) : ReviewsGet200Response {
         val localVarResponse = reviewsGetWithHttpInfo(productId = productId, page = page, pageSize = pageSize)
 
         return when (localVarResponse.responseType) {
@@ -96,7 +96,7 @@ open class ReviewsApi(basePath: kotlin.String = defaultBasePath, client: Call.Fa
      * Moderation-approved reviews only, newest first, paginated. productId is required. Authors appear as display names — customer ids and phones are never returned. averageRating and total cover ALL approved reviews for the product, not just this page. The write side stays capture-only (POST below, pending moderation). 
      * @param productId mithai-products id.
      * @param page  (optional, default to 1)
-     * @param pageSize  (optional, default to 10)
+     * @param pageSize  (optional, default to 20)
      * @return ApiResponse<ReviewsGet200Response?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -116,7 +116,7 @@ open class ReviewsApi(basePath: kotlin.String = defaultBasePath, client: Call.Fa
      *
      * @param productId mithai-products id.
      * @param page  (optional, default to 1)
-     * @param pageSize  (optional, default to 10)
+     * @param pageSize  (optional, default to 20)
      * @return RequestConfig
      */
     fun reviewsGetRequestConfig(productId: kotlin.String, page: kotlin.Int?, pageSize: kotlin.Int?) : RequestConfig<Unit> {

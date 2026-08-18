@@ -17,12 +17,13 @@ public struct PublicReview: Codable, JSONEncodable, Hashable {
     public var id: String
     public var rating: Int
     public var body: String?
-    public var authorDisplayName: String
+    /** Captured authorName, else the customer's saved name; null when neither exists (render \"Anonymous\"). */
+    public var authorDisplayName: String?
     /** Server-stamped true when the author had a delivered order containing the product. */
     public var verifiedPurchase: Bool
     public var createdAt: Date
 
-    public init(id: String, rating: Int, body: String? = nil, authorDisplayName: String, verifiedPurchase: Bool, createdAt: Date) {
+    public init(id: String, rating: Int, body: String? = nil, authorDisplayName: String?, verifiedPurchase: Bool, createdAt: Date) {
         self.id = id
         self.rating = rating
         self.body = body

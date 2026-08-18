@@ -2683,7 +2683,8 @@ export interface components {
             id: string;
             rating: number;
             body?: string | null;
-            authorDisplayName: string;
+            /** @description Captured authorName, else the customer's saved name; null when neither exists (render "Anonymous"). */
+            authorDisplayName: string | null;
             /** @description Server-stamped true when the author had a delivered order containing the product. */
             verifiedPurchase: boolean;
             /** Format: date-time */

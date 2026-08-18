@@ -226,10 +226,3 @@ src/main/kotlin/com/mishran/api/models/StoriesGet200ResponseData.kt
 src/main/kotlin/com/mishran/api/models/StoriesSlugGet200Response.kt
 src/main/kotlin/com/mishran/api/models/Story.kt
 src/main/kotlin/com/mishran/api/models/StoryDetail.kt
-src/test/kotlin/com/mishran/api/models/CartEstimatePost200ResponseTest.kt
-src/test/kotlin/com/mishran/api/models/CartEstimateRequestTest.kt
-src/test/kotlin/com/mishran/api/models/CartEstimateTest.kt
-src/test/kotlin/com/mishran/api/models/CodCreateOrderRequestTest.kt
-src/test/kotlin/com/mishran/api/models/PublicReviewTest.kt
-src/test/kotlin/com/mishran/api/models/ReviewListTest.kt
-src/test/kotlin/com/mishran/api/models/ReviewsGet200ResponseTest.kt
