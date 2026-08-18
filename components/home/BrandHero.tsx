@@ -95,9 +95,13 @@ export async function BrandHero({
   const bleedClass = isFullWidthLayout(layoutMode)
     ? "-mx-4 -mt-4 sm:-mx-6 lg:-mx-10 2xl:-mx-14"
     : "mx-[calc(50%-50vw)] -mt-4 w-screen";
+  // Image-forward proportions: the copy column holds a fixed reading
+  // measure at xl+ (minmax(0,32rem)) and the rotator takes ALL remaining
+  // width, inside a wider 85rem frame — the card grows from ~550px to
+  // ~730px+ on desktop instead of sitting in a half-empty row.
   const containerClass = isFullWidthLayout(layoutMode)
-    ? "relative mx-auto grid w-full max-w-none items-stretch gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-28 lg:px-10 2xl:px-14"
-    : "relative mx-auto grid w-full max-w-7xl items-stretch gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-28 lg:px-8";
+    ? "relative mx-auto grid w-full max-w-none items-stretch gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:gap-14 lg:py-28 lg:px-10 xl:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] 2xl:px-14"
+    : "relative mx-auto grid w-full max-w-[85rem] items-stretch gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:gap-14 lg:py-28 lg:px-8 xl:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]";
 
   return (
     <section
@@ -199,15 +203,15 @@ export async function BrandHero({
 
         {/* Right column — rotator when slides exist, else static fallback. */}
         {hasSlides ? (
-          <div className="relative lg:ml-auto">
+          <div className="relative lg:ml-auto xl:max-w-[48rem]">
             <HeroRotator slides={slides} autoplayMs={autoplayMs} />
           </div>
         ) : (
           <div className="relative hidden lg:block">
-            <figure className="relative ml-auto h-full w-full max-w-md">
+            <figure className="relative ml-auto h-full w-full max-w-md xl:max-w-[45rem]">
               <div className="absolute inset-0 rounded-[2rem] border border-gold/40 bg-bg-card/60 shadow-card" />
               <div className="relative m-3 overflow-hidden rounded-[1.6rem]">
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-bg-accent lg:aspect-[3/2]">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-bg-accent lg:aspect-[3/2] xl:aspect-[5/4] xl:max-h-[66svh]">
                   <Image
                     src={FALLBACK_HERO_IMAGE}
                     alt={t("heroInsetAlt")}

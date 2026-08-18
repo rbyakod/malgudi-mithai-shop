@@ -55,13 +55,15 @@ export function HeroRotator({slides, autoplayMs}: Props) {
               }
             >
               <div className="overflow-hidden rounded-[1.6rem] border border-gold/40 bg-bg-card shadow-card">
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-bg-accent lg:aspect-[3/2]">
+                {/* 4:5 mobile → 3:2 lg → taller 5:4 xl+ (capped by viewport
+                    height so short laptops keep the CTAs above the fold). */}
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-bg-accent lg:aspect-[3/2] xl:aspect-[5/4] xl:max-h-[66svh]">
                   <Image
                     src={slide.image}
                     alt={slide.imageAlt}
                     fill
                     priority={i === 0}
-                    sizes="(min-width: 1280px) 36rem, (min-width: 1024px) 26rem, 100vw - 2rem"
+                    sizes="(min-width: 1536px) 48rem, (min-width: 1280px) 42rem, (min-width: 1024px) 27rem, 100vw - 2rem"
                     className={`object-cover${
                       isActive ? (i % 2 ? " kb-hero kb-hero--alt" : " kb-hero") : ""
                     }`}
