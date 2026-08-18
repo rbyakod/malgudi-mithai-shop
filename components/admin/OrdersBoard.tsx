@@ -1,38 +1,42 @@
 "use client";
 // components/admin/OrdersBoard.tsx
-// Ops orders kanban board — Task 5.4 (Mishran Mobile Apps v1).
+// Ops orders console — Task 5.4, upgraded in the known-gaps campaign (B13).
 //
-// Client component: fetches orders from the Payload REST API (server-relative
-// `/api/orders`) scoped to active fulfillment, renders them in left-to-right
-// stage columns, and advances an order by dragging its card onto the next
-// column (or clicking the advance button). Each drop POSTs to the admin
-// status route (`POST /api/admin/orders/:id/status`) which runs the backend
-// state machine + notification fan-out.
+// Two views over one staff-gated feed (GET /api/staff/orders):
+//   - Board: the original kanban — left-to-right fulfillment columns with
+//     drag-to-advance (native HTML5 DnD, no dependency). A drop is only
+//     accepted when `canAdvance` says the transition is legal; each drop
+//     POSTs to the hardened admin status route which runs the backend state
+//     machine + notification fan-out.
+//   - All orders: the full console table (components/admin/OrdersTable) —
+//     every order with filters, phone/id search, status transitions, and
+//     COD cash-collected.
 //
-// Drag-and-drop uses the native HTML5 DnD API (no added dependency). A drop is
-// only accepted when `canAdvance` says the transition is legal; illegal drops
-// bounce back so the UI never offers a move the API would 409 on.
+// Auth: the server routes are the boundary. On a 401 the console renders a
+// sign-in hint linking to /admin (Payload's login) instead of a bare error —
+// staff sessions live in the payload-token cookie the fetches carry.
 //
-// Full Playwright E2E (seeded Mongo + Payload admin auth) is deferred — this
-// component is covered by unit tests on the pure logic in lib/admin/ordersBoard.
+// Full Playwright E2E (seeded Mongo + Payload admin auth) is deferred — both
+// views are covered by unit tests on the pure logic in lib/admin/ordersBoard
+// plus route tests on the feed/collect endpoints.
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import {
   BOARD_COLUMNS,
-  BLOCKED_STATUSES,
   STATUS_LABEL,
   STATUS_ACCENT,
   columnForStatus,
   canAdvance,
   type BoardColumn,
 } from "@/lib/admin/ordersBoard";
+import { OrdersTable, type StaffOrderRow } from "@/components/admin/OrdersTable";
 import type { OrderStatus } from "@/lib/commerce/types";
 
 interface OrderCard {
   id: string;
   status: OrderStatus;
-  totals?: { totalInPaise?: number };
-  customerName?: string;
-  updatedAt?: string;
+  totalInPaise?: number | null;
+  customerName?: string | null;
 }
 
 type Bucket = Record<BoardColumn | "blocked", OrderCard[]>;
@@ -55,16 +59,18 @@ const ACCENT_CLASSES: Record<string, { bar: string; chip: string; ring: string }
   rose: { bar: "bg-rose-500", chip: "bg-rose-50 text-rose-700", ring: "ring-rose-200" },
 };
 
-function bucketOrders(orders: OrderCard[]): Bucket {
+function bucketOrders(rows: StaffOrderRow[]): Bucket {
   const b: Bucket = { ...EMPTY, confirmed: [], packed: [], dispatched: [], out_for_delivery: [], delivered: [], blocked: [] };
-  for (const o of orders) {
+  for (const o of rows) {
     const col = columnForStatus(o.status);
-    if (col) b[col].push(o);
+    if (col) b[col].push({ id: o.id, status: o.status, totalInPaise: o.totalInPaise, customerName: o.customerName });
   }
   return b;
 }
 
 export function OrdersBoard() {
+  const [view, setView] = useState<"board" | "table">("table");
+  const [authError, setAuthError] = useState(false);
   const [buckets, setBuckets] = useState<Bucket>(EMPTY);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -74,11 +80,14 @@ export function OrdersBoard() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/orders?limit=100&depth=0", { cache: "no-store" });
+      const res = await fetch("/api/staff/orders?pageSize=100", { cache: "no-store" });
+      if (res.status === 401) {
+        setAuthError(true);
+        return;
+      }
       if (!res.ok) throw new Error(`orders fetch failed: ${res.status}`);
-      const body = await res.json();
-      const docs: OrderCard[] = body?.docs ?? body?.data?.items ?? [];
-      setBuckets(bucketOrders(docs));
+      const rows = ((await res.json()).data?.items ?? []) as StaffOrderRow[];
+      setBuckets(bucketOrders(rows));
     } catch (e) {
       setError(e instanceof Error ? e.message : "failed to load orders");
     } finally {
@@ -98,7 +107,7 @@ export function OrdersBoard() {
       next[from as BoardColumn] = prev[from as BoardColumn].filter((o) => o.id !== orderId);
       const target = columnForStatus(to) as BoardColumn | "blocked";
       const moved = prev[from as BoardColumn].find((o) => o.id === orderId);
-      if (moved && target) next[target] = [...prev[target], { ...moved, status: to }];
+      if (moved && target) next[target] = [...next[target], { ...moved, status: to }];
       return next;
     });
     try {
@@ -107,6 +116,10 @@ export function OrdersBoard() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ newStatus: to }),
       });
+      if (res.status === 401) {
+        setAuthError(true);
+        return;
+      }
       if (!res.ok) throw new Error(`status update failed: ${res.status}`);
     } catch {
       // Revert by refetching the canonical state.
@@ -129,55 +142,91 @@ export function OrdersBoard() {
     }
   }
 
-  if (loading) {
-    return <div className="p-8 text-stone-500">Loading orders…</div>;
-  }
-
   return (
     <div className="flex h-full flex-col">
       <header className="flex items-center justify-between border-b border-stone-200 px-6 py-4">
         <div>
-          <h1 className="text-xl font-semibold text-stone-900">Orders board</h1>
-          <p className="text-sm text-stone-500">Drag a card right to advance fulfilment.</p>
+          <h1 className="text-xl font-semibold text-stone-900">Orders console</h1>
+          <p className="text-sm text-stone-500">
+            {view === "board"
+              ? "Drag a card right to advance fulfilment."
+              : "Every order — filter, search, transition, and collect COD cash."}
+          </p>
         </div>
-        <button
-          onClick={() => void refresh()}
-          className="rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-700 hover:bg-stone-50"
-        >
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="flex rounded-md border border-stone-300 bg-white p-0.5" role="tablist" aria-label="Console view">
+            <button
+              role="tab"
+              aria-selected={view === "table"}
+              onClick={() => setView("table")}
+              className={`rounded px-3 py-1 text-sm font-medium ${view === "table" ? "bg-stone-900 text-white" : "text-stone-700 hover:bg-stone-50"}`}
+            >
+              All orders
+            </button>
+            <button
+              role="tab"
+              aria-selected={view === "board"}
+              onClick={() => setView("board")}
+              className={`rounded px-3 py-1 text-sm font-medium ${view === "board" ? "bg-stone-900 text-white" : "text-stone-700 hover:bg-stone-50"}`}
+            >
+              Board
+            </button>
+          </div>
+          <button
+            onClick={() => void refresh()}
+            className="rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-700 hover:bg-stone-50"
+          >
+            Refresh
+          </button>
+        </div>
       </header>
 
-      {error && (
+      {authError && (
+        <div className="mx-6 mt-4 rounded-md bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          Staff sign-in required.{" "}
+          <Link href="/admin" className="font-medium underline">
+            Sign in at the admin panel
+          </Link>{" "}
+          and reload this page.
+        </div>
+      )}
+
+      {error && !authError && (
         <div className="mx-6 mt-4 rounded-md bg-rose-50 px-4 py-2 text-sm text-rose-700">
           {error}
         </div>
       )}
 
-      <div className="flex flex-1 gap-4 overflow-x-auto p-6">
-        {BOARD_COLUMNS.map((col) => (
-          <Column
-            key={col}
-            col={col}
-            cards={buckets[col]}
-            onDragStartCard={(id) => setDragging(id)}
-            onDrop={(e) => onDrop(e, col)}
-            onAdvance={(card) => {
-              const next = nextStage(col);
-              if (next) void advance(card.id, card.status, next);
-            }}
-          />
-        ))}
-        {buckets.blocked.length > 0 && (
-          <Column
-            col="blocked"
-            cards={buckets.blocked}
-            onDragStartCard={(id) => setDragging(id)}
-            onDrop={(e) => e.preventDefault()}
-            onAdvance={() => {}}
-          />
-        )}
-      </div>
+      {view === "table" ? (
+        <OrdersTable onAuthError={() => setAuthError(true)} />
+      ) : loading ? (
+        <div className="p-8 text-stone-500">Loading orders…</div>
+      ) : (
+        <div className="flex flex-1 gap-4 overflow-x-auto p-6">
+          {BOARD_COLUMNS.map((col) => (
+            <Column
+              key={col}
+              col={col}
+              cards={buckets[col]}
+              onDragStartCard={(id) => setDragging(id)}
+              onDrop={(e) => onDrop(e, col)}
+              onAdvance={(card) => {
+                const next = nextStage(col);
+                if (next) void advance(card.id, card.status, next);
+              }}
+            />
+          ))}
+          {buckets.blocked.length > 0 && (
+            <Column
+              col="blocked"
+              cards={buckets.blocked}
+              onDragStartCard={(id) => setDragging(id)}
+              onDrop={(e) => e.preventDefault()}
+              onAdvance={() => {}}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -234,9 +283,9 @@ function Column({
                 <span className="font-mono text-xs text-stone-500">
                   #{card.id.slice(-6)}
                 </span>
-                {card.totals?.totalInPaise != null && (
+                {card.totalInPaise != null && (
                   <span className="text-xs font-medium text-stone-700">
-                    ₹{((card.totals.totalInPaise as number) / 100).toFixed(0)}
+                    ₹{((card.totalInPaise as number) / 100).toFixed(0)}
                   </span>
                 )}
               </div>

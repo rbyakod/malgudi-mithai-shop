@@ -11,11 +11,12 @@
 // root, so 6 `../` to repo root from this file. (Same depth as the mobile
 // orders detail route at app/api/mobile/v1/orders/[id]/route.ts.)
 //
-// Auth (SECURITY TODO, see lib/api/adminAuth.ts): admin session is verified
-// via getPayloadAdminUser. The route additionally requires a Bearer token to
-// be present — unauthenticated requests get 401. Hardening (Payload
-// `payload.authenticate` middleware or JWT verify against `users`) is
-// deferred; the 401-without-auth guarantee is covered by route tests.
+// Auth (hardened in known-gaps B13, see lib/api/adminAuth.ts): the session is
+// verified server-side via getPayloadAdminUser — Payload's payload.auth
+// resolves the `payload-token` cookie / Authorization JWT against the
+// `users` collection. A cheap Bearer-presence gate sits in front so
+// anonymous scanners never touch Payload. Unauthenticated or non-staff
+// requests get 401; covered by route tests.
 //
 // Notifications (Task 5.2): after a successful transition, emitOrderEvent
 // fans the new status out to push + SMS. No-ops on non-customer-facing
@@ -65,17 +66,11 @@ export async function POST(
       throw new ApiError(ErrorCode.TOKEN_EXPIRED, "Admin auth required");
     }
 
-    // Auth gate 2: resolve the admin user from the (mocked-for-now) helper.
-    // When the real helper lands, this is where the session/JWT check happens.
+    // Auth gate 2: resolve the staff user from the Payload session. No
+    // staff user -> 401 (the accept-any-Bearer v1 shortcut is gone).
     const user = await getPayloadAdminUser(req);
     if (!user) {
-      // NOTE: in the current v1 wiring the helper always returns undefined
-      // (see lib/api/adminAuth.ts). To keep the route exercisable end-to-end
-      // we accept ANY Bearer token as admin-proven while documenting that
-      // hardening is pending. The 401 test for missing Bearer still holds.
-      // TODO(security): replace this branch with:
-      //   throw new ApiError(ErrorCode.TOKEN_EXPIRED, "Admin auth required");
-      // once getPayloadAdminUser is wired to Payload's authenticate middleware.
+      throw new ApiError(ErrorCode.TOKEN_EXPIRED, "Admin auth required");
     }
 
     const { id } = await ctx.params;
@@ -89,7 +84,7 @@ export async function POST(
       });
     }
 
-    const actor = user?.id ? `admin:${user.id}` : "admin:unknown";
+    const actor = `admin:${user.id}`;
     const svc = new PayloadOrderService();
     const updated = await svc.transition(id, parsed.data.newStatus, {
       actor,

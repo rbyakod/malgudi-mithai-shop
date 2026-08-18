@@ -396,7 +396,28 @@ hours 9:00–21:00 IST, kitchens in Bengaluru), `/about`, `/privacy`,
 
 ---
 
-## 15. Tester notes
+## 15. Staff & ops tools (web)
+
+Staff tools live behind the admin login at `/admin` — the pages below
+ask you to sign in there first, then reload.
+
+- **Orders console** (`/staff/orders-board`): every order in one table —
+  id, placed time, customer + phone, source (web / iOS / Android), payment
+  method, payment state, status, and total. Filter by status, payment
+  method, payment state, source, or date range, or search by phone number
+  or order id; the page refreshes itself every 20 seconds. Row actions:
+  move an order to its next legal status (each move fires the customer's
+  SMS/push notification), and on cash-on-delivery orders a **Cash
+  collected** button marks the payment paid once the money is in hand. A
+  **Board** tab keeps the original drag-to-advance kanban view.
+- **Payment reconciliation** (`/staff/payment-reconciliation`): match
+  captured Razorpay payments against a pasted settlement export; a
+  **cash to collect** summary shows the outstanding COD total with a link
+  into the orders console.
+
+---
+
+## 16. Tester notes
 
 - **Test login**: +91 8088983014, OTP 424242 (works on all platforms, no
   SMS needed).
@@ -419,7 +440,7 @@ hours 9:00–21:00 IST, kitchens in Bengaluru), `/about`, `/privacy`,
 
 ---
 
-## 16. Known gaps (by design or deferred)
+## 17. Known gaps (by design or deferred)
 
 So nobody hunts for what isn't there:
 

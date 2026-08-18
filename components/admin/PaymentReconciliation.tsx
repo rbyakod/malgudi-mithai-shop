@@ -11,14 +11,49 @@
 // The CSV parse runs client-side (no file upload round-trip); the payment
 // docs are fetched from the Payload REST API. Pure parse + reconciliation
 // logic lives in lib/admin/reconcile so it is unit-tested without the browser.
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { parseSettlementCsv, reconcile, type PaymentDoc, type ReconciliationRow } from "@/lib/admin/reconcile";
+
+// Cash to collect — known-gaps B13. COD orders never appear in a Razorpay
+// settlement, so the reconciliation view surfaces them separately: the
+// outstanding cash (count + amount) links into the orders console where
+// staff mark collection.
+interface CashRow {
+  id: string;
+  totalInPaise?: number | null;
+  status?: string;
+}
 
 export function PaymentReconciliation() {
   const [csv, setCsv] = useState("");
   const [payments, setPayments] = useState<PaymentDoc[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cashRows, setCashRows] = useState<CashRow[] | null>(null);
+
+  const loadCash = useCallback(async () => {
+    try {
+      const res = await fetch(
+        "/api/staff/orders?paymentMethod=cod&paymentStatus=pending&pageSize=100",
+        { cache: "no-store" },
+      );
+      if (!res.ok) throw new Error(`cash orders fetch failed: ${res.status}`);
+      setCashRows(((await res.json()).data?.items ?? []) as CashRow[]);
+    } catch {
+      // Non-blocking: settlement matching stays usable without it.
+      setCashRows([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadCash();
+  }, [loadCash]);
+
+  const cashTotalInPaise = useMemo(
+    () => (cashRows ?? []).reduce((sum, r) => sum + (r.totalInPaise ?? 0), 0),
+    [cashRows],
+  );
 
   const loadPayments = useCallback(async () => {
     setLoading(true);
@@ -85,6 +120,28 @@ export function PaymentReconciliation() {
           <Stat label="Matched" value={counts.matched ?? 0} tone="emerald" />
           <Stat label="Captured, unsettled" value={counts.captured_unsettled ?? 0} tone="amber" />
           <Stat label="Orphan settlement" value={counts.orphan_settlement ?? 0} tone="rose" />
+          <div className="flex-1 rounded-lg bg-stone-100 px-4 py-3 text-stone-700">
+            <div className="text-2xl font-semibold">
+              {cashRows == null ? "…" : `₹${(cashTotalInPaise / 100).toFixed(0)}`}
+            </div>
+            <div className="text-xs font-medium opacity-80">
+              Cash to collect
+              {cashRows != null && (
+                <>
+                  {" — "}
+                  {cashRows.length} COD order{cashRows.length === 1 ? "" : "s"}
+                  {cashRows.length > 0 && (
+                    <>
+                      {" · "}
+                      <Link href="/staff/orders-board" className="underline">
+                        collect in console
+                      </Link>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="mt-4 overflow-x-auto">

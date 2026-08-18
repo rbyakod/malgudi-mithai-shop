@@ -174,8 +174,9 @@
     <a href="#s12"><span class="n">12</span>Languages</a>
     <a href="#s13"><span class="n">13</span>Notifications &amp; offline</a>
     <a href="#s14"><span class="n">14</span>Help &amp; legal</a>
-    <a href="#s15"><span class="n">15</span>Tester notes</a>
-    <a href="#s16"><span class="n">16</span>Known gaps</a>
+    <a href="#s15"><span class="n">15</span>Staff &amp; ops tools</a>
+    <a href="#s16"><span class="n">16</span>Tester notes</a>
+    <a href="#s17"><span class="n">17</span>Known gaps</a>
   </nav>
   <div class="sidebar-foot">
     Web · iOS · Android — everything you can do on Mishran today.<br /><br />
@@ -612,7 +613,28 @@
   </section>
 
   <section id="s15">
-    <h2>15. Tester notes</h2>
+    <h2>15. Staff &amp; ops tools (web)</h2>
+    <p>Staff tools live behind the admin login at <code>/admin</code> — the pages below
+    ask you to sign in there first, then reload.</p>
+    <ul>
+      <li><strong>Orders console</strong> (<code>/staff/orders-board</code>): every order in one
+      table — id, placed time, customer + phone, source (web / iOS / Android), payment
+      method, payment state, status, and total. Filter by status, payment method, payment
+      state, source, or date range, or search by phone number or order id; the page
+      refreshes itself every 20 seconds. Row actions: move an order to its next legal
+      status (each move fires the customer's SMS/push notification), and on
+      cash-on-delivery orders a <strong>Cash collected</strong> button marks the payment
+      paid once the money is in hand. A <strong>Board</strong> tab keeps the original
+      drag-to-advance kanban view.</li>
+      <li><strong>Payment reconciliation</strong> (<code>/staff/payment-reconciliation</code>):
+      match captured Razorpay payments against a pasted settlement export; a
+      <strong>cash to collect</strong> summary shows the outstanding COD total with a link
+      into the orders console.</li>
+    </ul>
+  </section>
+
+  <section id="s16">
+    <h2>16. Tester notes</h2>
     <div class="ok-box">
       <p class="box-title">Test login</p>
       <p>+91 8088983014, OTP 424242 (works on all platforms, no SMS needed).</p>
@@ -637,8 +659,8 @@
     </ul>
   </section>
 
-  <section id="s16">
-    <h2>16. Known gaps (by design or deferred)</h2>
+  <section id="s17">
+    <h2>17. Known gaps (by design or deferred)</h2>
     <div class="warn-box">
       <p class="box-title">So nobody hunts for what isn't there</p>
       <ul>

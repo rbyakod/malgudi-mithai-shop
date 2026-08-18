@@ -7,6 +7,7 @@
 // states (cancelled / failed_delivery / returned / payment_failed / abandoned)
 // are bucketed into a single "blocked" column so ops sees what needs attention
 // without losing the happy-path left-to-right flow.
+import type { Where } from "payload";
 import {
   ORDER_TRANSITIONS,
   type OrderStatus,
@@ -73,4 +74,59 @@ export function columnForStatus(status: OrderStatus): BoardColumn | "blocked" | 
 // UI can't offer a transition the API would 409 on.
 export function canAdvance(from: OrderStatus, to: OrderStatus): boolean {
   return ORDER_TRANSITIONS[from].includes(to);
+}
+
+// ---------------------------------------------------------------------------
+// All-orders console (known-gaps B13). Pure filter -> query helpers so the
+// route stays thin and the mapping is unit-testable.
+
+export interface OrdersQueryFilters {
+  status?: string;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  source?: string;
+  /** Inclusive ISO-date lower bound on createdAt. */
+  from?: string;
+  /** Inclusive ISO-date upper bound on createdAt. */
+  to?: string;
+  /** Free text: phone digits (resolved to customer ids by the route) or an order id. */
+  q?: string;
+}
+
+// Phones are digits with optional + / spaces / dashes; order ids are 24-char
+// hex. Anything else is treated as an order id (an id `equals` that matches
+// nothing — harmless, and keeps the where-shape total).
+export function queryLooksLikePhone(q: string): boolean {
+  return /^\+?[\d][\d\s-]{2,}$/.test(q.trim());
+}
+
+// Builds the orders `where` clause from console filters. `phoneCustomerIds`
+// carries the customers the route resolved for a phone-shaped `q` (non-empty
+// by contract — the route returns an empty page when a phone matches no one,
+// instead of building a match-none clause).
+export function buildOrdersWhere(
+  f: OrdersQueryFilters,
+  phoneCustomerIds?: string[],
+): Where {
+  const and: Where[] = [];
+  if (f.status) and.push({ status: { equals: f.status } });
+  if (f.paymentMethod) and.push({ paymentMethod: { equals: f.paymentMethod } });
+  if (f.paymentStatus) and.push({ paymentStatus: { equals: f.paymentStatus } });
+  if (f.source) and.push({ source: { equals: f.source } });
+  if (f.from) and.push({ createdAt: { greater_than_equal: f.from } });
+  if (f.to) and.push({ createdAt: { less_than_equal: f.to } });
+  if (f.q) {
+    if (phoneCustomerIds) and.push({ customerId: { in: phoneCustomerIds } });
+    else and.push({ id: { equals: f.q.trim() } });
+  }
+  return and.length > 0 ? { and } : {};
+}
+
+// COD rows with cash still to collect — drives the console's "Cash
+// collected" action and the reconciliation page's cash-to-collect preset.
+export function isCashToCollect(order: {
+  paymentMethod?: string | null;
+  paymentStatus?: string | null;
+}): boolean {
+  return order.paymentMethod === "cod" && order.paymentStatus === "pending";
 }

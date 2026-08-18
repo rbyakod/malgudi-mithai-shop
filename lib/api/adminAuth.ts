@@ -1,33 +1,42 @@
 // lib/api/adminAuth.ts
-// Admin auth helper — Task 5.1 (Mishran Mobile Apps v1).
+// Staff auth helper — hardened in the known-gaps campaign (B13).
 //
-// SECURITY TODO (Task 5.x): the current impl reads `payload.user` / Payload's
-// `getPayload` admin session state from the request. In production this MUST
-// be backed by either (a) Payload's built-in `payload.authenticate` middleware
-// (sets `req.user` from the payload-token cookie / Authorization header), or
-// (b) an explicit JWT verification against the `users` collection. The
-// simplified check below is acceptable for the v1 operator-only admin surface
-// because every admin route also sits behind the Payload admin login flow on
-// the same origin, but should be hardened before any non-staff access is
-// granted. The 401-without-auth guarantee is covered by route tests.
+// Resolves the operator from Payload's own session machinery: `payload.auth`
+// verifies the `payload-token` cookie (set by the Payload admin login at
+// /admin) or an `Authorization: JWT <token>` header against every
+// auth-enabled collection. Only one such collection exists in this app —
+// `users` (Customers is auth:false; mobile clients use custom JWTs that
+// payload.auth never sees) — but the collection guard below stays explicit
+// so a future auth collection can't silently widen staff access.
 //
-// Returning undefined (rather than throwing) lets the route handler map the
-// "no user" outcome to ApiError(TOKEN_EXPIRED) through its normal error path,
-// keeping the response envelope consistent.
+// Roles: `users` docs carry role admin|editor|ops — all three are staff;
+// route-level checks that need a finer split read `user.role` themselves.
+//
+// Returning undefined (rather than throwing) lets route handlers map the
+// "no staff user" outcome to ApiError(TOKEN_EXPIRED) through their normal
+// error path, keeping the response envelope consistent.
 import type { NextRequest } from "next/server";
+import { getPayload } from "payload";
+import config from "../../payload.config";
 
 export interface PayloadAdminUser {
   id: string;
   email?: string;
+  role?: string;
 }
 
 export async function getPayloadAdminUser(
-  _req: NextRequest,
+  req: NextRequest,
 ): Promise<PayloadAdminUser | undefined> {
-  // The real wiring depends on how the route is mounted. When Payload's
-  // `payload.authenticate` middleware runs before the handler, the verified
-  // user is attached to `req.user`. For now we return undefined and rely on
-  // the route's explicit token check. The route side stamps `actor` from
-  // whatever this helper returns (or 'admin:unknown' as a fallback).
-  return undefined;
+  const payload = await getPayload({ config });
+  const { user } = await payload.auth({ headers: req.headers });
+  if (!user) return undefined;
+  const staff = user as unknown as {
+    id?: string | number;
+    email?: string;
+    role?: string;
+    collection?: string;
+  };
+  if (staff.collection !== "users" || staff.id == null) return undefined;
+  return { id: String(staff.id), email: staff.email, role: staff.role };
 }
