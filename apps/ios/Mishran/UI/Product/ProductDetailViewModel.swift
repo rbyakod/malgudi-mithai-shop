@@ -21,6 +21,10 @@ final class ProductDetailViewModel {
     private(set) var product: ProductEntity?
     private(set) var isLoading = false
     private(set) var addedToCart = false
+    /// B11: approved public reviews for the loaded product (first page of
+    /// 5 + aggregate). nil while unloaded AND on failure — the PDP hides
+    /// the section silently; total 0 renders nothing (web parity).
+    private(set) var reviews: ReviewListDTO?
     /// Pack-size chips derived from the display price + weight (empty when
     /// neither parses — then the PDP renders no chips at all).
     private(set) var packSizes: [PackSize] = []
@@ -66,6 +70,22 @@ final class ProductDetailViewModel {
             }
         }
         derivePackSizes()
+    }
+
+    /// GET /reviews for the loaded product (B11 display-only). One fetch
+    /// per product; a failure leaves reviews nil so the section simply
+    /// stays hidden — never an error surface on the PDP.
+    func loadReviews() async {
+        guard let product, reviews == nil else { return }
+        do {
+            let dto: ReviewListDTO = try await client.request(
+                Endpoint.reviews(productId: product.id)
+            )
+            guard !Task.isCancelled else { return }
+            reviews = dto
+        } catch {
+            reviews = nil
+        }
     }
 
     /// Price line the PDP renders — the selected chip's label, falling back

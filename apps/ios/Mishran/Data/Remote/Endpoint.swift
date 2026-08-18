@@ -218,6 +218,21 @@ extension Endpoint {
         )
     }
 
+    /// POST /cart/estimate (Batch B9) — UNAUTHENTICATED pricing preview: the
+    /// validate math (line re-pricing, tier fee, threshold waiver) with
+    /// nothing persisted, so guest carts show delivery fees before sign-in.
+    /// Unlike validate, items keep their pack labels (each chip prices
+    /// separately) and an absent/unserviceable pincode is informational —
+    /// the response just carries a null tier with no fee to show.
+    static func cartEstimate(items: [CartEstimateItemDTO], pincode: String?) -> Endpoint {
+        Endpoint(
+            path: "cart/estimate",
+            method: .post,
+            body: try? JSONEncoder().encode(CartEstimateRequestDTO(items: items, pincode: pincode)),
+            requiresAuth: false
+        )
+    }
+
     /// POST /payments/razorpay/create-order. The Idempotency-Key must be
     /// FRESH per user attempt — the backend caches error responses per key,
     /// so a retry with a reused key replays the cached failure.
@@ -362,6 +377,23 @@ extension Endpoint {
     /// GET /catalog/merch/{slug} — bare merch object in {data}.
     static func merchDetail(slug: String) -> Endpoint {
         Endpoint(path: "catalog/merch/\(slug)", requiresAuth: false)
+    }
+
+    // MARK: Reviews (B11 — public review display)
+
+    /// GET /reviews?productId=… — public, moderation-approved reviews,
+    /// newest first. The PDP renders the first page (5 rows) plus the
+    /// aggregate rating; averageRating/total cover all approved reviews.
+    static func reviews(productId: String, page: Int = 1, pageSize: Int = 5) -> Endpoint {
+        Endpoint(
+            path: "reviews",
+            queryItems: [
+                URLQueryItem(name: "productId", value: productId),
+                URLQueryItem(name: "page", value: String(page)),
+                URLQueryItem(name: "pageSize", value: String(pageSize)),
+            ],
+            requiresAuth: false
+        )
     }
 
     // MARK: Leads (P2 enquiry)

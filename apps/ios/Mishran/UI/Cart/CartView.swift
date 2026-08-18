@@ -3,6 +3,10 @@
 // P3 parity: "Send order on WhatsApp" — the same openURL hand-off
 // OrderDetailView's Need-help row uses, with the enumerated order prefill
 // composed by WhatsAppMessages.cartOrder (pure, unit-tested).
+// Batch B9: the summary footer prices delivery off the view model's
+// /cart/estimate — a saved pincode shows the tier fee + free-delivery
+// threshold progress; otherwise the calculated-at-checkout copy carries a
+// Check affordance that reuses the PDP's delivery-check flow in a sheet.
 import SwiftData
 import SwiftUI
 
@@ -15,6 +19,10 @@ struct CartView: View {
     /// read, resolved once per appearance); the button stays disabled until
     /// digits exist.
     @State private var whatsappDigits: String?
+    /// B9: the PDP's delivery-check model, hosted in a sheet when the cart
+    /// footer offers "Check" (created lazily like the view model).
+    @State private var deliveryCheck: DeliveryCheckModel?
+    @State private var isShowingDeliveryCheck = false
     var onCheckout: (() -> Void)? = nil
 
     var body: some View {
@@ -27,11 +35,31 @@ struct CartView: View {
             }
         }
         .navigationTitle(L("cart.title"))
-        .onAppear { viewModel?.reload() }
+        .onAppear {
+            viewModel?.reload()
+            if deliveryCheck == nil {
+                deliveryCheck = DeliveryCheckModel(client: MishranAPIClient())
+            }
+        }
         .task {
             guard whatsappDigits == nil else { return }
             let repository = BrandRepository(client: MishranAPIClient())
             whatsappDigits = await repository.whatsappDigits()
+        }
+        // The existing PDP delivery-check flow, presented modally — the
+        // section + model are reused as-is (no new pincode UI).
+        .sheet(isPresented: $isShowingDeliveryCheck) {
+            if let deliveryCheck {
+                DeliveryCheckSection(model: deliveryCheck)
+                    .padding(.mishranSpacingLg)
+                    .background(Color.mishranBrandCanvas)
+                    .presentationDetents([.medium])
+            }
+        }
+        .onChange(of: isShowingDeliveryCheck) { _, showing in
+            // The sheet may have saved a fresh serviceable pincode —
+            // re-estimate so the fee/progress line appears immediately.
+            if !showing { viewModel?.refreshEstimate() }
         }
     }
 
@@ -63,10 +91,15 @@ struct CartView: View {
 
                 Section {
                     row(label: "Items", value: "\(viewModel.itemCount)")
+                    // B9: the estimate's tier fee rides the summary once a
+                    // saved pincode priced the cart (fallback: no row).
+                    if case let .priced(feePaise, _) = viewModel.deliveryFooter {
+                        row(label: L("cart.delivery_fee"), value: Self.rupees(feePaise))
+                    }
                     row(label: L("cart.total"), value: Self.rupees(viewModel.totalPaise))
                         .font(.mishranBodyLg.weight(.semibold))
                 } footer: {
-                    Text("Delivery calculated at checkout.")
+                    deliveryFooterBlock(viewModel.deliveryFooter)
                 }
 
                 Section {
@@ -117,6 +150,33 @@ struct CartView: View {
             Spacer()
             Text(value)
                 .foregroundStyle(Color.mishranBrandInk)
+        }
+    }
+
+    /// B9: delivery line under the summary — checkout-time copy (+ Check
+    /// affordance) until a saved pincode prices the cart, then the
+    /// free-delivery progress the estimate resolved.
+    @ViewBuilder
+    private func deliveryFooterBlock(_ footer: CartViewModel.DeliveryFooter) -> some View {
+        switch footer {
+        case .atCheckout:
+            HStack(spacing: .mishranSpacingSm) {
+                Text(L("cart.delivery_at_checkout"))
+                Spacer(minLength: 0)
+                Button {
+                    isShowingDeliveryCheck = true
+                } label: {
+                    Text(L("product.delivery.check"))
+                        .font(.mishranBodySm.weight(.semibold))
+                        .frame(minWidth: 44, minHeight: 44)
+                }
+                .buttonStyle(.borderless)
+                .tint(Color.mishranBrandAccent)
+                .accessibilityLabel(L("product.delivery.check"))
+                .accessibilityHint("Checks delivery to your pincode")
+            }
+        case let .priced(_, progress):
+            Text(CartViewModel.progressLine(progress))
         }
     }
 

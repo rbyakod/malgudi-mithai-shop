@@ -140,6 +140,13 @@ struct ProductDetailView: View {
                     if !crossSell.isEmpty {
                         crossSellRail
                     }
+
+                    // B11: approved public reviews — hidden entirely while
+                    // unloaded/failed and when the product has none (web
+                    // parity: no empty state).
+                    if let reviews = viewModel.reviews, reviews.total > 0 {
+                        reviewsSection(reviews)
+                    }
                 }
                 .padding(.mishranSpacingLg)
             } else if viewModel.isLoading {
@@ -183,9 +190,11 @@ struct ProductDetailView: View {
             whatsappDigits = await repository.whatsappDigits()
         }
         // Re-runs when the loaded product's slug appears: cross-sell reads
-        // the same-family cache rows (direct PDP entrylands fetch once).
+        // the same-family cache rows (direct PDP entrylands fetch once),
+        // and the reviews fetch rides the same trigger (B11).
         .task(id: viewModel.product?.slug) {
             await loadCrossSell()
+            await viewModel.loadReviews()
         }
     }
 
@@ -393,6 +402,86 @@ struct ProductDetailView: View {
                 .filter { $0.family == product.family && $0.slug != product.slug }
         }
         crossSell = Array(siblings.prefix(4))
+    }
+
+    // MARK: Reviews (B11)
+
+    /// "Customer reviews" — aggregate StarRow + summary line, then up to 5
+    /// approved rows (author · verified badge · date · body) and a plain
+    /// "+ N more" caption. Section styling matches provenance/honest-label
+    /// (divider, quiet uppercase heading, accent label color).
+    private func reviewsSection(_ reviews: ReviewListDTO) -> some View {
+        VStack(alignment: .leading, spacing: .mishranSpacingMd) {
+            Divider()
+            Text(L("reviews.title"))
+                .font(.mishranBodySm.weight(.medium))
+                .textCase(.uppercase)
+                .tracking(1.8)
+                .foregroundStyle(Color.mishranBrandAccent)
+                .accessibilityAddTraits(.isHeader)
+
+            HStack(spacing: .mishranSpacingMd) {
+                StarRow(rating: reviews.averageRating ?? 0)
+                Text(Self.reviewSummary(reviews))
+                    .font(.mishranBodyMd)
+                    .foregroundStyle(Color.mishranNeutral500)
+            }
+            .accessibilityElement(children: .combine)
+
+            let shown = Array(reviews.items.prefix(5))
+            ForEach(shown) { review in
+                reviewRow(review)
+            }
+
+            // Overflow caption only — pagination is a later batch.
+            if reviews.total > shown.count {
+                Text(L("reviews.more", String(reviews.total - shown.count)))
+                    .font(.mishranBodySm)
+                    .foregroundStyle(Color.mishranNeutral500)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("pdp.reviews")
+    }
+
+    /// One review: author (Anonymous fallback) with the verified-purchase
+    /// badge and the parsed date, body beneath when the row carries one.
+    private func reviewRow(_ review: ReviewDTO) -> some View {
+        VStack(alignment: .leading, spacing: .mishranSpacingXs) {
+            HStack(spacing: .mishranSpacingSm) {
+                Text(review.authorDisplayName ?? L("reviews.anonymous"))
+                    .font(.mishranBodyMd.weight(.semibold))
+                    .foregroundStyle(Color.mishranBrandInk)
+                if review.verifiedPurchase {
+                    Text(L("reviews.verified"))
+                        .font(.mishranBodySm.weight(.medium))
+                        .textCase(.uppercase)
+                        .tracking(1.2)
+                        .foregroundStyle(Color.mishranBrandPop)
+                }
+                Spacer(minLength: 0)
+                if let date = StoryFormatting.displayString(review.createdAt) {
+                    Text(date)
+                        .font(.mishranBodySm)
+                        .foregroundStyle(Color.mishranNeutral500)
+                }
+            }
+            if let body = review.body, !body.isEmpty {
+                Text(body)
+                    .font(.mishranBodyMd)
+                    .foregroundStyle(Color.mishranNeutral500)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    /// "4.5 · 12 reviews" — one-decimal rating (web's toFixed(1)) with the
+    /// singular/plural summary the i18n tables carry. Internal for tests.
+    static func reviewSummary(_ reviews: ReviewListDTO) -> String {
+        let rating = ReviewFormatting.rating(reviews.averageRating ?? 0)
+        return reviews.total == 1
+            ? L("reviews.summary_one", rating)
+            : L("reviews.summary_other", rating, String(reviews.total))
     }
 
     // MARK: Field → copy maps (mirrors MithaiPDP.tsx FRESHNESS_KEY/DIETARY_KEY)

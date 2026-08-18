@@ -108,11 +108,13 @@
 		9F6E4F9297504C2A33DBD2D8 /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4C872A2150AEB654FFA2B9D7 /* ExportOptions.plist */; };
 		9FD03ADFDD9C9409D7C60BF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38C61D8573D8238A69276ACD /* Assets.xcassets */; };
 		A3985EE883EE06FF0E9483AD /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE06CF24565A57CA9FCAA9AD /* APIError.swift */; };
+		A41402011A8B579FC1766C84 /* CartEstimateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66941C11EECD986D3803A228 /* CartEstimateTests.swift */; };
 		A94C62C4F095C3301CF0FC6B /* CartLineItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA138DEEE85AFEF2A870BE4 /* CartLineItem.swift */; };
 		AAF00B9D39423E4775B46DB9 /* CartBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94BC9203F9C887E0A98FFC1 /* CartBadge.swift */; };
 		ABF0BF37C890C6A8E909992C /* SwiftDataModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */; };
 		ADD7CCDC3C37DC330F12A408 /* DeepLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DF3D42184874F4F42CC512 /* DeepLinkTests.swift */; };
 		ADDD31EEBF7044E2271A6D70 /* GiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFEE24CEDB6D3216CF15F79 /* GiftViewModel.swift */; };
+		AE094EFA339EA6E1643BB169 /* ReviewDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81B438A4094BFE8E8E510B0C /* ReviewDisplayTests.swift */; };
 		AED872AED08D14214380378F /* StoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A3A87A72F2DF07FF5B3150 /* StoryRepository.swift */; };
 		B2DAA6BC451CF54279A60DAC /* MishranAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA438316FABC42993AEAC8DD /* MishranAPIClient.swift */; };
 		B36E3B62A15B85F6EF2F22AF /* CatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47991E844FC2618D4D5A5DBA /* CatalogView.swift */; };
@@ -131,6 +133,7 @@
 		CCE7E6111F6E2F67296F47BB /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96419773D8968ABB05ACB046 /* HomeViewModel.swift */; };
 		CD60C4EED7FEBE4F4493AF5E /* Verticals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068C4A4415A907EF29363E2A /* Verticals.swift */; };
 		CE823D38E7176D344874C91B /* StoryPillar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483C2A30BCC5D6DC3EC133E /* StoryPillar.swift */; };
+		CED6BED3CFDA703E337D4093 /* StarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3B5A9533445EF5A378092B /* StarRow.swift */; };
 		D1A709FD27EB85DD3CA54052 /* AccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6575E90C61D6190AA687E88 /* AccessibilityTests.swift */; };
 		D377E0B4F96E6CB8DEBBED4E /* StoryPillarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA5512406A0E7CF2D3A9BF1 /* StoryPillarTests.swift */; };
 		D431790501096E49AAA53975 /* HeroRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E0099047EE67B6DB5EF38 /* HeroRepository.swift */; };
@@ -218,6 +221,7 @@
 		4AD2938F9587022374A9DE29 /* LoyaltyPassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoyaltyPassTests.swift; sourceTree = "<group>"; };
 		4C872A2150AEB654FFA2B9D7 /* ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = ExportOptions.plist; sourceTree = "<group>"; };
 		4DDE5AFCC40042CEB720EB1A /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		4E3B5A9533445EF5A378092B /* StarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarRow.swift; sourceTree = "<group>"; };
 		527447227CF3E458EFB401BA /* PackSizePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackSizePicker.swift; sourceTree = "<group>"; };
 		5384924CE7B94056D974BAAC /* CheckoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutView.swift; sourceTree = "<group>"; };
 		557BDC90C27B02C28EE85F24 /* RazorpayCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RazorpayCoordinator.swift; sourceTree = "<group>"; };
@@ -234,6 +238,7 @@
 		608A8F33A9B70154DC268F53 /* CheckoutViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutViewModelTests.swift; sourceTree = "<group>"; };
 		64620CDA70359F2FAF3E0AC9 /* NavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationUITests.swift; sourceTree = "<group>"; };
 		6650E7C3E56C1E00A96507EC /* AccessibilityHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityHelpers.swift; sourceTree = "<group>"; };
+		66941C11EECD986D3803A228 /* CartEstimateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartEstimateTests.swift; sourceTree = "<group>"; };
 		67D0C6C11D7C185ADC27F041 /* CountryPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryPickerSheet.swift; sourceTree = "<group>"; };
 		6836CBCA9A6BB2BBD587BF74 /* OrderDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewModel.swift; sourceTree = "<group>"; };
 		69EF5FFF260D8EBC69A3ED5A /* AddressPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressPicker.swift; sourceTree = "<group>"; };
@@ -251,6 +256,7 @@
 		7DDC5C5B6DC60B237DA073D8 /* GiftView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftView.swift; sourceTree = "<group>"; };
 		7EFEE24CEDB6D3216CF15F79 /* GiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftViewModel.swift; sourceTree = "<group>"; };
 		8008BA765E8DCAF04F9892DD /* AppleSignInCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInCoordinator.swift; sourceTree = "<group>"; };
+		81B438A4094BFE8E8E510B0C /* ReviewDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewDisplayTests.swift; sourceTree = "<group>"; };
 		824C93F1D0932E5DEA6A05C8 /* DeliveryAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveryAttributes.swift; sourceTree = "<group>"; };
 		82730F53B7A9C3AE55E3ADCD /* RazorpayCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RazorpayCoordinatorTests.swift; sourceTree = "<group>"; };
 		8483C2A30BCC5D6DC3EC133E /* StoryPillar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryPillar.swift; sourceTree = "<group>"; };
@@ -402,6 +408,7 @@
 			children = (
 				F731821077C0CABDF68A8AB7 /* OrderStatusBadge.swift */,
 				8F6990934CD0E6C33B903BC5 /* ProductRemoteImage.swift */,
+				4E3B5A9533445EF5A378092B /* StarRow.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -737,6 +744,7 @@
 				D4774C4B2CF65897F30615C9 /* AuthViewModelTests.swift */,
 				CA6B6F05C67F3B5110ED193B /* BrandRepositoryTests.swift */,
 				1EBE2E36C2FF8DB8FE4C528E /* CartBadgeTests.swift */,
+				66941C11EECD986D3803A228 /* CartEstimateTests.swift */,
 				3A4B54152260D000962946B9 /* CartViewModelTests.swift */,
 				1DA54984EE19823EDAE55EBC /* CatalogRepositoryTests.swift */,
 				5E023DB28BA92429906660F0 /* CatalogSortTests.swift */,
@@ -758,6 +766,7 @@
 				A48A5980852C073E51B9FBFF /* ProductDetailViewModelTests.swift */,
 				2281E986EC07089C8334D767 /* PushRegistrationTests.swift */,
 				82730F53B7A9C3AE55E3ADCD /* RazorpayCoordinatorTests.swift */,
+				81B438A4094BFE8E8E510B0C /* ReviewDisplayTests.swift */,
 				3FA5512406A0E7CF2D3A9BF1 /* StoryPillarTests.swift */,
 				366DAF2835A246C4E1B01A8A /* StoryRepositoryTests.swift */,
 				2AE52F788D91A165CA52C5AA /* SwiftDataModelTests.swift */,
@@ -854,16 +863,16 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					2C49B580602E129C08366052 = {
-						DevelopmentTeam = 2X7B7DMV95;
+						DevelopmentTeam = "${APPLE_TEAM_ID}";
 						ProvisioningStyle = Automatic;
 						TestTargetID = D1B295700D76C68137328D08;
 					};
 					5AC9D4BAA9624C10E8CE992B = {
-						DevelopmentTeam = 2X7B7DMV95;
+						DevelopmentTeam = "${APPLE_TEAM_ID}";
 						ProvisioningStyle = Automatic;
 					};
 					D1B295700D76C68137328D08 = {
-						DevelopmentTeam = 2X7B7DMV95;
+						DevelopmentTeam = "${APPLE_TEAM_ID}";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -1016,6 +1025,7 @@
 				9C4704FA753E12516E498B4C /* SeedData.swift in Sources */,
 				5D0BD8A2DEA298E5516DD416 /* SlotPicker.swift in Sources */,
 				68264C0171F2DA6C1D62D455 /* SnackDetailView.swift in Sources */,
+				CED6BED3CFDA703E337D4093 /* StarRow.swift in Sources */,
 				18EFBFC5A9380E44FA16AD3A /* StoriesView.swift in Sources */,
 				5B8F9E4A5AE9D02AA556EC8B /* StoryFormatting.swift in Sources */,
 				CE823D38E7176D344874C91B /* StoryPillar.swift in Sources */,
@@ -1042,6 +1052,7 @@
 				59B2B9B58C01BA97CC40881D /* AuthViewModelTests.swift in Sources */,
 				ECAF25A81CEB6D82104143FB /* BrandRepositoryTests.swift in Sources */,
 				123C7729529020F117F69B2E /* CartBadgeTests.swift in Sources */,
+				A41402011A8B579FC1766C84 /* CartEstimateTests.swift in Sources */,
 				574C9AB932A24DF992905FBD /* CartViewModelTests.swift in Sources */,
 				425D41BA0C51A30BEAB5B3DD /* CatalogRepositoryTests.swift in Sources */,
 				DE6CFFC3FBB0F7A9A76B567C /* CatalogScrollTests.swift in Sources */,
@@ -1065,6 +1076,7 @@
 				315E701EE458F89C88DE27C1 /* ProductDetailViewModelTests.swift in Sources */,
 				655748B8C4E2F7FDDC5DDE19 /* PushRegistrationTests.swift in Sources */,
 				0BB50EF4FF9169EB606587D8 /* RazorpayCoordinatorTests.swift in Sources */,
+				AE094EFA339EA6E1643BB169 /* ReviewDisplayTests.swift in Sources */,
 				D377E0B4F96E6CB8DEBBED4E /* StoryPillarTests.swift in Sources */,
 				DB0F139DE0B213637C8822CE /* StoryRepositoryTests.swift in Sources */,
 				ABF0BF37C890C6A8E909992C /* SwiftDataModelTests.swift in Sources */,
@@ -1249,7 +1261,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 2X7B7DMV95;
+				DEVELOPMENT_TEAM = "${APPLE_TEAM_ID}";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1309,7 +1321,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 2X7B7DMV95;
+				DEVELOPMENT_TEAM = "${APPLE_TEAM_ID}";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

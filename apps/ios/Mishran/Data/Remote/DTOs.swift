@@ -332,22 +332,85 @@ struct CartValidateRequestDTO: Encodable {
     let couponCode: String?
 }
 
-/// Totals as /cart/validate prices them. Batch B8 decodes ONLY the coupon
-/// discount — the broader items/totals wiring on this response is a later
-/// batch, so the decode stays deliberately minimal.
-struct CartValidateTotalsDTO: Decodable, Equatable {
-    let discountInPaise: Int
+/// Totals as /cart/validate prices them — the contract reuses the order
+/// projection's OrderTotals schema verbatim ($ref), so the decode does too
+/// (Batch B9 stopped discarding everything but the coupon discount).
+typealias CartValidateTotalsDTO = OrderTotalsDTO
+
+/// /cart/validate snapshot line (openapi CartSnapshotItem) — the server
+/// re-priced each line against the pack identity it sold. Batch B9 stops
+/// discarding these: they ride the snapshot decode for later batches
+/// (checkout behavior itself is unchanged).
+struct CartSnapshotItemDTO: Decodable, Equatable {
+    let productId: String
+    let slug: String
+    let name: String
+    let quantity: Int
+    /// "made-daily" | "made-to-order" | "batch-frozen" | null.
+    let freshnessStatus: String?
+    /// Pack chip the line was priced against; null for base-price lines.
+    let packLabel: String?
+    /// Pack identity of the priced line, e.g. "500g" / "1 kg" / "250 g".
+    let unit: String?
+    /// Server-resolved line price in paise (per unit, not x quantity).
+    let priceInPaise: Int
+    /// First product image URL (absolute), when one exists.
+    let image: String?
 }
 
 struct CartValidateResponseDTO: Decodable {
     let snapshotId: String
     let customerId: String
+    let items: [CartSnapshotItemDTO]
+    let totals: CartValidateTotalsDTO
     let pincodeTier: String
     let expiresAt: String
     /// Coupon the server actually folded into totals, normalized uppercase;
     /// null when none was applied.
     let couponCode: String?
-    let totals: CartValidateTotalsDTO
+}
+
+// MARK: - Cart estimate (Batch B9 — guest pricing preview)
+
+/// POST /cart/estimate item (openapi CartItem). packLabel prices the
+/// matching derived pack option; absent = the product's base display price
+/// — so unlike place-order's collapsed validate items, each pack chip line
+/// stays its own estimate item.
+struct CartEstimateItemDTO: Encodable, Equatable {
+    let productId: String
+    let quantity: Int
+    let packLabel: String?
+}
+
+/// POST /cart/estimate body. Synthesized Encodable omits a nil pincode.
+/// With a SERVICEABLE pincode the estimate resolves tier, fee, and
+/// free-delivery threshold; absent or unserviceable yields a null tier,
+/// zero fee, null threshold (the client shows its no-pincode copy).
+struct CartEstimateRequestDTO: Encodable {
+    let items: [CartEstimateItemDTO]
+    let pincode: String?
+}
+
+/// Read-only pricing preview ({data:{…}}) — exactly the /cart/validate
+/// math, persisted nowhere, authenticated by nobody (guest carts price
+/// before sign-in). pincodeTier and freeDeliveryThresholdInPaise are
+/// NULLABLE per the contract ([string,'null'] / [integer,'null']): null
+/// when no/unserviceable/unknown-tier pincode was sent. A threshold of 0
+/// disables the waiver (renders no progress line).
+struct CartEstimateDTO: Decodable, Equatable {
+    let itemsTotalInPaise: Int
+    let deliveryFeeInPaise: Int
+    let discountInPaise: Int
+    let totalInPaise: Int
+    /// Service tier of the resolved pincode ("shelf" | "fresh"); null when
+    /// no/unserviceable pincode was sent.
+    let pincodeTier: String?
+    /// Tier's free-delivery threshold in paise; null when the tier is
+    /// unknown, 0 when the waiver is disabled.
+    let freeDeliveryThresholdInPaise: Int?
+    /// True when the tier is known and the subtotal met the threshold (the
+    /// fee in deliveryFeeInPaise is already zeroed).
+    let freeDeliveryEligible: Bool
 }
 
 struct CreateOrderRequestDTO: Encodable {
@@ -550,6 +613,38 @@ struct MerchDTO: Decodable, Equatable, Identifiable, Hashable {
 
 struct MerchPageDTO: Decodable, Equatable {
     let items: [MerchDTO]
+    let total: Int
+    let page: Int
+    let pageSize: Int
+}
+
+// MARK: - Reviews (B11 — public review display)
+
+/// One moderation-approved review (openapi PublicReview). Author is a
+/// display name only — customer ids and phones never leave the server.
+/// createdAt stays a STRING (ISO date-time) in the DTO on purpose: the
+/// client parses leniently at render time (StoryFormatting handles the
+/// fractional-seconds variants) instead of failing the whole page decode.
+struct ReviewDTO: Decodable, Equatable, Identifiable {
+    let id: String
+    /// 1–5, integer.
+    let rating: Int
+    /// Optional free-text body; null renders no body block.
+    let body: String?
+    /// Captured authorName, else the customer's saved name; null when
+    /// neither exists (the UI renders the Anonymous label).
+    let authorDisplayName: String?
+    /// Server-stamped: the author had a delivered order with the product.
+    let verifiedPurchase: Bool
+    let createdAt: String
+}
+
+/// GET /reviews page. averageRating and total cover ALL approved reviews
+/// for the product, not just this page; averageRating is null when there
+/// are none (total 0 renders no section at all — web parity).
+struct ReviewListDTO: Decodable, Equatable {
+    let items: [ReviewDTO]
+    let averageRating: Double?
     let total: Int
     let page: Int
     let pageSize: Int
