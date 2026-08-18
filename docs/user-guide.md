@@ -25,8 +25,10 @@ Last updated: 2026-08-17.
 **Tester login (all platforms):** phone **+91 8088983014**, OTP **424242**.
 This dummy account always works, including when the SMS provider is down.
 
-**Payments everywhere:** Razorpay only (UPI, cards, netbanking, wallets —
-all inside the Razorpay sheet). **No Cash on Delivery** on any platform.
+**Payments on the apps:** Razorpay only (UPI, cards, netbanking, wallets —
+all inside the Razorpay sheet). **On the web** you can pay online the same
+way or choose **Cash on delivery** at checkout and hand the cash to the
+delivery partner at your door (online is the default).
 
 ---
 
@@ -223,9 +225,13 @@ a running total. Carts persist on the device.
 3. **Review & pay** — the order is **re-priced by the kitchen in real
    time** (the amounts shown are the server's, not the estimate), a
    **Coupon** field sits between the items and the totals (see below),
-   then **Pay ₹{amount}** opens Razorpay. If payment fails or the window
-   is closed, your order is saved and you can retry or finish on WhatsApp —
-   you're never double-charged (idempotency keys).
+   and a payment choice: **Pay online** (default) or **Cash on
+   delivery**. Online: **Pay ₹{amount}** opens Razorpay; if payment
+   fails or the window is closed, your order is saved and you can retry
+   or finish on WhatsApp — you're never double-charged (idempotency
+   keys). Cash on delivery skips Razorpay entirely — you confirm, the
+   order is placed instantly (a small note reminds you to have the cash
+   ready for the delivery partner).
 
 **iOS**: Checkout form → pick/add address → pincode check → slot (fresh
 tier only) → **Pay ₹{amount}** → Razorpay sheet → confirmation. The
@@ -417,7 +423,6 @@ hours 9:00–21:00 IST, kitchens in Bengaluru), `/about`, `/privacy`,
 
 So nobody hunts for what isn't there:
 
-- **No COD** anywhere; Razorpay only.
 - **Apps don't show delivery fees or free-delivery thresholds in the
   cart** — fees appear on the priced order at checkout/after payment. Web
   shows the full estimate.

@@ -75,6 +75,8 @@
   "checkout.payment.card": "ક્રેડિટ / ડેબિટ કાર્ડ",
   "checkout.payment.netbanking": "નેટ બેંકિંગ",
   "checkout.payment.wallet": "વૉલેટ",
+  "checkout.payment.cod": "ડિલિવરી સમયે રોકડ",
+  "checkout.payment.cod_note": "ડિલિવરી પાર્ટનરને બારણે રોકડ આપો.",
   "checkout.pay": "{amount} ચુકવો",
   "checkout.cta.place_order": "ઑર્ડર કરો",
   "checkout.cta.select_address": "ડિલિવરી સરનામું પસંદ કરો",

@@ -76,6 +76,8 @@
   <string name="checkout_payment_card">Credit / Debit card</string>
   <string name="checkout_payment_netbanking">Netbanking</string>
   <string name="checkout_payment_wallet">Wallet</string>
+  <string name="checkout_payment_cod">Cash on delivery</string>
+  <string name="checkout_payment_cod_note">Hand the cash to the delivery partner at your door.</string>
   <string name="checkout_pay">Pay %1$s</string>
   <string name="checkout_cta_place_order">Place order</string>
   <string name="checkout_cta_select_address">Select a delivery address</string>

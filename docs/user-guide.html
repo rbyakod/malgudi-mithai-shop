@@ -234,8 +234,10 @@
       <p>Phone <strong>+91 8088983014</strong>, OTP <strong>424242</strong>. This dummy account
       always works, including when the SMS provider is down.</p>
     </div>
-    <p><strong>Payments everywhere:</strong> Razorpay only (UPI, cards, netbanking, wallets —
-    all inside the Razorpay sheet). <strong>No Cash on Delivery</strong> on any platform.</p>
+    <p><strong>Payments on the apps:</strong> Razorpay only (UPI, cards, netbanking, wallets —
+    all inside the Razorpay sheet). <strong>On the web</strong> you can pay online the same
+    way or choose <strong>Cash on delivery</strong> at checkout and hand the cash to the
+    delivery partner at your door (online is the default).</p>
   </section>
 
   <section id="s2">
@@ -443,10 +445,13 @@
       few days.</li>
       <li><strong>Review &amp; pay</strong> — the order is <strong>re-priced by the kitchen in
       real time</strong> (the amounts shown are the server's, not the estimate), a
-      <strong>Coupon</strong> field sits between the items and the totals (see below), then
-      <strong>Pay ₹{amount}</strong> opens Razorpay. If payment fails or the window is closed,
-      your order is saved and you can retry or finish on WhatsApp — you're never double-charged
-      (idempotency keys).</li>
+      <strong>Coupon</strong> field sits between the items and the totals (see below), and a
+      payment choice: <strong>Pay online</strong> (default) or <strong>Cash on delivery</strong>.
+      Online: <strong>Pay ₹{amount}</strong> opens Razorpay; if payment fails or the window is
+      closed, your order is saved and you can retry or finish on WhatsApp — you're never
+      double-charged (idempotency keys). Cash on delivery skips Razorpay entirely — you
+      confirm, the order is placed instantly (a small note reminds you to have the cash ready
+      for the delivery partner).</li>
     </ol>
 
     <p><strong>iOS</strong>: Checkout form → pick/add address → pincode check → slot (fresh
@@ -637,7 +642,6 @@
     <div class="warn-box">
       <p class="box-title">So nobody hunts for what isn't there</p>
       <ul>
-        <li><strong>No COD</strong> anywhere; Razorpay only.</li>
         <li><strong>Apps don't show delivery fees or free-delivery thresholds in the cart</strong>
         — fees appear on the priced order at checkout/after payment. Web shows the full
         estimate.</li>

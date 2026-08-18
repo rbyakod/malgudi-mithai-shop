@@ -14,7 +14,11 @@ import { getPayload } from "payload";
 import config from "../../../payload.config";
 import type { Order, OrderStatus } from "../types";
 import { ORDER_TRANSITIONS } from "../types";
-import type { OrderCreateSnapshot, OrderService } from "../OrderService";
+import type {
+  CreateOrderOptions,
+  OrderCreateSnapshot,
+  OrderService,
+} from "../OrderService";
 import { ApiError, ErrorCode } from "../../api/errors";
 
 // Shipments.currentStage enum (see collections/Shipments.ts). Stages that
@@ -35,7 +39,9 @@ export class PayloadOrderService implements OrderService {
     snapshot: OrderCreateSnapshot,
     customerId: string,
     source: "mobile-android" | "mobile-ios" | "web",
+    opts?: CreateOrderOptions,
   ): Promise<Order> {
+    const paymentMethod = opts?.paymentMethod ?? "razorpay";
     const payload = await getPayload({ config });
     const created = await payload.create({
       collection: "orders",
@@ -55,8 +61,14 @@ export class PayloadOrderService implements OrderService {
           image: item.image ?? null,
         })),
         totals: snapshot.totals,
-        status: "pending_payment",
+        // COD is born CONFIRMED — a sale with cash pending at the door
+        // (B12). Fulfillment (packing → dispatch → delivery) runs normally;
+        // staff flip paymentStatus to paid when the cash is collected.
+        // Online orders keep the pending_payment birth state until the
+        // provider verifies.
+        status: paymentMethod === "cod" ? "confirmed" : "pending_payment",
         paymentStatus: "pending",
+        paymentMethod,
         // Coupon stamped on the snapshot by /cart/validate (B7).
         couponCode: snapshot.couponCode ?? null,
         deliveryAddressId: snapshot.deliveryAddressId,
@@ -69,8 +81,8 @@ export class PayloadOrderService implements OrderService {
     // Burn the coupon (B7): usedCount is incremented exactly once per order
     // created with the code — this is its ONLY writer; /cart/validate reads
     // the counters on every call but consumes nothing. Both the razorpay
-    // path (today) and the COD path (B12) funnel through here, so a code
-    // is charged the same redemption either way.
+    // and the COD paths funnel through here, so a code is charged the same
+    // redemption either way.
     //
     // Cancellations deliberately do NOT decrement: usedCount is lifetime
     // redemptions, and a cancelled order keeps the customer's
@@ -228,6 +240,8 @@ export class PayloadOrderService implements OrderService {
       deliveryAddressId: d.deliveryAddressId as string,
       slot: d.slot as Order["slot"],
       source: d.source as Order["source"],
+      // Rows created before B12 carry no method — they are online orders.
+      paymentMethod: (d.paymentMethod as Order["paymentMethod"]) ?? "razorpay",
       couponCode: (d.couponCode as string | null | undefined) ?? null,
       razorpayOrderId: d.razorpayOrderId as string | undefined,
       createdAt: d.createdAt as string,

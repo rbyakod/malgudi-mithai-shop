@@ -75,6 +75,8 @@
 "checkout.payment.card" = "கிரெடிட் / டெபிட் கார்டு";
 "checkout.payment.netbanking" = "நெட் பேங்கிங்";
 "checkout.payment.wallet" = "வாலட்";
+"checkout.payment.cod" = "டெலிவரியின் போது பணம்";
+"checkout.payment.cod_note" = "டெலிவரி பங்கேற்பாளரிடம் வாசலில் பணம் கொடுங்கள்.";
 "checkout.pay" = "{amount} செலுத்து";
 "checkout.cta.place_order" = "ஆர்டர் செய்யுங்கள்";
 "checkout.cta.select_address" = "விநியோக முகவரியைத் தேர்ந்தெடுக்கவும்";

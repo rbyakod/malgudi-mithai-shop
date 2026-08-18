@@ -75,6 +75,8 @@
 "checkout.payment.card" = "Credit / Debit card";
 "checkout.payment.netbanking" = "Netbanking";
 "checkout.payment.wallet" = "Wallet";
+"checkout.payment.cod" = "Cash on delivery";
+"checkout.payment.cod_note" = "Hand the cash to the delivery partner at your door.";
 "checkout.pay" = "Pay {amount}";
 "checkout.cta.place_order" = "Place order";
 "checkout.cta.select_address" = "Select a delivery address";

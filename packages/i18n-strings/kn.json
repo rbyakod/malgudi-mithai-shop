@@ -75,6 +75,8 @@
   "checkout.payment.card": "ಕ್ರೆಡಿಟ್ / ಡೆಬಿಟ್ ಕಾರ್ಡ್",
   "checkout.payment.netbanking": "ನೆಟ್‌ಬ್ಯಾಂಕಿಂಗ್",
   "checkout.payment.wallet": "ವಾಲೆಟ್",
+  "checkout.payment.cod": "ಡೆಲಿವರಿ ಸಮಯದಲ್ಲಿ ನಗದು",
+  "checkout.payment.cod_note": "ಬಾಗಿಲಿನಲ್ಲಿ ಡೆಲಿವರಿ ಪಾರ್ಟ್‌ನರ್‌ಗೆ ನಗದು ನೀಡಿ.",
   "checkout.pay": "{amount} ಪಾವತಿಸಿ",
   "checkout.cta.place_order": "ಆರ್ಡರ್ ಮಾಡಿ",
   "checkout.cta.select_address": "ವಿತರಣಾ ವಿಳಾಸ ಆಯ್ಕೆಮಾಡಿ",

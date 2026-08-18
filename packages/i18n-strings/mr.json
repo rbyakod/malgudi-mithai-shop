@@ -75,6 +75,8 @@
   "checkout.payment.card": "क्रेडिट / डेबिट कार्ड",
   "checkout.payment.netbanking": "नेट बँकिंग",
   "checkout.payment.wallet": "वॉलेट",
+  "checkout.payment.cod": "डिलिव्हरीवेळी रोकड",
+  "checkout.payment.cod_note": "डिलिव्हरी पार्टनरला दारात रोकड द्या.",
   "checkout.pay": "{amount} पेमेंट करा",
   "checkout.cta.place_order": "ऑर्डर द्या",
   "checkout.cta.select_address": "डिलिव्हरी पत्ता निवडा",

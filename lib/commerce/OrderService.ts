@@ -2,7 +2,7 @@
 // OrderService interface — Task 4.2 (Mishran Mobile Apps v1).
 // Concrete impl (PayloadOrderService) lives in ./impl/PayloadOrderService.ts.
 // Wired into the DI container in a later task.
-import type { Order, OrderStatus } from "./types";
+import type { Order, OrderStatus, PaymentMethod } from "./types";
 
 /**
  * Cart snapshot shape passed to createFromSnapshot. Loose-typed here to
@@ -17,6 +17,15 @@ export interface OrderCreateSnapshot {
   slot?: { date: string; window: string };
   /** Coupon stamped by /cart/validate; copied to the order (B7). */
   couponCode?: string | null;
+}
+
+/**
+ * Per-call creation options (B12). paymentMethod defaults to "razorpay"
+ * (pending_payment birth state); "cod" is born confirmed with cash
+ * pending at the door.
+ */
+export interface CreateOrderOptions {
+  paymentMethod?: PaymentMethod;
 }
 
 export interface OrderListResult {
@@ -34,6 +43,7 @@ export interface OrderService {
     snapshot: OrderCreateSnapshot,
     customerId: string,
     source: "mobile-android" | "mobile-ios" | "web",
+    opts?: CreateOrderOptions,
   ): Promise<Order>;
   getById(id: string, customerId: string): Promise<Order | null>;
   listForCustomer(

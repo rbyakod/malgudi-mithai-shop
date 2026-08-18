@@ -76,6 +76,8 @@
   <string name="checkout_payment_card">ಕ್ರೆಡಿಟ್ / ಡೆಬಿಟ್ ಕಾರ್ಡ್</string>
   <string name="checkout_payment_netbanking">ನೆಟ್‌ಬ್ಯಾಂಕಿಂಗ್</string>
   <string name="checkout_payment_wallet">ವಾಲೆಟ್</string>
+  <string name="checkout_payment_cod">ಡೆಲಿವರಿ ಸಮಯದಲ್ಲಿ ನಗದು</string>
+  <string name="checkout_payment_cod_note">ಬಾಗಿಲಿನಲ್ಲಿ ಡೆಲಿವರಿ ಪಾರ್ಟ್‌ನರ್‌ಗೆ ನಗದು ನೀಡಿ.</string>
   <string name="checkout_pay">%1$s ಪಾವತಿಸಿ</string>
   <string name="checkout_cta_place_order">ಆರ್ಡರ್ ಮಾಡಿ</string>
   <string name="checkout_cta_select_address">ವಿತರಣಾ ವಿಳಾಸ ಆಯ್ಕೆಮಾಡಿ</string>

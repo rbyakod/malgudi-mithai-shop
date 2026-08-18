@@ -75,6 +75,8 @@
   "checkout.payment.card": "क्रेडिट / डेबिट कार्ड",
   "checkout.payment.netbanking": "नेटबैंकिंग",
   "checkout.payment.wallet": "वॉलेट",
+  "checkout.payment.cod": "डिलीवरी पर नगद",
+  "checkout.payment.cod_note": "डिलीवरी पार्टनर को दरवाज़े पर नगद दें।",
   "checkout.pay": "{amount} का भुगतान करें",
   "checkout.cta.place_order": "ऑर्डर दें",
   "checkout.cta.select_address": "डिलीवरी का पता चुनें",

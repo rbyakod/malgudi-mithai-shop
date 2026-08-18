@@ -75,6 +75,8 @@
 "checkout.payment.card" = "క్రెడిట్ / డెబిట్ కార్డ్";
 "checkout.payment.netbanking" = "నెట్ బ్యాంకింగ్";
 "checkout.payment.wallet" = "వాలెట్";
+"checkout.payment.cod" = "డెలివరీ సమయంలో నగదు";
+"checkout.payment.cod_note" = "డెలివరీ పార్ట్‌నర్‌కు తలుపు వద్ద నగదు ఇవ్వండి.";
 "checkout.pay" = "{amount} చెల్లించండి";
 "checkout.cta.place_order" = "ఆర్డర్ చేయండి";
 "checkout.cta.select_address" = "డెలివరీ చిరునామాను ఎంచుకోండి";

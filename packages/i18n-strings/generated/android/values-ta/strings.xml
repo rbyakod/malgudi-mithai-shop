@@ -76,6 +76,8 @@
   <string name="checkout_payment_card">கிரெடிட் / டெபிட் கார்டு</string>
   <string name="checkout_payment_netbanking">நெட் பேங்கிங்</string>
   <string name="checkout_payment_wallet">வாலட்</string>
+  <string name="checkout_payment_cod">டெலிவரியின் போது பணம்</string>
+  <string name="checkout_payment_cod_note">டெலிவரி பங்கேற்பாளரிடம் வாசலில் பணம் கொடுங்கள்.</string>
   <string name="checkout_pay">%1$s செலுத்து</string>
   <string name="checkout_cta_place_order">ஆர்டர் செய்யுங்கள்</string>
   <string name="checkout_cta_select_address">விநியோக முகவரியைத் தேர்ந்தெடுக்கவும்</string>

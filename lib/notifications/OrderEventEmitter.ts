@@ -4,6 +4,7 @@
 // Called by every path that transitions an order to a notifiable stage:
 //   - app/api/mobile/v1/payments/razorpay/verify/route.ts   (confirmed)
 //   - app/api/webhooks/razorpay/route.ts                     (confirmed)
+//   - app/api/mobile/v1/orders/cod/route.ts                  (confirmed — born-confirmed COD orders never reach verify/webhook)
 //   - app/api/admin/orders/[id]/status/route.ts              (any stage)
 //
 // For each stage in TEMPLATE_BY_STAGE, the emitter:

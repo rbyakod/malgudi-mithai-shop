@@ -14,6 +14,12 @@ export type OrderStatus =
 
 export type OrderSource = "mobile-android" | "mobile-ios" | "web";
 
+/**
+ * How the order is settled. Instrument detail lives in Razorpay's entity
+ * for online orders; COD orders carry no provider id at all.
+ */
+export type PaymentMethod = "razorpay" | "cod";
+
 export interface OrderItem {
   productId: string;
   slug: string;
@@ -49,6 +55,8 @@ export interface Order {
   deliveryAddressId: string;
   slot?: { date: string; window: string };
   source: OrderSource;
+  /** Settlement rail; legacy rows default to "razorpay" at read time. */
+  paymentMethod: PaymentMethod;
   /** Coupon applied at validate time, if any (B7). */
   couponCode?: string | null;
   razorpayOrderId?: string;

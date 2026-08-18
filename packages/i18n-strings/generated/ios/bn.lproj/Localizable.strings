@@ -75,6 +75,8 @@
 "checkout.payment.card" = "ক্রেডিট / ডেবিট কার্ড";
 "checkout.payment.netbanking" = "নেট ব্যাঙ্কিং";
 "checkout.payment.wallet" = "ওয়ালেট";
+"checkout.payment.cod" = "ডেলিভারির সময় নগদ";
+"checkout.payment.cod_note" = "ডেলিভারি পার্টনারকে দরজায় নগদ দিন।";
 "checkout.pay" = "{amount} পেমেন্ট করুন";
 "checkout.cta.place_order" = "অর্ডার করুন";
 "checkout.cta.select_address" = "ডেলিভারি ঠিকানা নির্বাচন করুন";

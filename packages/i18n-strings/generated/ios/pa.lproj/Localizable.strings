@@ -75,6 +75,8 @@
 "checkout.payment.card" = "ਕ੍ਰੈਡਿਟ / ਡੈਬਿਟ ਕਾਰਡ";
 "checkout.payment.netbanking" = "ਨੈੱਟ ਬੈਂਕਿੰਗ";
 "checkout.payment.wallet" = "ਵਾਲਿਟ";
+"checkout.payment.cod" = "ਡਿਲੀਵਰੀ ਸਮੇਂ ਨਗਦ";
+"checkout.payment.cod_note" = "ਡਿਲੀਵਰੀ ਪਾਰਟਨਰ ਨੂੰ ਦਰਵਾਜ਼ੇ ਤੇ ਨਗਦ ਦਿਓ।";
 "checkout.pay" = "{amount} ਭੁਗਤਾਨ ਕਰੋ";
 "checkout.cta.place_order" = "ਆਰਡਰ ਕਰੋ";
 "checkout.cta.select_address" = "ਡਿਲੀਵਰੀ ਪਤਾ ਚੁਣੋ";

@@ -104,6 +104,9 @@ export function CheckoutFlow({whatsapp}: Props) {
   const [couponInput, setCouponInput] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
+  // Payment rail (B12): online (Razorpay) or cash on delivery. Defaults
+  // to online; the choice re-reads on every render of the summary step.
+  const [paymentChoice, setPaymentChoice] = useState<"online" | "cod">("online");
   const [payBusy, setPayBusy] = useState(false);
   const [payError, setPayError] = useState<{reason: string; message?: string} | null>(
     null,
@@ -330,6 +333,41 @@ export function CheckoutFlow({whatsapp}: Props) {
 
   async function pay() {
     if (!delivery || !snapshot || !session) return;
+    // COD (B12): skip the payment machine entirely — the server mints the
+    // order born confirmed with cash pending, no provider artifacts.
+    if (paymentChoice === "cod") {
+      setPayBusy(true);
+      setPayError(null);
+      try {
+        const order = await apiFetch<{id: string}>("/orders/cod", {
+          method: "POST",
+          body: {
+            snapshotId: snapshot.snapshotId,
+            deliveryAddressId: delivery.address.id,
+          },
+          idempotencyKey: crypto.randomUUID(),
+        });
+        confirmRedirectGuard.current = true;
+        track("purchase", {
+          orderId: order.id,
+          value: snapshot.totals.totalInPaise / 100,
+          currency: "INR",
+          items: items.length,
+        });
+        clear();
+        router.push(`/checkout/success?orderId=${encodeURIComponent(order.id)}`);
+      } catch (err) {
+        const step = stepError(err);
+        setPayError({reason: "create-failed", message: step.message});
+        // An expired/stale snapshot explains itself on re-validate.
+        if (step.code === "VALIDATION" || step.code === "SNAPSHOT_NOT_FOUND") {
+          void validate(delivery, slot);
+        }
+      } finally {
+        setPayBusy(false);
+      }
+      return;
+    }
     setPayBusy(true);
     setPayError(null);
     const state =
@@ -715,6 +753,56 @@ export function CheckoutFlow({whatsapp}: Props) {
                 </div>
               </dl>
               <p className="mt-3 text-xs italic text-text-muted">{t("taxNote")}</p>
+
+              {/* Payment rail (B12) — online via Razorpay, or cash at the
+                  door. Radios keep the choice one glance wide. */}
+              <fieldset
+                data-testid="checkout-payment-method"
+                disabled={payBusy}
+                className="mt-8"
+              >
+                <legend className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
+                  {t("paymentMethodLabel")}
+                </legend>
+                <div className="mt-3 space-y-2">
+                  <label
+                    data-testid="checkout-payment-online"
+                    className="flex cursor-pointer items-start gap-3 text-sm text-text-secondary"
+                  >
+                    <input
+                      type="radio"
+                      name="checkout-payment-method"
+                      checked={paymentChoice === "online"}
+                      onChange={() => setPaymentChoice("online")}
+                      className="mt-1 accent-gold"
+                    />
+                    <span>
+                      {t("payOnline")}
+                      <span className="block text-xs italic text-text-muted">
+                        {t("payOnlineNote")}
+                      </span>
+                    </span>
+                  </label>
+                  <label
+                    data-testid="checkout-payment-cod"
+                    className="flex cursor-pointer items-start gap-3 text-sm text-text-secondary"
+                  >
+                    <input
+                      type="radio"
+                      name="checkout-payment-method"
+                      checked={paymentChoice === "cod"}
+                      onChange={() => setPaymentChoice("cod")}
+                      className="mt-1 accent-gold"
+                    />
+                    <span>
+                      {t("payCod")}
+                      <span className="block text-xs italic text-text-muted">
+                        {t("codNote")}
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
 
               <div className="mt-8">
                 <button

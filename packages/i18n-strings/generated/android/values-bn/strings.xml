@@ -76,6 +76,8 @@
   <string name="checkout_payment_card">ক্রেডিট / ডেবিট কার্ড</string>
   <string name="checkout_payment_netbanking">নেট ব্যাঙ্কিং</string>
   <string name="checkout_payment_wallet">ওয়ালেট</string>
+  <string name="checkout_payment_cod">ডেলিভারির সময় নগদ</string>
+  <string name="checkout_payment_cod_note">ডেলিভারি পার্টনারকে দরজায় নগদ দিন।</string>
   <string name="checkout_pay">%1$s পেমেন্ট করুন</string>
   <string name="checkout_cta_place_order">অর্ডার করুন</string>
   <string name="checkout_cta_select_address">ডেলিভারি ঠিকানা নির্বাচন করুন</string>
