@@ -101,8 +101,13 @@ export type FreeDeliveryThresholds = {
  * field — callers infer the waiver from subtotal + threshold.
  *
  * `discountInPaise` (coupons, folded in by /cart/validate after resolving
- * a code) comes out of the total, floored at 0. It does NOT affect the
- * threshold check yet — the coupon batch pins that semantic with tests.
+ * a code) comes out of the total, floored at the items total — a code can
+ * zero the goods but never earn the customer money.
+ *
+ * Threshold semantics (pinned by the coupons batch B7): the discount lands
+ * BEFORE the free-delivery check, because the threshold tracks what the
+ * customer pays — a ₹1,040 cart with a ₹100 code pays ₹940 and does NOT
+ * clear a ₹999 threshold. Delivery is judged on the post-discount subtotal.
  */
 export function computeTotals(
   lines: TotalsLine[],
@@ -115,6 +120,8 @@ export function computeTotals(
     (sum, line) => sum + line.priceInPaise * line.quantity,
     0,
   );
+  const discount = Math.max(0, Math.min(discountInPaise, itemsTotalInPaise));
+  const payableInPaise = itemsTotalInPaise - discount;
   let deliveryFeeInPaise = tier === 'fresh' ? fees.freshPaise : fees.shelfStablePaise;
   const threshold =
     tier === 'fresh'
@@ -122,16 +129,15 @@ export function computeTotals(
       : tier != null
         ? freeThresholds?.shelfStablePaise
         : undefined;
-  if (threshold != null && threshold > 0 && itemsTotalInPaise >= threshold) {
+  if (threshold != null && threshold > 0 && payableInPaise >= threshold) {
     deliveryFeeInPaise = 0;
   }
-  const discount = Math.max(0, Math.min(discountInPaise, itemsTotalInPaise));
   return {
     itemsTotalInPaise,
     deliveryFeeInPaise,
     taxesInPaise: 0,
     discountInPaise: discount,
-    totalInPaise: itemsTotalInPaise - discount + deliveryFeeInPaise,
+    totalInPaise: payableInPaise + deliveryFeeInPaise,
   };
 }
 

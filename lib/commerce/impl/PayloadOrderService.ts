@@ -57,12 +57,45 @@ export class PayloadOrderService implements OrderService {
         totals: snapshot.totals,
         status: "pending_payment",
         paymentStatus: "pending",
+        // Coupon stamped on the snapshot by /cart/validate (B7).
+        couponCode: snapshot.couponCode ?? null,
         deliveryAddressId: snapshot.deliveryAddressId,
         slot: snapshot.slot,
         source,
         cartSnapshotId: snapshot.snapshotId,
       },
     });
+
+    // Burn the coupon (B7): usedCount is incremented exactly once per order
+    // created with the code — this is its ONLY writer; /cart/validate reads
+    // the counters on every call but consumes nothing. Both the razorpay
+    // path (today) and the COD path (B12) funnel through here, so a code
+    // is charged the same redemption either way.
+    //
+    // Cancellations deliberately do NOT decrement: usedCount is lifetime
+    // redemptions, and a cancelled order keeps the customer's
+    // per-customer slot too (guards code-share abuse; staff can correct a
+    // miscount by hand). The read-modify-write race (two concurrent orders
+    // both reading N and writing N+1) is accepted for v1 — the limit check
+    // at validate time reads the same slightly-lagging counter anyway.
+    if (snapshot.couponCode) {
+      const couponDocs = await payload.find({
+        collection: "coupons",
+        where: { code: { equals: snapshot.couponCode } },
+        limit: 1,
+      });
+      const couponDoc = couponDocs.docs[0] as
+        | { id: string; usedCount?: number }
+        | undefined;
+      if (couponDoc) {
+        await payload.update({
+          collection: "coupons",
+          id: couponDoc.id,
+          data: { usedCount: (couponDoc.usedCount ?? 0) + 1 },
+        });
+      }
+    }
+
     return this.mapDoc(created);
   }
 
@@ -195,6 +228,7 @@ export class PayloadOrderService implements OrderService {
       deliveryAddressId: d.deliveryAddressId as string,
       slot: d.slot as Order["slot"],
       source: d.source as Order["source"],
+      couponCode: (d.couponCode as string | null | undefined) ?? null,
       razorpayOrderId: d.razorpayOrderId as string | undefined,
       createdAt: d.createdAt as string,
       updatedAt: d.updatedAt as string,

@@ -15,6 +15,8 @@ export interface OrderCreateSnapshot {
   totals: Order["totals"];
   deliveryAddressId: string;
   slot?: { date: string; window: string };
+  /** Coupon stamped by /cart/validate; copied to the order (B7). */
+  couponCode?: string | null;
 }
 
 export interface OrderListResult {

@@ -171,6 +171,72 @@ describe('computeTotals discountInPaise (coupon seam, B6)', () => {
   });
 });
 
+describe('computeTotals discount × free-delivery threshold (pinned by B7)', () => {
+  const fees = { freshPaise: 4900, shelfStablePaise: 9900 };
+  const thresholds = { freshPaise: 99900, shelfStablePaise: 199900 };
+
+  it('the discount lands BEFORE the threshold check — payable ₹940 < ₹999 keeps the fee', () => {
+    // ₹1,040 cart, ₹100 code → customer pays ₹940 for the goods, which
+    // does NOT clear the ₹999 fresh threshold. The threshold tracks what
+    // the customer pays, so the ₹49 fee applies on top of the discount.
+    const totals = computeTotals(
+      [{ priceInPaise: 104000, quantity: 1 }],
+      'fresh',
+      fees,
+      thresholds,
+      10000,
+    );
+    expect(totals).toEqual({
+      itemsTotalInPaise: 104000,
+      deliveryFeeInPaise: 4900,
+      taxesInPaise: 0,
+      discountInPaise: 10000,
+      totalInPaise: 104000 - 10000 + 4900, // 98900
+    });
+  });
+
+  it('a cart that still clears the threshold after the discount keeps the waiver', () => {
+    // ₹1,840 - ₹100 = ₹1,740 ≥ ₹999 → fee waived.
+    const totals = computeTotals(
+      [{ priceInPaise: 184000, quantity: 1 }],
+      'fresh',
+      fees,
+      thresholds,
+      10000,
+    );
+    expect(totals.deliveryFeeInPaise).toBe(0);
+    expect(totals.totalInPaise).toBe(174000);
+  });
+
+  it('a discount that pulls a fee-waived cart back under the threshold RESTORES the fee', () => {
+    // Pre-discount ₹1,840 ≥ ₹999 would waive; post-discount ₹900 < ₹999
+    // does not. The customer pays the fee again — the waiver is judged on
+    // the post-discount payable alone.
+    const totals = computeTotals(
+      [{ priceInPaise: 184000, quantity: 1 }],
+      'fresh',
+      fees,
+      thresholds,
+      94000,
+    );
+    expect(totals.deliveryFeeInPaise).toBe(4900);
+    expect(totals.totalInPaise).toBe(90000 + 4900);
+  });
+
+  it('a full-subtotal discount still charges delivery (goods free, fee not)', () => {
+    const totals = computeTotals(
+      [{ priceInPaise: 100000, quantity: 1 }],
+      'shelf',
+      fees,
+      thresholds,
+      100000,
+    );
+    expect(totals.discountInPaise).toBe(100000);
+    expect(totals.deliveryFeeInPaise).toBe(9900);
+    expect(totals.totalInPaise).toBe(9900);
+  });
+});
+
 describe('computeTotals free-delivery thresholds', () => {
   const fees = { freshPaise: 4900, shelfStablePaise: 9900 };
   // User-decided defaults: ₹999 fresh / ₹1,999 shelf-stable.

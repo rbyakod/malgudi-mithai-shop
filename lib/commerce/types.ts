@@ -49,6 +49,8 @@ export interface Order {
   deliveryAddressId: string;
   slot?: { date: string; window: string };
   source: OrderSource;
+  /** Coupon applied at validate time, if any (B7). */
+  couponCode?: string | null;
   razorpayOrderId?: string;
   createdAt: string;
   updatedAt: string;

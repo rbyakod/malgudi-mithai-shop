@@ -32,33 +32,66 @@ const { snapshotCreates, payloadCreate } = vi.hoisted(() => ({
   payloadCreate: vi.fn(),
 }));
 
-let pincodeDocs: any[] = [];
-let productById: Record<string, any> = {};
+type FixturePincode = { pincode: string; tier: string; city: string; active: boolean };
+type FixtureProduct = {
+  id: string;
+  slug: string;
+  name: string;
+  freshnessStatus: string;
+  displayPrice: string;
+  weight: string;
+  images: Array<{ image: { url: string } }>;
+};
+type FixtureCoupon = {
+  id: string;
+  code: string;
+  discountType: string;
+  value: number;
+  minSubtotalInPaise: number | null;
+  maxDiscountInPaise: number | null;
+  activeFrom: string | null;
+  activeTo: string | null;
+  usageLimitTotal: number | null;
+  usageLimitPerCustomer: number | null;
+  usedCount: number;
+  active: boolean;
+};
+
+let pincodeDocs: FixturePincode[] = [];
+let productById: Record<string, FixtureProduct> = {};
+// Coupon fixtures (B7): the coupons lookup + the per-customer order count.
+let couponDocs: FixtureCoupon[] = [];
+let orderCount = 0;
 
 vi.mock('payload', () => {
-  const find = vi.fn(async function (args: any) {
-    // Only the serviceablePincodes lookup is expected today.
+  const find = vi.fn(async function (args: { collection?: string }) {
     if (args && args.collection === 'serviceablePincodes') {
       return { docs: pincodeDocs };
     }
+    if (args && args.collection === 'coupons') {
+      return { docs: couponDocs };
+    }
     return { docs: [] };
   });
-  const findByID = vi.fn(async function (args: any) {
+  const findByID = vi.fn(async function (args: { id?: string }) {
     const id = args && args.id;
-    return productById[id] ?? null;
+    return (id && productById[id]) || null;
   });
-  const create = vi.fn(async function (args: any) {
+  const count = vi.fn(async function () {
+    return { totalDocs: orderCount };
+  });
+  const create = vi.fn(async function (args: { collection?: string; data?: Record<string, unknown> }) {
     // Minimal snapshot persistence: return a doc whose id is stable enough
     // for the route to surface as snapshotId. Real persistence is exercised
     // via integration tests against Mongo.
     if (args && args.collection === 'snapshots') {
-      snapshotCreates.push(args.data);
+      snapshotCreates.push(args.data ?? {});
       return { id: 'snap-mock-1', ...args.data };
     }
     return { id: 'mock-1' };
   });
   payloadCreate.mockImplementation(create);
-  const payloadStub = { find: find, findByID: findByID, create: create };
+  const payloadStub = { find: find, findByID: findByID, count: count, create: create };
   const getPayload = vi.fn(async function () {
     return payloadStub;
   });
@@ -105,6 +138,8 @@ describe('POST /cart/validate', () => {
     };
     snapshotCreates.length = 0;
     payloadCreate.mockClear();
+    couponDocs = [];
+    orderCount = 0;
   });
 
   it('returns 200 with a priced cart snapshot for a valid body', async () => {
@@ -142,10 +177,10 @@ describe('POST /cart/validate', () => {
   });
 
   it('persists the snapshot with the same stamped items + totals', async () => {
-    await POST(authedReq({
+    await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 2 }],
       pincode: '560001',
-    }) as any);
+    })));
 
     expect(snapshotCreates).toHaveLength(1);
     expect(snapshotCreates[0]).toMatchObject({
@@ -163,10 +198,10 @@ describe('POST /cart/validate', () => {
 
   it('prices a packLabel line against the derived pack ladder', async () => {
     productById.p1.displayPrice = '₹1,109 / 1 kg';
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 1, packLabel: '500g' }],
       pincode: '560001',
-    }) as any);
+    })));
 
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -200,11 +235,11 @@ describe('POST /cart/validate', () => {
   });
 
   it('normalizes iOS relative slot tokens when persisting the snapshot', async () => {
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 1 }],
       pincode: '560001',
       slot: { date: 'today', window: 'evening' },
-    }) as any);
+    })));
 
     expect(res.status).toBe(200);
     expect(snapshotCreates[0]).toMatchObject({
@@ -213,11 +248,11 @@ describe('POST /cart/validate', () => {
   });
 
   it('passes Android slot shapes through unchanged', async () => {
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 1 }],
       pincode: '560001',
       slot: { date: '2026-09-05', window: '10:00-14:00' },
-    }) as any);
+    })));
 
     expect(res.status).toBe(200);
     expect(snapshotCreates[0]).toMatchObject({
@@ -227,10 +262,10 @@ describe('POST /cart/validate', () => {
 
   it('rejects made-daily items on a shelf-tier pincode, naming the line (422 PINCODE_NOT_SERVICEABLE)', async () => {
     productById.p1.freshnessStatus = 'made-daily';
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 1 }],
       pincode: '560001',
-    }) as any);
+    })));
 
     expect(res.status).toBe(422);
     const body = await res.json();
@@ -243,10 +278,10 @@ describe('POST /cart/validate', () => {
   it('accepts made-daily items on a fresh-tier pincode', async () => {
     productById.p1.freshnessStatus = 'made-daily';
     pincodeDocs = [{ pincode: '110001', tier: 'fresh', city: 'New Delhi', active: true }];
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 1 }],
       pincode: '110001',
-    }) as any);
+    })));
 
     expect(res.status).toBe(200);
     expect(await res.json()).toMatchObject({ data: { pincodeTier: 'fresh' } });
@@ -254,10 +289,10 @@ describe('POST /cart/validate', () => {
 
   it('rejects unpriceable (on-request) lines with 422 VALIDATION', async () => {
     productById.p1.displayPrice = '₹ on request / pack';
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 1 }],
       pincode: '560001',
-    }) as any);
+    })));
 
     expect(res.status).toBe(422);
     const body = await res.json();
@@ -266,10 +301,10 @@ describe('POST /cart/validate', () => {
   });
 
   it('rejects a stale packLabel that no longer derives (422 VALIDATION)', async () => {
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 1, packLabel: '2 kg' }],
       pincode: '560001',
-    }) as any);
+    })));
 
     expect(res.status).toBe(422);
     const body = await res.json();
@@ -278,10 +313,10 @@ describe('POST /cart/validate', () => {
   });
 
   it('returns 404 PRODUCT_NOT_FOUND when a product no longer exists', async () => {
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'gone', quantity: 1 }],
       pincode: '560001',
-    }) as any);
+    })));
 
     expect(res.status).toBe(404);
     const body = await res.json();
@@ -290,10 +325,10 @@ describe('POST /cart/validate', () => {
 
   it('returns 422 PINCODE_NOT_SERVICEABLE when pincode is not served', async () => {
     pincodeDocs = []; // unserviceable
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       items: [{ productId: 'p1', quantity: 1 }],
       pincode: '999999',
-    }) as any);
+    })));
 
     expect(res.status).toBe(422);
     const body = await res.json();
@@ -301,9 +336,9 @@ describe('POST /cart/validate', () => {
   });
 
   it('returns 422 VALIDATION when body is missing items', async () => {
-    const res = await POST(authedReq({
+    const res = await POST(asReq(authedReq({
       pincode: '560001',
-    }) as any);
+    })));
 
     expect(res.status).toBe(422);
     const body = await res.json();
@@ -358,5 +393,128 @@ describe('POST /cart/validate', () => {
     const body = await res.json();
     expect(body.data.totals.deliveryFeeInPaise).toBe(9900);
     expect(body.data.totals.totalInPaise).toBe(184000 + 9900);
+  });
+
+  // Coupons (B7) — wiring only; the eligibility/discount matrix itself is
+  // table-driven in tests/unit/couponValidation.test.ts.
+  describe('couponCode (B7)', () => {
+    const flatCoupon = {
+      id: 'cpn1',
+      code: 'FLAT100',
+      discountType: 'flat',
+      value: 10000,
+      minSubtotalInPaise: null,
+      maxDiscountInPaise: null,
+      activeFrom: null,
+      activeTo: null,
+      usageLimitTotal: null,
+      usageLimitPerCustomer: null,
+      usedCount: 0,
+      active: true,
+    };
+
+    it('applies a valid code: discount in totals, code stamped on snapshot + response', async () => {
+      couponDocs = [flatCoupon];
+      // 2 x ₹920 = ₹1,840 shelf cart; ₹100 off → ₹1,740 still under the
+      // ₹1,999 shelf threshold, so the ₹99 fee stays.
+      const res = await POST(asReq(authedReq({
+        items: [{ productId: 'p1', quantity: 2 }],
+        pincode: '560001',
+        couponCode: ' flat100 ', // case + whitespace normalized
+      })));
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.data.couponCode).toBe('FLAT100');
+      expect(body.data.totals).toEqual({
+        itemsTotalInPaise: 184000,
+        deliveryFeeInPaise: 9900,
+        taxesInPaise: 0,
+        discountInPaise: 10000,
+        totalInPaise: 183900,
+      });
+      // The persisted snapshot carries the code — create-order re-reads it
+      // and stamps the order + burns the redemption.
+      expect(snapshotCreates[0]).toMatchObject({
+        couponCode: 'FLAT100',
+        totals: { discountInPaise: 10000, totalInPaise: 183900 },
+      });
+    });
+
+    it('returns couponCode null and a 0 discount without a code', async () => {
+      const res = await POST(asReq(authedReq({
+        items: [{ productId: 'p1', quantity: 1 }],
+        pincode: '560001',
+      })));
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.data.couponCode).toBeNull();
+      expect(body.data.totals.discountInPaise).toBe(0);
+      expect(snapshotCreates[0]).toMatchObject({ couponCode: null });
+    });
+
+    it('rejects an unknown code with 422 INVALID_COUPON, persisting nothing', async () => {
+      const res = await POST(asReq(authedReq({
+        items: [{ productId: 'p1', quantity: 1 }],
+        pincode: '560001',
+        couponCode: 'NOPE',
+      })));
+
+      expect(res.status).toBe(422);
+      const body = await res.json();
+      expect(body.error.code).toBe('INVALID_COUPON');
+      expect(snapshotCreates).toHaveLength(0);
+    });
+
+    it('rejects an inactive code with 422 INVALID_COUPON', async () => {
+      couponDocs = [{ ...flatCoupon, active: false }];
+      const res = await POST(asReq(authedReq({
+        items: [{ productId: 'p1', quantity: 1 }],
+        pincode: '560001',
+        couponCode: 'FLAT100',
+      })));
+
+      expect(res.status).toBe(422);
+      expect((await res.json()).error.code).toBe('INVALID_COUPON');
+    });
+
+    it('rejects a code past its per-customer limit (counted from orders)', async () => {
+      couponDocs = [{ ...flatCoupon, usageLimitPerCustomer: 1 }];
+      orderCount = 1; // this customer already placed one order with it
+      const res = await POST(asReq(authedReq({
+        items: [{ productId: 'p1', quantity: 1 }],
+        pincode: '560001',
+        couponCode: 'FLAT100',
+      })));
+
+      expect(res.status).toBe(422);
+      const body = await res.json();
+      expect(body.error.code).toBe('INVALID_COUPON');
+      expect(body.error.message).toContain('already used');
+    });
+
+    it('judges the discount BEFORE the free-delivery threshold at the route level', async () => {
+      // ₹1,840 fresh-tier cart with ₹1,000 off: payable ₹840 < ₹999, so
+      // the coupon RESTORES the delivery fee the pre-discount cart had
+      // waived. Pinned end-to-end (pricing unit test pins the primitive).
+      pincodeDocs = [{ pincode: '110001', tier: 'fresh', city: 'New Delhi', active: true }];
+      couponDocs = [{ ...flatCoupon, code: 'FLAT1000', value: 100000 }];
+      const res = await POST(asReq(authedReq({
+        items: [{ productId: 'p1', quantity: 2 }],
+        pincode: '110001',
+        couponCode: 'FLAT1000',
+      })));
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.data.totals).toEqual({
+        itemsTotalInPaise: 184000,
+        deliveryFeeInPaise: 4900,
+        taxesInPaise: 0,
+        discountInPaise: 100000,
+        totalInPaise: 88900,
+      });
+    });
   });
 });

@@ -10,6 +10,11 @@ import {
   resolvePricedCart,
   freeDeliveryThresholdForTier,
 } from '../../../../../../lib/commerce/resolveCart';
+import {
+  normalizeCouponCode,
+  evaluateCoupon,
+  type CouponRule,
+} from '../../../../../../lib/commerce/couponValidation';
 import { config as appConfig } from '../../../../../../lib/config';
 
 // Cart validate — the pricing boundary of the checkout flow.
@@ -56,6 +61,10 @@ const Body = z.object({
     .min(1),
   pincode: z.string().regex(/^[0-9]{6}$/),
   slot: Slot.optional(),
+  // Coupon code (B7). Resolved against the Coupons collection; an unusable
+  // code is a checkout-blocking INVALID_COUPON — never silently ignored,
+  // the customer just typed it. Case-insensitive ("diwali10" = "DIWALI10").
+  couponCode: z.string().trim().min(1).max(40).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -77,6 +86,55 @@ export async function POST(req: NextRequest) {
       enforceFreshTier: true,
     });
 
+    // Coupon resolution (B7). The rules live in the Coupons collection;
+    // evaluation is the pure lib/commerce/couponValidation module. Validate
+    // NEVER burns a code — counters are read here, incremented only by
+    // order creation. An unusable code throws INVALID_COUPON; the response
+    // carries the applied code so clients can render the chip.
+    let discountInPaise = 0;
+    let couponCode: string | null = null;
+    if (parsed.data.couponCode) {
+      couponCode = normalizeCouponCode(parsed.data.couponCode);
+      const couponDocs = await payload.find({
+        collection: 'coupons',
+        where: { code: { equals: couponCode } },
+        limit: 1,
+      });
+      const couponDoc = couponDocs.docs[0] as (CouponRule & { id: string }) | undefined;
+      if (!couponDoc) {
+        throw new ApiError(
+          ErrorCode.INVALID_COUPON,
+          `Coupon code "${couponCode}" is not valid`,
+        );
+      }
+      // Per-customer usage counts EVERY order this customer placed with
+      // the code (any status) — an abandoned pending_payment order still
+      // consumed their shot; cancellations never refund a redemption.
+      const usage = await payload.count({
+        collection: 'orders',
+        where: {
+          and: [
+            { couponCode: { equals: couponCode } },
+            { customerId: { equals: customerId } },
+          ],
+        },
+      });
+      const itemsTotalInPaise = items.reduce(
+        (sum, it) => sum + it.priceInPaise * it.quantity,
+        0,
+      );
+      const evaluation = evaluateCoupon(
+        { ...couponDoc, code: couponCode },
+        itemsTotalInPaise,
+        { usedTotal: couponDoc.usedCount ?? 0, usedByCustomer: usage.totalDocs },
+        new Date(),
+      );
+      if (!evaluation.ok) {
+        throw new ApiError(ErrorCode.INVALID_COUPON, evaluation.message);
+      }
+      discountInPaise = evaluation.discountInPaise;
+    }
+
     const totals = computeTotals(
       items,
       pincodeTier,
@@ -88,6 +146,7 @@ export async function POST(req: NextRequest) {
         freshPaise: appConfig.freeDeliveryThresholdFreshPaise,
         shelfStablePaise: appConfig.freeDeliveryThresholdShelfStablePaise,
       },
+      discountInPaise,
     );
 
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
@@ -105,6 +164,7 @@ export async function POST(req: NextRequest) {
         pincode: parsed.data.pincode,
         pincodeTier,
         slot: normalizeSlot(parsed.data.slot),
+        couponCode,
         expiresAt,
       },
     });
@@ -116,6 +176,9 @@ export async function POST(req: NextRequest) {
       items,
       totals,
       pincodeTier,
+      // Applied coupon (null when none requested/eligible) — create-order
+      // re-reads it off the snapshot; clients render the chip from it.
+      couponCode,
       // Threshold for the tier, so clients render "₹x more for free
       // delivery" from the server's number, never a baked-in constant.
       freeDeliveryThresholdInPaise: freeDeliveryThresholdForTier(pincodeTier, {

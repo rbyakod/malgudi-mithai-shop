@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
       // comparing the authenticated customerId. depth: 0 keeps the
       // customerId relation an id string (default depth populates it into
       // an object, which would also break the comparison).
-      let snapshotDoc: { id: string; customerId?: string; items?: unknown; totals?: unknown; slot?: unknown; expiresAt?: string } | null;
+      let snapshotDoc: { id: string; customerId?: string; items?: unknown; totals?: unknown; slot?: unknown; couponCode?: string | null; expiresAt?: string } | null;
       try {
         snapshotDoc = (await payload.findByID({
           collection: 'snapshots',
@@ -123,6 +123,9 @@ export async function POST(req: NextRequest) {
         totals: snapshotDoc.totals as OrderCreateSnapshot['totals'],
         deliveryAddressId: parsed.data.deliveryAddressId,
         slot: snapshotDoc.slot as OrderCreateSnapshot['slot'],
+        // Coupon resolved at validate time (B7); carried to the order and
+        // its redemption burned by createFromSnapshot.
+        couponCode: snapshotDoc.couponCode ?? null,
       };
 
       // Stale pre-pricing snapshots (zero/missing total) must never reach
