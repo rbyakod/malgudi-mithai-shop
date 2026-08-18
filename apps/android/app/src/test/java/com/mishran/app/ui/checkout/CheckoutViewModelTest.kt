@@ -8,6 +8,8 @@
 package com.mishran.app.ui.checkout
 
 import com.mishran.api.models.Address
+import com.mishran.api.models.CartSnapshot
+import com.mishran.api.models.OrderTotals
 import com.mishran.api.models.ServiceableResponse
 import com.mishran.app.data.local.entity.CartItemEntity
 import com.mishran.app.data.repository.AddressRepository
@@ -16,6 +18,7 @@ import com.mishran.app.domain.usecase.CreateOrderResult
 import com.mishran.app.domain.usecase.PaymentRequest
 import com.mishran.app.domain.usecase.PlaceOrderResult
 import com.mishran.app.domain.usecase.PlaceOrderUseCase
+import com.mishran.app.domain.usecase.ValidateCouponResult
 import com.mishran.app.util.RazorpayOutcome
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -215,7 +218,7 @@ class CheckoutViewModelTest {
         val events = recordEvents(vm)
         val request = paymentRequest()
         coEvery {
-            placeOrder.createPaymentRequest(any(), any(), any(), any())
+            placeOrder.createPaymentRequest(any(), any(), any(), any(), any())
         } returns CreateOrderResult.NeedsPayment(request)
 
         vm.placeOrder()
@@ -231,7 +234,7 @@ class CheckoutViewModelTest {
         advanceUntilIdle()
         val events = recordEvents(vm)
         coEvery {
-            placeOrder.createPaymentRequest(any(), any(), any(), any())
+            placeOrder.createPaymentRequest(any(), any(), any(), any(), any())
         } returns CreateOrderResult.CartChanged("2 items changed price")
 
         vm.placeOrder()
@@ -246,7 +249,7 @@ class CheckoutViewModelTest {
         advanceUntilIdle()
         val events = recordEvents(vm)
         coEvery {
-            placeOrder.createPaymentRequest(any(), any(), any(), any())
+            placeOrder.createPaymentRequest(any(), any(), any(), any(), any())
         } returns CreateOrderResult.Failure("offline")
 
         vm.placeOrder()
@@ -260,7 +263,7 @@ class CheckoutViewModelTest {
         val vm = readyViewModel()
         advanceUntilIdle()
         coEvery {
-            placeOrder.createPaymentRequest(any(), any(), any(), any())
+            placeOrder.createPaymentRequest(any(), any(), any(), any(), any())
         } returns CreateOrderResult.NeedsPayment(paymentRequest())
 
         // Both calls land before the launched coroutine runs.
@@ -268,7 +271,7 @@ class CheckoutViewModelTest {
         vm.placeOrder()
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { placeOrder.createPaymentRequest(any(), any(), any(), any()) }
+        coVerify(exactly = 1) { placeOrder.createPaymentRequest(any(), any(), any(), any(), any()) }
     }
 
     @Test
@@ -278,7 +281,7 @@ class CheckoutViewModelTest {
         val events = recordEvents(vm)
         val request = paymentRequest()
         coEvery {
-            placeOrder.createPaymentRequest(any(), any(), any(), any())
+            placeOrder.createPaymentRequest(any(), any(), any(), any(), any())
         } returns CreateOrderResult.NeedsPayment(request)
         coEvery {
             placeOrder.verifyPayment(request, "pay_1", "sig_1")
@@ -311,7 +314,7 @@ class CheckoutViewModelTest {
         val events = recordEvents(vm)
         val request = paymentRequest()
         coEvery {
-            placeOrder.createPaymentRequest(any(), any(), any(), any())
+            placeOrder.createPaymentRequest(any(), any(), any(), any(), any())
         } returns CreateOrderResult.NeedsPayment(request)
         coEvery {
             placeOrder.verifyPayment(request, "pay_1", "sig_1")
@@ -338,7 +341,7 @@ class CheckoutViewModelTest {
         advanceUntilIdle()
         val events = recordEvents(vm)
         coEvery {
-            placeOrder.createPaymentRequest(any(), any(), any(), any())
+            placeOrder.createPaymentRequest(any(), any(), any(), any(), any())
         } returns CreateOrderResult.NeedsPayment(paymentRequest())
 
         vm.placeOrder()
@@ -359,7 +362,7 @@ class CheckoutViewModelTest {
         val events = recordEvents(vm)
         val request = paymentRequest()
         coEvery {
-            placeOrder.createPaymentRequest(any(), any(), any(), any())
+            placeOrder.createPaymentRequest(any(), any(), any(), any(), any())
         } returns CreateOrderResult.NeedsPayment(request)
         coEvery {
             placeOrder.verifyPayment(request, "pay_1", "sig_1")
@@ -380,7 +383,7 @@ class CheckoutViewModelTest {
         advanceUntilIdle()
         val events = recordEvents(vm)
         coEvery {
-            placeOrder.createPaymentRequest(any(), any(), any(), any())
+            placeOrder.createPaymentRequest(any(), any(), any(), any(), any())
         } returns CreateOrderResult.NeedsPayment(paymentRequest())
 
         vm.placeOrder()
@@ -391,6 +394,112 @@ class CheckoutViewModelTest {
         assertEquals(1, events.size) // just OpenPayment
         coVerify(exactly = 0) { placeOrder.verifyPayment(any(), any(), any()) }
         coVerify(exactly = 0) { cartRepository.clear() }
+    }
+
+    // ---- coupon field (B8) -------------------------------------------------
+
+    /** Server-priced snapshot as /cart/validate returns it for a coupon. */
+    private fun couponSnapshot(code: String?, discountInPaise: Int) = CartSnapshot(
+        snapshotId = java.util.UUID.fromString("00000000-0000-0000-0000-00000000000c"),
+        customerId = "c1",
+        items = emptyList(),
+        totals = OrderTotals(
+            itemsTotalInPaise = 144000,
+            deliveryFeeInPaise = 0,
+            taxesInPaise = 0,
+            discountInPaise = discountInPaise,
+            totalInPaise = 144000 - discountInPaise,
+        ),
+        pincodeTier = "shelf",
+        expiresAt = "2026-08-17T20:00:00Z",
+        couponCode = code,
+    )
+
+    @Test
+    fun `apply coupon validates with the code and shows the discount`() = runTest(dispatcher) {
+        val vm = readyViewModel()
+        advanceUntilIdle()
+        coEvery { placeOrder.validateCoupon(any(), any(), any(), any()) } returns
+            ValidateCouponResult.Validated(couponSnapshot("TEST100", 10_000))
+
+        vm.updateCouponInput("test100")
+        assertEquals("TEST100", vm.state.value.couponInput) // uppercased as typed
+        assertTrue(vm.state.value.couponInput.length <= 40)
+
+        vm.applyCoupon()
+        advanceUntilIdle()
+
+        coVerify { placeOrder.validateCoupon(any(), any(), any(), eq("TEST100")) }
+        assertEquals("TEST100", vm.state.value.appliedCoupon)
+        assertEquals(10_000, vm.state.value.discountInPaise) // discount row data
+        assertFalse(vm.state.value.couponInvalid)
+    }
+
+    @Test
+    fun `invalid coupon shows the error, clears the code, keeps last good totals`() = runTest(dispatcher) {
+        val vm = readyViewModel()
+        advanceUntilIdle()
+        coEvery { placeOrder.validateCoupon(any(), any(), any(), eq("TEST100")) } returns
+            ValidateCouponResult.Validated(couponSnapshot("TEST100", 10_000))
+        coEvery { placeOrder.validateCoupon(any(), any(), any(), eq("NOPE")) } returns
+            ValidateCouponResult.InvalidCoupon("Coupon code \"NOPE\" is not valid")
+
+        vm.updateCouponInput("TEST100")
+        vm.applyCoupon()
+        advanceUntilIdle()
+        assertEquals(10_000, vm.state.value.discountInPaise)
+
+        vm.updateCouponInput("NOPE")
+        vm.applyCoupon()
+        advanceUntilIdle()
+
+        assertTrue(vm.state.value.couponInvalid)
+        assertEquals("Coupon code \"NOPE\" is not valid", vm.state.value.couponErrorDetail)
+        assertNull(vm.state.value.appliedCoupon)
+        assertEquals(10_000, vm.state.value.discountInPaise) // last good totals kept
+        assertTrue(vm.state.value.canPlaceOrder) // checkout is not blocked
+    }
+
+    @Test
+    fun `remove re-validates without the code and drops the discount`() = runTest(dispatcher) {
+        val vm = readyViewModel()
+        advanceUntilIdle()
+        coEvery { placeOrder.validateCoupon(any(), any(), any(), eq("TEST100")) } returns
+            ValidateCouponResult.Validated(couponSnapshot("TEST100", 10_000))
+        coEvery { placeOrder.validateCoupon(any(), any(), any(), isNull()) } returns
+            ValidateCouponResult.Validated(couponSnapshot(null, 0))
+
+        vm.updateCouponInput("TEST100")
+        vm.applyCoupon()
+        advanceUntilIdle()
+
+        vm.removeCoupon()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { placeOrder.validateCoupon(any(), any(), any(), isNull()) }
+        assertNull(vm.state.value.appliedCoupon)
+        assertEquals("", vm.state.value.couponInput)
+        assertEquals(0, vm.state.value.discountInPaise)
+    }
+
+    @Test
+    fun `placeOrder carries the applied coupon into the payment validate`() = runTest(dispatcher) {
+        val vm = readyViewModel()
+        advanceUntilIdle()
+        coEvery { placeOrder.validateCoupon(any(), any(), any(), any()) } returns
+            ValidateCouponResult.Validated(couponSnapshot("TEST100", 10_000))
+        coEvery {
+            placeOrder.createPaymentRequest(any(), any(), any(), any(), any())
+        } returns CreateOrderResult.NeedsPayment(paymentRequest())
+
+        vm.updateCouponInput("TEST100")
+        vm.applyCoupon()
+        advanceUntilIdle()
+        vm.placeOrder()
+        advanceUntilIdle()
+
+        // The code rides along until removed or rejected.
+        coVerify { placeOrder.createPaymentRequest(any(), any(), any(), any(), eq("TEST100")) }
     }
 
     // ---- pure helpers ------------------------------------------------------

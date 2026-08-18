@@ -97,6 +97,22 @@ final class CheckoutViewModel {
     private(set) var errorMessage: String?
     private(set) var paymentState: PaymentFlowState = .idle
 
+    // MARK: coupon (Batch B8)
+
+    /// Coupon the last SUCCESSFUL validate folded in (server-normalized
+    /// uppercase). Rides along on every later validate until removed or
+    /// rejected. Nil = no code applied.
+    private(set) var appliedCouponCode: String?
+    /// Discount from the last successful validate. A rejected code never
+    /// touches it — the UI must not show totals from a failed request.
+    private(set) var couponDiscountPaise = 0
+    /// "Coupon {code} applied" confirmation for the coupon row.
+    private(set) var couponMessage: String?
+    /// Why the last apply/re-validate was rejected (localized + server detail).
+    private(set) var couponErrorMessage: String?
+    /// True while an Apply/Remove validate round-trip is in flight.
+    private(set) var isValidatingCoupon = false
+
     init(
         client: MishranAPIClient,
         context: ModelContext,
@@ -229,6 +245,113 @@ final class CheckoutViewModel {
         return order.map { CartValidateItemDTO(productId: $0, quantity: quantities[$0] ?? 0) }
     }
 
+    // MARK: coupon (Batch B8)
+
+    /// Apply input → server shape: trim, uppercase, cap at 40 chars (the
+    /// route's own z.string().max(40)).
+    nonisolated static func normalizeCouponCode(_ raw: String) -> String {
+        String(raw.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().prefix(40))
+    }
+
+    nonisolated static func isInvalidCoupon(_ error: Error) -> Bool {
+        if case let .api(code, _, _, _) = error as? APIError { return code == .invalidCoupon }
+        return false
+    }
+
+    /// checkout.coupon.invalid + the server's reason when it sent one
+    /// (e.g. `Coupon code "EXPIRED5" is not valid`).
+    nonisolated static func invalidCouponMessage(_ error: Error) -> String {
+        var message = L("checkout.coupon.invalid")
+        if case let .api(_, serverMessage, _, _) = error as? APIError, !serverMessage.isEmpty {
+            message += " \(serverMessage)"
+        }
+        return message
+    }
+
+    /// Validate with the typed code. On success the server-priced discount
+    /// replaces the local guess; on INVALID_COUPON the code is dropped, the
+    /// error is surfaced, the LAST GOOD totals are kept, and checkout stays
+    /// open at full price.
+    func applyCoupon(_ rawCode: String) async {
+        let code = Self.normalizeCouponCode(rawCode)
+        guard !code.isEmpty else { return }
+        guard let address else {
+            couponMessage = nil
+            couponErrorMessage = "Pick a delivery address first — the code is checked against it."
+            return
+        }
+        guard hasCartLines() else {
+            couponMessage = nil
+            couponErrorMessage = "Your cart is empty."
+            return
+        }
+        couponMessage = nil
+        couponErrorMessage = nil
+        isValidatingCoupon = true
+        defer { isValidatingCoupon = false }
+        do {
+            let response = try await validateCart(pincode: address.pincode, couponCode: code)
+            guard let applied = response.couponCode else {
+                // 200 with no coupon folded in — the contract prefers a 422
+                // for unusable codes; treat the silent no-op the same way.
+                appliedCouponCode = nil
+                couponErrorMessage = L("checkout.coupon.invalid")
+                return
+            }
+            appliedCouponCode = applied
+            couponDiscountPaise = response.totals.discountInPaise
+            couponMessage = L("checkout.coupon.applied", applied)
+        } catch let error as APIError where Self.isInvalidCoupon(error) {
+            appliedCouponCode = nil
+            couponErrorMessage = Self.invalidCouponMessage(error)
+            // couponDiscountPaise untouched: last good totals stand.
+        } catch {
+            appliedCouponCode = nil
+            couponErrorMessage = "Couldn't check this code. Try again."
+        }
+    }
+
+    /// Drop the code and re-validate WITHOUT it so the totals lose the
+    /// discount (Remove is local truth; a failed refresh is fine — Pay
+    /// re-validates anyway).
+    func removeCoupon() async {
+        guard appliedCouponCode != nil else { return }
+        appliedCouponCode = nil
+        couponMessage = nil
+        couponErrorMessage = nil
+        guard let address, hasCartLines() else {
+            couponDiscountPaise = 0
+            return
+        }
+        isValidatingCoupon = true
+        defer { isValidatingCoupon = false }
+        do {
+            let response = try await validateCart(pincode: address.pincode, couponCode: nil)
+            appliedCouponCode = response.couponCode
+            couponDiscountPaise = response.totals.discountInPaise
+        } catch {
+            // Nothing to surface — the code IS removed; the next validate
+            // (Apply or Pay) refreshes the totals.
+        }
+    }
+
+    private func hasCartLines() -> Bool {
+        let count = (try? context.fetchCount(FetchDescriptor<CartItemEntity>())) ?? 0
+        return count > 0
+    }
+
+    /// POST /cart/validate with the CURRENT cart lines + slot. The applied
+    /// code rides along on every validate the flow performs.
+    private func validateCart(pincode: String, couponCode: String?) async throws -> CartValidateResponseDTO {
+        let lines = (try? context.fetch(FetchDescriptor<CartItemEntity>())) ?? []
+        return try await client.request(Endpoint.cartValidate(
+            items: Self.collapsedCartItems(lines),
+            pincode: pincode,
+            slot: selectedSlot,
+            couponCode: couponCode
+        ))
+    }
+
     // MARK: place order (Task 17.3)
 
     /// validate → create-order → Razorpay sheet → verify.
@@ -251,11 +374,24 @@ final class CheckoutViewModel {
             }
 
             paymentState = .validatingCart
-            let validate: CartValidateResponseDTO = try await client.request(Endpoint.cartValidate(
-                items: Self.collapsedCartItems(lines),
-                pincode: address.pincode,
-                slot: selectedSlot
-            ))
+            let validate: CartValidateResponseDTO
+            do {
+                validate = try await validateCart(pincode: address.pincode, couponCode: appliedCouponCode)
+            } catch let error as APIError where Self.isInvalidCoupon(error) {
+                // The code that applied earlier is no longer usable (expired
+                // since). Drop it, say why, and stop THIS attempt — checkout
+                // is not blocked: the next Pay runs clean at full price.
+                appliedCouponCode = nil
+                couponMessage = nil
+                couponErrorMessage = Self.invalidCouponMessage(error)
+                paymentState = .failed(message: couponErrorMessage ?? "")
+                errorMessage = couponErrorMessage
+                return
+            }
+            // The validate round-trip is the coupon's source of truth —
+            // sync what the server actually folded in.
+            appliedCouponCode = validate.couponCode
+            couponDiscountPaise = validate.totals.discountInPaise
 
             paymentState = .creatingOrder
             let create: CreateOrderResponseDTO = try await client.request(Endpoint.paymentCreateOrder(

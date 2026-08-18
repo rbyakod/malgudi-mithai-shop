@@ -230,6 +230,13 @@
   <string name="checkout_error_invalid_pincode">ఈ పిన్‌కోడ్ తప్పుగా ఉన్నట్లు అనిపిస్తోంది.</string>
   <string name="checkout_error_serviceability_check">ఈ పిన్‌కోడ్‌ను తనిఖీ చేయలేకపోయాము — మీ కనెక్షన్ తనిఖీ చేసి మళ్లీ ప్రయత్నించండి.</string>
   <string name="checkout_error_not_serviceable">ఈ పిన్‌కోడ్‌కు ఇంకా డెలివరీ లేదు.</string>
+  <string name="checkout_coupon_label">కూపన్ కోడ్</string>
+  <string name="checkout_coupon_placeholder">కోడ్ నమోదు చేయండి</string>
+  <string name="checkout_coupon_apply">వర్తింపజేయండి</string>
+  <string name="checkout_coupon_applied">కూపన్ %1$s వర్తించింది</string>
+  <string name="checkout_coupon_remove">తీసివేయండి</string>
+  <string name="checkout_coupon_invalid">ఆ కూపన్ కోడ్ పనిచేయలేదు.</string>
+  <string name="checkout_coupon_discount">కూపన్ తగ్గింపు</string>
   <string name="order_placed_at">%1$s న ఆర్డర్ చేయబడింది</string>
   <string name="order_items_title">వస్తువులు</string>
   <string name="order_totals_title">మొత్తాలు</string>

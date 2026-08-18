@@ -23,6 +23,10 @@ enum APIErrorCode: String, Decodable, CaseIterable, Sendable {
     case tokenExpired = "TOKEN_EXPIRED"
     case tokenRevoked = "TOKEN_REVOKED"
     case conflict = "CONFLICT"
+    /// Batch B8 coupons: /cart/validate rejects an unusable couponCode with
+    /// 422 + this code (a customer mid-checkout wants the error, not a
+    /// silent full-price snapshot).
+    case invalidCoupon = "INVALID_COUPON"
     case validation = "VALIDATION"
     case internalError = "INTERNAL"
     case otpProviderDown = "OTP_PROVIDER_DOWN"

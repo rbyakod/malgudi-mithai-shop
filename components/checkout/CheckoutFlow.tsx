@@ -67,6 +67,9 @@ type ValidateResponse = {
     totalInPaise: number;
   };
   pincodeTier: string;
+  /** Applied coupon, normalized uppercase by the server (B8). */
+  couponCode: string | null;
+  freeDeliveryThresholdInPaise: number | null;
   expiresAt: string;
 };
 
@@ -94,6 +97,13 @@ export function CheckoutFlow({whatsapp}: Props) {
   const [validating, setValidating] = useState(false);
   const [snapshot, setSnapshot] = useState<ValidateResponse | null>(null);
   const [validateError, setValidateError] = useState<string | null>(null);
+  // Coupon (B8): `couponInput` is the live field; `appliedCoupon` is the
+  // code the server accepted and stamped on the snapshot. Only the
+  // SERVER's totals ever render — the coupon-blind local estimate is
+  // never adjusted client-side.
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
   const [payBusy, setPayBusy] = useState(false);
   const [payError, setPayError] = useState<{reason: string; message?: string} | null>(
     null,
@@ -121,9 +131,13 @@ export function CheckoutFlow({whatsapp}: Props) {
   async function validate(
     deliveryArg: Delivery,
     slotArg: SlotChoice | null,
+    // undefined = keep the currently applied code; null = drop it (Remove).
+    couponOverride?: string | null,
   ): Promise<ValidateResponse | null> {
+    const code = couponOverride === undefined ? appliedCoupon : couponOverride;
     setValidating(true);
     setValidateError(null);
+    setCouponError(null);
     try {
       const snap = await apiFetch<ValidateResponse>("/cart/validate", {
         method: "POST",
@@ -136,9 +150,12 @@ export function CheckoutFlow({whatsapp}: Props) {
           }),
           pincode: deliveryArg.address.pincode,
           ...(slotArg ? {slot: {date: slotArg.date, window: slotArg.window}} : {}),
+          ...(code ? {couponCode: code} : {}),
         },
       });
       setSnapshot(snap);
+      setAppliedCoupon(snap.couponCode ?? null);
+      if (snap.couponCode) setCouponInput(snap.couponCode);
       paymentStateRef.current = initialPaymentState(
         snap.snapshotId,
         deliveryArg.address.id,
@@ -153,6 +170,14 @@ export function CheckoutFlow({whatsapp}: Props) {
       }
       return snap;
     } catch (err) {
+      if (err instanceof ApiClientError && err.code === "INVALID_COUPON") {
+        // A coupon problem, not a cart problem: keep the last good
+        // snapshot (totals stay clean, without the dead code) and surface
+        // the server's reason — it is precise ("expired", "add ₹x more").
+        setCouponError(err.message);
+        setAppliedCoupon(null);
+        return null;
+      }
       setValidateError(messageForValidateError(err));
       return null;
     } finally {
@@ -218,6 +243,22 @@ export function CheckoutFlow({whatsapp}: Props) {
     if (!slot || !delivery) return;
     setPhase("summary");
     void validate(delivery, slot);
+  }
+
+  // ---- Coupon apply/remove (B8) --------------------------------------------------
+
+  function applyCoupon() {
+    if (!delivery) return;
+    const code = couponInput.trim();
+    if (!code) return;
+    void validate(delivery, slot, code);
+  }
+
+  function removeCoupon() {
+    if (!delivery) return;
+    setCouponInput("");
+    setCouponError(null);
+    void validate(delivery, slot, null);
   }
 
   // ---- Step 3: pay -------------------------------------------------------------
@@ -576,6 +617,77 @@ export function CheckoutFlow({whatsapp}: Props) {
                   </li>
                 ))}
               </ul>
+
+              {/* Coupon (B8) — the applied code rides every re-validate;
+                  the totals below are always the server's. */}
+              <div
+                data-testid="checkout-coupon"
+                className="mt-6 border-y border-border-card py-4"
+              >
+                {appliedCoupon ? (
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <p className="text-sm text-text-secondary">
+                      <span className="font-display tracking-[0.14em] text-gold">
+                        {appliedCoupon}
+                      </span>{" "}
+                      · {t("couponApplied")}
+                    </p>
+                    <button
+                      type="button"
+                      data-testid="checkout-coupon-remove"
+                      onClick={removeCoupon}
+                      disabled={validating}
+                      className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline disabled:opacity-50"
+                    >
+                      {t("couponRemove")}
+                    </button>
+                  </div>
+                ) : (
+                  <form
+                    className="flex flex-wrap items-center gap-3"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      applyCoupon();
+                    }}
+                  >
+                    <label
+                      htmlFor="checkout-coupon-input"
+                      className="text-[11px] font-medium uppercase tracking-[0.18em] text-text-secondary"
+                    >
+                      {t("couponLabel")}
+                    </label>
+                    <input
+                      id="checkout-coupon-input"
+                      data-testid="checkout-coupon-input"
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                      placeholder={t("couponPlaceholder")}
+                      maxLength={40}
+                      autoComplete="off"
+                      spellCheck={false}
+                      disabled={validating}
+                      className="w-44 border border-border-input bg-bg-card px-3 py-2 text-sm uppercase tracking-[0.14em] text-text-heading placeholder:text-text-muted placeholder:normal-case placeholder:tracking-normal focus:border-gold focus:outline-none disabled:opacity-60"
+                    />
+                    <button
+                      type="submit"
+                      data-testid="checkout-coupon-apply"
+                      disabled={!couponInput.trim() || validating}
+                      className="border border-border-input px-4 py-2 text-[11px] font-medium uppercase tracking-[0.18em] text-text-secondary transition-colors hover:border-gold hover:text-primary disabled:opacity-50"
+                    >
+                      {t("couponApply")}
+                    </button>
+                  </form>
+                )}
+                {couponError ? (
+                  <p
+                    data-testid="checkout-coupon-error"
+                    role="alert"
+                    className="mt-2 text-xs italic leading-relaxed text-primary"
+                  >
+                    {couponError}
+                  </p>
+                ) : null}
+              </div>
 
               <dl className="mt-6 space-y-2 text-sm">
                 <div className="flex justify-between text-text-secondary">

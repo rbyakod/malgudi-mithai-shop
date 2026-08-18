@@ -321,11 +321,22 @@ struct DeliverySlotDTO: Encodable, Equatable {
     let window: String
 }
 
-/// Synthesized Encodable omits a nil slot (optional per contract).
+/// Synthesized Encodable omits a nil slot AND a nil couponCode (both
+/// optional per contract). An invalid code is a 422 INVALID_COUPON, never
+/// silently ignored server-side.
 struct CartValidateRequestDTO: Encodable {
     let items: [CartValidateItemDTO]
     let pincode: String
     let slot: DeliverySlotDTO?
+    /// Normalized uppercase code the server folds into totals (Batch B8).
+    let couponCode: String?
+}
+
+/// Totals as /cart/validate prices them. Batch B8 decodes ONLY the coupon
+/// discount — the broader items/totals wiring on this response is a later
+/// batch, so the decode stays deliberately minimal.
+struct CartValidateTotalsDTO: Decodable, Equatable {
+    let discountInPaise: Int
 }
 
 struct CartValidateResponseDTO: Decodable {
@@ -333,6 +344,10 @@ struct CartValidateResponseDTO: Decodable {
     let customerId: String
     let pincodeTier: String
     let expiresAt: String
+    /// Coupon the server actually folded into totals, normalized uppercase;
+    /// null when none was applied.
+    let couponCode: String?
+    let totals: CartValidateTotalsDTO
 }
 
 struct CreateOrderRequestDTO: Encodable {

@@ -230,6 +230,13 @@
   <string name="checkout_error_invalid_pincode">આ પિનકોડ ખોટો લાગે છે.</string>
   <string name="checkout_error_serviceability_check">આ પિનકોડ ચકાસી શકાયો નહીં — તમારું કનેક્શન ચકાસો અને ફરી પ્રયાસ કરો.</string>
   <string name="checkout_error_not_serviceable">આ પિનકોડ પર અમે હજુ ડિલિવરી કરતા નથી.</string>
+  <string name="checkout_coupon_label">કૂપન કોડ</string>
+  <string name="checkout_coupon_placeholder">કોડ દાખલ કરો</string>
+  <string name="checkout_coupon_apply">લાગુ કરો</string>
+  <string name="checkout_coupon_applied">કૂપન %1$s લાગુ થયું</string>
+  <string name="checkout_coupon_remove">દૂર કરો</string>
+  <string name="checkout_coupon_invalid">તે કૂપન કોડ કામ કર્યો નથી.</string>
+  <string name="checkout_coupon_discount">કૂપન છૂટ</string>
   <string name="order_placed_at">%1$s ના રોજ ઓર્ડર કરેલ</string>
   <string name="order_items_title">વસ્તુઓ</string>
   <string name="order_totals_title">કુલ</string>

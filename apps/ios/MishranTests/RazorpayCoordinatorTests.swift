@@ -94,7 +94,7 @@ final class RazorpayCoordinatorTests: XCTestCase {
     private func routeHappyPath() {
         let json = { (string: String) in Data(string.utf8) }
         MockURLProtocol.routes["cart/validate"] = (200, [:], json(
-            #"{"data":{"snapshotId":"snap_1","customerId":"cust_1","items":[],"pincodeTier":"shelf","expiresAt":"2026-08-13T12:00:00Z"}}"#
+            #"{"data":{"snapshotId":"snap_1","customerId":"cust_1","items":[],"pincodeTier":"shelf","couponCode":null,"totals":{"itemsTotalInPaise":50000,"deliveryFeeInPaise":9900,"taxesInPaise":0,"discountInPaise":0,"totalInPaise":59900},"expiresAt":"2026-08-13T12:00:00Z"}}"#
         ))
         MockURLProtocol.routeOverride["payments/razorpay/create-order"] = { [weak self] request in
             self?.createOrderKeys.append(request.value(forHTTPHeaderField: "Idempotency-Key") ?? "-")
@@ -154,7 +154,7 @@ final class RazorpayCoordinatorTests: XCTestCase {
         // Idempotency-Keys (the backend caches error responses per key).
         let json = { (string: String) in Data(string.utf8) }
         MockURLProtocol.routes["cart/validate"] = (200, [:], json(
-            #"{"data":{"snapshotId":"snap_1","customerId":"cust_1","items":[],"pincodeTier":"shelf","expiresAt":"2026-08-13T12:00:00Z"}}"#
+            #"{"data":{"snapshotId":"snap_1","customerId":"cust_1","items":[],"pincodeTier":"shelf","couponCode":null,"totals":{"itemsTotalInPaise":50000,"deliveryFeeInPaise":9900,"taxesInPaise":0,"discountInPaise":0,"totalInPaise":59900},"expiresAt":"2026-08-13T12:00:00Z"}}"#
         ))
         nonisolated(unsafe) var failFirst = true
         MockURLProtocol.routeOverride["payments/razorpay/create-order"] = { [weak self] request in

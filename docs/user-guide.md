@@ -221,9 +221,10 @@ a running total. Carts persist on the device.
    Tomorrow × 10:00–14:00 or 16:00–20:00). Shelf-stable orders skip this
    and dispatch in a few days.
 3. **Review & pay** — the order is **re-priced by the kitchen in real
-   time** (the amounts shown are the server's, not the estimate), then
-   **Pay ₹{amount}** opens Razorpay. If payment fails or the window is
-   closed, your order is saved and you can retry or finish on WhatsApp —
+   time** (the amounts shown are the server's, not the estimate), a
+   **Coupon** field sits between the items and the totals (see below),
+   then **Pay ₹{amount}** opens Razorpay. If payment fails or the window
+   is closed, your order is saved and you can retry or finish on WhatsApp —
    you're never double-charged (idempotency keys).
 
 **iOS**: Checkout form → pick/add address → pincode check → slot (fresh
@@ -231,13 +232,26 @@ tier only) → **Pay ₹{amount}** → Razorpay sheet → confirmation. The
 progress reads "Checking your cart… → Creating your order… → Waiting for
 payment… → Confirming payment…". Addresses can be added mid-checkout.
 
+**Coupon codes** (web, iOS, and Android): before paying you can apply a
+coupon code — type it (it uppercases as you type; up to 40 characters)
+and tap **Apply**. The kitchen validates it live against your cart and
+address; the summary then shows a **Coupon discount −₹…** row plus a chip
+with the applied code and a **Remove** button. A code that doesn't work
+says so with the kitchen's reason ("expired", "Add ₹200 more to use this
+code", …) and nothing is blocked — checkout continues at full price. If a
+code expires or hits its limit between applying and paying, it's dropped
+with a message and you can pay straight away; removing a code re-checks
+the cart so the discount disappears. On iOS, **Apply** stays disabled
+until an address is picked (validation needs its pincode).
+
 **Android**: Checkout shows saved addresses (add them from Account →
 Saved addresses first), a serviceability readout ("Fresh — same-day
-network" / "Shelf — shipped"), slot chips on the fresh tier, and a payment
-preference (UPI / card / netbanking / wallet — the Razorpay sheet collects
-the actual payment). The CTA tells you what's missing ("Select a delivery
-address" → "Pick a delivery slot" → "Place order"). Android verifies the
-payment signature server-side before confirming.
+network" / "Shelf — shipped"), slot chips on the fresh tier, a coupon
+field (above) just above the CTA, and a payment preference (UPI / card /
+netbanking / wallet — the Razorpay sheet collects the actual payment).
+The CTA tells you what's missing ("Select a delivery address" → "Pick a
+delivery slot" → "Place order"). Android verifies the payment signature
+server-side before confirming.
 
 **After payment**: all three land on a confirmation screen with the order
 reference and a **Track** button. A receipt SMS follows.
@@ -254,9 +268,8 @@ reference and a **Track** button. A receipt SMS follows.
   more** button to page through the full history; `/track-order` is a
   shortcut to the same list; each order's receipt page shows items,
   totals, **Order again** (one tap puts everything back in the cart), and
-  — once delivered — a **star-rating review form** per item (reviews are
-    collected for moderation; they aren't displayed on the storefront
-    yet).
+  — once delivered — a **star-rating review form** per item (approved
+    reviews then appear on the product page — §5).
 - **iOS**: Orders list → detail with a five-stage progress timeline
   (Confirmed → Packed → Dispatched → Out for delivery → Delivered), items,
   totals, **Need help** (WhatsApp), and **Order again** — every line goes
@@ -405,8 +418,6 @@ hours 9:00–21:00 IST, kitchens in Bengaluru), `/about`, `/privacy`,
 So nobody hunts for what isn't there:
 
 - **No COD** anywhere; Razorpay only.
-- **No coupon/discount code field** at checkout (server-side discounts can
-  still show up as a Discount row).
 - **Apps don't show delivery fees or free-delivery thresholds in the
   cart** — fees appear on the priced order at checkout/after payment. Web
   shows the full estimate.

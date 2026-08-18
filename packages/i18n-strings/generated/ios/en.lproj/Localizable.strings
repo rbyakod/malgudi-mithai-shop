@@ -229,6 +229,13 @@
 "checkout.error.invalid_pincode" = "That pincode looks invalid.";
 "checkout.error.serviceability_check" = "Couldn't check this pincode — check your connection and retry.";
 "checkout.error.not_serviceable" = "We don't deliver to this pincode yet.";
+"checkout.coupon.label" = "Coupon code";
+"checkout.coupon.placeholder" = "Enter code";
+"checkout.coupon.apply" = "Apply";
+"checkout.coupon.applied" = "Coupon {code} applied";
+"checkout.coupon.remove" = "Remove";
+"checkout.coupon.invalid" = "That coupon code didn't work.";
+"checkout.coupon.discount" = "Coupon discount";
 "order.placed_at" = "Placed {date}";
 "order.items_title" = "Items";
 "order.totals_title" = "Totals";

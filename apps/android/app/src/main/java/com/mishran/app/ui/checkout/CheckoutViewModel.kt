@@ -1,7 +1,10 @@
 // apps/android/app/src/main/java/com/mishran/app/ui/checkout/CheckoutViewModel.kt — Task 10.2.
 //
 // Checkout state: saved addresses + serviceability of the selected pincode
-// (tier drives the slot picker), delivery slot, payment method. Slots exist
+// (tier drives the slot picker), delivery slot, payment method, and the
+// applied coupon (B8: apply/remove re-validate the cart so totals — and the
+// discount row — are always server-priced; the code rides along on every
+// later validate until removed or rejected). Slots exist
 // only for the fresh tier (Delhi NCR same-day network); shelf-tier metros
 // ship on the standard SLA so the picker stays hidden. Pure helpers
 // (buildSlotOptions, formatAddressLine, pincode validation) are extracted for
@@ -18,6 +21,7 @@ import com.mishran.app.data.repository.AddressRepository
 import com.mishran.app.data.repository.CartRepository
 import com.mishran.app.domain.usecase.CreateOrderResult
 import com.mishran.app.domain.usecase.PaymentRequest
+import com.mishran.app.domain.usecase.ValidateCouponResult
 import com.mishran.app.domain.usecase.PlaceOrderResult
 import com.mishran.app.domain.usecase.PlaceOrderUseCase
 import com.mishran.app.util.RazorpayOutcome
@@ -64,6 +68,18 @@ data class CheckoutUiState(
     val slotOptions: List<SlotOption> = emptyList(),
     val selectedSlot: SlotOption? = null,
     val paymentMethod: PaymentMethod = PaymentMethod.UPI,
+    /** Coupon being typed — uppercased and capped at [CheckoutViewModel.COUPON_MAX_LENGTH]. */
+    val couponInput: String = "",
+    /** The code the server accepted on the last validate; null when none is applied. */
+    val appliedCoupon: String? = null,
+    /** True after an INVALID_COUPON response — drives the inline field error. */
+    val couponInvalid: Boolean = false,
+    /** Server detail for the rejection (e.g. "Coupon EXPIRED5 has expired"), when sent. */
+    val couponErrorDetail: String? = null,
+    /** Discount folded into the last server-priced totals — drives the −₹ row. */
+    val discountInPaise: Int = 0,
+    /** A coupon validate is in flight (apply or remove). */
+    val validatingCoupon: Boolean = false,
 ) {
     val isFreshTier: Boolean
         get() = (serviceability as? ServiceabilityState.Serviceable)?.tier == CheckoutViewModel.TIER_FRESH
@@ -95,6 +111,9 @@ sealed interface CheckoutEvent {
     ) : CheckoutEvent
 
     data class CartChanged(val message: String?) : CheckoutEvent
+
+    /** The coupon code was accepted — toast it (the chip is the durable signal). */
+    data class CouponApplied(val code: String) : CheckoutEvent
 
     data class PaymentFailed(val message: String?) : CheckoutEvent
 
@@ -163,6 +182,93 @@ class CheckoutViewModel @Inject constructor(
         _state.update { it.copy(paymentMethod = method) }
     }
 
+    /** Edit the coupon field — uppercased as typed, capped at 40 characters. */
+    fun updateCouponInput(raw: String) {
+        _state.update {
+            it.copy(
+                couponInput = raw.take(COUPON_MAX_LENGTH).uppercase(),
+                couponInvalid = false,
+                couponErrorDetail = null,
+            )
+        }
+    }
+
+    /** Validate WITH the typed code — totals come back server-priced. */
+    fun applyCoupon() {
+        val current = _state.value
+        val code = current.couponInput.trim()
+        if (code.isEmpty() || current.validatingCoupon) return
+        validateCouponWith(code)
+    }
+
+    /** Drop the applied code and re-validate WITHOUT it so totals lose the discount. */
+    fun removeCoupon() {
+        val current = _state.value
+        if (current.appliedCoupon == null || current.validatingCoupon) return
+        // The chip disappears immediately; validate is stateless server-side,
+        // so the code outlives nothing even if the refresh call below fails.
+        _state.update {
+            it.copy(
+                appliedCoupon = null,
+                couponInput = "",
+                couponInvalid = false,
+                couponErrorDetail = null,
+                discountInPaise = 0,
+            )
+        }
+        validateCouponWith(null)
+    }
+
+    /**
+     * The coupon field's validate leg. The code rides on every validate —
+     * apply, remove, and later placeOrder() — until removed or rejected, so
+     * totals always reflect what the customer will actually pay.
+     */
+    private fun validateCouponWith(code: String?) {
+        val address = _state.value.selectedAddress ?: return
+        _state.update { it.copy(validatingCoupon = true) }
+        viewModelScope.launch {
+            val items = cartRepository.observeItems().first()
+            val slot = _state.value.selectedSlot?.let {
+                CartValidateRequestSlot(date = it.date, window = it.window)
+            }
+            when (
+                val result = placeOrder.validateCoupon(
+                    items = items,
+                    pincode = address.pincode.orEmpty(),
+                    slot = slot,
+                    couponCode = code,
+                )
+            ) {
+                is ValidateCouponResult.Validated -> {
+                    val applied = result.snapshot.couponCode
+                    _state.update {
+                        it.copy(
+                            appliedCoupon = applied,
+                            couponInput = applied.orEmpty(),
+                            couponInvalid = false,
+                            couponErrorDetail = null,
+                            discountInPaise = result.snapshot.totals.discountInPaise,
+                        )
+                    }
+                    applied?.let { accepted -> _events.emit(CheckoutEvent.CouponApplied(accepted)) }
+                }
+                is ValidateCouponResult.InvalidCoupon -> _state.update {
+                    // Keep the last good totals, clear the applied code, and
+                    // leave the CTA alone — an unusable code never blocks checkout.
+                    it.copy(
+                        appliedCoupon = null,
+                        couponInvalid = true,
+                        couponErrorDetail = result.message,
+                    )
+                }
+                is ValidateCouponResult.Failure ->
+                    _events.tryEmit(CheckoutEvent.Failed(result.message))
+            }
+            _state.update { it.copy(validatingCoupon = false) }
+        }
+    }
+
     /** Validate the cart + mint the order; the sheet opens on [CheckoutEvent.OpenPayment]. */
     fun placeOrder() {
         val current = _state.value
@@ -182,6 +288,7 @@ class CheckoutViewModel @Inject constructor(
                 pincode = address.pincode.orEmpty(),
                 deliveryAddressId = addressId,
                 slot = slot,
+                couponCode = current.appliedCoupon,
             )) {
                 is CreateOrderResult.NeedsPayment -> {
                     pendingRequest = result.request
@@ -189,6 +296,19 @@ class CheckoutViewModel @Inject constructor(
                 }
                 is CreateOrderResult.CartChanged ->
                     _events.emit(CheckoutEvent.CartChanged(result.message))
+                is CreateOrderResult.CouponRejected -> {
+                    // The applied code died between apply and pay — drop it
+                    // (and its discount row) and let the customer retry.
+                    _state.update {
+                        it.copy(
+                            appliedCoupon = null,
+                            couponInvalid = true,
+                            couponErrorDetail = result.message,
+                            discountInPaise = 0,
+                        )
+                    }
+                    _events.emit(CheckoutEvent.Failed(result.message))
+                }
                 is CreateOrderResult.Failure ->
                     _events.emit(CheckoutEvent.Failed(result.message))
             }
@@ -279,6 +399,9 @@ class CheckoutViewModel @Inject constructor(
         const val TIER_SHELF = "shelf"
         const val WINDOW_MORNING = "10:00-14:00"
         const val WINDOW_EVENING = "16:00-20:00"
+
+        /** Coupon-code length cap (server contract trims at 40). */
+        const val COUPON_MAX_LENGTH = 40
     }
 }
 

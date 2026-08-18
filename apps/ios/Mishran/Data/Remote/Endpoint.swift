@@ -198,10 +198,13 @@ extension Endpoint {
 
     /// POST /cart/validate — persists a server-side cart snapshot and hands
     /// back the snapshotId create-order re-reads (tamper-evident cart).
+    /// `couponCode` (Batch B8) folds a validated discount into the totals;
+    /// an unusable code fails the request with 422 INVALID_COUPON.
     static func cartValidate(
         items: [CartValidateItemDTO],
         pincode: String,
-        slot: DeliverySlot?
+        slot: DeliverySlot?,
+        couponCode: String?
     ) -> Endpoint {
         Endpoint(
             path: "cart/validate",
@@ -209,7 +212,8 @@ extension Endpoint {
             body: try? JSONEncoder().encode(CartValidateRequestDTO(
                 items: items,
                 pincode: pincode,
-                slot: slot.map { DeliverySlotDTO(date: $0.date, window: $0.window) }
+                slot: slot.map { DeliverySlotDTO(date: $0.date, window: $0.window) },
+                couponCode: couponCode
             ))
         )
     }

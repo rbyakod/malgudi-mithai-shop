@@ -229,6 +229,13 @@
 "checkout.error.invalid_pincode" = "এই পিনকোডটি ভুল মনে হচ্ছে।";
 "checkout.error.serviceability_check" = "এই পিনকোড যাচাই করা গেল না — আপনার সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।";
 "checkout.error.not_serviceable" = "এই পিনকোডে আমরা এখনও ডেলিভারি করি না।";
+"checkout.coupon.label" = "কুপন কোড";
+"checkout.coupon.placeholder" = "কোড লিখুন";
+"checkout.coupon.apply" = "প্রয়োগ করুন";
+"checkout.coupon.applied" = "কুপন {code} প্রয়োগ করা হয়েছে";
+"checkout.coupon.remove" = "সরান";
+"checkout.coupon.invalid" = "সেই কুপন কোডটি কাজ করেনি।";
+"checkout.coupon.discount" = "কুপন ছাড়";
 "order.placed_at" = "{date} তারিখে অর্ডার করা";
 "order.items_title" = "জিনিস";
 "order.totals_title" = "মোট";

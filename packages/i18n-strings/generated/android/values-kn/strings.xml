@@ -230,6 +230,13 @@
   <string name="checkout_error_invalid_pincode">ಈ ಪಿನ್‌ಕೋಡ್ ಸರಿ ಇಲ್ಲದಂತೆ ಕಾಣುತ್ತದೆ.</string>
   <string name="checkout_error_serviceability_check">ಈ ಪಿನ್‌ಕೋಡ್ ಪರಿಶೀಲಿಸಲಾಗಲಿಲ್ಲ — ನಿಮ್ಮ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ, ಪುನಃ ಪ್ರಯತ್ನಿಸಿ.</string>
   <string name="checkout_error_not_serviceable">ಈ ಪಿನ್‌ಕೋಡ್‌ಗೆ ನಾವು ಇನ್ನೂ ವಿತರಣೆ ಮಾಡುವುದಿಲ್ಲ.</string>
+  <string name="checkout_coupon_label">ಕೂಪನ್ ಕೋಡ್</string>
+  <string name="checkout_coupon_placeholder">ಕೋಡ್ ಬರೆಯಿರಿ</string>
+  <string name="checkout_coupon_apply">ಅನ್ವಯಿಸಿ</string>
+  <string name="checkout_coupon_applied">ಕೂಪನ್ %1$s ಅನ್ವಯಿಸಲಾಗಿದೆ</string>
+  <string name="checkout_coupon_remove">ತೆಗೆದುಹಾಕಿ</string>
+  <string name="checkout_coupon_invalid">ಆ ಕೂಪನ್ ಕೋಡ್ ಕೆಲಸ ಮಾಡಲಿಲ್ಲ.</string>
+  <string name="checkout_coupon_discount">ಕೂಪನ್ ರಿಯಾಯಿತಿ</string>
   <string name="order_placed_at">%1$s ರಂದು ಆದೇಶಿಸಲಾಗಿದೆ</string>
   <string name="order_items_title">ವಸ್ತುಗಳು</string>
   <string name="order_totals_title">ಒಟ್ಟು ಮೊತ್ತ</string>

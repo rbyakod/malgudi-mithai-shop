@@ -229,6 +229,13 @@
 "checkout.error.invalid_pincode" = "ಈ ಪಿನ್‌ಕೋಡ್ ಸರಿ ಇಲ್ಲದಂತೆ ಕಾಣುತ್ತದೆ.";
 "checkout.error.serviceability_check" = "ಈ ಪಿನ್‌ಕೋಡ್ ಪರಿಶೀಲಿಸಲಾಗಲಿಲ್ಲ — ನಿಮ್ಮ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ, ಪುನಃ ಪ್ರಯತ್ನಿಸಿ.";
 "checkout.error.not_serviceable" = "ಈ ಪಿನ್‌ಕೋಡ್‌ಗೆ ನಾವು ಇನ್ನೂ ವಿತರಣೆ ಮಾಡುವುದಿಲ್ಲ.";
+"checkout.coupon.label" = "ಕೂಪನ್ ಕೋಡ್";
+"checkout.coupon.placeholder" = "ಕೋಡ್ ಬರೆಯಿರಿ";
+"checkout.coupon.apply" = "ಅನ್ವಯಿಸಿ";
+"checkout.coupon.applied" = "ಕೂಪನ್ {code} ಅನ್ವಯಿಸಲಾಗಿದೆ";
+"checkout.coupon.remove" = "ತೆಗೆದುಹಾಕಿ";
+"checkout.coupon.invalid" = "ಆ ಕೂಪನ್ ಕೋಡ್ ಕೆಲಸ ಮಾಡಲಿಲ್ಲ.";
+"checkout.coupon.discount" = "ಕೂಪನ್ ರಿಯಾಯಿತಿ";
 "order.placed_at" = "{date} ರಂದು ಆದೇಶಿಸಲಾಗಿದೆ";
 "order.items_title" = "ವಸ್ತುಗಳು";
 "order.totals_title" = "ಒಟ್ಟು ಮೊತ್ತ";

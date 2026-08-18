@@ -12,6 +12,7 @@ struct CheckoutView: View {
     var onPlaceOrder: ((CheckoutViewModel) -> Void)? = nil
 
     @State private var pincodeField = ""
+    @State private var couponField = ""
     @State private var showingAddressForm = false
     @Environment(\.modelContext) private var context
     @State private var addressRepository = AddressRepository(client: MishranAPIClient())
@@ -72,6 +73,79 @@ struct CheckoutView: View {
 
             Section(L("checkout.payment.title")) {
                 PaymentMethodPicker(selection: $viewModel.paymentMethod)
+            }
+
+            // Batch B8: apply/remove a coupon before paying. The code is
+            // checked server-side (/cart/validate prices the discount); an
+            // unusable code never blocks checkout — Pay stays available at
+            // full price.
+            Section(L("checkout.coupon.label")) {
+                if let code = viewModel.appliedCouponCode {
+                    HStack {
+                        Text(code)
+                            .font(.mishranBodyLg.weight(.semibold))
+                        Spacer()
+                        Button(L("checkout.coupon.remove")) {
+                            couponField = ""
+                            Task { await viewModel.removeCoupon() }
+                        }
+                        .frame(minHeight: 44)
+                        .disabled(viewModel.isPlacingOrder)
+                        .accessibilityLabel(L("checkout.coupon.remove"))
+                    }
+                } else {
+                    HStack {
+                        TextField(L("checkout.coupon.placeholder"), text: $couponField)
+                            .font(.mishranBodyLg)
+                            .textInputAutocapitalization(.characters)
+                            .autocorrectionDisabled()
+                            .onChange(of: couponField) { _, newValue in
+                                couponField = String(newValue.uppercased().prefix(40))
+                            }
+                            .disabled(viewModel.isPlacingOrder)
+                            .accessibilityLabel(L("checkout.coupon.label"))
+                        Button(L("checkout.coupon.apply")) {
+                            Task { await viewModel.applyCoupon(couponField) }
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(Color.mishranBrandAccent)
+                        .frame(minHeight: 44)
+                        .disabled(
+                            viewModel.isValidatingCoupon
+                                || viewModel.isPlacingOrder
+                                || viewModel.address == nil
+                                || couponField.trimmingCharacters(in: .whitespaces).isEmpty
+                        )
+                        .accessibilityLabel(L("checkout.coupon.apply"))
+                    }
+                }
+
+                if viewModel.isValidatingCoupon {
+                    HStack {
+                        ProgressView()
+                        Text("Checking…")
+                            .font(.mishranBodyMd)
+                    }
+                }
+
+                if let message = viewModel.couponMessage {
+                    Label(message, systemImage: "checkmark.circle.fill")
+                        .font(.mishranBodyMd)
+                        .foregroundStyle(Color.mishranBrandAccent)
+                }
+
+                if let message = viewModel.couponErrorMessage {
+                    Label(message, systemImage: "exclamationmark.circle.fill")
+                        .font(.mishranBodyMd)
+                        .foregroundStyle(Color.mishranStateError)
+                }
+
+                if viewModel.couponDiscountPaise > 0 {
+                    couponRow(
+                        label: L("checkout.coupon.discount"),
+                        value: "−\(CartView.rupees(viewModel.couponDiscountPaise))"
+                    )
+                }
             }
 
             Section {
@@ -158,6 +232,18 @@ struct CheckoutView: View {
             }
         }
         return true
+    }
+
+    /// Totals row, same shape as CartView's summary rows (label, spacer,
+    /// ink-colored value) — the coupon discount renders as −₹x.
+    private func couponRow(label: String, value: String) -> some View {
+        HStack {
+            Text(label)
+            Spacer()
+            Text(value)
+                .foregroundStyle(Color.mishranBrandInk)
+        }
+        .font(.mishranBodyMd)
     }
 
     private func blockingText(_ reason: CheckoutViewModel.BlockingReason, pincode: String) -> String {

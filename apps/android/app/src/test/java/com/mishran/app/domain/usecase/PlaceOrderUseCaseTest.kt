@@ -298,6 +298,79 @@ class PlaceOrderUseCaseTest {
         assertTrue((second as CreateOrderResult.NeedsPayment).request.idempotencyKey.isNotEmpty())
     }
 
+    // ---- coupon field (B8) -------------------------------------------------
+
+    /** Snapshot as /cart/validate returns it once a coupon is folded in. */
+    private fun couponSnapshot() = snapshot.copy(
+        couponCode = "TEST100",
+        totals = OrderTotals(144000, 0, 0, 10_000, 134000),
+    )
+
+    @Test
+    fun `validateCoupon sends the code and returns the priced snapshot`() = runTest {
+        coEvery { api.validateCart(any()) } returns CartValidatePost200Response(couponSnapshot())
+
+        val result = useCase.validateCoupon(listOf(cartLine), "110001", null, "test100")
+
+        assertTrue(result is ValidateCouponResult.Validated)
+        assertEquals("TEST100", (result as ValidateCouponResult.Validated).snapshot.couponCode)
+        assertEquals(10_000, result.snapshot.totals.discountInPaise)
+        val body = slot<CartValidateRequest>()
+        coVerify { api.validateCart(capture(body)) }
+        assertEquals("test100", body.captured.couponCode)
+        assertEquals("110001", body.captured.pincode)
+    }
+
+    @Test
+    fun `validateCoupon maps INVALID_COUPON to InvalidCoupon with the message`() = runTest {
+        coEvery { api.validateCart(any()) } throws
+            httpError(422, "INVALID_COUPON", "Coupon EXPIRED5 has expired")
+
+        val result = useCase.validateCoupon(listOf(cartLine), "110001", null, "EXPIRED5")
+
+        assertTrue(result is ValidateCouponResult.InvalidCoupon)
+        assertEquals("Coupon EXPIRED5 has expired", (result as ValidateCouponResult.InvalidCoupon).message)
+    }
+
+    @Test
+    fun `createPaymentRequest forwards the applied coupon to validate`() = runTest {
+        coEvery { api.validateCart(any()) } returns CartValidatePost200Response(snapshot)
+        coEvery { api.createOrder(any(), any(), any()) } returns createOrderResponse
+
+        useCase.createPaymentRequest(
+            listOf(cartLine),
+            "110001",
+            "addr-1",
+            slot = null,
+            couponCode = "TEST100",
+        )
+
+        val body = slot<CartValidateRequest>()
+        coVerify { api.validateCart(capture(body)) }
+        assertEquals("TEST100", body.captured.couponCode)
+    }
+
+    @Test
+    fun `INVALID_COUPON at place time surfaces as CouponRejected`() = runTest {
+        coEvery { api.validateCart(any()) } throws
+            httpError(422, "INVALID_COUPON", "Coupon EXPIRED5 has expired")
+
+        val result = useCase.createPaymentRequest(
+            listOf(cartLine),
+            "110001",
+            "addr-1",
+            slot = null,
+            couponCode = "EXPIRED5",
+        )
+
+        assertTrue(result is CreateOrderResult.CouponRejected)
+        assertEquals(
+            "Coupon EXPIRED5 has expired",
+            (result as CreateOrderResult.CouponRejected).message,
+        )
+        coVerify(exactly = 0) { api.createOrder(any(), any(), any()) }
+    }
+
     private fun paymentRequest() = PaymentRequest(
         orderId = "order-1",
         razorpayOrderId = "rzp_order_1",

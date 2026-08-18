@@ -229,6 +229,13 @@
 "checkout.error.invalid_pincode" = "આ પિનકોડ ખોટો લાગે છે.";
 "checkout.error.serviceability_check" = "આ પિનકોડ ચકાસી શકાયો નહીં — તમારું કનેક્શન ચકાસો અને ફરી પ્રયાસ કરો.";
 "checkout.error.not_serviceable" = "આ પિનકોડ પર અમે હજુ ડિલિવરી કરતા નથી.";
+"checkout.coupon.label" = "કૂપન કોડ";
+"checkout.coupon.placeholder" = "કોડ દાખલ કરો";
+"checkout.coupon.apply" = "લાગુ કરો";
+"checkout.coupon.applied" = "કૂપન {code} લાગુ થયું";
+"checkout.coupon.remove" = "દૂર કરો";
+"checkout.coupon.invalid" = "તે કૂપન કોડ કામ કર્યો નથી.";
+"checkout.coupon.discount" = "કૂપન છૂટ";
 "order.placed_at" = "{date} ના રોજ ઓર્ડર કરેલ";
 "order.items_title" = "વસ્તુઓ";
 "order.totals_title" = "કુલ";

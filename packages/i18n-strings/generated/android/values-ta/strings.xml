@@ -230,6 +230,13 @@
   <string name="checkout_error_invalid_pincode">இந்த பின்கோடு தவறாக தெரிகிறது.</string>
   <string name="checkout_error_serviceability_check">இந்த பின்கோடை சரிபார்க்க முடியவில்லை — இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.</string>
   <string name="checkout_error_not_serviceable">இந்த பின்கோடுக்கு இன்னும் டெலிவரி இல்லை.</string>
+  <string name="checkout_coupon_label">கூப்பன் குறியீடு</string>
+  <string name="checkout_coupon_placeholder">குறியீட்டை உள்ளிடவும்</string>
+  <string name="checkout_coupon_apply">பயன்படுத்து</string>
+  <string name="checkout_coupon_applied">கூப்பன் %1$s பயன்படுத்தப்பட்டது</string>
+  <string name="checkout_coupon_remove">அகற்று</string>
+  <string name="checkout_coupon_invalid">அந்த கூப்பன் குறியீடு வேலை செய்யவில்லை.</string>
+  <string name="checkout_coupon_discount">கூப்பன் தள்ளுபடி</string>
   <string name="order_placed_at">%1$s அன்று ஆர்டர் செய்யப்பட்டது</string>
   <string name="order_items_title">பொருட்கள்</string>
   <string name="order_totals_title">மொத்தம்</string>

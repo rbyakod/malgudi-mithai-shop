@@ -17,6 +17,7 @@
 package com.mishran.app.domain.usecase
 
 import com.mishran.api.models.CartItem
+import com.mishran.api.models.CartSnapshot
 import com.mishran.api.models.CartValidatePost200Response
 import com.mishran.api.models.CartValidateRequest
 import com.mishran.api.models.CartValidateRequestSlot
@@ -51,7 +52,28 @@ sealed interface CreateOrderResult {
     /** 409 CART_CHANGED — the user must review the diff and re-confirm. */
     data class CartChanged(val message: String?) : CreateOrderResult
 
+    /**
+     * 422 INVALID_COUPON — a code that rode along on the validate is no
+     * longer usable (expired etc.). Not terminal: the caller drops the code
+     * and the customer can retry at full price or with another code.
+     */
+    data class CouponRejected(val message: String?) : CreateOrderResult
+
     data class Failure(val message: String?) : CreateOrderResult
+}
+
+/** Outcome of the coupon field's validate-only refresh (apply/remove). */
+sealed interface ValidateCouponResult {
+    /**
+     * Server-priced snapshot — its totals already fold the coupon's discount
+     * and `couponCode` carries the normalized (uppercase) applied code.
+     */
+    data class Validated(val snapshot: CartSnapshot) : ValidateCouponResult
+
+    /** 422 INVALID_COUPON — the code is unknown, expired, or under its minimum. */
+    data class InvalidCoupon(val message: String?) : ValidateCouponResult
+
+    data class Failure(val message: String?) : ValidateCouponResult
 }
 
 /** Final outcome of the whole place-order transaction. */
@@ -75,12 +97,15 @@ class PlaceOrderUseCase @Inject constructor(
     /**
      * Validate the local cart against the server and mint a payable order.
      * @param slot date+window when the fresh tier is selected, else null.
+     * @param couponCode the applied coupon, when one survives — rides along
+     *   on validate so the minted order totals fold its discount.
      */
     suspend fun createPaymentRequest(
         items: List<CartItemEntity>,
         pincode: String,
         deliveryAddressId: String,
         slot: CartValidateRequestSlot?,
+        couponCode: String? = null,
     ): CreateOrderResult {
         val snapshot = try {
             api.validateCart(
@@ -88,11 +113,13 @@ class PlaceOrderUseCase @Inject constructor(
                     items = collapsePackLines(items),
                     pincode = pincode,
                     slot = slot,
+                    couponCode = couponCode,
                 ),
             ).data
         } catch (e: HttpException) {
             return when (parseErrorCode(e)) {
                 ERROR_CART_CHANGED -> CreateOrderResult.CartChanged(parseErrorMessage(e))
+                ERROR_INVALID_COUPON -> CreateOrderResult.CouponRejected(parseErrorMessage(e))
                 else -> CreateOrderResult.Failure(e.message())
             }
         } catch (e: Exception) {
@@ -126,6 +153,38 @@ class PlaceOrderUseCase @Inject constructor(
         )
     }
 
+    /**
+     * Validate-only leg for the coupon field: POST /cart/validate with (or
+     * without — removal) a code and hand back the server-priced snapshot. No
+     * order is minted; apply/remove just refresh totals, and the code that
+     * survives re-validates rides along when [createPaymentRequest] runs.
+     */
+    suspend fun validateCoupon(
+        items: List<CartItemEntity>,
+        pincode: String,
+        slot: CartValidateRequestSlot?,
+        couponCode: String?,
+    ): ValidateCouponResult = try {
+        ValidateCouponResult.Validated(
+            api.validateCart(
+                CartValidateRequest(
+                    items = collapsePackLines(items),
+                    pincode = pincode,
+                    slot = slot,
+                    couponCode = couponCode,
+                ),
+            ).data,
+        )
+    } catch (e: HttpException) {
+        if (parseErrorCode(e) == ERROR_INVALID_COUPON) {
+            ValidateCouponResult.InvalidCoupon(parseErrorMessage(e))
+        } else {
+            ValidateCouponResult.Failure(e.message())
+        }
+    } catch (e: Exception) {
+        ValidateCouponResult.Failure(e.message)
+    }
+
     /** Post the Razorpay outcome's signature; map the server's verdict. */
     suspend fun verifyPayment(
         request: PaymentRequest,
@@ -154,6 +213,7 @@ class PlaceOrderUseCase @Inject constructor(
 
     private companion object {
         const val ERROR_CART_CHANGED = "CART_CHANGED"
+        const val ERROR_INVALID_COUPON = "INVALID_COUPON"
     }
 }
 

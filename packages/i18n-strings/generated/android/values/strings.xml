@@ -230,6 +230,13 @@
   <string name="checkout_error_invalid_pincode">That pincode looks invalid.</string>
   <string name="checkout_error_serviceability_check">Couldn\'t check this pincode — check your connection and retry.</string>
   <string name="checkout_error_not_serviceable">We don\'t deliver to this pincode yet.</string>
+  <string name="checkout_coupon_label">Coupon code</string>
+  <string name="checkout_coupon_placeholder">Enter code</string>
+  <string name="checkout_coupon_apply">Apply</string>
+  <string name="checkout_coupon_applied">Coupon %1$s applied</string>
+  <string name="checkout_coupon_remove">Remove</string>
+  <string name="checkout_coupon_invalid">That coupon code didn\'t work.</string>
+  <string name="checkout_coupon_discount">Coupon discount</string>
   <string name="order_placed_at">Placed %1$s</string>
   <string name="order_items_title">Items</string>
   <string name="order_totals_title">Totals</string>

@@ -230,6 +230,13 @@
   <string name="checkout_error_invalid_pincode">ਇਹ ਪਿੰਨਕੋਡ ਗਲਤ ਜਾਪਦਾ ਹੈ।</string>
   <string name="checkout_error_serviceability_check">ਇਹ ਪਿੰਨਕੋਡ ਜਾਂਚਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ — ਆਪਣੀ ਕੁਨੈਕਸ਼ਨ ਜਾਂਚ ਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
   <string name="checkout_error_not_serviceable">ਅਸੀਂ ਇਸ ਪਿੰਨਕੋਡ ਤੇ ਹਾਲੇ ਡਿਲੀਵਰੀ ਨਹੀਂ ਕਰਦੇ।</string>
+  <string name="checkout_coupon_label">ਕੂਪਨ ਕੋਡ</string>
+  <string name="checkout_coupon_placeholder">ਕੋਡ ਲਿਖੋ</string>
+  <string name="checkout_coupon_apply">ਲਾਗੂ ਕਰੋ</string>
+  <string name="checkout_coupon_applied">ਕੂਪਨ %1$s ਲਾਗੂ ਹੋ ਗਿਆ</string>
+  <string name="checkout_coupon_remove">ਹਟਾਓ</string>
+  <string name="checkout_coupon_invalid">ਉਹ ਕੂਪਨ ਕੋਡ ਕੰਮ ਨਹੀਂ ਕੀਤਾ।</string>
+  <string name="checkout_coupon_discount">ਕੂਪਨ ਛੂਟ</string>
   <string name="order_placed_at">%1$s ਨੂੰ ਆਰਡਰ ਕੀਤਾ</string>
   <string name="order_items_title">ਚੀਜ਼ਾਂ</string>
   <string name="order_totals_title">ਕੁੱਲ</string>

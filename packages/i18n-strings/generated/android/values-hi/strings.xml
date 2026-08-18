@@ -230,6 +230,13 @@
   <string name="checkout_error_invalid_pincode">यह पिनकोड गलत लग रहा है।</string>
   <string name="checkout_error_serviceability_check">यह पिनकोड जाँचा नहीं जा सका — अपना कनेक्शन जाँचें और पुनः प्रयास करें।</string>
   <string name="checkout_error_not_serviceable">हम अभी इस पिनकोड पर डिलीवरी नहीं करते।</string>
+  <string name="checkout_coupon_label">कूपन कोड</string>
+  <string name="checkout_coupon_placeholder">कोड लिखें</string>
+  <string name="checkout_coupon_apply">लागू करें</string>
+  <string name="checkout_coupon_applied">कूपन %1$s लागू हुआ</string>
+  <string name="checkout_coupon_remove">हटाएँ</string>
+  <string name="checkout_coupon_invalid">यह कूपन कोड काम नहीं कर सका।</string>
+  <string name="checkout_coupon_discount">कूपन छूट</string>
   <string name="order_placed_at">%1$s को ऑर्डर किया गया</string>
   <string name="order_items_title">वस्तुएँ</string>
   <string name="order_totals_title">योग</string>
