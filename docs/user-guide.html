@@ -237,8 +237,10 @@
     </div>
     <p><strong>Payments on the apps:</strong> Razorpay only (UPI, cards, netbanking, wallets —
     all inside the Razorpay sheet). <strong>On the web</strong> you can pay online the same
-    way or choose <strong>Cash on delivery</strong> at checkout and hand the cash to the
-    delivery partner at your door (online is the default).</p>
+    way, pick a dedicated <strong>UPI</strong> rail (one-tap apps on your phone, a QR code
+    on desktop — still inside Razorpay), or choose <strong>Cash on delivery</strong> at
+    checkout and hand the cash to the delivery partner at your door (online is the
+    default).</p>
   </section>
 
   <section id="s2">
@@ -447,11 +449,14 @@
       <li><strong>Review &amp; pay</strong> — the order is <strong>re-priced by the kitchen in
       real time</strong> (the amounts shown are the server's, not the estimate), a
       <strong>Coupon</strong> field sits between the items and the totals (see below), and a
-      payment choice: <strong>Pay online</strong> (default) or <strong>Cash on delivery</strong>.
-      Online: <strong>Pay ₹{amount}</strong> opens Razorpay; if payment fails or the window is
-      closed, your order is saved and you can retry or finish on WhatsApp — you're never
-      double-charged (idempotency keys). Cash on delivery skips Razorpay entirely — you
-      confirm, the order is placed instantly (a small note reminds you to have the cash ready
+      payment choice: <strong>Pay online</strong> (default), <strong>UPI</strong>, or
+      <strong>Cash on delivery</strong>. Online: <strong>Pay ₹{amount}</strong> opens Razorpay;
+      if payment fails or the window is closed, your order is saved and you can retry or
+      finish on WhatsApp — you're never double-charged (idempotency keys). UPI: the same
+      button opens a Razorpay window with UPI as the only method — on a phone it lists your
+      UPI apps (GPay, PhonePe, BHIM) for a one-tap pay; on a desktop it shows a QR code to
+      scan from your UPI app. Cash on delivery skips Razorpay entirely — you confirm, the
+      order is placed instantly (a small note reminds you to have the cash ready
       for the delivery partner).</li>
     </ol>
 

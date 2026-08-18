@@ -390,6 +390,8 @@
     "paymentMethodLabel": "Payment",
     "payOnline": "Pay online",
     "payOnlineNote": "UPI · cards · netbanking · wallets — via Razorpay",
+    "payUpi": "UPI — GPay / PhonePe / BHIM",
+    "payUpiNote": "One tap on your phone, QR on desktop — via Razorpay",
     "payCod": "Cash on delivery",
     "codNote": "Hand the cash to the delivery partner at your door.",
     "totalsTotal": "Total",

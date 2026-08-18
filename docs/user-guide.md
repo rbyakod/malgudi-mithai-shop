@@ -27,8 +27,10 @@ This dummy account always works, including when the SMS provider is down.
 
 **Payments on the apps:** Razorpay only (UPI, cards, netbanking, wallets —
 all inside the Razorpay sheet). **On the web** you can pay online the same
-way or choose **Cash on delivery** at checkout and hand the cash to the
-delivery partner at your door (online is the default).
+way, pick a dedicated **UPI** rail (one-tap apps on your phone, a QR code
+on desktop — still inside Razorpay), or choose **Cash on delivery** at
+checkout and hand the cash to the delivery partner at your door (online is
+the default).
 
 ---
 
@@ -225,11 +227,14 @@ a running total. Carts persist on the device.
 3. **Review & pay** — the order is **re-priced by the kitchen in real
    time** (the amounts shown are the server's, not the estimate), a
    **Coupon** field sits between the items and the totals (see below),
-   and a payment choice: **Pay online** (default) or **Cash on
+   and a payment choice: **Pay online** (default), **UPI**, or **Cash on
    delivery**. Online: **Pay ₹{amount}** opens Razorpay; if payment
    fails or the window is closed, your order is saved and you can retry
    or finish on WhatsApp — you're never double-charged (idempotency
-   keys). Cash on delivery skips Razorpay entirely — you confirm, the
+   keys). UPI: the same button opens a Razorpay window with UPI as the
+   only method — on a phone it lists your UPI apps (GPay, PhonePe, BHIM)
+   for a one-tap pay; on a desktop it shows a QR code to scan from your
+   UPI app. Cash on delivery skips Razorpay entirely — you confirm, the
    order is placed instantly (a small note reminds you to have the cash
    ready for the delivery partner).
 

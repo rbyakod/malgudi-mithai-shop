@@ -392,6 +392,8 @@
     "paymentMethodLabel": "ಪಾವತಿ",
     "payOnline": "ಆನ್‌ಲೈನ್ ಪಾವತಿ",
     "payOnlineNote": "UPI · ಕಾರ್ಡ್‌ಗಳು · ನೆಟ್‌ಬ್ಯಾಂಕಿಂಗ್ · ವಾಲೆಟ್ — Razorpay ಮೂಲಕ",
+    "payUpi": "ಯುಪಿಐ — GPay / PhonePe / BHIM",
+    "payUpiNote": "ಮೊಬೈಲ್‌ನಲ್ಲಿ ಒಂದು ಟ್ಯಾಪ್, ಡೆಸ್ಕ್‌ಟಾಪ್‌ನಲ್ಲಿ QR — Razorpay ಮೂಲಕ",
     "payCod": "ಡೆಲಿವರಿ ಸಮಯದಲ್ಲಿ ನಗದು",
     "codNote": "ಬಾಗಿಲಿನಲ್ಲಿ ಡೆಲಿವರಿ ಪಾರ್ಟ್‌ನರ್‌ಗೆ ನಗದು ನೀಡಿ.",
     "totalsTotal": "ಒಟ್ಟು",

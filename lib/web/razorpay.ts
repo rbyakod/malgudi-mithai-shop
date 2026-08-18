@@ -27,6 +27,22 @@ export type RazorpayPrefill = {
   contact?: string;
 };
 
+// checkout.js `config.display` (B14) — used to restrict the widget to one
+// payment method (UPI) when the customer chose a specific rail. Key names
+// per Razorpay "Configure Payment Methods" sample code (2026-08):
+//   https://razorpay.com/docs/payments/payment-gateway/web-integration/standard/configure-payment-methods/sample-code/
+// UPI inside the widget is Razorpay-mediated end to end — intent one-tap on
+// mobile, QR on desktop (UPI Collect was deprecated 2026-02-28) — so the
+// payment still resolves through the same handler → verify → webhook
+// pipeline. We never mint raw `upi://pay` links or static-VPA QRs.
+export type RazorpayDisplayConfig = {
+  display: {
+    blocks: Record<string, {name: string; instruments: {method: string}[]}>;
+    sequence: string[];
+    preferences: {show_default_blocks: boolean};
+  };
+};
+
 export type RazorpayOptions = {
   key: string;
   order_id: string;
@@ -36,6 +52,7 @@ export type RazorpayOptions = {
   description?: string;
   prefill?: RazorpayPrefill;
   theme?: {color?: string};
+  config?: RazorpayDisplayConfig;
   handler: (response: RazorpayHandlerResponse) => void;
   modal?: {ondismiss?: () => void};
 };
@@ -100,7 +117,31 @@ export type OpenCheckoutInput = {
   prefill?: RazorpayPrefill;
   /** Malgudi Blue v2 primary action color. */
   themeColor?: string;
+  /**
+   * Restrict the widget to a single Razorpay method (B14 UPI rail). The
+   * order/handler/verify path is identical — this only shapes the widget.
+   */
+  restrictToMethod?: "upi";
 };
+
+/**
+ * Pure builder for a method-only `config.display` block — unit-tested
+ * without loading the widget script.
+ */
+export function methodOnlyDisplayConfig(method: string): RazorpayDisplayConfig {
+  return {
+    display: {
+      blocks: {
+        only: {
+          name: `Pay via ${method.toUpperCase()}`,
+          instruments: [{method}],
+        },
+      },
+      sequence: ["block.only"],
+      preferences: {show_default_blocks: false},
+    },
+  };
+}
 
 export type OpenCheckoutResult =
   | {kind: "ok"; response: RazorpayHandlerResponse}
@@ -136,6 +177,9 @@ export async function openRazorpayCheckout(
       ...(input.description ? {description: input.description} : {}),
       ...(input.prefill ? {prefill: input.prefill} : {}),
       theme: {color: input.themeColor ?? "#0053E2"},
+      ...(input.restrictToMethod
+        ? {config: methodOnlyDisplayConfig(input.restrictToMethod)}
+        : {}),
       handler: (response) => finish({kind: "ok", response}),
       modal: {
         ondismiss: () => finish({kind: "dismissed"}),

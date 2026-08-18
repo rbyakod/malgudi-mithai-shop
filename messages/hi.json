@@ -390,6 +390,8 @@
     "paymentMethodLabel": "भुगतान",
     "payOnline": "ऑनलाइन भुगतान",
     "payOnlineNote": "UPI · कार्ड · नेटबैंकिंग · वॉलेट — Razorpay से",
+    "payUpi": "यूपीआई — GPay / PhonePe / BHIM",
+    "payUpiNote": "फ़ोन पर एक टैप, डेस्कटॉप पर QR — Razorpay के ज़रिए",
     "payCod": "डिलीवरी पर नगद",
     "codNote": "डिलीवरी पार्टनर को दरवाज़े पर नगद दें।",
     "totalsTotal": "कुल",

@@ -104,9 +104,11 @@ export function CheckoutFlow({whatsapp}: Props) {
   const [couponInput, setCouponInput] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
-  // Payment rail (B12): online (Razorpay) or cash on delivery. Defaults
-  // to online; the choice re-reads on every render of the summary step.
-  const [paymentChoice, setPaymentChoice] = useState<"online" | "cod">("online");
+  // Payment rail (B12 online/COD, B14 UPI): online (full Razorpay sheet),
+  // UPI (Razorpay checkout restricted to UPI — one-tap intent on mobile,
+  // QR on desktop), or cash on delivery. Defaults to online; the choice
+  // re-reads on every render of the summary step.
+  const [paymentChoice, setPaymentChoice] = useState<"online" | "upi" | "cod">("online");
   const [payBusy, setPayBusy] = useState(false);
   const [payError, setPayError] = useState<{reason: string; message?: string} | null>(
     null,
@@ -306,6 +308,9 @@ export function CheckoutFlow({whatsapp}: Props) {
           ...input,
           name: t("razorpayName"),
           description: t("razorpayDescription"),
+          // B14 UPI rail: same order/verify pipeline — the widget just
+          // opens with UPI as the only block (Razorpay's own intent/QR).
+          ...(paymentChoice === "upi" ? {restrictToMethod: "upi" as const} : {}),
           // Prefill from the signed-in customer — never asked twice.
           prefill: {
             ...(session?.customer.name ? {name: session.customer.name} : {}),
@@ -780,6 +785,24 @@ export function CheckoutFlow({whatsapp}: Props) {
                       {t("payOnline")}
                       <span className="block text-xs italic text-text-muted">
                         {t("payOnlineNote")}
+                      </span>
+                    </span>
+                  </label>
+                  <label
+                    data-testid="checkout-payment-upi"
+                    className="flex cursor-pointer items-start gap-3 text-sm text-text-secondary"
+                  >
+                    <input
+                      type="radio"
+                      name="checkout-payment-method"
+                      checked={paymentChoice === "upi"}
+                      onChange={() => setPaymentChoice("upi")}
+                      className="mt-1 accent-gold"
+                    />
+                    <span>
+                      {t("payUpi")}
+                      <span className="block text-xs italic text-text-muted">
+                        {t("payUpiNote")}
                       </span>
                     </span>
                   </label>
