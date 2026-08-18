@@ -56,8 +56,9 @@ export function HeroRotator({slides, autoplayMs}: Props) {
             >
               <div className="overflow-hidden rounded-[1.6rem] border border-gold/40 bg-bg-card shadow-card">
                 {/* 4:5 mobile → 3:2 lg → taller 5:4 xl+ (capped by viewport
-                    height so short laptops keep the CTAs above the fold). */}
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-bg-accent lg:aspect-[3/2] xl:aspect-[5/4] xl:max-h-[66svh]">
+                    height so short laptops keep the CTAs above the fold —
+                    52svh leaves room for caption + controls + padding). */}
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-bg-accent lg:aspect-[3/2] xl:aspect-[5/4] xl:max-h-[52svh]">
                   <Image
                     src={slide.image}
                     alt={slide.imageAlt}

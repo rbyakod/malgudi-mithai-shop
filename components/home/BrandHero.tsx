@@ -203,7 +203,12 @@ export async function BrandHero({
 
         {/* Right column — rotator when slides exist, else static fallback. */}
         {hasSlides ? (
-          <div className="relative lg:ml-auto xl:max-w-[48rem]">
+          // w-full is load-bearing: with ml-auto alone the grid item is
+          // shrink-to-fit, and the aspect box's max-h cap breaks its
+          // intrinsic-width contribution — the card collapses to the
+          // caption's width (~260px). Fill the track; the cap + ml-auto
+          // still bound it on ultrawide full-width layouts.
+          <div className="relative w-full lg:ml-auto xl:max-w-[48rem]">
             <HeroRotator slides={slides} autoplayMs={autoplayMs} />
           </div>
         ) : (
@@ -211,7 +216,7 @@ export async function BrandHero({
             <figure className="relative ml-auto h-full w-full max-w-md xl:max-w-[45rem]">
               <div className="absolute inset-0 rounded-[2rem] border border-gold/40 bg-bg-card/60 shadow-card" />
               <div className="relative m-3 overflow-hidden rounded-[1.6rem]">
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-bg-accent lg:aspect-[3/2] xl:aspect-[5/4] xl:max-h-[66svh]">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-bg-accent lg:aspect-[3/2] xl:aspect-[5/4] xl:max-h-[52svh]">
                   <Image
                     src={FALLBACK_HERO_IMAGE}
                     alt={t("heroInsetAlt")}
