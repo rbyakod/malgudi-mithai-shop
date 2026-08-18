@@ -797,6 +797,44 @@ input:focus-visible {
   color: var(--t-text-heading);
 }
 
+/* ---- Ken Burns cinematic image motion ----
+   Hero slides (kb-hero) run one pan per activation — the class is applied
+   only to the active slide, so each activation replays from keyframe 0 and
+   the inline animation-duration is set to the slide dwell (autoplayMs).
+   Two opposing directions alternate by slide-index parity. Product imagery
+   (kb-drift) breathes on a slow 22s alternate loop — subtle enough for a
+   hundred grid images. No will-change on kb-drift: hub grids promote
+   enough layers as it is. */
+
+@keyframes kb-hero-a {
+  from { transform: scale(1.03) translate3d(0, 0, 0); }
+  to   { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+}
+@keyframes kb-hero-b {
+  from { transform: scale(1.12) translate3d(1.5%, 1%, 0); }
+  to   { transform: scale(1.03) translate3d(0, 0, 0); }
+}
+@keyframes kb-drift {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to   { transform: scale(1.05) translate3d(-1%, -0.75%, 0); }
+}
+
+.kb-hero {
+  animation: kb-hero-a 9s ease-in-out forwards;
+  will-change: transform;
+}
+.kb-hero--alt {
+  animation-name: kb-hero-b;
+}
+.kb-drift {
+  animation: kb-drift 22s ease-in-out infinite alternate;
+}
+
+/* Admin kill-switch (Theme settings → Product image motion). */
+[data-motion-drift="off"] .kb-drift {
+  animation: none !important;
+}
+
 /* ---- Animated background orbs ---- */
 
 @keyframes orb-drift-1 {
@@ -885,6 +923,8 @@ input:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .page-bg__orb { animation: none !important; }
+  .kb-hero,
+  .kb-drift { animation: none !important; }
 }
 
 /* ---- Story article body (lexical rich text renderer output) ----

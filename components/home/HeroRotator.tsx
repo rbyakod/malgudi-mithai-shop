@@ -1,18 +1,16 @@
-// Client carousel for the brand home hero. Receives resolved Slide[]
-// from the server BrandHero and owns carousel state + autoplay. Pauses
-// on hover, focus, and off-screen. Honors prefers-reduced-motion.
+// Client carousel for the brand home hero — the admin-selectable "framed"
+// variant (Theme settings → Home hero style). Receives resolved Slide[]
+// from the server BrandHero; carousel state + autoplay live in the shared
+// useHeroCarousel hook (also used by CinematicHero). Pauses on hover,
+// focus, and off-screen. Honors prefers-reduced-motion.
 "use client";
 
-import {useCallback, useEffect, useRef, useState} from "react";
 import Image from "next/image";
 import {useTranslations} from "next-intl";
 import {Link} from "@/i18n/navigation";
-import {useCart} from "@/context/CartContext";
-import {track} from "@/lib/analytics";
-import {usePrefersReducedMotion} from "./use-prefers-reduced-motion";
+import {useHeroCarousel} from "./use-hero-carousel";
+import {HeroAddToCartButton} from "./HeroAddToCartButton";
 import type {Slide} from "@/lib/home-hero";
-
-const DEFAULT_AUTOPLAY_MS = 5000;
 
 type Props = {
   slides: Slide[];
@@ -21,65 +19,8 @@ type Props = {
 
 export function HeroRotator({slides, autoplayMs}: Props) {
   const t = useTranslations("HeroRotator");
-  const intervalMs = autoplayMs && autoplayMs > 0 ? autoplayMs : DEFAULT_AUTOPLAY_MS;
-  const reducedMotion = usePrefersReducedMotion();
-  const [active, setActive] = useState(0);
-  const activeRef = useRef(0);
-  const [paused, setPaused] = useState(false);
-  const regionRef = useRef<HTMLDivElement>(null);
-
-  // Keep activeRef in sync so the autoplay interval (which intentionally
-  // excludes `active` from its deps to avoid resetting the timer on every
-  // transition) can read the current value via the ref.
-  useEffect(() => {
-    activeRef.current = active;
-  }, [active]);
-
-  // Wrap clamp helper.
-  const clamp = useCallback(
-    (n: number) => (slides.length <= 1 ? 0 : (n + slides.length) % slides.length),
-    [slides.length]
-  );
-
-  const go = useCallback(
-    (next: number) => {
-      setActive((current) => {
-        const target = clamp(next);
-        if (target !== current) {
-          track("hero_slide_view", {index: target, total: slides.length});
-        }
-        return target;
-      });
-    },
-    [clamp, slides.length]
-  );
-
-  const goPrev = useCallback(() => go(active - 1), [active, go]);
-  const goNext = useCallback(() => go(active + 1), [active, go]);
-
-  // Autoplay timer. Routed through `go` so every auto-advance also emits
-  // `hero_slide_view`. activeRef sidesteps the stale-active closure without
-  // adding `active` to deps (which would reset the timer on every tick).
-  useEffect(() => {
-    if (reducedMotion || paused || slides.length <= 1) return;
-    const id = setInterval(() => {
-      go(activeRef.current + 1);
-    }, intervalMs);
-    return () => clearInterval(id);
-  }, [reducedMotion, paused, slides.length, go, intervalMs]);
-
-  // Pause when the region is scrolled off-screen.
-  useEffect(() => {
-    if (typeof IntersectionObserver === "undefined") return;
-    const el = regionRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => setPaused(!entry.isIntersecting),
-      {threshold: 0}
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+  const {active, go, goPrev, goNext, regionRef, pauseProps, intervalMs} =
+    useHeroCarousel({count: slides.length, intervalMs: autoplayMs});
 
   if (slides.length === 0) return null;
 
@@ -90,15 +31,7 @@ export function HeroRotator({slides, autoplayMs}: Props) {
       aria-roledescription="carousel"
       aria-label={t("regionLabel")}
       className="relative"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={(e) => {
-        // Only resume when focus leaves the carousel entirely.
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-          setPaused(false);
-        }
-      }}
+      {...pauseProps}
     >
       {/* Slides — render all, toggle visibility via CSS to keep image cache warm. */}
       <div className="relative">
@@ -122,14 +55,17 @@ export function HeroRotator({slides, autoplayMs}: Props) {
               }
             >
               <div className="overflow-hidden rounded-[1.6rem] border border-gold/40 bg-bg-card shadow-card">
-                <div className="relative aspect-[4/5] w-full bg-bg-accent">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-bg-accent lg:aspect-[3/2]">
                   <Image
                     src={slide.image}
                     alt={slide.imageAlt}
                     fill
                     priority={i === 0}
-                    sizes="(min-width: 1024px) 28rem, 100vw - 2rem"
-                    className="object-cover"
+                    sizes="(min-width: 1280px) 36rem, (min-width: 1024px) 26rem, 100vw - 2rem"
+                    className={`object-cover${
+                      isActive ? (i % 2 ? " kb-hero kb-hero--alt" : " kb-hero") : ""
+                    }`}
+                    style={isActive ? {animationDuration: `${intervalMs}ms`} : undefined}
                   />
                 </div>
                 <div className="space-y-3 p-4 sm:p-5">
@@ -148,7 +84,7 @@ export function HeroRotator({slides, autoplayMs}: Props) {
                     >
                       {t("view")}
                     </Link>
-                    <AddToCartButton slide={slide} />
+                    <HeroAddToCartButton slide={slide} />
                   </div>
                 </div>
               </div>
@@ -197,39 +133,6 @@ export function HeroRotator({slides, autoplayMs}: Props) {
         </div>
       )}
     </div>
-  );
-}
-
-// Inline client button so each slide's add-to-cart is independent. Reuses
-// the project's AddToCartButton visual style (gold border, uppercase
-// tracking) but smaller for the hero card.
-function AddToCartButton({slide}: {slide: Slide}) {
-  const t = useTranslations("HeroRotator");
-  const {addItem} = useCart();
-  const [added, setAdded] = useState(false);
-
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        addItem({
-          id: slide.id,
-          name: slide.name,
-          priceLabel: slide.priceLabel ?? "",
-          image: slide.image,
-        });
-        setAdded(true);
-        track("hero_add_to_cart", {id: slide.id, name: slide.name});
-        window.setTimeout(() => setAdded(false), 1800);
-      }}
-      aria-live="polite"
-      className="inline-flex items-center gap-2 rounded-full border border-gold/60 bg-bg-control px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary transition hover:bg-bg-accent"
-    >
-      <span aria-hidden="true" className="text-gold">
-        {added ? "✓" : "+"}
-      </span>
-      <span>{added ? t("added") : t("addToCart")}</span>
-    </button>
   );
 }
 

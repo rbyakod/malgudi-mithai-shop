@@ -79,9 +79,22 @@ There are no passwords anywhere — you sign in with a phone number and a
 ### Web
 - Announcement strip ("Handcrafted daily · Delivered fresh across
   Bengaluru") with the WhatsApp number.
-- **Hero rotator** of featured products — auto-advances every 5 seconds;
-  pauses on hover/focus; honors your device's reduced-motion setting. Each
-  slide links to the product and has its own **Add to cart**.
+- **Hero** — featured products in a slow Ken Burns pan (a gentle
+  video-like drift, pure CSS). The shop ships two looks, and the owner
+  picks between them in **Admin → Storefront settings** to experiment
+  with customers:
+  - **Framed** (default): editorial two-column hero with a rotating
+    product card that includes the price and its own **Add to cart**.
+  - **Cinematic**: a full-width image band with the headline, gold
+    **Explore mithai** button, and a product chip (name + price + **Add
+    to cart**) over the photo.
+  Both auto-advance every 5 seconds, pause on hover/focus, and honor your
+  device's reduced-motion setting (autoplay and the drift stop entirely).
+- Product photos across the shop (catalog cards, product pages, journal)
+  carry the same subtle always-on drift. It's a display effect only —
+  photos never change content — and it also switches off with
+  reduced-motion or from **Admin → Storefront settings → Product image
+  motion**.
 - **"Find your Mishran"** — the four verticals (Mithai · QSR · Snacks ·
   Merch) as full-width cards.
 - **"Why Mishran"** — the four promise cards, each linking into Stories.
@@ -137,7 +150,9 @@ stores, not in the cart) · **QSR** (walk-in counter menu — no ordering) ·
 
 ### Product cards elsewhere
 Snacks cards show MRP + pack weight; QSR cards show a veg/non-veg dot and
-category; Merch cards show type and availability.
+category; Merch cards show type and availability. On web, catalog photos
+carry the subtle always-on drift noted in §3 (off with reduced-motion or
+the admin toggle).
 
 ---
 
@@ -146,7 +161,7 @@ category; Merch cards show type and availability.
 ### Mithai product page (the main buy flow)
 Common to all platforms:
 1. **Hero photo** (a designed monogram tile if the product has no photo
-   yet).
+   yet). On web the hero photo slowly drifts, like the home hero.
 2. **Family, name, price, freshness promise** ("Made fresh each morning" /
    "Made to order…" / "Finished fresh, frozen at peak").
 3. **Pack size**: 250 g / 500 g / 1 kg chips when the product is priced on

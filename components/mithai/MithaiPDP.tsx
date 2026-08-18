@@ -157,7 +157,7 @@ export async function MithaiPDP({slug, locale}: Props) {
                   fill
                   priority
                   sizes="(min-width: 1024px) 32rem, 100vw"
-                  className="object-cover"
+                  className="object-cover kb-drift"
                 />
                 <div className="absolute inset-0 bg-gradient-to-tr from-bg-darker/30 via-transparent to-transparent" />
               </>

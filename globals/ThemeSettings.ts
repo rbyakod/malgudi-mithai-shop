@@ -30,6 +30,36 @@ export const ThemeSettings: GlobalConfig = {
       ],
     },
     {
+      name: "heroStyle",
+      type: "select",
+      label: "Home hero style",
+      defaultValue: "framed",
+      admin: {
+        description:
+          "Framed: editorial two-column hero with a rotating product card. Cinematic: full-width image band with headline overlay and product chip. Switch anytime to compare with customers.",
+      },
+      options: [
+        {
+          label: "Framed (editorial card)",
+          value: "framed",
+        },
+        {
+          label: "Cinematic (full-bleed band)",
+          value: "cinematic",
+        },
+      ],
+    },
+    {
+      name: "productImageMotion",
+      type: "checkbox",
+      label: "Product image motion",
+      defaultValue: true,
+      admin: {
+        description:
+          "Slow cinematic drift on product imagery across the storefront. Uncheck to keep imagery perfectly still.",
+      },
+    },
+    {
       name: "themeSwitcherVisibility",
       type: "select",
       label: "Theme Studio visibility",

@@ -11,6 +11,7 @@ import {SiteHeader} from "@/components/layout/SiteHeader";
 import {SiteFooter} from "@/components/layout/SiteFooter";
 import {isFullWidthLayout} from "@/lib/storefront-layout";
 import {
+  readProductImageMotion,
   readStorefrontLayoutMode,
   readThemeSwitcherVisibility,
 } from "@/lib/storefront-layout-server";
@@ -68,10 +69,12 @@ export default async function LocaleLayout({children, params}: Props) {
   setRequestLocale(locale);
 
   const messages = (await import(`../../messages/${locale}.json`)).default;
-  const [layoutMode, themeSwitcherVisibility] = await Promise.all([
-    readStorefrontLayoutMode(),
-    readThemeSwitcherVisibility(),
-  ]);
+  const [layoutMode, themeSwitcherVisibility, productImageMotion] =
+    await Promise.all([
+      readStorefrontLayoutMode(),
+      readThemeSwitcherVisibility(),
+      readProductImageMotion(),
+    ]);
   const mainClassName = [
     "mx-auto w-full flex-1 px-4 pb-16 pt-4 sm:px-6",
     isFullWidthLayout(layoutMode) ? "max-w-none lg:px-10 2xl:px-14" : "max-w-6xl lg:px-8",
@@ -92,7 +95,12 @@ export default async function LocaleLayout({children, params}: Props) {
       <HtmlLangSync locale={locale} />
       {/* Layout shell — BrandBar (server, reads Payload) + SiteHeader (client,
           owns theme/locale/cart UI) + main content + SiteFooter (server). */}
-      <div className="relative z-10 flex min-h-dvh flex-col text-text-primary">
+      {/* data-motion-drift — admin kill-switch (Theme settings → Product
+          image motion) for the site-wide Ken Burns drift; CSS gates on it. */}
+      <div
+        data-motion-drift={productImageMotion ? "on" : "off"}
+        className="relative z-10 flex min-h-dvh flex-col text-text-primary"
+      >
         <BrandBar layoutMode={layoutMode} />
         <SiteHeader
           layoutMode={layoutMode}

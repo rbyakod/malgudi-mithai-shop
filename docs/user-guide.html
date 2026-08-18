@@ -295,9 +295,23 @@
     <ul>
       <li>Announcement strip ("Handcrafted daily · Delivered fresh across Bengaluru") with the
       WhatsApp number.</li>
-      <li><strong>Hero rotator</strong> of featured products — auto-advances every 5 seconds;
-      pauses on hover/focus; honors your device's reduced-motion setting. Each slide links to
-      the product and has its own <strong>Add to cart</strong>.</li>
+      <li><strong>Hero</strong> — featured products in a slow Ken Burns pan (a gentle
+      video-like drift, pure CSS). The shop ships two looks, and the owner picks between them
+      in <strong>Admin → Storefront settings</strong> to experiment with customers:
+        <ul>
+          <li><strong>Framed</strong> (default): editorial two-column hero with a rotating
+          product card that includes the price and its own
+          <strong>Add to cart</strong>.</li>
+          <li><strong>Cinematic</strong>: a full-width image band with the headline, gold
+          <strong>Explore mithai</strong> button, and a product chip (name + price +
+          <strong>Add to cart</strong>) over the photo.</li>
+        </ul>
+      Both auto-advance every 5 seconds, pause on hover/focus, and honor your device's
+      reduced-motion setting (autoplay and the drift stop entirely).</li>
+      <li>Product photos across the shop (catalog cards, product pages, journal) carry the
+      same subtle always-on drift. It's a display effect only — photos never change content —
+      and it also switches off with reduced-motion or from
+      <strong>Admin → Storefront settings → Product image motion</strong>.</li>
       <li><strong>"Find your Mishran"</strong> — the four verticals (Mithai · QSR · Snacks ·
       Merch) as full-width cards.</li>
       <li><strong>"Why Mishran"</strong> — the four promise cards, each linking into Stories.</li>
@@ -352,7 +366,8 @@
 
     <h3>Product cards elsewhere</h3>
     <p>Snacks cards show MRP + pack weight; QSR cards show a veg/non-veg dot and category;
-    Merch cards show type and availability.</p>
+    Merch cards show type and availability. On web, catalog photos carry the subtle
+    always-on drift noted in §3 (off with reduced-motion or the admin toggle).</p>
   </section>
 
   <section id="s5">
@@ -362,7 +377,7 @@
     <p>Common to all platforms:</p>
     <ol>
       <li><strong>Hero photo</strong> (a designed monogram tile if the product has no photo
-      yet).</li>
+      yet). On web the hero photo slowly drifts, like the home hero.</li>
       <li><strong>Family, name, price, freshness promise</strong> ("Made fresh each morning" /
       "Made to order…" / "Finished fresh, frozen at peak").</li>
       <li><strong>Pack size</strong>: 250&thinsp;g / 500&thinsp;g / 1&thinsp;kg chips when the

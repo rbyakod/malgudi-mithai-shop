@@ -1,16 +1,27 @@
 // components/home/BrandHero.tsx
-// Cinematic hero for the Mishran brand home. Server component — reads
-// `brand-settings` from Payload for brandName / positioning / heroCopy,
-// resolves curated slides from the `home-hero` global, and renders the
-// HeroRotator when slides exist. Empty global → static kaju-katli
-// still life (original behaviour).
+// Brand hero for the Mishran home. Server component — reads
+// `brand-settings` from Payload for brandName / positioning / heroCopy and
+// resolves curated slides from the `home-hero` global, then picks the
+// variant the owner chose in Theme settings → Home hero style:
+//   - "framed" (default): editorial two-column hero with the HeroRotator
+//     card, widened past main's content column.
+//   - "cinematic": full-bleed Ken Burns band with overlaid headline
+//     (CinematicHero). Empty `home-hero` global → the fallback image is
+//     injected as a synthetic slide in cinematic mode, or the static
+//     kaju-katli still life in framed mode (original behaviour).
 
 import Image from "next/image";
 import {getTranslations, getLocale} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
 import {getPayload} from "@/lib/payload-client";
-import {resolveHomeHeroSlides} from "@/lib/home-hero";
+import {resolveHomeHeroSlides, type Slide} from "@/lib/home-hero";
+import {
+  isFullWidthLayout,
+  type StorefrontLayoutMode,
+} from "@/lib/storefront-layout";
+import {readHeroStyle} from "@/lib/storefront-layout-server";
 import {HeroRotator} from "./HeroRotator";
+import {CinematicHero} from "./CinematicHero";
 
 const FALLBACK_HERO_IMAGE =
   "/api/media/file/1_17966508-6230-43cc-a641-14bd2b412990.jpg";
@@ -34,11 +45,16 @@ async function readBrandSettings(): Promise<BrandGlobal | null> {
   }
 }
 
-export async function BrandHero() {
-  const [t, brand, locale] = await Promise.all([
+export async function BrandHero({
+  layoutMode,
+}: {
+  layoutMode: StorefrontLayoutMode;
+}) {
+  const [t, brand, locale, heroStyle] = await Promise.all([
     getTranslations("Home"),
     readBrandSettings(),
     getLocale(),
+    readHeroStyle(),
   ]);
   const {slides, autoplayMs} = await resolveHomeHeroSlides(locale);
 
@@ -46,10 +62,47 @@ export async function BrandHero() {
   const positioning = brand?.positioning?.trim();
   const hasSlides = slides.length > 0;
 
+  // Cinematic variant — full-bleed band. With no curated slides the
+  // fallback still life becomes a single-slide band so the hero never
+  // renders empty.
+  if (heroStyle === "cinematic") {
+    const cinematicSlides: Slide[] = hasSlides
+      ? slides
+      : [
+          {
+            id: "brand-fallback",
+            collection: "brand",
+            name: t("heroInsetTitle"),
+            image: FALLBACK_HERO_IMAGE,
+            imageAlt: t("heroInsetAlt"),
+            href: "/mithai",
+          },
+        ];
+    return (
+      <CinematicHero
+        slides={cinematicSlides}
+        autoplayMs={autoplayMs}
+        layoutMode={layoutMode}
+        brandName={brandName}
+        positioning={positioning}
+      />
+    );
+  }
+
+  // Widen: fixed mode escapes main's max-w-6xl entirely via the 50vw trick
+  // (body clips the overhang); full mode cancels main's exact horizontal
+  // padding (lg:px-10 2xl:px-14) so the hero is truly edge-to-edge.
+  const bleedClass = isFullWidthLayout(layoutMode)
+    ? "-mx-4 -mt-4 sm:-mx-6 lg:-mx-10 2xl:-mx-14"
+    : "mx-[calc(50%-50vw)] -mt-4 w-screen";
+  const containerClass = isFullWidthLayout(layoutMode)
+    ? "relative mx-auto grid w-full max-w-none items-stretch gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-28 lg:px-10 2xl:px-14"
+    : "relative mx-auto grid w-full max-w-7xl items-stretch gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-28 lg:px-8";
+
   return (
     <section
       aria-labelledby="brand-hero-heading"
-      className="relative overflow-hidden border-b border-border-card"
+      className={`relative overflow-hidden border-b border-border-card ${bleedClass}`}
     >
       <div
         aria-hidden="true"
@@ -60,7 +113,7 @@ export async function BrandHero() {
         <div className="absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto grid max-w-6xl items-stretch gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14 lg:py-28 lg:px-8">
+      <div className={containerClass}>
         {/* Editorial left column — unchanged. */}
         <div className="flex flex-col justify-center">
           <div className="mb-6 flex items-center gap-3">
@@ -121,7 +174,7 @@ export async function BrandHero() {
 
           {!hasSlides ? (
             <figure className="mt-10 overflow-hidden rounded-2xl border border-border-image bg-bg-card shadow-card lg:hidden">
-              <div className="relative aspect-[16/10] w-full bg-bg-accent">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-bg-accent">
                 <Image
                   src={FALLBACK_HERO_IMAGE}
                   alt={t("heroInsetAlt")}
@@ -146,7 +199,7 @@ export async function BrandHero() {
 
         {/* Right column — rotator when slides exist, else static fallback. */}
         {hasSlides ? (
-          <div className="relative lg:ml-auto lg:max-w-md">
+          <div className="relative lg:ml-auto">
             <HeroRotator slides={slides} autoplayMs={autoplayMs} />
           </div>
         ) : (
@@ -154,7 +207,7 @@ export async function BrandHero() {
             <figure className="relative ml-auto h-full w-full max-w-md">
               <div className="absolute inset-0 rounded-[2rem] border border-gold/40 bg-bg-card/60 shadow-card" />
               <div className="relative m-3 overflow-hidden rounded-[1.6rem]">
-                <div className="relative aspect-[4/5] w-full bg-bg-accent">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-bg-accent lg:aspect-[3/2]">
                   <Image
                     src={FALLBACK_HERO_IMAGE}
                     alt={t("heroInsetAlt")}

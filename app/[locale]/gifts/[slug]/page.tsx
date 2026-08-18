@@ -168,7 +168,7 @@ export default async function Page({params}: Context) {
                 fill
                 priority
                 sizes="(min-width: 1024px) 28rem, 100vw"
-                className="object-cover"
+                className="object-cover kb-drift"
               />
             ) : (
               <div
