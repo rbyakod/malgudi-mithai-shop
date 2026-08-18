@@ -355,8 +355,11 @@ anything is packed or charged.
 - **Gift boxes** (`/gifts`, web) — curated boxes with "In the box"
   contents, add-ons, and compatible sweets; the buy path is the builder or
   WhatsApp, not the cart.
-- **Occasions** (`/occasions`, web) — occasion landing pages with a
-  recommended-products rail (content still being seeded).
+- **Occasions** (`/occasions`, web) — seven occasion landing pages
+  (Diwali, Weddings, Raksha Bandhan, Housewarming, Corporate Gifting,
+  Holi, Birthdays & Celebrations), each with a hero image, evergreen
+  copy, and a curated recommended-products rail of mithai and gift boxes
+  (`scripts/seed-occasions.ts` seeds and can be re-run safely).
 
 ---
 
