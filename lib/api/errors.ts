@@ -19,6 +19,7 @@ export const ErrorCode = {
   TOKEN_REVOKED: 'TOKEN_REVOKED',
   CONFLICT: 'CONFLICT',
   VALIDATION: 'VALIDATION',
+  INVALID_COUPON: 'INVALID_COUPON',
   INTERNAL: 'INTERNAL',
 } as const;
 export type ErrorCode = typeof ErrorCode[keyof typeof ErrorCode];
@@ -43,6 +44,7 @@ const STATUS_CODES: Record<ErrorCode, number> = {
   TOKEN_REVOKED: 401,
   CONFLICT: 409,
   VALIDATION: 422,
+  INVALID_COUPON: 422,
   INTERNAL: 500,
 };
 

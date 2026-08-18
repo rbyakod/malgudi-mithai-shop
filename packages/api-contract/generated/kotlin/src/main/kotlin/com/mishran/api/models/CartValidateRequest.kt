@@ -35,6 +35,7 @@ import com.squareup.moshi.JsonClass
  * @param items 
  * @param pincode 
  * @param slot 
+ * @param couponCode Optional coupon code to resolve and fold into totals. An invalid code fails the request with INVALID_COUPON (a customer mid- checkout wants the error, not a silent full-price snapshot). 
  */
 
 
@@ -47,7 +48,11 @@ data class CartValidateRequest (
     val pincode: kotlin.String,
 
     @Json(name = "slot")
-    val slot: CartValidateRequestSlot? = null
+    val slot: CartValidateRequestSlot? = null,
+
+    /* Optional coupon code to resolve and fold into totals. An invalid code fails the request with INVALID_COUPON (a customer mid- checkout wants the error, not a silent full-price snapshot).  */
+    @Json(name = "couponCode")
+    val couponCode: kotlin.String? = null
 
 ) {
 

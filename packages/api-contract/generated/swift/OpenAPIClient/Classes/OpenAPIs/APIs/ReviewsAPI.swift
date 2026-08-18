@@ -13,6 +13,59 @@ import AnyCodable
 open class ReviewsAPI {
 
     /**
+     List approved reviews for one product (public)
+     
+     - parameter productId: (query) mithai-products id. 
+     - parameter page: (query)  (optional, default to 1)
+     - parameter pageSize: (query)  (optional, default to 10)
+     - parameter apiResponseQueue: The queue on which api response is dispatched.
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    @discardableResult
+    open class func reviewsGet(productId: String, page: Int? = nil, pageSize: Int? = nil, apiResponseQueue: DispatchQueue = OpenAPIClientAPI.apiResponseQueue, completion: @escaping ((_ data: ReviewsGet200Response?, _ error: Error?) -> Void)) -> RequestTask {
+        return reviewsGetWithRequestBuilder(productId: productId, page: page, pageSize: pageSize).execute(apiResponseQueue) { result in
+            switch result {
+            case let .success(response):
+                completion(response.body, nil)
+            case let .failure(error):
+                completion(nil, error)
+            }
+        }
+    }
+
+    /**
+     List approved reviews for one product (public)
+     - GET /reviews
+     - Moderation-approved reviews only, newest first, paginated. productId is required. Authors appear as display names — customer ids and phones are never returned. averageRating and total cover ALL approved reviews for the product, not just this page. The write side stays capture-only (POST below, pending moderation). 
+     - parameter productId: (query) mithai-products id. 
+     - parameter page: (query)  (optional, default to 1)
+     - parameter pageSize: (query)  (optional, default to 10)
+     - returns: RequestBuilder<ReviewsGet200Response> 
+     */
+    open class func reviewsGetWithRequestBuilder(productId: String, page: Int? = nil, pageSize: Int? = nil) -> RequestBuilder<ReviewsGet200Response> {
+        let localVariablePath = "/reviews"
+        let localVariableURLString = OpenAPIClientAPI.basePath + localVariablePath
+        let localVariableParameters: [String: Any]? = nil
+
+        var localVariableUrlComponents = URLComponents(string: localVariableURLString)
+        localVariableUrlComponents?.queryItems = APIHelper.mapValuesToQueryItems([
+            "productId": (wrappedValue: productId.encodeToJSON(), isExplode: true),
+            "page": (wrappedValue: page?.encodeToJSON(), isExplode: true),
+            "pageSize": (wrappedValue: pageSize?.encodeToJSON(), isExplode: true),
+        ])
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<ReviewsGet200Response>.Type = OpenAPIClientAPI.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: false)
+    }
+
+    /**
      Upsert the customer's review for one product (capture-only)
      
      - parameter reviewInput: (body)  

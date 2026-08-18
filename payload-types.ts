@@ -17,7 +17,9 @@
  *
  * Brand collections (Task 6): users, media, stories, karigars, farms,
  * packaging, occasions. Product stubs (Task 7 expands): mithai-products,
- * gift-boxes, qsr-menu-items, snack-products, merch-products.
+ * gift-boxes, qsr-menu-items, snack-products, merch-products. Ops +
+ * mobile-app + conversion-batch collections registered since; coupons
+ * joined with the known-gaps campaign (B6).
  */
 export type Collection =
   | "users"
@@ -31,10 +33,34 @@ export type Collection =
   | "gift-boxes"
   | "qsr-menu-items"
   | "snack-products"
-  | "merch-products";
+  | "merch-products"
+  | "leads"
+  | "drafts"
+  | "customers"
+  | "addresses"
+  | "orders"
+  | "payments"
+  | "shipments"
+  | "serviceablePincodes"
+  | "snapshots"
+  | "otpRequests"
+  | "devices"
+  | "idempotencyKeys"
+  | "revokedTokens"
+  | "securityEvents"
+  | "walletPasses"
+  | "reviews"
+  | "cart-drafts"
+  | "coupons";
 
-/** Global slugs — none registered yet. */
-export type Global = never;
+/** Global slugs registered in payload.config.ts. */
+export type Global =
+  | "brand-settings"
+  | "nav-settings"
+  | "theme-settings"
+  | "analytics-settings"
+  | "store-settings"
+  | "home-hero";
 
 /**
  * Minimal Config mirror. The real generated file carries the full sanitized

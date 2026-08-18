@@ -38,6 +38,8 @@ import com.squareup.moshi.JsonClass
  * @param totals 
  * @param pincodeTier Service tier of the resolved pincode (e.g. shelf, fresh).
  * @param expiresAt 
+ * @param couponCode The coupon code whose discount is folded into totals, when a valid one was supplied to /cart/validate. Null when none. 
+ * @param freeDeliveryThresholdInPaise The pincode tier's free-delivery threshold in paise (0 disables the waiver; null when the tier is unknown). Clients use this to render threshold progress — never a baked-in constant. 
  */
 
 
@@ -60,7 +62,15 @@ data class CartSnapshot (
     val pincodeTier: kotlin.String?,
 
     @Json(name = "expiresAt")
-    val expiresAt: kotlin.String
+    val expiresAt: kotlin.String,
+
+    /* The coupon code whose discount is folded into totals, when a valid one was supplied to /cart/validate. Null when none.  */
+    @Json(name = "couponCode")
+    val couponCode: kotlin.String? = null,
+
+    /* The pincode tier's free-delivery threshold in paise (0 disables the waiver; null when the tier is unknown). Clients use this to render threshold progress — never a baked-in constant.  */
+    @Json(name = "freeDeliveryThresholdInPaise")
+    val freeDeliveryThresholdInPaise: kotlin.Int? = null
 
 ) {
 

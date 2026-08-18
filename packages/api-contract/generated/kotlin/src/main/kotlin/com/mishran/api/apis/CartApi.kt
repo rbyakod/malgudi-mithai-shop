@@ -27,6 +27,8 @@ import java.io.IOException
 import okhttp3.Call
 import okhttp3.HttpUrl
 
+import com.mishran.api.models.CartEstimatePost200Response
+import com.mishran.api.models.CartEstimateRequest
 import com.mishran.api.models.CartValidatePost200Response
 import com.mishran.api.models.CartValidateRequest
 import com.mishran.api.models.Error
@@ -53,6 +55,80 @@ open class CartApi(basePath: kotlin.String = defaultBasePath, client: Call.Facto
         val defaultBasePath: String by lazy {
             System.getProperties().getProperty(ApiClient.BASE_URL_KEY, "http://localhost:3000/api/mobile/v1")
         }
+    }
+
+    /**
+     * POST /cart/estimate
+     * 
+     * Read-only pricing preview of a cart — the exact /cart/validate math (server-side line re-pricing, pincode tier lookup, tier delivery fee, free-delivery threshold waiver) with nothing persisted and NO sign-in required. Guest carts call this to show delivery fees and threshold progress before checkout. Unpriceable or vanished lines error exactly like validate so callers can distinguish \&quot;here&#39;s your estimate\&quot; from \&quot;your cart is stale\&quot;; pincode serviceability is informational here — a known tier prices its real fee/threshold, while an absent or unserviceable pincode yields a null tier, no fee, and no threshold (nothing to estimate against; the client shows its no-pincode copy). Validate enforces serviceability for real. Rate-limited per client IP. 
+     * @param cartEstimateRequest 
+     * @return CartEstimatePost200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun cartEstimatePost(cartEstimateRequest: CartEstimateRequest) : CartEstimatePost200Response {
+        val localVarResponse = cartEstimatePostWithHttpInfo(cartEstimateRequest = cartEstimateRequest)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CartEstimatePost200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * POST /cart/estimate
+     * 
+     * Read-only pricing preview of a cart — the exact /cart/validate math (server-side line re-pricing, pincode tier lookup, tier delivery fee, free-delivery threshold waiver) with nothing persisted and NO sign-in required. Guest carts call this to show delivery fees and threshold progress before checkout. Unpriceable or vanished lines error exactly like validate so callers can distinguish \&quot;here&#39;s your estimate\&quot; from \&quot;your cart is stale\&quot;; pincode serviceability is informational here — a known tier prices its real fee/threshold, while an absent or unserviceable pincode yields a null tier, no fee, and no threshold (nothing to estimate against; the client shows its no-pincode copy). Validate enforces serviceability for real. Rate-limited per client IP. 
+     * @param cartEstimateRequest 
+     * @return ApiResponse<CartEstimatePost200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun cartEstimatePostWithHttpInfo(cartEstimateRequest: CartEstimateRequest) : ApiResponse<CartEstimatePost200Response?> {
+        val localVariableConfig = cartEstimatePostRequestConfig(cartEstimateRequest = cartEstimateRequest)
+
+        return request<CartEstimateRequest, CartEstimatePost200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation cartEstimatePost
+     *
+     * @param cartEstimateRequest 
+     * @return RequestConfig
+     */
+    fun cartEstimatePostRequestConfig(cartEstimateRequest: CartEstimateRequest) : RequestConfig<CartEstimateRequest> {
+        val localVariableBody = cartEstimateRequest
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/cart/estimate",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
     }
 
     /**

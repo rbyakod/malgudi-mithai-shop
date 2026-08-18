@@ -63,6 +63,7 @@ import { WalletPasses } from "./collections/WalletPasses";
 // drafts (abandonment recovery).
 import { Reviews } from "./collections/Reviews";
 import { CartDrafts } from "./collections/CartDrafts";
+import { Coupons } from "./collections/Coupons";
 // Globals (Task 8).
 import { BrandSettings } from "./globals/BrandSettings";
 import { NavSettings } from "./globals/NavSettings";
@@ -153,6 +154,8 @@ export default buildConfig({
     // Conversion batch, Batch A.
     Reviews,
     CartDrafts,
+    // Known-gaps campaign (B6): coupon codes.
+    Coupons,
   ],
   globals: [
     BrandSettings,

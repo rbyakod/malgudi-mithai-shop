@@ -31,6 +31,7 @@ public struct ErrorError: Codable, JSONEncodable, Hashable {
         case tokenRevoked = "TOKEN_REVOKED"
         case conflict = "CONFLICT"
         case validation = "VALIDATION"
+        case invalidCoupon = "INVALID_COUPON"
         case _internal = "INTERNAL"
         case otpProviderDown = "OTP_PROVIDER_DOWN"
     }

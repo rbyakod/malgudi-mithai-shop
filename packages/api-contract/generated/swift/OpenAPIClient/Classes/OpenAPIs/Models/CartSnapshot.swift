@@ -12,20 +12,27 @@ import AnyCodable
 
 public struct CartSnapshot: Codable, JSONEncodable, Hashable {
 
+    public static let freeDeliveryThresholdInPaiseRule = NumericRule<Int>(minimum: 0, exclusiveMinimum: false, maximum: nil, exclusiveMaximum: false, multipleOf: nil)
     public var snapshotId: UUID
     public var customerId: String
     public var items: [CartSnapshotItem]
     public var totals: OrderTotals
     /** Service tier of the resolved pincode (e.g. shelf, fresh). */
     public var pincodeTier: String?
+    /** The coupon code whose discount is folded into totals, when a valid one was supplied to /cart/validate. Null when none.  */
+    public var couponCode: String?
+    /** The pincode tier's free-delivery threshold in paise (0 disables the waiver; null when the tier is unknown). Clients use this to render threshold progress — never a baked-in constant.  */
+    public var freeDeliveryThresholdInPaise: Int?
     public var expiresAt: Date
 
-    public init(snapshotId: UUID, customerId: String, items: [CartSnapshotItem], totals: OrderTotals, pincodeTier: String?, expiresAt: Date) {
+    public init(snapshotId: UUID, customerId: String, items: [CartSnapshotItem], totals: OrderTotals, pincodeTier: String?, couponCode: String? = nil, freeDeliveryThresholdInPaise: Int? = nil, expiresAt: Date) {
         self.snapshotId = snapshotId
         self.customerId = customerId
         self.items = items
         self.totals = totals
         self.pincodeTier = pincodeTier
+        self.couponCode = couponCode
+        self.freeDeliveryThresholdInPaise = freeDeliveryThresholdInPaise
         self.expiresAt = expiresAt
     }
 
@@ -35,6 +42,8 @@ public struct CartSnapshot: Codable, JSONEncodable, Hashable {
         case items
         case totals
         case pincodeTier
+        case couponCode
+        case freeDeliveryThresholdInPaise
         case expiresAt
     }
 
@@ -47,6 +56,8 @@ public struct CartSnapshot: Codable, JSONEncodable, Hashable {
         try container.encode(items, forKey: .items)
         try container.encode(totals, forKey: .totals)
         try container.encode(pincodeTier, forKey: .pincodeTier)
+        try container.encodeIfPresent(couponCode, forKey: .couponCode)
+        try container.encodeIfPresent(freeDeliveryThresholdInPaise, forKey: .freeDeliveryThresholdInPaise)
         try container.encode(expiresAt, forKey: .expiresAt)
     }
 }

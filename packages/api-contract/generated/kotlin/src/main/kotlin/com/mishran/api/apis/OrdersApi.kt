@@ -27,6 +27,7 @@ import java.io.IOException
 import okhttp3.Call
 import okhttp3.HttpUrl
 
+import com.mishran.api.models.CodCreateOrderRequest
 import com.mishran.api.models.Error
 import com.mishran.api.models.OrdersGet200Response
 import com.mishran.api.models.OrdersIdGet200Response
@@ -53,6 +54,80 @@ open class OrdersApi(basePath: kotlin.String = defaultBasePath, client: Call.Fac
         val defaultBasePath: String by lazy {
             System.getProperties().getProperty(ApiClient.BASE_URL_KEY, "http://localhost:3000/api/mobile/v1")
         }
+    }
+
+    /**
+     * POST /orders/cod
+     * 
+     * Create a cash-on-delivery order from a validated cart snapshot: requireCustomer, snapshot ownership + 10-minute expiry checks identical to Razorpay create-order, then the order is born status&#x3D;confirmed / paymentStatus&#x3D;pending / paymentMethod&#x3D;cod with razorpayOrderId null (payment-side jobs skip it). Cash is marked collected by staff (orders console). Route lands with the COD batch (B12); declared here so client codegen sees the shape once. 
+     * @param codCreateOrderRequest 
+     * @return OrdersIdGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun ordersCodPost(codCreateOrderRequest: CodCreateOrderRequest) : OrdersIdGet200Response {
+        val localVarResponse = ordersCodPostWithHttpInfo(codCreateOrderRequest = codCreateOrderRequest)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as OrdersIdGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * POST /orders/cod
+     * 
+     * Create a cash-on-delivery order from a validated cart snapshot: requireCustomer, snapshot ownership + 10-minute expiry checks identical to Razorpay create-order, then the order is born status&#x3D;confirmed / paymentStatus&#x3D;pending / paymentMethod&#x3D;cod with razorpayOrderId null (payment-side jobs skip it). Cash is marked collected by staff (orders console). Route lands with the COD batch (B12); declared here so client codegen sees the shape once. 
+     * @param codCreateOrderRequest 
+     * @return ApiResponse<OrdersIdGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun ordersCodPostWithHttpInfo(codCreateOrderRequest: CodCreateOrderRequest) : ApiResponse<OrdersIdGet200Response?> {
+        val localVariableConfig = ordersCodPostRequestConfig(codCreateOrderRequest = codCreateOrderRequest)
+
+        return request<CodCreateOrderRequest, OrdersIdGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation ordersCodPost
+     *
+     * @param codCreateOrderRequest 
+     * @return RequestConfig
+     */
+    fun ordersCodPostRequestConfig(codCreateOrderRequest: CodCreateOrderRequest) : RequestConfig<CodCreateOrderRequest> {
+        val localVariableBody = codCreateOrderRequest
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/orders/cod",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
     }
 
     /**

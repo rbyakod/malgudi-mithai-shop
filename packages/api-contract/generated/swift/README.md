@@ -40,6 +40,7 @@ Class | Method | HTTP request | Description
 *AuthAPI* | [**authOtpVerifyPost**](docs/AuthAPI.md#authotpverifypost) | **POST** /auth/otp/verify | 
 *AuthAPI* | [**authRefreshPost**](docs/AuthAPI.md#authrefreshpost) | **POST** /auth/refresh | 
 *BrandAPI* | [**brandGet**](docs/BrandAPI.md#brandget) | **GET** /brand | 
+*CartAPI* | [**cartEstimatePost**](docs/CartAPI.md#cartestimatepost) | **POST** /cart/estimate | 
 *CartAPI* | [**cartValidatePost**](docs/CartAPI.md#cartvalidatepost) | **POST** /cart/validate | 
 *CatalogAPI* | [**catalogMerchGet**](docs/CatalogAPI.md#catalogmerchget) | **GET** /catalog/merch | 
 *CatalogAPI* | [**catalogMerchSlugGet**](docs/CatalogAPI.md#catalogmerchslugget) | **GET** /catalog/merch/{slug} | 
@@ -54,10 +55,12 @@ Class | Method | HTTP request | Description
 *LoyaltyAPI* | [**accountLoyaltyGet**](docs/LoyaltyAPI.md#accountloyaltyget) | **GET** /account/loyalty | Read the customer&#39;s loyalty standing (no wallet-pass side effects)
 *LoyaltyAPI* | [**accountLoyaltyPassGet**](docs/LoyaltyAPI.md#accountloyaltypassget) | **GET** /account/loyalty-pass | Generate / refresh the customer&#39;s Apple Wallet loyalty pass (signed URL)
 *NotificationsAPI* | [**notificationsRegisterDevicePost**](docs/NotificationsAPI.md#notificationsregisterdevicepost) | **POST** /notifications/register-device | Register / refresh a push token (idempotent upsert)
+*OrdersAPI* | [**ordersCodPost**](docs/OrdersAPI.md#orderscodpost) | **POST** /orders/cod | 
 *OrdersAPI* | [**ordersGet**](docs/OrdersAPI.md#ordersget) | **GET** /orders | 
 *OrdersAPI* | [**ordersIdGet**](docs/OrdersAPI.md#ordersidget) | **GET** /orders/{id} | 
 *PaymentsAPI* | [**paymentsRazorpayCreateOrderPost**](docs/PaymentsAPI.md#paymentsrazorpaycreateorderpost) | **POST** /payments/razorpay/create-order | 
 *PaymentsAPI* | [**paymentsRazorpayVerifyPost**](docs/PaymentsAPI.md#paymentsrazorpayverifypost) | **POST** /payments/razorpay/verify | 
+*ReviewsAPI* | [**reviewsGet**](docs/ReviewsAPI.md#reviewsget) | **GET** /reviews | List approved reviews for one product (public)
 *ReviewsAPI* | [**reviewsPost**](docs/ReviewsAPI.md#reviewspost) | **POST** /reviews | Upsert the customer&#39;s review for one product (capture-only)
 *StoriesAPI* | [**storiesGet**](docs/StoriesAPI.md#storiesget) | **GET** /stories | 
 *StoriesAPI* | [**storiesSlugGet**](docs/StoriesAPI.md#storiesslugget) | **GET** /stories/{slug} | 
@@ -85,6 +88,9 @@ Class | Method | HTTP request | Description
  - [AuthRefreshPost200Response](docs/AuthRefreshPost200Response.md)
  - [Brand](docs/Brand.md)
  - [BrandGet200Response](docs/BrandGet200Response.md)
+ - [CartEstimate](docs/CartEstimate.md)
+ - [CartEstimatePost200Response](docs/CartEstimatePost200Response.md)
+ - [CartEstimateRequest](docs/CartEstimateRequest.md)
  - [CartItem](docs/CartItem.md)
  - [CartSnapshot](docs/CartSnapshot.md)
  - [CartSnapshotItem](docs/CartSnapshotItem.md)
@@ -105,6 +111,7 @@ Class | Method | HTTP request | Description
  - [CatalogSnacksGet200Response](docs/CatalogSnacksGet200Response.md)
  - [CatalogSnacksGet200ResponseData](docs/CatalogSnacksGet200ResponseData.md)
  - [CatalogSnacksSlugGet200Response](docs/CatalogSnacksSlugGet200Response.md)
+ - [CodCreateOrderRequest](docs/CodCreateOrderRequest.md)
  - [Customer](docs/Customer.md)
  - [ErrorError](docs/ErrorError.md)
  - [Hero](docs/Hero.md)
@@ -132,6 +139,7 @@ Class | Method | HTTP request | Description
  - [PaymentsRazorpayCreateOrderPost200Response](docs/PaymentsRazorpayCreateOrderPost200Response.md)
  - [PaymentsRazorpayVerifyPost200Response](docs/PaymentsRazorpayVerifyPost200Response.md)
  - [Product](docs/Product.md)
+ - [PublicReview](docs/PublicReview.md)
  - [QsrItem](docs/QsrItem.md)
  - [RazorpayCreateOrderRequest](docs/RazorpayCreateOrderRequest.md)
  - [RazorpayCreateOrderResponse](docs/RazorpayCreateOrderResponse.md)
@@ -140,6 +148,8 @@ Class | Method | HTTP request | Description
  - [RefreshResponse](docs/RefreshResponse.md)
  - [Review](docs/Review.md)
  - [ReviewInput](docs/ReviewInput.md)
+ - [ReviewList](docs/ReviewList.md)
+ - [ReviewsGet200Response](docs/ReviewsGet200Response.md)
  - [ReviewsPost200Response](docs/ReviewsPost200Response.md)
  - [ServiceableResponse](docs/ServiceableResponse.md)
  - [Snack](docs/Snack.md)

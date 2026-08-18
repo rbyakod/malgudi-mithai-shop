@@ -14,6 +14,51 @@ open class OrdersAPI {
 
     /**
 
+     - parameter codCreateOrderRequest: (body)  
+     - parameter apiResponseQueue: The queue on which api response is dispatched.
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    @discardableResult
+    open class func ordersCodPost(codCreateOrderRequest: CodCreateOrderRequest, apiResponseQueue: DispatchQueue = OpenAPIClientAPI.apiResponseQueue, completion: @escaping ((_ data: OrdersIdGet200Response?, _ error: Error?) -> Void)) -> RequestTask {
+        return ordersCodPostWithRequestBuilder(codCreateOrderRequest: codCreateOrderRequest).execute(apiResponseQueue) { result in
+            switch result {
+            case let .success(response):
+                completion(response.body, nil)
+            case let .failure(error):
+                completion(nil, error)
+            }
+        }
+    }
+
+    /**
+     - POST /orders/cod
+     - Create a cash-on-delivery order from a validated cart snapshot: requireCustomer, snapshot ownership + 10-minute expiry checks identical to Razorpay create-order, then the order is born status=confirmed / paymentStatus=pending / paymentMethod=cod with razorpayOrderId null (payment-side jobs skip it). Cash is marked collected by staff (orders console). Route lands with the COD batch (B12); declared here so client codegen sees the shape once. 
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter codCreateOrderRequest: (body)  
+     - returns: RequestBuilder<OrdersIdGet200Response> 
+     */
+    open class func ordersCodPostWithRequestBuilder(codCreateOrderRequest: CodCreateOrderRequest) -> RequestBuilder<OrdersIdGet200Response> {
+        let localVariablePath = "/orders/cod"
+        let localVariableURLString = OpenAPIClientAPI.basePath + localVariablePath
+        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: codCreateOrderRequest)
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            "Content-Type": "application/json",
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<OrdersIdGet200Response>.Type = OpenAPIClientAPI.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "POST", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
+
+    /**
+
      - parameter page: (query)  (optional, default to 1)
      - parameter pageSize: (query)  (optional, default to 20)
      - parameter apiResponseQueue: The queue on which api response is dispatched.

@@ -14,6 +14,7 @@ export const Orders: CollectionConfig = {
       "id",
       "customerId",
       "status",
+      "paymentMethod",
       "totals.totalInPaise",
       "createdAt",
     ],
@@ -109,6 +110,21 @@ export const Orders: CollectionConfig = {
         (v) => ({ label: v, value: v }),
       ),
     },
+    {
+      // How the order collects its money. razorpay: prepaid via the
+      // Razorpay sheet. cod: cash at the door — born confirmed with
+      // paymentStatus pending until staff mark cash collected
+      // (razorpayOrderId stays null so payment jobs skip it).
+      name: "paymentMethod",
+      type: "select",
+      required: true,
+      defaultValue: "razorpay",
+      options: ["razorpay", "cod"].map((v) => ({ label: v, value: v })),
+    },
+    // Coupon whose discount is reflected in totals.discountInPaise.
+    // Copied from the cart snapshot at create-order time; burned usage
+    // counters live on the Coupons row.
+    { name: "couponCode", type: "text", index: true },
     {
       name: "deliveryAddressId",
       type: "relationship",

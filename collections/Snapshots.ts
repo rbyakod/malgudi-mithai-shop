@@ -63,6 +63,13 @@ export const Snapshots: CollectionConfig = {
       type: "json",
     },
     {
+      // Coupon code resolved at validate time whose discount is folded
+      // into totals.discountInPaise. Copied onto the order at
+      // create-order time (razorpay and COD paths both).
+      name: "couponCode",
+      type: "text",
+    },
+    {
       name: "expiresAt",
       type: "date",
       required: true,

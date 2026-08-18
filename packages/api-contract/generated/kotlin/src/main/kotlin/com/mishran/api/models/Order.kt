@@ -43,6 +43,8 @@ import com.squareup.moshi.JsonClass
  * @param source 
  * @param createdAt 
  * @param updatedAt 
+ * @param paymentMethod How the order collects its money. razorpay: prepaid through the Razorpay sheet (razorpayOrderId set; webhook/verify settle it). cod: cash at the door — born status=confirmed with paymentStatus=pending until staff mark cash collected; razorpayOrderId stays null so payment-side jobs skip it. Legacy orders read as razorpay. 
+ * @param couponCode Coupon whose discount is reflected in totals.discountInPaise, when one was applied.
  * @param slot 
  * @param razorpayOrderId 
  */
@@ -79,6 +81,14 @@ data class Order (
 
     @Json(name = "updatedAt")
     val updatedAt: kotlin.String,
+
+    /* How the order collects its money. razorpay: prepaid through the Razorpay sheet (razorpayOrderId set; webhook/verify settle it). cod: cash at the door — born status=confirmed with paymentStatus=pending until staff mark cash collected; razorpayOrderId stays null so payment-side jobs skip it. Legacy orders read as razorpay.  */
+    @Json(name = "paymentMethod")
+    val paymentMethod: Order.PaymentMethod? = PaymentMethod.razorpay,
+
+    /* Coupon whose discount is reflected in totals.discountInPaise, when one was applied. */
+    @Json(name = "couponCode")
+    val couponCode: kotlin.String? = null,
 
     @Json(name = "slot")
     val slot: OrderSlot? = null,
@@ -131,6 +141,16 @@ data class Order (
         @Json(name = "mobile-android") mobileMinusAndroid("mobile-android"),
         @Json(name = "mobile-ios") mobileMinusIos("mobile-ios"),
         @Json(name = "web") web("web");
+    }
+    /**
+     * How the order collects its money. razorpay: prepaid through the Razorpay sheet (razorpayOrderId set; webhook/verify settle it). cod: cash at the door — born status=confirmed with paymentStatus=pending until staff mark cash collected; razorpayOrderId stays null so payment-side jobs skip it. Legacy orders read as razorpay. 
+     *
+     * Values: razorpay,cod
+     */
+    @JsonClass(generateAdapter = false)
+    enum class PaymentMethod(val value: kotlin.String) {
+        @Json(name = "razorpay") razorpay("razorpay"),
+        @Json(name = "cod") cod("cod");
     }
 
 }

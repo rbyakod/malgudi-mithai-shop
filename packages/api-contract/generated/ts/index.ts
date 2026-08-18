@@ -749,6 +749,89 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/cart/estimate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Read-only pricing preview of a cart — the exact /cart/validate
+         *     math (server-side line re-pricing, pincode tier lookup, tier
+         *     delivery fee, free-delivery threshold waiver) with nothing
+         *     persisted and NO sign-in required. Guest carts call this to show
+         *     delivery fees and threshold progress before checkout. Unpriceable
+         *     or vanished lines error exactly like validate so callers can
+         *     distinguish "here's your estimate" from "your cart is stale";
+         *     pincode serviceability is informational here — a known tier
+         *     prices its real fee/threshold, while an absent or unserviceable
+         *     pincode yields a null tier, no fee, and no threshold (nothing to
+         *     estimate against; the client shows its no-pincode copy). Validate
+         *     enforces serviceability for real.
+         *     Rate-limited per client IP.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CartEstimateRequest"];
+                };
+            };
+            responses: {
+                /** @description OK — estimate (never a snapshot; nothing persisted). */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["CartEstimate"];
+                        };
+                    };
+                };
+                /** @description Not Found — one or more products no longer exist. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unprocessable Entity — invalid body or unpriceable line. */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Too Many Requests — per-IP rate limit. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/cart/validate": {
         parameters: {
             query?: never;
@@ -937,6 +1020,83 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/cod": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Create a cash-on-delivery order from a validated cart snapshot:
+         *     requireCustomer, snapshot ownership + 10-minute expiry checks
+         *     identical to Razorpay create-order, then the order is born
+         *     status=confirmed / paymentStatus=pending / paymentMethod=cod with
+         *     razorpayOrderId null (payment-side jobs skip it). Cash is marked
+         *     collected by staff (orders console). Route lands with the COD
+         *     batch (B12); declared here so client codegen sees the shape once.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CodCreateOrderRequest"];
+                };
+            };
+            responses: {
+                /** @description OK — the created COD order (born confirmed). */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Order"];
+                        };
+                    };
+                };
+                /** @description Unauthorized — missing or invalid bearer token. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Not Found — snapshot unknown, expired, or belongs to another customer. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unprocessable Entity — invalid body. */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -1591,7 +1751,46 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * List approved reviews for one product (public)
+         * @description Moderation-approved reviews only, newest first, paginated. productId is required. Authors appear as display names — customer ids and phones are never returned. averageRating and total cover ALL approved reviews for the product, not just this page. The write side stays capture-only (POST below, pending moderation).
+         */
+        get: {
+            parameters: {
+                query: {
+                    /** @description mithai-products id. */
+                    productId: string;
+                    page?: number;
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK — one page of approved reviews + aggregate rating. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["ReviewList"];
+                        };
+                    };
+                };
+                /** @description Unprocessable Entity — missing/invalid productId or pagination. */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
         put?: never;
         /**
          * Upsert the customer's review for one product (capture-only)
@@ -1999,7 +2198,7 @@ export interface components {
         Error: {
             error: {
                 /** @enum {string} */
-                code: "RATE_LIMITED" | "OTP_INVALID" | "OTP_EXPIRED" | "PINCODE_NOT_SERVICEABLE" | "CART_CHANGED" | "STOCK_INSUFFICIENT" | "PAYMENT_FAILED" | "PAYMENT_ABANDONED" | "ORDER_NOT_FOUND" | "SNAPSHOT_NOT_FOUND" | "PRODUCT_NOT_FOUND" | "STORY_NOT_FOUND" | "NOT_FOUND" | "INVALID_STATE_TRANSITION" | "TOKEN_EXPIRED" | "TOKEN_REVOKED" | "CONFLICT" | "VALIDATION" | "INTERNAL" | "OTP_PROVIDER_DOWN";
+                code: "RATE_LIMITED" | "OTP_INVALID" | "OTP_EXPIRED" | "PINCODE_NOT_SERVICEABLE" | "CART_CHANGED" | "STOCK_INSUFFICIENT" | "PAYMENT_FAILED" | "PAYMENT_ABANDONED" | "ORDER_NOT_FOUND" | "SNAPSHOT_NOT_FOUND" | "PRODUCT_NOT_FOUND" | "STORY_NOT_FOUND" | "NOT_FOUND" | "INVALID_STATE_TRANSITION" | "TOKEN_EXPIRED" | "TOKEN_REVOKED" | "CONFLICT" | "VALIDATION" | "INVALID_COUPON" | "INTERNAL" | "OTP_PROVIDER_DOWN";
                 message: string;
                 fieldErrors?: {
                     [key: string]: string;
@@ -2245,6 +2444,12 @@ export interface components {
                 date: string;
                 window: string;
             };
+            /**
+             * @description Optional coupon code to resolve and fold into totals. An invalid
+             *     code fails the request with INVALID_COUPON (a customer mid-
+             *     checkout wants the error, not a silent full-price snapshot).
+             */
+            couponCode?: string;
         };
         /**
          * @description Order totals in paise (INR). itemsTotal is the sum of server-priced
@@ -2252,7 +2457,8 @@ export interface components {
          *     by pincode serviceability tier — fresh (same-city, ₹49 default) vs
          *     shelf-stable (courier, ₹99 default); both env-tunable server-side.
          *     taxes is always 0: catalog prices are MRP inclusive of GST.
-         *     discount is 0 (no promotions yet). total = itemsTotal + deliveryFee.
+         *     discount is 0 unless a validated coupon was applied at validate
+         *     time. total = itemsTotal - discount + deliveryFee.
          */
         OrderTotals: {
             itemsTotalInPaise: number;
@@ -2288,8 +2494,49 @@ export interface components {
             totals: components["schemas"]["OrderTotals"];
             /** @description Service tier of the resolved pincode (e.g. shelf, fresh). */
             pincodeTier: string | null;
+            /**
+             * @description The coupon code whose discount is folded into totals, when a
+             *     valid one was supplied to /cart/validate. Null when none.
+             */
+            couponCode?: string | null;
+            /**
+             * @description The pincode tier's free-delivery threshold in paise (0 disables
+             *     the waiver; null when the tier is unknown). Clients use this to
+             *     render threshold progress — never a baked-in constant.
+             */
+            freeDeliveryThresholdInPaise?: number | null;
             /** Format: date-time */
             expiresAt: string;
+        };
+        CartEstimateRequest: {
+            items: components["schemas"]["CartItem"][];
+            /**
+             * @description Optional. With a SERVICEABLE pincode the estimate resolves the
+             *     tier, delivery fee, and free-delivery threshold. Absent or
+             *     unserviceable → null tier, zero fee, null threshold (the
+             *     client shows its no-pincode copy).
+             */
+            pincode?: string;
+        };
+        /**
+         * @description Read-only pricing preview of a cart — exactly the /cart/validate
+         *     math (server-side line pricing, tier fee, threshold waiver) but
+         *     persisted nowhere and authenticated by nobody. Guest carts use it
+         *     to show delivery fees before sign-in. Stale/unpriceable lines
+         *     still error (PRODUCT_NOT_FOUND / VALIDATION) so callers can tell
+         *     "estimate" from "your cart is broken".
+         */
+        CartEstimate: {
+            itemsTotalInPaise: number;
+            deliveryFeeInPaise: number;
+            discountInPaise: number;
+            totalInPaise: number;
+            /** @description Service tier of the resolved pincode; null when no/unserviceable pincode was sent. */
+            pincodeTier: string | null;
+            /** @description Tier's free-delivery threshold in paise; null when the tier is unknown. */
+            freeDeliveryThresholdInPaise: number | null;
+            /** @description True when the tier is known and the subtotal met the threshold (fee already zeroed). */
+            freeDeliveryEligible: boolean;
         };
         RazorpayCreateOrderRequest: {
             /**
@@ -2342,6 +2589,19 @@ export interface components {
             status: "created" | "pending_payment" | "confirmed" | "packed" | "dispatched" | "out_for_delivery" | "delivered" | "payment_failed" | "cancelled" | "returned" | "failed_delivery" | "abandoned";
             /** @enum {string} */
             paymentStatus: "pending" | "paid" | "failed" | "refunded" | "partially_refunded";
+            /**
+             * @description How the order collects its money. razorpay: prepaid through the
+             *     Razorpay sheet (razorpayOrderId set; webhook/verify settle it).
+             *     cod: cash at the door — born status=confirmed with
+             *     paymentStatus=pending until staff mark cash collected;
+             *     razorpayOrderId stays null so payment-side jobs skip it.
+             *     Legacy orders read as razorpay.
+             * @default razorpay
+             * @enum {string}
+             */
+            paymentMethod: "razorpay" | "cod";
+            /** @description Coupon whose discount is reflected in totals.discountInPaise, when one was applied. */
+            couponCode?: string | null;
             deliveryAddressId: string;
             slot?: {
                 date?: string;
@@ -2413,6 +2673,43 @@ export interface components {
             status: "pending" | "approved" | "rejected";
             /** @description True when a new review row was created; false when an existing (customer, product) review was updated. */
             created: boolean;
+        };
+        /**
+         * @description A moderation-approved review as the public sees it. Author is a
+         *     display name only — customer ids and phones never leave the
+         *     server. Served by GET /reviews (B10).
+         */
+        PublicReview: {
+            id: string;
+            rating: number;
+            body?: string | null;
+            authorDisplayName: string;
+            /** @description Server-stamped true when the author had a delivered order containing the product. */
+            verifiedPurchase: boolean;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        /** @description One page of approved reviews plus the product's aggregate rating over ALL approved reviews. */
+        ReviewList: {
+            items: components["schemas"]["PublicReview"][];
+            /** @description Mean rating across all approved reviews; null when there are none. */
+            averageRating: number | null;
+            total: number;
+            page: number;
+            pageSize: number;
+        };
+        /**
+         * @description Cash-on-delivery order creation — same contract as Razorpay
+         *     create-order minus the provider: consume a validated cart
+         *     snapshot, create the order born confirmed with cash pending at
+         *     the door. Full route lands with the COD batch (B12); declared
+         *     here so clients codegen against the final shape once.
+         */
+        CodCreateOrderRequest: {
+            /** @description Cart snapshot id returned by POST /cart/validate; must belong to the caller and be unexpired. */
+            snapshotId: string;
+            /** @description Customer address id to ship the order to. */
+            deliveryAddressId: string;
         };
     };
     responses: never;

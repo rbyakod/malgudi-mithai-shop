@@ -29,6 +29,7 @@ import okhttp3.HttpUrl
 
 import com.mishran.api.models.Error
 import com.mishran.api.models.ReviewInput
+import com.mishran.api.models.ReviewsGet200Response
 import com.mishran.api.models.ReviewsPost200Response
 
 import com.squareup.moshi.Json
@@ -53,6 +54,94 @@ open class ReviewsApi(basePath: kotlin.String = defaultBasePath, client: Call.Fa
         val defaultBasePath: String by lazy {
             System.getProperties().getProperty(ApiClient.BASE_URL_KEY, "http://localhost:3000/api/mobile/v1")
         }
+    }
+
+    /**
+     * GET /reviews
+     * List approved reviews for one product (public)
+     * Moderation-approved reviews only, newest first, paginated. productId is required. Authors appear as display names — customer ids and phones are never returned. averageRating and total cover ALL approved reviews for the product, not just this page. The write side stays capture-only (POST below, pending moderation). 
+     * @param productId mithai-products id.
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 10)
+     * @return ReviewsGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun reviewsGet(productId: kotlin.String, page: kotlin.Int? = 1, pageSize: kotlin.Int? = 10) : ReviewsGet200Response {
+        val localVarResponse = reviewsGetWithHttpInfo(productId = productId, page = page, pageSize = pageSize)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ReviewsGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * GET /reviews
+     * List approved reviews for one product (public)
+     * Moderation-approved reviews only, newest first, paginated. productId is required. Authors appear as display names — customer ids and phones are never returned. averageRating and total cover ALL approved reviews for the product, not just this page. The write side stays capture-only (POST below, pending moderation). 
+     * @param productId mithai-products id.
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 10)
+     * @return ApiResponse<ReviewsGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun reviewsGetWithHttpInfo(productId: kotlin.String, page: kotlin.Int?, pageSize: kotlin.Int?) : ApiResponse<ReviewsGet200Response?> {
+        val localVariableConfig = reviewsGetRequestConfig(productId = productId, page = page, pageSize = pageSize)
+
+        return request<Unit, ReviewsGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation reviewsGet
+     *
+     * @param productId mithai-products id.
+     * @param page  (optional, default to 1)
+     * @param pageSize  (optional, default to 10)
+     * @return RequestConfig
+     */
+    fun reviewsGetRequestConfig(productId: kotlin.String, page: kotlin.Int?, pageSize: kotlin.Int?) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("productId", listOf(productId.toString()))
+                if (page != null) {
+                    put("page", listOf(page.toString()))
+                }
+                if (pageSize != null) {
+                    put("pageSize", listOf(pageSize.toString()))
+                }
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/reviews",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
     }
 
     /**

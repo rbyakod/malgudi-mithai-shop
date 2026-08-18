@@ -14,20 +14,25 @@ public struct CartValidateRequest: Codable, JSONEncodable, Hashable {
 
     public static let itemsRule = ArrayRule(minItems: 1, maxItems: nil, uniqueItems: false)
     public static let pincodeRule = StringRule(minLength: nil, maxLength: nil, pattern: "/^[0-9]{6}$/")
+    public static let couponCodeRule = StringRule(minLength: 1, maxLength: 40, pattern: nil)
     public var items: [CartItem]
     public var pincode: String
     public var slot: CartValidateRequestSlot?
+    /** Optional coupon code to resolve and fold into totals. An invalid code fails the request with INVALID_COUPON (a customer mid- checkout wants the error, not a silent full-price snapshot).  */
+    public var couponCode: String?
 
-    public init(items: [CartItem], pincode: String, slot: CartValidateRequestSlot? = nil) {
+    public init(items: [CartItem], pincode: String, slot: CartValidateRequestSlot? = nil, couponCode: String? = nil) {
         self.items = items
         self.pincode = pincode
         self.slot = slot
+        self.couponCode = couponCode
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case items
         case pincode
         case slot
+        case couponCode
     }
 
     // Encodable protocol methods
@@ -37,6 +42,7 @@ public struct CartValidateRequest: Codable, JSONEncodable, Hashable {
         try container.encode(items, forKey: .items)
         try container.encode(pincode, forKey: .pincode)
         try container.encodeIfPresent(slot, forKey: .slot)
+        try container.encodeIfPresent(couponCode, forKey: .couponCode)
     }
 }
 

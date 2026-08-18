@@ -33,6 +33,10 @@ public struct Order: Codable, JSONEncodable, Hashable {
         case refunded = "refunded"
         case partiallyRefunded = "partially_refunded"
     }
+    public enum PaymentMethod: String, Codable, CaseIterable {
+        case razorpay = "razorpay"
+        case cod = "cod"
+    }
     public enum Source: String, Codable, CaseIterable {
         case mobileAndroid = "mobile-android"
         case mobileIos = "mobile-ios"
@@ -44,6 +48,10 @@ public struct Order: Codable, JSONEncodable, Hashable {
     public var totals: OrderTotals
     public var status: Status
     public var paymentStatus: PaymentStatus
+    /** How the order collects its money. razorpay: prepaid through the Razorpay sheet (razorpayOrderId set; webhook/verify settle it). cod: cash at the door — born status=confirmed with paymentStatus=pending until staff mark cash collected; razorpayOrderId stays null so payment-side jobs skip it. Legacy orders read as razorpay.  */
+    public var paymentMethod: PaymentMethod? = .razorpay
+    /** Coupon whose discount is reflected in totals.discountInPaise, when one was applied. */
+    public var couponCode: String?
     public var deliveryAddressId: String
     public var slot: OrderSlot?
     public var source: Source
@@ -51,13 +59,15 @@ public struct Order: Codable, JSONEncodable, Hashable {
     public var createdAt: Date
     public var updatedAt: Date
 
-    public init(id: String, customerId: String, items: [OrderItemsInner], totals: OrderTotals, status: Status, paymentStatus: PaymentStatus, deliveryAddressId: String, slot: OrderSlot? = nil, source: Source, razorpayOrderId: String? = nil, createdAt: Date, updatedAt: Date) {
+    public init(id: String, customerId: String, items: [OrderItemsInner], totals: OrderTotals, status: Status, paymentStatus: PaymentStatus, paymentMethod: PaymentMethod? = .razorpay, couponCode: String? = nil, deliveryAddressId: String, slot: OrderSlot? = nil, source: Source, razorpayOrderId: String? = nil, createdAt: Date, updatedAt: Date) {
         self.id = id
         self.customerId = customerId
         self.items = items
         self.totals = totals
         self.status = status
         self.paymentStatus = paymentStatus
+        self.paymentMethod = paymentMethod
+        self.couponCode = couponCode
         self.deliveryAddressId = deliveryAddressId
         self.slot = slot
         self.source = source
@@ -73,6 +83,8 @@ public struct Order: Codable, JSONEncodable, Hashable {
         case totals
         case status
         case paymentStatus
+        case paymentMethod
+        case couponCode
         case deliveryAddressId
         case slot
         case source
@@ -91,6 +103,8 @@ public struct Order: Codable, JSONEncodable, Hashable {
         try container.encode(totals, forKey: .totals)
         try container.encode(status, forKey: .status)
         try container.encode(paymentStatus, forKey: .paymentStatus)
+        try container.encodeIfPresent(paymentMethod, forKey: .paymentMethod)
+        try container.encodeIfPresent(couponCode, forKey: .couponCode)
         try container.encode(deliveryAddressId, forKey: .deliveryAddressId)
         try container.encodeIfPresent(slot, forKey: .slot)
         try container.encode(source, forKey: .source)

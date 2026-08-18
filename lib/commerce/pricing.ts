@@ -99,12 +99,17 @@ export type FreeDeliveryThresholds = {
  * (and a threshold > 0) zeroes the delivery fee. A null/undefined tier
  * never qualifies (mirrors the UI rule "tier known"). No new totals
  * field — callers infer the waiver from subtotal + threshold.
+ *
+ * `discountInPaise` (coupons, folded in by /cart/validate after resolving
+ * a code) comes out of the total, floored at 0. It does NOT affect the
+ * threshold check yet — the coupon batch pins that semantic with tests.
  */
 export function computeTotals(
   lines: TotalsLine[],
   tier: string | null | undefined,
   fees: DeliveryFees,
   freeThresholds?: FreeDeliveryThresholds,
+  discountInPaise = 0,
 ): OrderTotals {
   const itemsTotalInPaise = lines.reduce(
     (sum, line) => sum + line.priceInPaise * line.quantity,
@@ -120,12 +125,13 @@ export function computeTotals(
   if (threshold != null && threshold > 0 && itemsTotalInPaise >= threshold) {
     deliveryFeeInPaise = 0;
   }
+  const discount = Math.max(0, Math.min(discountInPaise, itemsTotalInPaise));
   return {
     itemsTotalInPaise,
     deliveryFeeInPaise,
     taxesInPaise: 0,
-    discountInPaise: 0,
-    totalInPaise: itemsTotalInPaise + deliveryFeeInPaise,
+    discountInPaise: discount,
+    totalInPaise: itemsTotalInPaise - discount + deliveryFeeInPaise,
   };
 }
 

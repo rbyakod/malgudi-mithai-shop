@@ -41,6 +41,9 @@ OpenAPIClient/Classes/OpenAPIs/Models/AuthOtpVerifyPost200Response.swift
 OpenAPIClient/Classes/OpenAPIs/Models/AuthRefreshPost200Response.swift
 OpenAPIClient/Classes/OpenAPIs/Models/Brand.swift
 OpenAPIClient/Classes/OpenAPIs/Models/BrandGet200Response.swift
+OpenAPIClient/Classes/OpenAPIs/Models/CartEstimate.swift
+OpenAPIClient/Classes/OpenAPIs/Models/CartEstimatePost200Response.swift
+OpenAPIClient/Classes/OpenAPIs/Models/CartEstimateRequest.swift
 OpenAPIClient/Classes/OpenAPIs/Models/CartItem.swift
 OpenAPIClient/Classes/OpenAPIs/Models/CartSnapshot.swift
 OpenAPIClient/Classes/OpenAPIs/Models/CartSnapshotItem.swift
@@ -61,6 +64,7 @@ OpenAPIClient/Classes/OpenAPIs/Models/CatalogServiceableGet200Response.swift
 OpenAPIClient/Classes/OpenAPIs/Models/CatalogSnacksGet200Response.swift
 OpenAPIClient/Classes/OpenAPIs/Models/CatalogSnacksGet200ResponseData.swift
 OpenAPIClient/Classes/OpenAPIs/Models/CatalogSnacksSlugGet200Response.swift
+OpenAPIClient/Classes/OpenAPIs/Models/CodCreateOrderRequest.swift
 OpenAPIClient/Classes/OpenAPIs/Models/Customer.swift
 OpenAPIClient/Classes/OpenAPIs/Models/ErrorError.swift
 OpenAPIClient/Classes/OpenAPIs/Models/Hero.swift
@@ -88,6 +92,7 @@ OpenAPIClient/Classes/OpenAPIs/Models/PassDeviceInput.swift
 OpenAPIClient/Classes/OpenAPIs/Models/PaymentsRazorpayCreateOrderPost200Response.swift
 OpenAPIClient/Classes/OpenAPIs/Models/PaymentsRazorpayVerifyPost200Response.swift
 OpenAPIClient/Classes/OpenAPIs/Models/Product.swift
+OpenAPIClient/Classes/OpenAPIs/Models/PublicReview.swift
 OpenAPIClient/Classes/OpenAPIs/Models/QsrItem.swift
 OpenAPIClient/Classes/OpenAPIs/Models/RazorpayCreateOrderRequest.swift
 OpenAPIClient/Classes/OpenAPIs/Models/RazorpayCreateOrderResponse.swift
@@ -96,6 +101,8 @@ OpenAPIClient/Classes/OpenAPIs/Models/RazorpayVerifyResponse.swift
 OpenAPIClient/Classes/OpenAPIs/Models/RefreshResponse.swift
 OpenAPIClient/Classes/OpenAPIs/Models/Review.swift
 OpenAPIClient/Classes/OpenAPIs/Models/ReviewInput.swift
+OpenAPIClient/Classes/OpenAPIs/Models/ReviewList.swift
+OpenAPIClient/Classes/OpenAPIs/Models/ReviewsGet200Response.swift
 OpenAPIClient/Classes/OpenAPIs/Models/ReviewsPost200Response.swift
 OpenAPIClient/Classes/OpenAPIs/Models/ServiceableResponse.swift
 OpenAPIClient/Classes/OpenAPIs/Models/Snack.swift
@@ -133,6 +140,9 @@ docs/Brand.md
 docs/BrandAPI.md
 docs/BrandGet200Response.md
 docs/CartAPI.md
+docs/CartEstimate.md
+docs/CartEstimatePost200Response.md
+docs/CartEstimateRequest.md
 docs/CartItem.md
 docs/CartSnapshot.md
 docs/CartSnapshotItem.md
@@ -154,6 +164,7 @@ docs/CatalogServiceableGet200Response.md
 docs/CatalogSnacksGet200Response.md
 docs/CatalogSnacksGet200ResponseData.md
 docs/CatalogSnacksSlugGet200Response.md
+docs/CodCreateOrderRequest.md
 docs/Customer.md
 docs/ErrorError.md
 docs/Hero.md
@@ -186,6 +197,7 @@ docs/PaymentsAPI.md
 docs/PaymentsRazorpayCreateOrderPost200Response.md
 docs/PaymentsRazorpayVerifyPost200Response.md
 docs/Product.md
+docs/PublicReview.md
 docs/QsrItem.md
 docs/RazorpayCreateOrderRequest.md
 docs/RazorpayCreateOrderResponse.md
@@ -194,7 +206,9 @@ docs/RazorpayVerifyResponse.md
 docs/RefreshResponse.md
 docs/Review.md
 docs/ReviewInput.md
+docs/ReviewList.md
 docs/ReviewsAPI.md
+docs/ReviewsGet200Response.md
 docs/ReviewsPost200Response.md
 docs/ServiceableResponse.md
 docs/Snack.md

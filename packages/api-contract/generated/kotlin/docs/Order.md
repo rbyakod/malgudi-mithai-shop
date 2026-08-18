@@ -14,6 +14,8 @@
 | **source** | [**inline**](#Source) |  |  |
 | **createdAt** | **kotlin.String** |  |  |
 | **updatedAt** | **kotlin.String** |  |  |
+| **paymentMethod** | [**inline**](#PaymentMethod) | How the order collects its money. razorpay: prepaid through the Razorpay sheet (razorpayOrderId set; webhook/verify settle it). cod: cash at the door — born status&#x3D;confirmed with paymentStatus&#x3D;pending until staff mark cash collected; razorpayOrderId stays null so payment-side jobs skip it. Legacy orders read as razorpay.  |  [optional] |
+| **couponCode** | **kotlin.String** | Coupon whose discount is reflected in totals.discountInPaise, when one was applied. |  [optional] |
 | **slot** | [**OrderSlot**](OrderSlot.md) |  |  [optional] |
 | **razorpayOrderId** | **kotlin.String** |  |  [optional] |
 
@@ -37,6 +39,13 @@
 | Name | Value |
 | ---- | ----- |
 | source | mobile-android, mobile-ios, web |
+
+
+<a id="PaymentMethod"></a>
+## Enum: paymentMethod
+| Name | Value |
+| ---- | ----- |
+| paymentMethod | razorpay, cod |
 
 
 

@@ -59,6 +59,7 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
 | *AuthApi* | [**authOtpVerifyPost**](docs/AuthApi.md#authotpverifypost) | **POST** /auth/otp/verify |  |
 | *AuthApi* | [**authRefreshPost**](docs/AuthApi.md#authrefreshpost) | **POST** /auth/refresh |  |
 | *BrandApi* | [**brandGet**](docs/BrandApi.md#brandget) | **GET** /brand |  |
+| *CartApi* | [**cartEstimatePost**](docs/CartApi.md#cartestimatepost) | **POST** /cart/estimate |  |
 | *CartApi* | [**cartValidatePost**](docs/CartApi.md#cartvalidatepost) | **POST** /cart/validate |  |
 | *CatalogApi* | [**catalogMerchGet**](docs/CatalogApi.md#catalogmerchget) | **GET** /catalog/merch |  |
 | *CatalogApi* | [**catalogMerchSlugGet**](docs/CatalogApi.md#catalogmerchslugget) | **GET** /catalog/merch/{slug} |  |
@@ -73,10 +74,12 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
 | *LoyaltyApi* | [**accountLoyaltyGet**](docs/LoyaltyApi.md#accountloyaltyget) | **GET** /account/loyalty | Read the customer's loyalty standing (no wallet-pass side effects) |
 | *LoyaltyApi* | [**accountLoyaltyPassGet**](docs/LoyaltyApi.md#accountloyaltypassget) | **GET** /account/loyalty-pass | Generate / refresh the customer's Apple Wallet loyalty pass (signed URL) |
 | *NotificationsApi* | [**notificationsRegisterDevicePost**](docs/NotificationsApi.md#notificationsregisterdevicepost) | **POST** /notifications/register-device | Register / refresh a push token (idempotent upsert) |
+| *OrdersApi* | [**ordersCodPost**](docs/OrdersApi.md#orderscodpost) | **POST** /orders/cod |  |
 | *OrdersApi* | [**ordersGet**](docs/OrdersApi.md#ordersget) | **GET** /orders |  |
 | *OrdersApi* | [**ordersIdGet**](docs/OrdersApi.md#ordersidget) | **GET** /orders/{id} |  |
 | *PaymentsApi* | [**paymentsRazorpayCreateOrderPost**](docs/PaymentsApi.md#paymentsrazorpaycreateorderpost) | **POST** /payments/razorpay/create-order |  |
 | *PaymentsApi* | [**paymentsRazorpayVerifyPost**](docs/PaymentsApi.md#paymentsrazorpayverifypost) | **POST** /payments/razorpay/verify |  |
+| *ReviewsApi* | [**reviewsGet**](docs/ReviewsApi.md#reviewsget) | **GET** /reviews | List approved reviews for one product (public) |
 | *ReviewsApi* | [**reviewsPost**](docs/ReviewsApi.md#reviewspost) | **POST** /reviews | Upsert the customer's review for one product (capture-only) |
 | *StoriesApi* | [**storiesGet**](docs/StoriesApi.md#storiesget) | **GET** /stories |  |
 | *StoriesApi* | [**storiesSlugGet**](docs/StoriesApi.md#storiesslugget) | **GET** /stories/{slug} |  |
@@ -105,6 +108,9 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
  - [com.mishran.api.models.AuthRefreshPost200Response](docs/AuthRefreshPost200Response.md)
  - [com.mishran.api.models.Brand](docs/Brand.md)
  - [com.mishran.api.models.BrandGet200Response](docs/BrandGet200Response.md)
+ - [com.mishran.api.models.CartEstimate](docs/CartEstimate.md)
+ - [com.mishran.api.models.CartEstimatePost200Response](docs/CartEstimatePost200Response.md)
+ - [com.mishran.api.models.CartEstimateRequest](docs/CartEstimateRequest.md)
  - [com.mishran.api.models.CartItem](docs/CartItem.md)
  - [com.mishran.api.models.CartSnapshot](docs/CartSnapshot.md)
  - [com.mishran.api.models.CartSnapshotItem](docs/CartSnapshotItem.md)
@@ -125,6 +131,7 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
  - [com.mishran.api.models.CatalogSnacksGet200Response](docs/CatalogSnacksGet200Response.md)
  - [com.mishran.api.models.CatalogSnacksGet200ResponseData](docs/CatalogSnacksGet200ResponseData.md)
  - [com.mishran.api.models.CatalogSnacksSlugGet200Response](docs/CatalogSnacksSlugGet200Response.md)
+ - [com.mishran.api.models.CodCreateOrderRequest](docs/CodCreateOrderRequest.md)
  - [com.mishran.api.models.Customer](docs/Customer.md)
  - [com.mishran.api.models.Error](docs/Error.md)
  - [com.mishran.api.models.ErrorError](docs/ErrorError.md)
@@ -152,6 +159,7 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
  - [com.mishran.api.models.PaymentsRazorpayCreateOrderPost200Response](docs/PaymentsRazorpayCreateOrderPost200Response.md)
  - [com.mishran.api.models.PaymentsRazorpayVerifyPost200Response](docs/PaymentsRazorpayVerifyPost200Response.md)
  - [com.mishran.api.models.Product](docs/Product.md)
+ - [com.mishran.api.models.PublicReview](docs/PublicReview.md)
  - [com.mishran.api.models.QsrItem](docs/QsrItem.md)
  - [com.mishran.api.models.RazorpayCreateOrderRequest](docs/RazorpayCreateOrderRequest.md)
  - [com.mishran.api.models.RazorpayCreateOrderResponse](docs/RazorpayCreateOrderResponse.md)
@@ -160,6 +168,8 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
  - [com.mishran.api.models.RefreshResponse](docs/RefreshResponse.md)
  - [com.mishran.api.models.Review](docs/Review.md)
  - [com.mishran.api.models.ReviewInput](docs/ReviewInput.md)
+ - [com.mishran.api.models.ReviewList](docs/ReviewList.md)
+ - [com.mishran.api.models.ReviewsGet200Response](docs/ReviewsGet200Response.md)
  - [com.mishran.api.models.ReviewsPost200Response](docs/ReviewsPost200Response.md)
  - [com.mishran.api.models.ServiceableResponse](docs/ServiceableResponse.md)
  - [com.mishran.api.models.Snack](docs/Snack.md)

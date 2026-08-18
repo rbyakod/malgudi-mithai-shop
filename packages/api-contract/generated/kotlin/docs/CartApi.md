@@ -4,8 +4,55 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
 
 | Method | HTTP request | Description |
 | ------------- | ------------- | ------------- |
+| [**cartEstimatePost**](CartApi.md#cartEstimatePost) | **POST** /cart/estimate |  |
 | [**cartValidatePost**](CartApi.md#cartValidatePost) | **POST** /cart/validate |  |
 
+
+<a id="cartEstimatePost"></a>
+# **cartEstimatePost**
+> CartEstimatePost200Response cartEstimatePost(cartEstimateRequest)
+
+
+
+Read-only pricing preview of a cart — the exact /cart/validate math (server-side line re-pricing, pincode tier lookup, tier delivery fee, free-delivery threshold waiver) with nothing persisted and NO sign-in required. Guest carts call this to show delivery fees and threshold progress before checkout. Unpriceable or vanished lines error exactly like validate so callers can distinguish \&quot;here&#39;s your estimate\&quot; from \&quot;your cart is stale\&quot;; pincode serviceability is informational here — a known tier prices its real fee/threshold, while an absent or unserviceable pincode yields a null tier, no fee, and no threshold (nothing to estimate against; the client shows its no-pincode copy). Validate enforces serviceability for real. Rate-limited per client IP. 
+
+### Example
+```kotlin
+// Import classes:
+//import com.mishran.api.infrastructure.*
+//import com.mishran.api.models.*
+
+val apiInstance = CartApi()
+val cartEstimateRequest : CartEstimateRequest =  // CartEstimateRequest | 
+try {
+    val result : CartEstimatePost200Response = apiInstance.cartEstimatePost(cartEstimateRequest)
+    println(result)
+} catch (e: ClientException) {
+    println("4xx response calling CartApi#cartEstimatePost")
+    e.printStackTrace()
+} catch (e: ServerException) {
+    println("5xx response calling CartApi#cartEstimatePost")
+    e.printStackTrace()
+}
+```
+
+### Parameters
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **cartEstimateRequest** | [**CartEstimateRequest**](CartEstimateRequest.md)|  | |
+
+### Return type
+
+[**CartEstimatePost200Response**](CartEstimatePost200Response.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 <a id="cartValidatePost"></a>
 # **cartValidatePost**

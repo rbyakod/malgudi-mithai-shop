@@ -4,9 +4,59 @@ All URIs are relative to *http://localhost:3000/api/mobile/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**ordersCodPost**](OrdersAPI.md#orderscodpost) | **POST** /orders/cod | 
 [**ordersGet**](OrdersAPI.md#ordersget) | **GET** /orders | 
 [**ordersIdGet**](OrdersAPI.md#ordersidget) | **GET** /orders/{id} | 
 
+
+# **ordersCodPost**
+```swift
+    open class func ordersCodPost(codCreateOrderRequest: CodCreateOrderRequest, completion: @escaping (_ data: OrdersIdGet200Response?, _ error: Error?) -> Void)
+```
+
+
+
+Create a cash-on-delivery order from a validated cart snapshot: requireCustomer, snapshot ownership + 10-minute expiry checks identical to Razorpay create-order, then the order is born status=confirmed / paymentStatus=pending / paymentMethod=cod with razorpayOrderId null (payment-side jobs skip it). Cash is marked collected by staff (orders console). Route lands with the COD batch (B12); declared here so client codegen sees the shape once. 
+
+### Example
+```swift
+// The following code samples are still beta. For any issue, please report via http://github.com/OpenAPITools/openapi-generator/issues/new
+import OpenAPIClient
+
+let codCreateOrderRequest = CodCreateOrderRequest(snapshotId: "snapshotId_example", deliveryAddressId: "deliveryAddressId_example") // CodCreateOrderRequest | 
+
+OrdersAPI.ordersCodPost(codCreateOrderRequest: codCreateOrderRequest) { (response, error) in
+    guard error == nil else {
+        print(error)
+        return
+    }
+
+    if (response) {
+        dump(response)
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **codCreateOrderRequest** | [**CodCreateOrderRequest**](CodCreateOrderRequest.md) |  | 
+
+### Return type
+
+[**OrdersIdGet200Response**](OrdersIdGet200Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **ordersGet**
 ```swift

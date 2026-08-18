@@ -145,6 +145,32 @@ describe('computeTotals', () => {
   });
 });
 
+describe('computeTotals discountInPaise (coupon seam, B6)', () => {
+  const fees = { freshPaise: 4900, shelfStablePaise: 9900 };
+  const lines = [{ priceInPaise: 100000, quantity: 1 }]; // ₹1,000
+
+  it('defaults to 0 — existing callers are unchanged', () => {
+    expect(computeTotals(lines, 'fresh', fees).discountInPaise).toBe(0);
+    expect(computeTotals(lines, 'fresh', fees).totalInPaise).toBe(104900);
+  });
+
+  it('subtracts the discount from the total', () => {
+    expect(computeTotals(lines, 'fresh', fees, undefined, 10000)).toEqual({
+      itemsTotalInPaise: 100000,
+      deliveryFeeInPaise: 4900,
+      taxesInPaise: 0,
+      discountInPaise: 10000,
+      totalInPaise: 94900, // 100000 - 10000 + 4900
+    });
+  });
+
+  it('floors the discount at the subtotal (never below zero)', () => {
+    const totals = computeTotals(lines, 'fresh', fees, undefined, 150000);
+    expect(totals.discountInPaise).toBe(100000);
+    expect(totals.totalInPaise).toBe(4900); // just the fee
+  });
+});
+
 describe('computeTotals free-delivery thresholds', () => {
   const fees = { freshPaise: 4900, shelfStablePaise: 9900 };
   // User-decided defaults: ₹999 fresh / ₹1,999 shelf-stable.

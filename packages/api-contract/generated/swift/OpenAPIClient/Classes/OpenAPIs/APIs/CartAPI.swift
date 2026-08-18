@@ -14,6 +14,48 @@ open class CartAPI {
 
     /**
 
+     - parameter cartEstimateRequest: (body)  
+     - parameter apiResponseQueue: The queue on which api response is dispatched.
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    @discardableResult
+    open class func cartEstimatePost(cartEstimateRequest: CartEstimateRequest, apiResponseQueue: DispatchQueue = OpenAPIClientAPI.apiResponseQueue, completion: @escaping ((_ data: CartEstimatePost200Response?, _ error: Error?) -> Void)) -> RequestTask {
+        return cartEstimatePostWithRequestBuilder(cartEstimateRequest: cartEstimateRequest).execute(apiResponseQueue) { result in
+            switch result {
+            case let .success(response):
+                completion(response.body, nil)
+            case let .failure(error):
+                completion(nil, error)
+            }
+        }
+    }
+
+    /**
+     - POST /cart/estimate
+     - Read-only pricing preview of a cart — the exact /cart/validate math (server-side line re-pricing, pincode tier lookup, tier delivery fee, free-delivery threshold waiver) with nothing persisted and NO sign-in required. Guest carts call this to show delivery fees and threshold progress before checkout. Unpriceable or vanished lines error exactly like validate so callers can distinguish \"here's your estimate\" from \"your cart is stale\"; pincode serviceability is informational here — a known tier prices its real fee/threshold, while an absent or unserviceable pincode yields a null tier, no fee, and no threshold (nothing to estimate against; the client shows its no-pincode copy). Validate enforces serviceability for real. Rate-limited per client IP. 
+     - parameter cartEstimateRequest: (body)  
+     - returns: RequestBuilder<CartEstimatePost200Response> 
+     */
+    open class func cartEstimatePostWithRequestBuilder(cartEstimateRequest: CartEstimateRequest) -> RequestBuilder<CartEstimatePost200Response> {
+        let localVariablePath = "/cart/estimate"
+        let localVariableURLString = OpenAPIClientAPI.basePath + localVariablePath
+        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: cartEstimateRequest)
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            "Content-Type": "application/json",
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<CartEstimatePost200Response>.Type = OpenAPIClientAPI.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "POST", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: false)
+    }
+
+    /**
+
      - parameter cartValidateRequest: (body)  
      - parameter apiResponseQueue: The queue on which api response is dispatched.
      - parameter completion: completion handler to receive the data and the error objects

@@ -5,8 +5,11 @@ import config from '../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../lib/api/errors';
 import { requireCustomer } from '../../../../../../lib/api/authMiddleware';
-import { flattenImages } from '../../../../../../lib/api/catalogSerializers';
-import { resolveLinePrice, computeTotals, normalizeSlot } from '../../../../../../lib/commerce/pricing';
+import { computeTotals, normalizeSlot } from '../../../../../../lib/commerce/pricing';
+import {
+  resolvePricedCart,
+  freeDeliveryThresholdForTier,
+} from '../../../../../../lib/commerce/resolveCart';
 import { config as appConfig } from '../../../../../../lib/config';
 
 // Cart validate — the pricing boundary of the checkout flow.
@@ -29,6 +32,11 @@ import { config as appConfig } from '../../../../../../lib/config';
 //     MRP-inclusive GST),
 //   - normalizes iOS relative slot tokens ("today"/"morning") so the
 //     Orders.slot date field validates downstream.
+//
+// The resolve-and-price pipeline lives in lib/commerce/resolveCart.ts,
+// shared with the unauthenticated POST /cart/estimate (B6) — this route
+// runs it strict (unserviceable pincodes and fresh-tier violations are
+// checkout-blocking errors).
 
 const Slot = z.object({
   date: z.string().min(1),
@@ -63,87 +71,11 @@ export async function POST(req: NextRequest) {
 
     const payload = await getPayload({ config });
 
-    // Pincode serviceability — same query shape as GET /catalog/serviceable.
-    const pincodeDoc = await payload.find({
-      collection: 'serviceablePincodes',
-      where: { pincode: { equals: parsed.data.pincode }, active: { equals: true } },
-      limit: 1,
+    const { items, pincodeTier } = await resolvePricedCart(payload, parsed.data.items, {
+      pincode: parsed.data.pincode,
+      rejectUnserviceable: true,
+      enforceFreshTier: true,
     });
-    if (!pincodeDoc.docs[0]) {
-      throw new ApiError(
-        ErrorCode.PINCODE_NOT_SERVICEABLE,
-        `Cannot deliver to ${parsed.data.pincode}`,
-      );
-    }
-    const pincodeTier = (pincodeDoc.docs[0] as { tier?: string }).tier ?? 'unknown';
-
-    // Re-fetch each product fresh; price it and stamp the snapshot line.
-    const items: Array<{
-      productId: string;
-      slug: string;
-      name: string;
-      quantity: number;
-      freshnessStatus: string | null;
-      packLabel: string | null;
-      unit: string;
-      priceInPaise: number;
-      image: string | null;
-    }> = [];
-
-    for (const it of parsed.data.items) {
-      const product = (await payload.findByID({
-        collection: 'mithai-products',
-        id: it.productId,
-        overrideAccess: false,
-      })) as
-        | {
-            id: string;
-            slug: string;
-            name: string;
-            freshnessStatus?: string | null;
-            displayPrice?: string | null;
-            weight?: string | null;
-            images?: unknown;
-          }
-        | null;
-
-      if (!product) {
-        throw new ApiError(
-          ErrorCode.PRODUCT_NOT_FOUND,
-          `Product ${it.productId} is no longer available`,
-        );
-      }
-
-      // Fresh-tier rule (F3): made-daily items ship same-city only. Mixed
-      // carts are rejected up front with the offending line named.
-      if (product.freshnessStatus === 'made-daily' && pincodeTier !== 'fresh') {
-        throw new ApiError(
-          ErrorCode.PINCODE_NOT_SERVICEABLE,
-          `${product.name} is made daily and only ships on the fresh tier — cannot deliver to ${parsed.data.pincode}`,
-        );
-      }
-
-      const linePrice = resolveLinePrice(product, it.packLabel);
-      if (!linePrice) {
-        throw new ApiError(
-          ErrorCode.VALIDATION,
-          `${product.name} is not priced for online ordering${it.packLabel ? ` (pack "${it.packLabel}" is unavailable)` : ''}`,
-          { fieldErrors: { productId: product.id } },
-        );
-      }
-
-      items.push({
-        productId: product.id,
-        slug: product.slug,
-        name: product.name,
-        quantity: it.quantity,
-        freshnessStatus: product.freshnessStatus ?? null,
-        packLabel: it.packLabel ?? null,
-        unit: linePrice.unit,
-        priceInPaise: linePrice.priceInPaise,
-        image: flattenImages(product.images)[0] ?? null,
-      });
-    }
 
     const totals = computeTotals(
       items,
@@ -184,6 +116,12 @@ export async function POST(req: NextRequest) {
       items,
       totals,
       pincodeTier,
+      // Threshold for the tier, so clients render "₹x more for free
+      // delivery" from the server's number, never a baked-in constant.
+      freeDeliveryThresholdInPaise: freeDeliveryThresholdForTier(pincodeTier, {
+        freshPaise: appConfig.freeDeliveryThresholdFreshPaise,
+        shelfStablePaise: appConfig.freeDeliveryThresholdShelfStablePaise,
+      }),
       expiresAt,
     });
   } catch (err) {

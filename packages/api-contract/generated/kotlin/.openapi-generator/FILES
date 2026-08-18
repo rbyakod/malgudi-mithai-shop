@@ -22,6 +22,9 @@ docs/Brand.md
 docs/BrandApi.md
 docs/BrandGet200Response.md
 docs/CartApi.md
+docs/CartEstimate.md
+docs/CartEstimatePost200Response.md
+docs/CartEstimateRequest.md
 docs/CartItem.md
 docs/CartSnapshot.md
 docs/CartSnapshotItem.md
@@ -43,6 +46,7 @@ docs/CatalogServiceableGet200Response.md
 docs/CatalogSnacksGet200Response.md
 docs/CatalogSnacksGet200ResponseData.md
 docs/CatalogSnacksSlugGet200Response.md
+docs/CodCreateOrderRequest.md
 docs/Customer.md
 docs/Error.md
 docs/ErrorError.md
@@ -75,6 +79,7 @@ docs/PaymentsApi.md
 docs/PaymentsRazorpayCreateOrderPost200Response.md
 docs/PaymentsRazorpayVerifyPost200Response.md
 docs/Product.md
+docs/PublicReview.md
 docs/QsrItem.md
 docs/RazorpayCreateOrderRequest.md
 docs/RazorpayCreateOrderResponse.md
@@ -83,7 +88,9 @@ docs/RazorpayVerifyResponse.md
 docs/RefreshResponse.md
 docs/Review.md
 docs/ReviewInput.md
+docs/ReviewList.md
 docs/ReviewsApi.md
+docs/ReviewsGet200Response.md
 docs/ReviewsPost200Response.md
 docs/ServiceableResponse.md
 docs/Snack.md
@@ -148,6 +155,9 @@ src/main/kotlin/com/mishran/api/models/AuthOtpVerifyPost200Response.kt
 src/main/kotlin/com/mishran/api/models/AuthRefreshPost200Response.kt
 src/main/kotlin/com/mishran/api/models/Brand.kt
 src/main/kotlin/com/mishran/api/models/BrandGet200Response.kt
+src/main/kotlin/com/mishran/api/models/CartEstimate.kt
+src/main/kotlin/com/mishran/api/models/CartEstimatePost200Response.kt
+src/main/kotlin/com/mishran/api/models/CartEstimateRequest.kt
 src/main/kotlin/com/mishran/api/models/CartItem.kt
 src/main/kotlin/com/mishran/api/models/CartSnapshot.kt
 src/main/kotlin/com/mishran/api/models/CartSnapshotItem.kt
@@ -168,6 +178,7 @@ src/main/kotlin/com/mishran/api/models/CatalogServiceableGet200Response.kt
 src/main/kotlin/com/mishran/api/models/CatalogSnacksGet200Response.kt
 src/main/kotlin/com/mishran/api/models/CatalogSnacksGet200ResponseData.kt
 src/main/kotlin/com/mishran/api/models/CatalogSnacksSlugGet200Response.kt
+src/main/kotlin/com/mishran/api/models/CodCreateOrderRequest.kt
 src/main/kotlin/com/mishran/api/models/Customer.kt
 src/main/kotlin/com/mishran/api/models/Error.kt
 src/main/kotlin/com/mishran/api/models/ErrorError.kt
@@ -195,6 +206,7 @@ src/main/kotlin/com/mishran/api/models/PassDeviceInput.kt
 src/main/kotlin/com/mishran/api/models/PaymentsRazorpayCreateOrderPost200Response.kt
 src/main/kotlin/com/mishran/api/models/PaymentsRazorpayVerifyPost200Response.kt
 src/main/kotlin/com/mishran/api/models/Product.kt
+src/main/kotlin/com/mishran/api/models/PublicReview.kt
 src/main/kotlin/com/mishran/api/models/QsrItem.kt
 src/main/kotlin/com/mishran/api/models/RazorpayCreateOrderRequest.kt
 src/main/kotlin/com/mishran/api/models/RazorpayCreateOrderResponse.kt
@@ -203,6 +215,8 @@ src/main/kotlin/com/mishran/api/models/RazorpayVerifyResponse.kt
 src/main/kotlin/com/mishran/api/models/RefreshResponse.kt
 src/main/kotlin/com/mishran/api/models/Review.kt
 src/main/kotlin/com/mishran/api/models/ReviewInput.kt
+src/main/kotlin/com/mishran/api/models/ReviewList.kt
+src/main/kotlin/com/mishran/api/models/ReviewsGet200Response.kt
 src/main/kotlin/com/mishran/api/models/ReviewsPost200Response.kt
 src/main/kotlin/com/mishran/api/models/ServiceableResponse.kt
 src/main/kotlin/com/mishran/api/models/Snack.kt
@@ -212,3 +226,10 @@ src/main/kotlin/com/mishran/api/models/StoriesGet200ResponseData.kt
 src/main/kotlin/com/mishran/api/models/StoriesSlugGet200Response.kt
 src/main/kotlin/com/mishran/api/models/Story.kt
 src/main/kotlin/com/mishran/api/models/StoryDetail.kt
+src/test/kotlin/com/mishran/api/models/CartEstimatePost200ResponseTest.kt
+src/test/kotlin/com/mishran/api/models/CartEstimateRequestTest.kt
+src/test/kotlin/com/mishran/api/models/CartEstimateTest.kt
+src/test/kotlin/com/mishran/api/models/CodCreateOrderRequestTest.kt
+src/test/kotlin/com/mishran/api/models/PublicReviewTest.kt
+src/test/kotlin/com/mishran/api/models/ReviewListTest.kt
+src/test/kotlin/com/mishran/api/models/ReviewsGet200ResponseTest.kt
