@@ -177,13 +177,16 @@ fun MishranAppRoot() {
                 )
             }
             composable(Routes.AUTH_PHONE) {
-                PhoneEntryScreen(onOtpSent = { requestId ->
-                    navController.navigate(Routes.authOtp(requestId))
+                PhoneEntryScreen(onOtpSent = { requestId, phone ->
+                    navController.navigate(Routes.authOtp(requestId, phone))
                 })
             }
             composable(
                 route = Routes.AUTH_OTP,
-                arguments = listOf(navArgument("requestId") { type = NavType.StringType }),
+                arguments = listOf(
+                    navArgument("requestId") { type = NavType.StringType },
+                    navArgument("phone") { type = NavType.StringType },
+                ),
             ) {
                 OtpScreen(
                     onVerified = {
@@ -198,7 +201,6 @@ fun MishranAppRoot() {
                             launchSingleTop = true
                         }
                     },
-                    onResend = { navController.popBackStack(Routes.AUTH_PHONE, inclusive = false) },
                 )
             }
             composable(Routes.HOME) {

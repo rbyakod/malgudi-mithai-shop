@@ -1,6 +1,11 @@
 // app/api/mobile/v1/catalog/products/[slug]/route.test.ts
 import { describe, it, expect, vi } from 'vitest';
 
+// Media URLs come back ABSOLUTE (task #57): the serializer prefixes
+// NEXT_PUBLIC_SITE_URL, defaulting to localhost — mirror it rather than
+// hard-coding so the test holds wherever it runs.
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+
 // Path depth: app/api/mobile/v1/catalog/products/[slug]/ = 7 dirs -> 7 ../ to root.
 // Mock Payload so the route does not require a running Mongo. vi.mock is
 // hoisted, so the factory must not reference outer-scope variables; we
@@ -101,7 +106,7 @@ describe('GET /catalog/products/{slug}', () => {
     expect(body.data.ingredients).toBe('Cashew, sugar');
     expect(body.data.shelfLife).toBe('10 days');
     expect(body.data.storage).toBe('Cool dry place');
-    expect(body.data.images).toEqual(['/kaju.jpg']);
+    expect(body.data.images).toEqual([`${SITE}/kaju.jpg`]);
     expect(body.data.story).toBeNull();
     expect(body.data.karigar).toBeNull();
     expect(body.data.updatedAt).toBe('2026-01-01T00:00:00.000Z');

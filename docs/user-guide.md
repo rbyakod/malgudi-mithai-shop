@@ -51,15 +51,16 @@ There are no passwords anywhere — you sign in with a phone number and a
    `+919876543210`, the app figures out the country and strips the code.
 3. **Send OTP** → enter the 6-digit code → **Verify**. There's also a
    **Sign in with Apple** button that skips OTP entirely.
-4. To resend, tap **"Wrong number? Start over"** (there is no in-place
-   resend on iOS yet).
+4. If the code doesn't arrive, **Resend code** re-sends right on the code
+   screen (available after a 30-second countdown). **Wrong number? Start
+   over** returns to the phone screen.
 
 ### Android
 1. Sign-in is the first screen — there's no guest browsing.
 2. Same country picker as iOS (default 🇮🇳 +91, searchable, paste-tolerant).
 3. **Send OTP** → the code field often **fills itself in** (SMS Retriever
-   auto-read; no SMS permission is used). **Resend code** pops you back to
-   the phone screen to trigger a new code.
+   auto-read; no SMS permission is used). **Resend code** re-sends right on
+   the code screen after a 30-second countdown.
 4. After verifying, Android offers **biometric login** (fingerprint/face)
    for next time — Enable or Skip. On later launches, a system biometric
    prompt unlocks the app if enabled.
@@ -240,7 +241,8 @@ reference and a **Track** button. A receipt SMS follows.
   payment → Confirmed → Packed → Dispatched → Out for delivery →
   Delivered, plus Cancelled / Payment failed / Returned / Delivery failed
   / Abandoned.
-- **Web**: `/account` lists your last 10 orders; `/track-order` is a
+- **Web**: `/account` shows your 10 most recent orders with a **Load
+  more** button to page through the full history; `/track-order` is a
   shortcut to the same list; each order's receipt page shows items,
   totals, **Order again** (one tap puts everything back in the cart), and
   — once delivered — a **star-rating review form** per item (reviews are
@@ -267,6 +269,11 @@ reference and a **Track** button. A receipt SMS follows.
   yet.
 - **Addresses**: add / set-default / delete on all platforms, with
   Home/Work/Other tags. Serviceability badges per address on web.
+- **Biometric unlock**: both apps have a toggle in Account (iOS:
+  Preferences; Android: beside Language). Turning it on stores your
+  session behind the device's fingerprint/face check, so the next launch
+  unlocks with biometrics instead of a code; turning it off returns to
+  normal sign-in. Hidden on devices with no enrolled fingerprint or face.
 - **Loyalty**: two delivered orders earn **Silver**, five earn **Gold**.
   Web shows your tier progress on `/account`; iOS can add the loyalty card
   to **Apple Wallet** once earned; Android doesn't surface loyalty yet.
@@ -336,7 +343,8 @@ still English on the apps.)
   needs a connection. Orders stay readable offline on Android (hourly
   refresh) and reload on iOS when online.
 - **iOS extras**: Sign in with Apple · Live Activity for deliveries ·
-  Apple Wallet loyalty pass · light-mode-locked design.
+  Apple Wallet loyalty pass · biometric unlock toggle · light-mode-locked
+  design.
 - **Android extras**: biometric unlock · SMS auto-fill of the OTP ·
   order-status home-screen widget · system dark mode · deep link
   `mishran://order/{id}`.
@@ -392,11 +400,7 @@ So nobody hunts for what isn't there:
 - **Apps don't show delivery fees or free-delivery thresholds in the
   cart** — fees appear on the priced order at checkout/after payment. Web
   shows the full estimate.
-- **iOS OTP has no in-place resend** (use "Wrong number? Start over");
-  Android's resend returns you to the phone screen.
 - **No guest checkout on web** and no guest browsing on Android; iOS
   allows browsing without sign-in.
-- **Biometric unlock**: offered on Android after sign-in; the iOS
-  equivalent exists internally but has no settings toggle yet.
 - **Web Build-a-gift is a quote form**, not an interactive box builder
-  (deferred).
+  (by design — the team prices every bespoke box before packing).

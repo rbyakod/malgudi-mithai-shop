@@ -3,6 +3,7 @@
 // OTP-verify screen: 6-digit code → Verify. On success the session is already
 // persisted by [OtpViewModel]/[AuthRepository]; this screen hands control to
 // [onVerified] (the NavGraph routes to Home and pops the auth stack).
+// Resend happens IN PLACE with a 30 s countdown — no pop back to phone entry.
 // SMS-retriever autofill (Task 8.3) populates [code] from a matched inbound
 // SMS; the field stays hand-editable regardless.
 package com.mishran.app.ui.auth
@@ -48,10 +49,11 @@ fun OtpScreen(
     viewModel: OtpViewModel = hiltViewModel(),
     enrollmentViewModel: BiometricEnrollmentViewModel = hiltViewModel(),
     onVerified: () -> Unit,
-    onResend: () -> Unit,
 ) {
     val code by viewModel.code.collectAsStateWithLifecycle()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val resendCountdown by viewModel.resendCountdown.collectAsStateWithLifecycle()
+    val resendError by viewModel.resendError.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     // SMS Retriever autofill (Task 8.3): open a listen window for this screen's
@@ -155,8 +157,29 @@ fun OtpScreen(
             }
         }
         Spacer(Modifier.height(8.dp))
-        TextButton(onClick = onResend) {
-            Text(stringResource(R.string.auth_otp_resend))
+        // In-place resend with a 30 s cooldown — the countdown text replaces
+        // the label while waiting, and the tap re-sends to the same phone
+        // (fresh requestId lands in the ViewModel's SavedStateHandle).
+        TextButton(
+            onClick = { viewModel.resend() },
+            enabled = resendCountdown == 0,
+        ) {
+            Text(
+                text = if (resendCountdown > 0) {
+                    stringResource(R.string.auth_otp_countdown, resendCountdown)
+                } else {
+                    stringResource(R.string.auth_otp_resend)
+                },
+            )
+        }
+        resendError?.let { message ->
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
         }
     }
 }

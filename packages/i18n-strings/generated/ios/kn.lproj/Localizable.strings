@@ -19,6 +19,7 @@
 "auth.otp.cta" = "ದೃಢೀಕರಿಸಿ";
 "auth.otp.resend" = "ಸಂಕೇತ ಮರುಕಳುಹಿಸಿ";
 "auth.otp.countdown" = "{seconds} ಸೆಕೆಂಡ್‌ಗಳಲ್ಲಿ ಮರುಕಳುಹಿಸಿ";
+"auth.otp.wrong_number" = "ತಪ್ಪು ಸಂಖ್ಯೆಯೇ? ಮರುಪ್ರಾರಂಭಿಸಿ";
 "auth.biometric.prompt" = "Mishran ಗೆ ಪ್ರವೇಶಿಸಲು ಬಯೋಮೆಟ್ರಿಕ್ ಬಳಸಿ";
 "auth.biometric.title" = "ಮರಳಿ ಸ್ವಾಗತ";
 "auth.biometric.cta" = "ತ್ವರಿತ ಪ್ರವೇಶ";
@@ -100,6 +101,8 @@
 "account.profile" = "ಪ್ರೊಫೈಲ್";
 "account.addresses" = "ಉಳಿಸಿದ ವಿಳಾಸಗಳು";
 "account.language" = "ಭಾಷೆ";
+"account.biometric.title" = "ಬಯೋಮೆಟ್ರಿಕ್ ಅನ್‌ಲಾಕ್";
+"account.biometric.hint" = "ಮುಖ ಅಥವಾ ಫಿಂಗರ್‌ಪ್ರಿಂಟ್‌ನಿಂದ ಆ್ಯಪ್ ಅನ್‌ಲಾಕ್ ಮಾಡಿ.";
 "account.notifications" = "ಅಧಿಸೂಚನೆಗಳು";
 "account.support" = "ಬೆಂಬಲ";
 "account.logout" = "ನಿರ್ಗಮಿಸಿ";

@@ -19,6 +19,7 @@
 "auth.otp.cta" = "Verify";
 "auth.otp.resend" = "Resend code";
 "auth.otp.countdown" = "Resend in {seconds}s";
+"auth.otp.wrong_number" = "Wrong number? Start over";
 "auth.biometric.prompt" = "Use biometric to log in to Mishran";
 "auth.biometric.title" = "Welcome back";
 "auth.biometric.cta" = "Quick login";
@@ -100,6 +101,8 @@
 "account.profile" = "Profile";
 "account.addresses" = "Saved addresses";
 "account.language" = "Language";
+"account.biometric.title" = "Biometric unlock";
+"account.biometric.hint" = "Unlock the app with your face or fingerprint.";
 "account.notifications" = "Notifications";
 "account.support" = "Support";
 "account.logout" = "Log out";

@@ -20,6 +20,7 @@
   <string name="auth_otp_cta">ದೃಢೀಕರಿಸಿ</string>
   <string name="auth_otp_resend">ಸಂಕೇತ ಮರುಕಳುಹಿಸಿ</string>
   <string name="auth_otp_countdown">%1$s ಸೆಕೆಂಡ್‌ಗಳಲ್ಲಿ ಮರುಕಳುಹಿಸಿ</string>
+  <string name="auth_otp_wrong_number">ತಪ್ಪು ಸಂಖ್ಯೆಯೇ? ಮರುಪ್ರಾರಂಭಿಸಿ</string>
   <string name="auth_biometric_prompt">Mishran ಗೆ ಪ್ರವೇಶಿಸಲು ಬಯೋಮೆಟ್ರಿಕ್ ಬಳಸಿ</string>
   <string name="auth_biometric_title">ಮರಳಿ ಸ್ವಾಗತ</string>
   <string name="auth_biometric_cta">ತ್ವರಿತ ಪ್ರವೇಶ</string>
@@ -101,6 +102,8 @@
   <string name="account_profile">ಪ್ರೊಫೈಲ್</string>
   <string name="account_addresses">ಉಳಿಸಿದ ವಿಳಾಸಗಳು</string>
   <string name="account_language">ಭಾಷೆ</string>
+  <string name="account_biometric_title">ಬಯೋಮೆಟ್ರಿಕ್ ಅನ್‌ಲಾಕ್</string>
+  <string name="account_biometric_hint">ಮುಖ ಅಥವಾ ಫಿಂಗರ್‌ಪ್ರಿಂಟ್‌ನಿಂದ ಆ್ಯಪ್ ಅನ್‌ಲಾಕ್ ಮಾಡಿ.</string>
   <string name="account_notifications">ಅಧಿಸೂಚನೆಗಳು</string>
   <string name="account_support">ಬೆಂಬಲ</string>
   <string name="account_logout">ನಿರ್ಗಮಿಸಿ</string>

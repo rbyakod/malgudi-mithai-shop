@@ -128,6 +128,54 @@ final class AuthViewModelTests: XCTestCase {
         XCTAssertEqual(vm.stage, AuthViewModel.Stage.phone)
     }
 
+    // MARK: (b2) in-place resend + cooldown
+
+    func testSendCodeStartsResendCountdown() async {
+        MockURLProtocol.routes["/auth/otp/send"] = (
+            200, [:], json(#"{"data":{"requestId":"req_1","expiresAt":"2026-08-13T12:00:00Z"}}"#)
+        )
+        let vm = makeViewModel()
+        vm.nationalNumber = "9876543210"
+        await vm.sendCode()
+
+        XCTAssertEqual(vm.resendCountdown, AuthViewModel.resendCooldownSeconds)
+    }
+
+    func testResendReplacesRequestIdAndStaysOnOtpStage() async {
+        MockURLProtocol.routes["/auth/otp/send"] = (
+            200, [:], json(#"{"data":{"requestId":"req_2","expiresAt":"2026-08-13T12:05:00Z"}}"#)
+        )
+        let vm = makeViewModel()
+        vm.nationalNumber = "9876543210"
+        vm.requestId = "req_1"
+        vm.stage = .otp
+        vm.resendCountdown = 0  // cooldown elapsed
+        await vm.resend()
+
+        XCTAssertEqual(MockURLProtocol.calls["/auth/otp/send"], 1)
+        XCTAssertEqual(vm.requestId, "req_2")
+        XCTAssertEqual(vm.stage, .otp)
+        XCTAssertEqual(vm.code, "")  // stale digits cleared for the new code
+        XCTAssertEqual(vm.resendCountdown, AuthViewModel.resendCooldownSeconds)
+    }
+
+    func testResendBlockedDuringCooldown() async {
+        let vm = makeViewModel()
+        vm.nationalNumber = "9876543210"
+        vm.resendCountdown = 5
+        await vm.resend()
+
+        XCTAssertNil(MockURLProtocol.calls["/auth/otp/send"])
+        XCTAssertEqual(vm.resendCountdown, 5)
+    }
+
+    func testRestartClearsCountdown() async {
+        let vm = makeViewModel()
+        vm.resendCountdown = 20
+        vm.restart()
+        XCTAssertEqual(vm.resendCountdown, 0)
+    }
+
     // MARK: (c) verify success stores tokens + customer
 
     func testVerifySuccessStoresTokensAndCustomer() async {

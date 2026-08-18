@@ -1,6 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 
+// Media URLs come back ABSOLUTE (task #57): the serializer prefixes
+// NEXT_PUBLIC_SITE_URL, defaulting to localhost — mirror it rather than
+// hard-coding so the test holds wherever it runs.
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+
 // Path depth: app/api/mobile/v1/catalog/products/ = 6 dirs -> 6 ../ to root.
 // Mock Payload so the route does not require a running Mongo. vi.mock is
 // hoisted, so the factory must not reference outer-scope variables; we
@@ -120,7 +125,7 @@ describe('GET /catalog/products', () => {
     expect(body.data.items.length).toBe(2);
     expect(body.data.total).toBe(2);
     expect(body.data.items[0]).toMatchObject({ id: 'p1', slug: 'kaju-katli' });
-    expect(body.data.items[0].images).toEqual(['/kaju.jpg']);
+    expect(body.data.items[0].images).toEqual([`${SITE}/kaju.jpg`]);
   });
 
   it('returns 304 when If-None-Match matches', async () => {

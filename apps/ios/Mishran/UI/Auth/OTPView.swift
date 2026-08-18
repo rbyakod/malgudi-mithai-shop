@@ -1,5 +1,6 @@
 // OTPView.swift — Task 15.1 (Mishran Mobile Apps v1).
-// Code-entry half of the sign-in flow: 6 digits, resend via restart.
+// Code-entry half of the sign-in flow: 6 digits, in-place resend with a
+// 30 s cooldown, and a wrong-number escape back to phone entry.
 import SwiftUI
 
 struct OTPView: View {
@@ -67,12 +68,24 @@ struct OTPView: View {
             .disabled(!viewModel.canSubmit)
             .accessibilityLabel(L("auth.otp.cta"))
 
-            Button("Wrong number? Start over") {
+            Button {
+                Task { await viewModel.resend() }
+            } label: {
+                Text(viewModel.resendCountdown > 0
+                     ? L("auth.otp.countdown", "\(viewModel.resendCountdown)")
+                     : L("auth.otp.resend"))
+            }
+            .font(.mishranBodyMd)
+            .foregroundStyle(Color.mishranBrandAccent)
+            .disabled(viewModel.resendCountdown > 0 || viewModel.isLoading)
+            .accessibilityLabel(L("auth.otp.resend"))
+
+            Button(L("auth.otp.wrong_number")) {
                 viewModel.restart()
             }
             .font(.mishranBodyMd)
             .foregroundStyle(Color.mishranBrandAccent)
-            .accessibilityLabel("Use a different phone number")
+            .accessibilityLabel(L("auth.otp.wrong_number"))
 
             Spacer()
         }

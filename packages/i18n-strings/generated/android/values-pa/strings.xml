@@ -20,6 +20,7 @@
   <string name="auth_otp_cta">ਤਸਦੀਕ ਕਰੋ</string>
   <string name="auth_otp_resend">ਕੋਡ ਦੁਬਾਰਾ ਭੇਜੋ</string>
   <string name="auth_otp_countdown">%1$s ਸਕਿੰਟਾਂ ਵਿੱਚ ਦੁਬਾਰਾ ਭੇਜੋ</string>
+  <string name="auth_otp_wrong_number">ਗ਼ਲਤ ਨੰਬਰ? ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਕਰੋ</string>
   <string name="auth_biometric_prompt">Mishran ਤੱਕ ਪਹੁੰਚਣ ਲਈ ਬਾਇਓਮੈਟ੍ਰਿਕ ਵਰਤੋ</string>
   <string name="auth_biometric_title">ਮੁੜ ਸਵਾਗਤ</string>
   <string name="auth_biometric_cta">ਤੇਜ਼ ਪਹੁੰਚ</string>
@@ -101,6 +102,8 @@
   <string name="account_profile">ਪ੍ਰੋਫਾਈਲ</string>
   <string name="account_addresses">ਸੰਭਾਲੇ ਪਤੇ</string>
   <string name="account_language">ਭਾਸ਼ਾ</string>
+  <string name="account_biometric_title">ਬਾਇਓਮੈਟ੍ਰਿਕ ਅਨਲਾਕ</string>
+  <string name="account_biometric_hint">ਚਿਹਰੇ ਜਾਂ ਫਿੰਗਰਪ੍ਰਿੰਟ ਨਾਲ ਐਪ ਅਨਲਾਕ ਕਰੋ।</string>
   <string name="account_notifications">ਨੋਟੀਫਿਕੇਸ਼ਨ</string>
   <string name="account_support">ਸਹਾਇਤਾ</string>
   <string name="account_logout">ਲੌਗ ਆਊਟ</string>

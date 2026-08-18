@@ -20,6 +20,7 @@
   <string name="auth_otp_cta">నిర్ధారించండి</string>
   <string name="auth_otp_resend">కోడ్ మళ్లీ పంపండి</string>
   <string name="auth_otp_countdown">%1$s సెకన్లలో మళ్లీ పంపండి</string>
+  <string name="auth_otp_wrong_number">తప్పు నంబరా? మళ్లీ మొదలుపెట్టండి</string>
   <string name="auth_biometric_prompt">Mishran ను యాక్సెస్ చేయడానికి బయోమెట్రిక్ ఉపయోగించండి</string>
   <string name="auth_biometric_title">తిరిగి స్వాగతం</string>
   <string name="auth_biometric_cta">త్వరిత ప్రాప్తి</string>
@@ -101,6 +102,8 @@
   <string name="account_profile">ప్రొఫైల్</string>
   <string name="account_addresses">సేవ్ చేసిన చిరునామాలు</string>
   <string name="account_language">భాష</string>
+  <string name="account_biometric_title">బయోమెట్రిక్ అన్‌లాక్</string>
+  <string name="account_biometric_hint">ముఖం లేదా వేలిముద్రతో యాప్‌ను అన్‌లాక్ చేయండి.</string>
   <string name="account_notifications">నోటిఫికేషన్లు</string>
   <string name="account_support">సపోర్ట్</string>
   <string name="account_logout">లాగ్ అవుట్</string>

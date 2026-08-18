@@ -19,6 +19,7 @@
 "auth.otp.cta" = "सत्यापित करें";
 "auth.otp.resend" = "कोड पुनः भेजें";
 "auth.otp.countdown" = "{seconds} सेकंड में पुनः भेजें";
+"auth.otp.wrong_number" = "गलत नंबर है? फिर से शुरू करें";
 "auth.biometric.prompt" = "मिश्रण में लॉग इन करने के लिए बायोमेट्रिक का उपयोग करें";
 "auth.biometric.title" = "वापसी पर स्वागत है";
 "auth.biometric.cta" = "त्वरित लॉगिन";
@@ -100,6 +101,8 @@
 "account.profile" = "प्रोफ़ाइल";
 "account.addresses" = "सहेजे गए पते";
 "account.language" = "भाषा";
+"account.biometric.title" = "बायोमेट्रिक अनलॉक";
+"account.biometric.hint" = "चेहरे या फिंगरप्रिंट से ऐप खोलें।";
 "account.notifications" = "सूचनाएँ";
 "account.support" = "सहायता";
 "account.logout" = "लॉग आउट";

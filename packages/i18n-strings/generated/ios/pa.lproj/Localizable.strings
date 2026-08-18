@@ -19,6 +19,7 @@
 "auth.otp.cta" = "ਤਸਦੀਕ ਕਰੋ";
 "auth.otp.resend" = "ਕੋਡ ਦੁਬਾਰਾ ਭੇਜੋ";
 "auth.otp.countdown" = "{seconds} ਸਕਿੰਟਾਂ ਵਿੱਚ ਦੁਬਾਰਾ ਭੇਜੋ";
+"auth.otp.wrong_number" = "ਗ਼ਲਤ ਨੰਬਰ? ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਕਰੋ";
 "auth.biometric.prompt" = "Mishran ਤੱਕ ਪਹੁੰਚਣ ਲਈ ਬਾਇਓਮੈਟ੍ਰਿਕ ਵਰਤੋ";
 "auth.biometric.title" = "ਮੁੜ ਸਵਾਗਤ";
 "auth.biometric.cta" = "ਤੇਜ਼ ਪਹੁੰਚ";
@@ -100,6 +101,8 @@
 "account.profile" = "ਪ੍ਰੋਫਾਈਲ";
 "account.addresses" = "ਸੰਭਾਲੇ ਪਤੇ";
 "account.language" = "ਭਾਸ਼ਾ";
+"account.biometric.title" = "ਬਾਇਓਮੈਟ੍ਰਿਕ ਅਨਲਾਕ";
+"account.biometric.hint" = "ਚਿਹਰੇ ਜਾਂ ਫਿੰਗਰਪ੍ਰਿੰਟ ਨਾਲ ਐਪ ਅਨਲਾਕ ਕਰੋ।";
 "account.notifications" = "ਨੋਟੀਫਿਕੇਸ਼ਨ";
 "account.support" = "ਸਹਾਇਤਾ";
 "account.logout" = "ਲੌਗ ਆਊਟ";

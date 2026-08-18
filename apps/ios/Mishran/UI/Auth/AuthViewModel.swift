@@ -24,6 +24,12 @@ final class AuthViewModel {
     var code = ""
     var requestId: String?
 
+    /// Seconds until the resend control re-enables (0 = can resend now).
+    /// Restarted on every successful send, mirroring the server's 30 s
+    /// resend cooldown on the web flow.
+    var resendCountdown = 0
+    private var countdownTask: Task<Void, Never>?
+
     /// Composed E.164 (e.g. +919876543210) — sent to the API and shown on
     /// the OTP screen subtitle. Derived, so the country chip and the national
     /// field can never drift out of sync.
@@ -106,10 +112,31 @@ final class AuthViewModel {
             requestId = response.requestId
             code = ""
             stage = .otp
+            startResendCountdown()
         } catch let error as APIError {
             apply(error)
         } catch {
             errorMessage = "Something went wrong. Try again."
+        }
+    }
+
+    /// In-place resend: re-invokes the send with the same composed phone.
+    /// sendCode() already stays on the OTP stage and swaps in the fresh
+    /// requestId, so this is a cooldown-gated passthrough.
+    func resend() async {
+        guard resendCountdown == 0, !isLoading else { return }
+        await sendCode()
+    }
+
+    private func startResendCountdown() {
+        countdownTask?.cancel()
+        resendCountdown = AuthViewModel.resendCooldownSeconds
+        countdownTask = Task { [weak self] in
+            while let self, !Task.isCancelled, self.resendCountdown > 0 {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { break }
+                self.resendCountdown -= 1
+            }
         }
     }
 
@@ -167,6 +194,8 @@ final class AuthViewModel {
         code = ""
         errorMessage = nil
         errorCode = nil
+        countdownTask?.cancel()
+        resendCountdown = 0
     }
 
     /// Successful sign-in: session state + the persisted "signed in once"
@@ -189,6 +218,9 @@ final class AuthViewModel {
 
     /// UserDefaults key: true once any sign-in has succeeded on this install.
     static let signedInOnceKey = "signedInOnce"
+
+    /// Resend cooldown in seconds — matches the web flow's 30 s countdown.
+    static let resendCooldownSeconds = 30
 
     /// UserDefaults key: the signed-in customer's phone (enquiry pre-fill).
     /// nonisolated: read from EnquiryView's nonisolated default argument.

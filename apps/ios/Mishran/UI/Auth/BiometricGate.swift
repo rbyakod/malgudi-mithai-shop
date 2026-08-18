@@ -34,6 +34,13 @@ enum BiometricSettings {
         get { UserDefaults.standard.bool(forKey: key) }
         set { UserDefaults.standard.set(newValue, forKey: key) }
     }
+
+    /// Whether this device can evaluate biometrics at all (enrolled +
+    /// permitted). The Account settings toggle hides when false — there is
+    /// nothing to configure. Prompt-free, unlike [BiometricGate.live].
+    static var isAvailable: Bool {
+        LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+    }
 }
 
 /// Launch-gate state machine: evaluate → unlocked, or fall back to sign-in.

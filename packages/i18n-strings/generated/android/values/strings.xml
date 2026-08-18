@@ -20,6 +20,7 @@
   <string name="auth_otp_cta">Verify</string>
   <string name="auth_otp_resend">Resend code</string>
   <string name="auth_otp_countdown">Resend in %1$ss</string>
+  <string name="auth_otp_wrong_number">Wrong number? Start over</string>
   <string name="auth_biometric_prompt">Use biometric to log in to Mishran</string>
   <string name="auth_biometric_title">Welcome back</string>
   <string name="auth_biometric_cta">Quick login</string>
@@ -101,6 +102,8 @@
   <string name="account_profile">Profile</string>
   <string name="account_addresses">Saved addresses</string>
   <string name="account_language">Language</string>
+  <string name="account_biometric_title">Biometric unlock</string>
+  <string name="account_biometric_hint">Unlock the app with your face or fingerprint.</string>
   <string name="account_notifications">Notifications</string>
   <string name="account_support">Support</string>
   <string name="account_logout">Log out</string>

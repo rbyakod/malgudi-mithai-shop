@@ -21,6 +21,10 @@ struct AccountView: View {
     @State private var signOutClient = MishranAPIClient()
     /// Task 20.3: in-app language override (UserDefaults "AppleLanguages").
     @State private var showingLanguagePicker = false
+    /// The launch gate's opt-in flag, surfaced as a Preferences toggle.
+    /// Armed only when a refresh token also exists, so flipping this while
+    /// signed out simply pre-sets the preference for the next sign-in.
+    @State private var biometricEnabled = BiometricSettings.isEnabled
 
     /// Cheap keychain probe: a refresh token means a live session. Nothing
     /// customer-shaped persists locally yet (signedInCustomer lives only in
@@ -83,6 +87,9 @@ struct AccountView: View {
             }
             // Task 20.3: in-app language override (persists to AppleLanguages;
             // applies on next launch — the sheet's footnote says so).
+            // Known-gaps B2: the biometric-unlock opt-in (the launch gate's
+            // long-missing writer) — hidden entirely on devices with no
+            // enrolled Face ID / Touch ID.
             Section("Preferences") {
                 Button {
                     showingLanguagePicker = true
@@ -91,6 +98,22 @@ struct AccountView: View {
                 }
                 .accessibilityLabel(L("account.language"))
                 .accessibilityHint("Choose the app language")
+
+                if BiometricSettings.isAvailable {
+                    Toggle(isOn: $biometricEnabled) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(L("account.biometric.title"))
+                            Text(L("account.biometric.hint"))
+                                .font(.mishranBodySm)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .frame(minHeight: 44)
+                    .accessibilityLabel(L("account.biometric.title"))
+                    .onChange(of: biometricEnabled) { _, enabled in
+                        BiometricSettings.isEnabled = enabled
+                    }
+                }
             }
             // P2: journal + bulk/events entries (stories.title / enquiry.title);
             // P3: the gift-box builder (gift.title / account.gift).

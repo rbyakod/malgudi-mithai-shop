@@ -19,6 +19,7 @@
 "auth.otp.cta" = "নিশ্চিত করুন";
 "auth.otp.resend" = "কোড আবার পাঠান";
 "auth.otp.countdown" = "{seconds} সেকেন্ডে আবার পাঠান";
+"auth.otp.wrong_number" = "ভুল নম্বর? আবার শুরু করুন";
 "auth.biometric.prompt" = "Mishran অ্যাক্সেস করতে বায়োমেট্রিক ব্যবহার করুন";
 "auth.biometric.title" = "আবার স্বাগতম";
 "auth.biometric.cta" = "দ্রুত অ্যাক্সেস";
@@ -100,6 +101,8 @@
 "account.profile" = "প্রোফাইল";
 "account.addresses" = "সংরক্ষিত ঠিকানা";
 "account.language" = "ভাষা";
+"account.biometric.title" = "বায়োমেট্রিক আনলক";
+"account.biometric.hint" = "মুখ বা আঙুলের ছাপ দিয়ে অ্যাপ আনলক করুন।";
 "account.notifications" = "নোটিফিকেশন";
 "account.support" = "সহায়তা";
 "account.logout" = "লগ আউট";

@@ -68,4 +68,24 @@ final class KeychainAndBiometricTests: XCTestCase {
         XCTAssertFalse(failing.isUnlocked)
         XCTAssertTrue(failing.shouldFallBackToSignIn)
     }
+
+    // MARK: BiometricSettings — the Known-gaps B2 toggle's writer
+
+    func testBiometricSettingsWriterRoundTrips() {
+        let original = BiometricSettings.isEnabled
+        defer { BiometricSettings.isEnabled = original }
+
+        BiometricSettings.isEnabled = true
+        XCTAssertTrue(BiometricSettings.isEnabled)
+
+        BiometricSettings.isEnabled = false
+        XCTAssertFalse(BiometricSettings.isEnabled)
+    }
+
+    func testBiometricSettingsAvailabilityProbeDoesNotPromptOrTrap() {
+        // A bare CI simulator has no enrolled biometrics — the probe behind
+        // the Account toggle's visibility must simply answer, never prompt
+        // or trap. (canEvaluatePolicy is the prompt-free check by design.)
+        _ = BiometricSettings.isAvailable
+    }
 }

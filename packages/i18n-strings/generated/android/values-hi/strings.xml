@@ -20,6 +20,7 @@
   <string name="auth_otp_cta">सत्यापित करें</string>
   <string name="auth_otp_resend">कोड पुनः भेजें</string>
   <string name="auth_otp_countdown">%1$s सेकंड में पुनः भेजें</string>
+  <string name="auth_otp_wrong_number">गलत नंबर है? फिर से शुरू करें</string>
   <string name="auth_biometric_prompt">मिश्रण में लॉग इन करने के लिए बायोमेट्रिक का उपयोग करें</string>
   <string name="auth_biometric_title">वापसी पर स्वागत है</string>
   <string name="auth_biometric_cta">त्वरित लॉगिन</string>
@@ -101,6 +102,8 @@
   <string name="account_profile">प्रोफ़ाइल</string>
   <string name="account_addresses">सहेजे गए पते</string>
   <string name="account_language">भाषा</string>
+  <string name="account_biometric_title">बायोमेट्रिक अनलॉक</string>
+  <string name="account_biometric_hint">चेहरे या फिंगरप्रिंट से ऐप खोलें।</string>
   <string name="account_notifications">सूचनाएँ</string>
   <string name="account_support">सहायता</string>
   <string name="account_logout">लॉग आउट</string>

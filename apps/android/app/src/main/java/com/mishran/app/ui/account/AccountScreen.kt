@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mishran.app.R
+import com.mishran.app.ui.auth.EnableBiometricDialog
 
 @Composable
 fun AccountScreen(
@@ -59,7 +61,11 @@ fun AccountScreen(
     val support by viewModel.support.collectAsStateWithLifecycle()
     val signingOut by viewModel.signingOut.collectAsStateWithLifecycle()
     val localeTag by viewModel.localeTag.collectAsStateWithLifecycle()
+    val biometricEnabled by viewModel.biometricEnabled.collectAsStateWithLifecycle()
     var showLanguagePicker by remember { mutableStateOf(false) }
+    // Known-gaps B2: flipping ON re-confirms via the post-sign-in dialog
+    // (reused verbatim); flipping OFF acts immediately.
+    var showBiometricDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -145,6 +151,42 @@ fun AccountScreen(
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+        // Known-gaps B2: biometric-unlock toggle — the settings writer the
+        // Task 8.2 opt-in never had. Hidden on devices with no STRONG sensor.
+        // Tapping the switch ON only re-arms after the confirmation dialog;
+        // the checked state follows the ViewModel, so a failed enable never
+        // leaves the switch lying.
+        if (viewModel.biometricAvailable) {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(
+                        Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.account_biometric_title),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        Text(
+                            text = stringResource(R.string.account_biometric_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Switch(
+                        checked = biometricEnabled,
+                        onCheckedChange = { wantsEnabled ->
+                            if (wantsEnabled) showBiometricDialog = true else viewModel.disableBiometric()
+                        },
+                    )
+                }
             }
         }
 
@@ -316,6 +358,16 @@ fun AccountScreen(
                 viewModel.setLocale(tag)
             },
             onDismiss = { showLanguagePicker = false },
+        )
+    }
+
+    if (showBiometricDialog) {
+        EnableBiometricDialog(
+            onEnable = {
+                showBiometricDialog = false
+                viewModel.enableBiometric()
+            },
+            onSkip = { showBiometricDialog = false },
         )
     }
 }

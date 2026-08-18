@@ -1,8 +1,9 @@
 // apps/android/app/src/main/java/com/mishran/app/ui/auth/PhoneEntryScreen.kt — Task 8.1.
 //
 // Phone-entry screen: country dial-code chip + national number → Send OTP.
-// A success result hands the server requestId to [onOtpSent] (the NavGraph
-// routes to the OTP screen). The layout is a single focused column — this is
+// A success result hands the server requestId + the composed phone to
+// [onOtpSent] (the NavGraph routes to the OTP screen, which resends in
+// place). The layout is a single focused column — this is
 // the front door, so it carries the brand wordmark and nothing that competes
 // for attention.
 package com.mishran.app.ui.auth
@@ -50,7 +51,7 @@ import com.mishran.app.ui.common.UiState
 @Composable
 fun PhoneEntryScreen(
     viewModel: PhoneEntryViewModel = hiltViewModel(),
-    onOtpSent: (requestId: String) -> Unit,
+    onOtpSent: (requestId: String, phone: String) -> Unit,
 ) {
     val selectedCountry by viewModel.selectedCountry.collectAsStateWithLifecycle()
     val nationalNumber by viewModel.nationalNumber.collectAsStateWithLifecycle()
@@ -61,10 +62,11 @@ fun PhoneEntryScreen(
 
     // Fire navigation exactly once per success, then return to Idle so a
     // configuration change (or back-and-forth) doesn't replay the navigation.
+    // The composed phone rides along so the OTP screen can resend in place.
     LaunchedEffect(state) {
         val success = state as? UiState.Success
         if (success != null) {
-            onOtpSent(success.data.requestId)
+            onOtpSent(success.data.requestId, viewModel.e164)
             viewModel.consumeState()
         }
     }

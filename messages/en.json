@@ -530,6 +530,8 @@
   "Orders": {
     "heading": "Recent orders",
     "loadError": "We couldn't load your orders. Please refresh the page.",
+    "loadMore": "Load more",
+    "showing": "Showing {shown} of {total} orders",
     "empty": "No orders yet.",
     "emptyCta": "Browse mithai",
     "reference": "Order #{ref}",

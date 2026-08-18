@@ -7,6 +7,7 @@
 // truth — no drift between the manifest intent-filter and the NavHost.
 package com.mishran.app.navigation
 
+import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -19,7 +20,8 @@ import com.mishran.app.R
 object Routes {
     const val SPLASH = "splash"
     const val AUTH_PHONE = "auth/phone"
-    const val AUTH_OTP = "auth/otp/{requestId}"
+    /** OTP verify; `phone` rides along so resend can re-send in place. */
+    const val AUTH_OTP = "auth/otp/{requestId}?phone={phone}"
     const val HOME = "home"
     /** Pattern with optional family filter + vertical tab args (Home deep links). */
     const val CATALOG = "catalog?family={family}&vertical={vertical}"
@@ -45,7 +47,12 @@ object Routes {
     /** Deep-link URI pattern — must stay in lockstep with the manifest intent-filter. */
     const val ORDER_DEEPLINK_PATTERN = "mishran://order/{id}"
 
-    fun authOtp(requestId: String): String = "auth/otp/$requestId"
+    /**
+     * Built AUTH_OTP route. The E.164 phone carries a "+", which some query
+     * parsers read as a space — encode it, and Navigation decodes on arg read.
+     */
+    fun authOtp(requestId: String, phone: String): String =
+        "auth/otp/$requestId?phone=${Uri.encode(phone)}"
 
     /**
      * Built CATALOG route: bare "catalog" (all families, Mithai tab) or with

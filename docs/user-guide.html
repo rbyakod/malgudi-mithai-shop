@@ -262,8 +262,9 @@
       <code>+919876543210</code>, the app figures out the country and strips the code.</li>
       <li><strong>Send OTP</strong> → enter the 6-digit code → <strong>Verify</strong>. There's
       also a <strong>Sign in with Apple</strong> button that skips OTP entirely.</li>
-      <li>To resend, tap <strong>"Wrong number? Start over"</strong> (there is no in-place
-      resend on iOS yet).</li>
+      <li>If the code doesn't arrive, <strong>Resend code</strong> re-sends right on the code
+      screen (available after a 30-second countdown). <strong>Wrong number? Start over</strong>
+      returns to the phone screen.</li>
     </ol>
 
     <h3>Android</h3>
@@ -271,8 +272,8 @@
       <li>Sign-in is the first screen — there's no guest browsing.</li>
       <li>Same country picker as iOS (default 🇮🇳 +91, searchable, paste-tolerant).</li>
       <li><strong>Send OTP</strong> → the code field often <strong>fills itself in</strong>
-      (SMS Retriever auto-read; no SMS permission is used). <strong>Resend code</strong> pops
-      you back to the phone screen to trigger a new code.</li>
+      (SMS Retriever auto-read; no SMS permission is used). <strong>Resend code</strong> re-sends
+      right on the code screen after a 30-second countdown.</li>
       <li>After verifying, Android offers <strong>biometric login</strong> (fingerprint/face)
       for next time — Enable or Skip. On later launches, a system biometric prompt unlocks the
       app if enabled.</li>
@@ -461,7 +462,8 @@
       <li><strong>Order statuses</strong> (same vocabulary everywhere): Placed → Awaiting
       payment → Confirmed → Packed → Dispatched → Out for delivery → Delivered, plus Cancelled
       / Payment failed / Returned / Delivery failed / Abandoned.</li>
-      <li><strong>Web</strong>: <code>/account</code> lists your last 10 orders;
+      <li><strong>Web</strong>: <code>/account</code> shows your 10 most recent orders with a
+      <strong>Load more</strong> button to page through the full history;
       <code>/track-order</code> is a shortcut to the same list; each order's receipt page shows
       items, totals, <strong>Order again</strong> (one tap puts everything back in the cart),
       and — once delivered — a <strong>star-rating review form</strong> per item (reviews are
@@ -486,6 +488,11 @@
       your verified phone and sign-out. There's no profile editor anywhere yet.</li>
       <li><strong>Addresses</strong>: add / set-default / delete on all platforms, with
       Home/Work/Other tags. Serviceability badges per address on web.</li>
+      <li><strong>Biometric unlock</strong>: both apps have a toggle in Account (iOS:
+      Preferences; Android: beside Language). Turning it on stores your session behind the
+      device's fingerprint/face check, so the next launch unlocks with biometrics instead of
+      a code; turning it off returns to normal sign-in. Hidden on devices with no enrolled
+      fingerprint or face.</li>
       <li><strong>Loyalty</strong>: two delivered orders earn <strong>Silver</strong>, five
       earn <strong>Gold</strong>. Web shows your tier progress on <code>/account</code>; iOS
       can add the loyalty card to <strong>Apple Wallet</strong> once earned; Android doesn't
@@ -555,7 +562,7 @@
       needs a connection. Orders stay readable offline on Android (hourly refresh) and reload
       on iOS when online.</li>
       <li><strong>iOS extras</strong>: Sign in with Apple · Live Activity for deliveries ·
-      Apple Wallet loyalty pass · light-mode-locked design.</li>
+      Apple Wallet loyalty pass · biometric unlock toggle · light-mode-locked design.</li>
       <li><strong>Android extras</strong>: biometric unlock · SMS auto-fill of the OTP ·
       order-status home-screen widget · system dark mode · deep link
       <code>mishran://order/{id}</code>.</li>
@@ -614,14 +621,10 @@
         <li><strong>Apps don't show delivery fees or free-delivery thresholds in the cart</strong>
         — fees appear on the priced order at checkout/after payment. Web shows the full
         estimate.</li>
-        <li><strong>iOS OTP has no in-place resend</strong> (use "Wrong number? Start over");
-        Android's resend returns you to the phone screen.</li>
         <li><strong>No guest checkout on web</strong> and no guest browsing on Android; iOS
         allows browsing without sign-in.</li>
-        <li><strong>Biometric unlock</strong>: offered on Android after sign-in; the iOS
-        equivalent exists internally but has no settings toggle yet.</li>
         <li><strong>Web Build-a-gift is a quote form</strong>, not an interactive box builder
-        (deferred).</li>
+        (by design — the team prices every bespoke box before packing).</li>
       </ul>
     </div>
   </section>
