@@ -95,6 +95,8 @@
   "orders.status.cancelled": "ਰੱਦ",
   "orders.status.payment_failed": "ਭੁਗਤਾਨ ਅਸਫਲ",
   "orders.reorder": "ਦੁਬਾਰਾ ਆਰਡਰ ਕਰੋ",
+  "orders.reorder.added": "ਕਾਰਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ",
+  "orders.reorder.added_partial": "{total} ਵਿੱਚੋਂ {added} ਆਈਟਮ ਸ਼ਾਮਲ ਕੀਤੇ",
   "orders.view_details": "ਵੇਰਵੇ ਵੇਖੋ",
   "orders.track": "ਟਰੈਕ",
   "account.title": "ਖਾਤਾ",

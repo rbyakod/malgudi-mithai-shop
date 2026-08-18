@@ -95,6 +95,8 @@
 "orders.status.cancelled" = "ரத்து செய்யப்பட்டது";
 "orders.status.payment_failed" = "பணப்பரிமாற்றம் தோல்வி";
 "orders.reorder" = "மீண்டும் ஆர்டர்";
+"orders.reorder.added" = "கார்ட்டில் சேர்க்கப்பட்டது";
+"orders.reorder.added_partial" = "{total} இல் {added} பொருட்கள் சேர்க்கப்பட்டன";
 "orders.view_details" = "விவரங்களைப் பார்";
 "orders.track" = "கண்காணி";
 "account.title" = "கணக்கு";

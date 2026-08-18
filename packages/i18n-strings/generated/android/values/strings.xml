@@ -96,6 +96,8 @@
   <string name="orders_status_cancelled">Cancelled</string>
   <string name="orders_status_payment_failed">Payment failed</string>
   <string name="orders_reorder">Reorder</string>
+  <string name="orders_reorder_added">Added to cart</string>
+  <string name="orders_reorder_added_partial">%1$s of %2$s items added</string>
   <string name="orders_view_details">View details</string>
   <string name="orders_track">Track</string>
   <string name="account_title">Account</string>

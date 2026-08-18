@@ -95,6 +95,8 @@
 "orders.status.cancelled" = "ರದ್ದಾಗಿದೆ";
 "orders.status.payment_failed" = "ಪಾವತಿ ವಿಫಲ";
 "orders.reorder" = "ಮರು ಆರ್ಡರ್";
+"orders.reorder.added" = "ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಲಾಗಿದೆ";
+"orders.reorder.added_partial" = "{total} ರಲ್ಲಿ {added} ಐಟಂ ಸೇರಿಸಲಾಗಿದೆ";
 "orders.view_details" = "ವಿವರ ನೋಡಿ";
 "orders.track" = "ಟ್ರ್ಯಾಕ್";
 "account.title" = "ಖಾತೆ";

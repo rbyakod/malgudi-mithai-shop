@@ -96,6 +96,8 @@
   <string name="orders_status_cancelled">રદ</string>
   <string name="orders_status_payment_failed">ચુકવણી નિષ્ફળ</string>
   <string name="orders_reorder">ફરી ઑર્ડર કરો</string>
+  <string name="orders_reorder_added">કાર્ટમાં ઉમેરાયું</string>
+  <string name="orders_reorder_added_partial">%1$s માંથી %2$s વસ્તુઓ ઉમેરાઈ</string>
   <string name="orders_view_details">વિગતો જુઓ</string>
   <string name="orders_track">ટ્રૅક</string>
   <string name="account_title">એકાઉન્ટ</string>

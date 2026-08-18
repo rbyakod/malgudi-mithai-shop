@@ -95,6 +95,8 @@
 "orders.status.cancelled" = "रद्द";
 "orders.status.payment_failed" = "भुगतान विफल";
 "orders.reorder" = "पुनः ऑर्डर";
+"orders.reorder.added" = "कार्ट में जोड़ा गया";
+"orders.reorder.added_partial" = "{total} में से {added} आइटम जोड़े गए";
 "orders.view_details" = "विवरण देखें";
 "orders.track" = "ट्रैक";
 "account.title" = "खाता";

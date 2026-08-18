@@ -95,6 +95,8 @@
 "orders.status.cancelled" = "Cancelled";
 "orders.status.payment_failed" = "Payment failed";
 "orders.reorder" = "Reorder";
+"orders.reorder.added" = "Added to cart";
+"orders.reorder.added_partial" = "{added} of {total} items added";
 "orders.view_details" = "View details";
 "orders.track" = "Track";
 "account.title" = "Account";

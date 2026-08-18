@@ -96,6 +96,8 @@
   <string name="orders_status_cancelled">ਰੱਦ</string>
   <string name="orders_status_payment_failed">ਭੁਗਤਾਨ ਅਸਫਲ</string>
   <string name="orders_reorder">ਦੁਬਾਰਾ ਆਰਡਰ ਕਰੋ</string>
+  <string name="orders_reorder_added">ਕਾਰਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ</string>
+  <string name="orders_reorder_added_partial">%1$s ਵਿੱਚੋਂ %2$s ਆਈਟਮ ਸ਼ਾਮਲ ਕੀਤੇ</string>
   <string name="orders_view_details">ਵੇਰਵੇ ਵੇਖੋ</string>
   <string name="orders_track">ਟਰੈਕ</string>
   <string name="account_title">ਖਾਤਾ</string>

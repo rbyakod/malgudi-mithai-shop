@@ -96,6 +96,8 @@
   <string name="orders_status_cancelled">రద్దు చేయబడింది</string>
   <string name="orders_status_payment_failed">చెల్లింపు విఫలం</string>
   <string name="orders_reorder">మళ్లీ ఆర్డర్</string>
+  <string name="orders_reorder_added">కార్టుకు జోడించబడింది</string>
+  <string name="orders_reorder_added_partial">%1$s లో %2$s ఐటమ్‌లు జోడించబడ్డాయి</string>
   <string name="orders_view_details">వివరాలు చూడండి</string>
   <string name="orders_track">ట్రాక్</string>
   <string name="account_title">ఖాతా</string>

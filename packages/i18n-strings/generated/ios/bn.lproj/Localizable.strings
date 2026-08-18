@@ -95,6 +95,8 @@
 "orders.status.cancelled" = "বাতিল";
 "orders.status.payment_failed" = "পেমেন্ট ব্যর্থ";
 "orders.reorder" = "আবার অর্ডার করুন";
+"orders.reorder.added" = "কার্টে যোগ করা হয়েছে";
+"orders.reorder.added_partial" = "{total} এর মধ্যে {added}টি আইটেম যোগ করা হয়েছে";
 "orders.view_details" = "বিস্তারিত দেখুন";
 "orders.track" = "ট্র্যাক";
 "account.title" = "অ্যাকাউন্ট";

@@ -95,6 +95,8 @@
   "orders.status.cancelled": "रद्द",
   "orders.status.payment_failed": "पेमेंट अयशस्वी",
   "orders.reorder": "पुन्हा ऑर्डर करा",
+  "orders.reorder.added": "कार्टमध्ये जोडले",
+  "orders.reorder.added_partial": "{total} पैकी {added} वस्तू जोडल्या",
   "orders.view_details": "तपशील पहा",
   "orders.track": "ट्रॅक",
   "account.title": "खाते",

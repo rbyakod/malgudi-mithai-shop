@@ -95,6 +95,8 @@
   "orders.status.cancelled": "રદ",
   "orders.status.payment_failed": "ચુકવણી નિષ્ફળ",
   "orders.reorder": "ફરી ઑર્ડર કરો",
+  "orders.reorder.added": "કાર્ટમાં ઉમેરાયું",
+  "orders.reorder.added_partial": "{total} માંથી {added} વસ્તુઓ ઉમેરાઈ",
   "orders.view_details": "વિગતો જુઓ",
   "orders.track": "ટ્રૅક",
   "account.title": "એકાઉન્ટ",

@@ -96,6 +96,8 @@
   <string name="orders_status_cancelled">বাতিল</string>
   <string name="orders_status_payment_failed">পেমেন্ট ব্যর্থ</string>
   <string name="orders_reorder">আবার অর্ডার করুন</string>
+  <string name="orders_reorder_added">কার্টে যোগ করা হয়েছে</string>
+  <string name="orders_reorder_added_partial">%1$s এর মধ্যে %2$sটি আইটেম যোগ করা হয়েছে</string>
   <string name="orders_view_details">বিস্তারিত দেখুন</string>
   <string name="orders_track">ট্র্যাক</string>
   <string name="account_title">অ্যাকাউন্ট</string>

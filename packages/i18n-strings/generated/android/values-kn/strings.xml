@@ -96,6 +96,8 @@
   <string name="orders_status_cancelled">ರದ್ದಾಗಿದೆ</string>
   <string name="orders_status_payment_failed">ಪಾವತಿ ವಿಫಲ</string>
   <string name="orders_reorder">ಮರು ಆರ್ಡರ್</string>
+  <string name="orders_reorder_added">ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಲಾಗಿದೆ</string>
+  <string name="orders_reorder_added_partial">%1$s ರಲ್ಲಿ %2$s ಐಟಂ ಸೇರಿಸಲಾಗಿದೆ</string>
   <string name="orders_view_details">ವಿವರ ನೋಡಿ</string>
   <string name="orders_track">ಟ್ರ್ಯಾಕ್</string>
   <string name="account_title">ಖಾತೆ</string>

@@ -96,6 +96,8 @@
   <string name="orders_status_cancelled">रद्द</string>
   <string name="orders_status_payment_failed">भुगतान विफल</string>
   <string name="orders_reorder">पुनः ऑर्डर</string>
+  <string name="orders_reorder_added">कार्ट में जोड़ा गया</string>
+  <string name="orders_reorder_added_partial">%1$s में से %2$s आइटम जोड़े गए</string>
   <string name="orders_view_details">विवरण देखें</string>
   <string name="orders_track">ट्रैक</string>
   <string name="account_title">खाता</string>

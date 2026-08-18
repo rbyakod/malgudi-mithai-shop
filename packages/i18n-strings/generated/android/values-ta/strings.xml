@@ -96,6 +96,8 @@
   <string name="orders_status_cancelled">ரத்து செய்யப்பட்டது</string>
   <string name="orders_status_payment_failed">பணப்பரிமாற்றம் தோல்வி</string>
   <string name="orders_reorder">மீண்டும் ஆர்டர்</string>
+  <string name="orders_reorder_added">கார்ட்டில் சேர்க்கப்பட்டது</string>
+  <string name="orders_reorder_added_partial">%1$s இல் %2$s பொருட்கள் சேர்க்கப்பட்டன</string>
   <string name="orders_view_details">விவரங்களைப் பார்</string>
   <string name="orders_track">கண்காணி</string>
   <string name="account_title">கணக்கு</string>

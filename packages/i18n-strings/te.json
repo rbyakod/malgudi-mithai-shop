@@ -95,6 +95,8 @@
   "orders.status.cancelled": "రద్దు చేయబడింది",
   "orders.status.payment_failed": "చెల్లింపు విఫలం",
   "orders.reorder": "మళ్లీ ఆర్డర్",
+  "orders.reorder.added": "కార్టుకు జోడించబడింది",
+  "orders.reorder.added_partial": "{total} లో {added} ఐటమ్‌లు జోడించబడ్డాయి",
   "orders.view_details": "వివరాలు చూడండి",
   "orders.track": "ట్రాక్",
   "account.title": "ఖాతా",
