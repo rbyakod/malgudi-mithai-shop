@@ -71,7 +71,7 @@
   "checkout.slot.today": "ఈ రోజు",
   "checkout.slot.tomorrow": "రేపు",
   "checkout.payment.title": "చెల్లింపు విధానం",
-  "checkout.payment.upi": "UPI",
+  "checkout.payment.upi": "యుపిఐ — GPay / PhonePe / BHIM",
   "checkout.payment.card": "క్రెడిట్ / డెబిట్ కార్డ్",
   "checkout.payment.netbanking": "నెట్ బ్యాంకింగ్",
   "checkout.payment.wallet": "వాలెట్",
@@ -332,5 +332,6 @@
   "reviews.verified": "ధృవీకరించిన కొనుగోలు",
   "reviews.anonymous": "అనామకం",
   "reviews.empty": "ఇంకా రివ్యూలు లేవు",
-  "reviews.more": "+ మరిన్ని {count}"
+  "reviews.more": "+ మరిన్ని {count}",
+  "checkout.payment.methods_label": "యుపిఐ / కార్డ్‌లు / నెట్‌బ్యాంకింగ్ — Razorpay ద్వారా"
 }

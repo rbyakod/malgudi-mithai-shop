@@ -71,7 +71,7 @@
   "checkout.slot.today": "இன்று",
   "checkout.slot.tomorrow": "நாளை",
   "checkout.payment.title": "பணம் செலுத்தும் முறை",
-  "checkout.payment.upi": "UPI",
+  "checkout.payment.upi": "யுபிஐ — GPay / PhonePe / BHIM",
   "checkout.payment.card": "கிரெடிட் / டெபிட் கார்டு",
   "checkout.payment.netbanking": "நெட் பேங்கிங்",
   "checkout.payment.wallet": "வாலட்",
@@ -332,5 +332,6 @@
   "reviews.verified": "சரிபார்க்கப்பட்ட வாங்குதல்",
   "reviews.anonymous": "அநாமதேயம்",
   "reviews.empty": "இன்னும் விமர்சனங்கள் இல்லை",
-  "reviews.more": "+ மேலும் {count}"
+  "reviews.more": "+ மேலும் {count}",
+  "checkout.payment.methods_label": "யுபிஐ / கார்டு / நெட்பேங்கிங் — Razorpay வழியாக"
 }

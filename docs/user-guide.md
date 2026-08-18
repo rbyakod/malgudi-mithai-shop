@@ -262,11 +262,22 @@ with a message and you can pay straight away; removing a code re-checks
 the cart so the discount disappears. On iOS, **Apply** stays disabled
 until an address is picked (validation needs its pincode).
 
+**UPI on each surface**: on the **web** the dedicated UPI choice opens
+Razorpay with UPI as the only method (one-tap app list on your phone, QR
+on desktop). In the **Android app** the Razorpay sheet's UPI tab lists
+your installed UPI apps — GPay, PhonePe, BHIM — for a one-tap pay; the
+UPI chip records your preference and the sheet still offers every
+method. The **iOS app** opens the same sheet with its UPI tab (entering
+any UPI ID keeps working there — Razorpay exempts iOS from the 2026
+collect deprecation); neither mobile SDK can pre-select a method, so no
+per-app deep links are promised on either app.
+
 **Android**: Checkout shows saved addresses (add them from Account →
 Saved addresses first), a serviceability readout ("Fresh — same-day
 network" / "Shelf — shipped"), slot chips on the fresh tier, a coupon
 field (above) just above the CTA, and a payment preference (UPI / card /
-netbanking / wallet — the Razorpay sheet collects the actual payment).
+netbanking / wallet — the Razorpay sheet collects the actual payment and
+always offers every method).
 The CTA tells you what's missing ("Select a delivery address" → "Pick a
 delivery slot" → "Place order"). Android verifies the payment signature
 server-side before confirming.
@@ -460,3 +471,12 @@ So nobody hunts for what isn't there:
   apps let you browse and fill a cart without signing in; ordering asks.
 - **Web Build-a-gift is a quote form**, not an interactive box builder
   (by design — the team prices every bespoke box before packing).
+- **Paid checkout is TEST-mode-only until real Razorpay TEST keys land**
+  — order creation for online/UPI payment currently runs against a
+  placeholder secret, so the paid flow can't be exercised end-to-end;
+  COD and everything after payment (verify → status → console) are live
+  and verified. (Blocked on the real key pair.)
+- **COD UI exists on web only** — the server accepts cash orders from any
+  client (`POST /orders/cod`), but the apps' checkout still offers the
+  Razorpay sheet alone; adding a COD toggle to the apps is the next
+  commerce batch.

@@ -72,7 +72,7 @@
   <string name="checkout_slot_today">ಇಂದು</string>
   <string name="checkout_slot_tomorrow">ನಾಳೆ</string>
   <string name="checkout_payment_title">ಪಾವತಿ ವಿಧಾನ</string>
-  <string name="checkout_payment_upi">UPI</string>
+  <string name="checkout_payment_upi">ಯುಪಿಐ — GPay / PhonePe / BHIM</string>
   <string name="checkout_payment_card">ಕ್ರೆಡಿಟ್ / ಡೆಬಿಟ್ ಕಾರ್ಡ್</string>
   <string name="checkout_payment_netbanking">ನೆಟ್‌ಬ್ಯಾಂಕಿಂಗ್</string>
   <string name="checkout_payment_wallet">ವಾಲೆಟ್</string>
@@ -334,4 +334,5 @@
   <string name="reviews_anonymous">ಅನಾಮಧೇಯ</string>
   <string name="reviews_empty">ಇನ್ನೂ ಯಾವುದೇ ವಿಮರ್ಶೆ ಇಲ್ಲ</string>
   <string name="reviews_more">+ ಇನ್ನೂ %1$s</string>
+  <string name="checkout_payment_methods_label">ಯುಪಿಐ / ಕಾರ್ಡ್ / ನೆಟ್‌ಬ್ಯಾಂಕಿಂಗ್ — Razorpay ಮೂಲಕ</string>
 </resources>

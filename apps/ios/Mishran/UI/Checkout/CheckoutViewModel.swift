@@ -62,7 +62,10 @@ final class CheckoutViewModel {
 
         var displayName: String {
             switch self {
-            case .razorpay: "Razorpay (UPI / cards / netbanking)"
+            // B15: localized (was a hardcoded string); UPI leads because the
+            // sheet opens with every method available — the iOS SDK exposes
+            // no method preselect, so the label is the only emphasis.
+            case .razorpay: L("checkout.payment.methods_label")
             }
         }
     }

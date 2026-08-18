@@ -71,7 +71,7 @@
 "checkout.slot.today" = "आज";
 "checkout.slot.tomorrow" = "कल";
 "checkout.payment.title" = "भुगतान विधि";
-"checkout.payment.upi" = "यूपीआई";
+"checkout.payment.upi" = "यूपीआई — GPay / PhonePe / BHIM";
 "checkout.payment.card" = "क्रेडिट / डेबिट कार्ड";
 "checkout.payment.netbanking" = "नेटबैंकिंग";
 "checkout.payment.wallet" = "वॉलेट";
@@ -333,3 +333,4 @@
 "reviews.anonymous" = "गुमनाम";
 "reviews.empty" = "अभी कोई समीक्षा नहीं";
 "reviews.more" = "+ और {count}";
+"checkout.payment.methods_label" = "यूपीआई / कार्ड / नेटबैंकिंग — Razorpay से";

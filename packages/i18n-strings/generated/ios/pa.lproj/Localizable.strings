@@ -71,7 +71,7 @@
 "checkout.slot.today" = "ਅੱਜ";
 "checkout.slot.tomorrow" = "ਕੱਲ੍ਹ";
 "checkout.payment.title" = "ਭੁਗਤਾਨ ਢੰਗ";
-"checkout.payment.upi" = "UPI";
+"checkout.payment.upi" = "ਯੂਪੀਆਈ — GPay / PhonePe / BHIM";
 "checkout.payment.card" = "ਕ੍ਰੈਡਿਟ / ਡੈਬਿਟ ਕਾਰਡ";
 "checkout.payment.netbanking" = "ਨੈੱਟ ਬੈਂਕਿੰਗ";
 "checkout.payment.wallet" = "ਵਾਲਿਟ";
@@ -333,3 +333,4 @@
 "reviews.anonymous" = "ਗੁਮਨਾਮ";
 "reviews.empty" = "ਹਾਲੇ ਕੋਈ ਸਮੀਖਿਆ ਨਹੀਂ";
 "reviews.more" = "+ ਹੋਰ {count}";
+"checkout.payment.methods_label" = "ਯੂਪੀਆਈ / ਕਾਰਡ / ਨੈੱਟਬੈਂਕਿੰਗ — Razorpay ਰਾਹੀਂ";

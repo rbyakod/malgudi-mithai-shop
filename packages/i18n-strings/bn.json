@@ -71,7 +71,7 @@
   "checkout.slot.today": "আজ",
   "checkout.slot.tomorrow": "আগামীকাল",
   "checkout.payment.title": "পেমেন্ট পদ্ধতি",
-  "checkout.payment.upi": "UPI",
+  "checkout.payment.upi": "ইউপিআই — GPay / PhonePe / BHIM",
   "checkout.payment.card": "ক্রেডিট / ডেবিট কার্ড",
   "checkout.payment.netbanking": "নেট ব্যাঙ্কিং",
   "checkout.payment.wallet": "ওয়ালেট",
@@ -332,5 +332,6 @@
   "reviews.verified": "ভেরিফায়েড কেনা",
   "reviews.anonymous": "অজ্ঞাতনামা",
   "reviews.empty": "এখনও কোনো রিভিউ নেই",
-  "reviews.more": "+ আরও {count}"
+  "reviews.more": "+ আরও {count}",
+  "checkout.payment.methods_label": "ইউপিআই / কার্ড / নেটব্যাঙ্কিং — Razorpay-এর মাধ্যমে"
 }

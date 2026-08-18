@@ -72,7 +72,7 @@
   <string name="checkout_slot_today">Today</string>
   <string name="checkout_slot_tomorrow">Tomorrow</string>
   <string name="checkout_payment_title">Payment method</string>
-  <string name="checkout_payment_upi">UPI</string>
+  <string name="checkout_payment_upi">UPI — GPay / PhonePe / BHIM</string>
   <string name="checkout_payment_card">Credit / Debit card</string>
   <string name="checkout_payment_netbanking">Netbanking</string>
   <string name="checkout_payment_wallet">Wallet</string>
@@ -334,4 +334,5 @@
   <string name="reviews_anonymous">Anonymous</string>
   <string name="reviews_empty">No reviews yet</string>
   <string name="reviews_more">+ %1$s more</string>
+  <string name="checkout_payment_methods_label">UPI / cards / netbanking — via Razorpay</string>
 </resources>

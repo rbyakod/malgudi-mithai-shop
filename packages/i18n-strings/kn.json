@@ -71,7 +71,7 @@
   "checkout.slot.today": "ಇಂದು",
   "checkout.slot.tomorrow": "ನಾಳೆ",
   "checkout.payment.title": "ಪಾವತಿ ವಿಧಾನ",
-  "checkout.payment.upi": "UPI",
+  "checkout.payment.upi": "ಯುಪಿಐ — GPay / PhonePe / BHIM",
   "checkout.payment.card": "ಕ್ರೆಡಿಟ್ / ಡೆಬಿಟ್ ಕಾರ್ಡ್",
   "checkout.payment.netbanking": "ನೆಟ್‌ಬ್ಯಾಂಕಿಂಗ್",
   "checkout.payment.wallet": "ವಾಲೆಟ್",
@@ -332,5 +332,6 @@
   "reviews.verified": "ಪರಿಶೀಲಿಸಿದ ಖರೀದಿ",
   "reviews.anonymous": "ಅನಾಮಧೇಯ",
   "reviews.empty": "ಇನ್ನೂ ಯಾವುದೇ ವಿಮರ್ಶೆ ಇಲ್ಲ",
-  "reviews.more": "+ ಇನ್ನೂ {count}"
+  "reviews.more": "+ ಇನ್ನೂ {count}",
+  "checkout.payment.methods_label": "ಯುಪಿಐ / ಕಾರ್ಡ್ / ನೆಟ್‌ಬ್ಯಾಂಕಿಂಗ್ — Razorpay ಮೂಲಕ"
 }

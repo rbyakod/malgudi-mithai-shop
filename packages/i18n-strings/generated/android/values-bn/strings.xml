@@ -72,7 +72,7 @@
   <string name="checkout_slot_today">আজ</string>
   <string name="checkout_slot_tomorrow">আগামীকাল</string>
   <string name="checkout_payment_title">পেমেন্ট পদ্ধতি</string>
-  <string name="checkout_payment_upi">UPI</string>
+  <string name="checkout_payment_upi">ইউপিআই — GPay / PhonePe / BHIM</string>
   <string name="checkout_payment_card">ক্রেডিট / ডেবিট কার্ড</string>
   <string name="checkout_payment_netbanking">নেট ব্যাঙ্কিং</string>
   <string name="checkout_payment_wallet">ওয়ালেট</string>
@@ -334,4 +334,5 @@
   <string name="reviews_anonymous">অজ্ঞাতনামা</string>
   <string name="reviews_empty">এখনও কোনো রিভিউ নেই</string>
   <string name="reviews_more">+ আরও %1$s</string>
+  <string name="checkout_payment_methods_label">ইউপিআই / কার্ড / নেটব্যাঙ্কিং — Razorpay-এর মাধ্যমে</string>
 </resources>

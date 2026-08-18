@@ -71,7 +71,7 @@
   "checkout.slot.today": "Today",
   "checkout.slot.tomorrow": "Tomorrow",
   "checkout.payment.title": "Payment method",
-  "checkout.payment.upi": "UPI",
+  "checkout.payment.upi": "UPI — GPay / PhonePe / BHIM",
   "checkout.payment.card": "Credit / Debit card",
   "checkout.payment.netbanking": "Netbanking",
   "checkout.payment.wallet": "Wallet",
@@ -332,5 +332,6 @@
   "reviews.verified": "Verified purchase",
   "reviews.anonymous": "Anonymous",
   "reviews.empty": "No reviews yet",
-  "reviews.more": "+ {count} more"
+  "reviews.more": "+ {count} more",
+  "checkout.payment.methods_label": "UPI / cards / netbanking — via Razorpay"
 }
