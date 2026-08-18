@@ -29,6 +29,7 @@
     "seed:branding": "node --env-file=.env --import tsx scripts/seed-branding.ts",
     "seed:staging": "node --env-file=.env --import tsx scripts/seed-staging.ts",
     "seed:pincodes": "node --env-file=.env --import tsx scripts/seed-pincodes.ts",
+    "seed:coupons": "node --env-file=.env --import tsx scripts/seed-coupons.ts",
     "backfill:giftbox-price": "node --env-file=.env --import tsx scripts/backfill-giftbox-price.ts",
     "media:health": "node scripts/check-media-health.mjs",
     "regen:importmap": "node --import tsx scripts/regen-importmap.mjs",
