@@ -19,8 +19,8 @@ export type HeroCarousel = {
   goNext: () => void;
   regionRef: React.RefObject<HTMLDivElement | null>;
   pauseProps: {
-    onMouseEnter: () => void;
-    onMouseLeave: () => void;
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
     onFocus: () => void;
     onBlur: (e: React.FocusEvent<HTMLDivElement>) => void;
   };
@@ -31,9 +31,19 @@ export type HeroCarousel = {
 export function useHeroCarousel({
   count,
   intervalMs: requestedMs,
+  hoverPause = true,
 }: {
   count: number;
   intervalMs?: number;
+  /**
+   * Pause autoplay while the cursor is over the region. Right for the
+   * framed card (hovering signals "I'm about to click"); wrong for the
+   * full-bleed cinematic band, which fills most of the viewport — a
+   * resting cursor sits "over" it incidentally, freezing the carousel
+   * indefinitely. Cinematic opts out; focus/off-screen pausing still
+   * applies everywhere.
+   */
+  hoverPause?: boolean;
 }): HeroCarousel {
   const intervalMs =
     requestedMs && requestedMs > 0 ? requestedMs : DEFAULT_AUTOPLAY_MS;
@@ -103,8 +113,12 @@ export function useHeroCarousel({
     goNext,
     regionRef,
     pauseProps: {
-      onMouseEnter: () => setPaused(true),
-      onMouseLeave: () => setPaused(false),
+      ...(hoverPause
+        ? {
+            onMouseEnter: () => setPaused(true),
+            onMouseLeave: () => setPaused(false),
+          }
+        : {}),
       onFocus: () => setPaused(true),
       onBlur: (e) => {
         // Only resume when focus leaves the carousel entirely.

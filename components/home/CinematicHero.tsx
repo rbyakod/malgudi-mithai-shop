@@ -39,6 +39,10 @@ export function CinematicHero({
   const {active, go, regionRef, pauseProps, intervalMs} = useHeroCarousel({
     count: slides.length,
     intervalMs: autoplayMs,
+    // The band fills most of the viewport — a resting cursor is almost
+    // always over it, so hover-pause would freeze the carousel for anyone
+    // reading the headline. Focus (keyboard) + off-screen pausing remain.
+    hoverPause: false,
   });
 
   if (slides.length === 0) return null;

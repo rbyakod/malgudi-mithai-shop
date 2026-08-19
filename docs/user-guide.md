@@ -88,8 +88,11 @@ There are no passwords anywhere — you sign in with a phone number and a
   - **Cinematic**: a full-width image band with the headline, gold
     **Explore mithai** button, and a product chip (name + price + **Add
     to cart**) over the photo.
-  Both auto-advance every 5 seconds, pause on hover/focus, and honor your
-  device's reduced-motion setting (autoplay and the drift stop entirely).
+  Both auto-advance every 5 seconds and honor your device's reduced-motion
+  setting (autoplay and the drift stop entirely). The framed card pauses
+  while you hover it — handy right before clicking **Add to cart**; the
+  cinematic band keeps rotating even with the cursor resting on the photo,
+  since the band fills most of the screen (keyboard focus still pauses it).
 - Product photos across the shop (catalog cards, product pages, journal)
   carry the same subtle always-on drift. It's a display effect only —
   photos never change content — and it also switches off with

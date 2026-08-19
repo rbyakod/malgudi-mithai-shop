@@ -63,7 +63,9 @@ export function AdminThemeSwitcher() {
           textTransform: "uppercase",
           letterSpacing: "0.08em",
           marginBottom: "0.3rem",
-          color: "var(--t-text-muted)",
+          // Nav-rail tokens — this control lives on the dark sidebar field
+          // (see --t-nav-* in custom.scss), not the page canvas.
+          color: "var(--t-nav-muted)",
         }}
       >
         Admin theme
@@ -77,9 +79,9 @@ export function AdminThemeSwitcher() {
           width: "100%",
           padding: "0.375rem 0.5rem",
           borderRadius: "6px",
-          border: "1px solid var(--t-border)",
-          background: "var(--t-bg-card)",
-          color: "var(--t-text)",
+          border: "1px solid var(--t-nav-border)",
+          background: "var(--t-nav-hover-bg)",
+          color: "var(--t-nav-text)",
           fontSize: "0.8125rem",
           cursor: "pointer",
         }}

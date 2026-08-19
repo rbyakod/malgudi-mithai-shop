@@ -1,5 +1,5 @@
 import {describe, it, expect, vi, beforeEach, afterEach} from "vitest";
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen, fireEvent, act} from "@testing-library/react";
 import {CinematicHero} from "@/components/home/CinematicHero";
 import type {Slide} from "@/lib/home-hero";
 import type {StorefrontLayoutMode} from "@/lib/storefront-layout";
@@ -160,5 +160,45 @@ describe("CinematicHero", () => {
       priceLabel: "₹800",
       image: "/kaju.jpg",
     });
+  });
+
+  it("keeps autoplaying while the cursor rests on the band (no hover-pause)", () => {
+    // Regression: the band fills most of the viewport, so a reading cursor
+    // is almost always over it — hover-pause froze the carousel for anyone
+    // just looking at the hero. Cinematic opts out of hover-pause.
+    vi.useFakeTimers();
+    renderCinematic();
+    const region = screen.getByRole("group", {name: /featured products/i});
+
+    fireEvent.mouseEnter(region);
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    const dots = screen.getAllByRole("button", {name: /Go to slide/i});
+    expect(dots[1]).toHaveAttribute("aria-current", "true");
+
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(dots[0]).toHaveAttribute("aria-current", "true");
+  });
+
+  it("still pauses autoplay for keyboard focus inside the band", () => {
+    vi.useFakeTimers();
+    renderCinematic();
+    const region = screen.getByRole("group", {name: /featured products/i});
+
+    fireEvent.focus(region);
+    act(() => {
+      vi.advanceTimersByTime(15000);
+    });
+    const dots = screen.getAllByRole("button", {name: /Go to slide/i});
+    expect(dots[0]).toHaveAttribute("aria-current", "true");
+
+    fireEvent.blur(region);
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(dots[1]).toHaveAttribute("aria-current", "true");
   });
 });

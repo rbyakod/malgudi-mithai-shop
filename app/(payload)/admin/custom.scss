@@ -56,6 +56,40 @@ body[data-admin-theme="mishran-monsoon"] {
   --t-danger: #c0392b;
 }
 
+// Sidebar rail tokens — a deliberately deeper field than the canvas so the
+// nav reads as one solid panel (the audit's "sidebar dies into the page").
+// Each theme ships its own five-token set; the .nav rules below consume
+// only these, so all three themes restyle together.
+body[data-admin-theme="mishran-admin"] {
+  --t-nav-bg: #2e1b0f;                       // deep espresso-maroon rail
+  --t-nav-text: #f3e9d6;                     // cream
+  --t-nav-muted: #cdb894;                    // muted cream (resting links)
+  --t-nav-accent: #d79a35;                   // gold (section titles, markers)
+  --t-nav-hover-bg: rgba(243, 233, 214, 0.07);
+  --t-nav-active-bg: rgba(215, 154, 53, 0.16);
+  --t-nav-border: rgba(215, 154, 53, 0.28);
+}
+
+body[data-admin-theme="mishran-midnight"] {
+  --t-nav-bg: #0f0c09;                       // deeper than the midnight canvas
+  --t-nav-text: #f0e6d2;
+  --t-nav-muted: #a89878;
+  --t-nav-accent: #d79a35;
+  --t-nav-hover-bg: rgba(240, 230, 210, 0.06);
+  --t-nav-active-bg: rgba(215, 154, 53, 0.12);
+  --t-nav-border: rgba(215, 154, 53, 0.22);
+}
+
+body[data-admin-theme="mishran-monsoon"] {
+  --t-nav-bg: #17222e;                       // deep slate rail
+  --t-nav-text: #e3ecf5;
+  --t-nav-muted: #9fb2c6;
+  --t-nav-accent: #d79a35;
+  --t-nav-hover-bg: rgba(227, 236, 245, 0.07);
+  --t-nav-active-bg: rgba(215, 154, 53, 0.14);
+  --t-nav-border: rgba(215, 154, 53, 0.24);
+}
+
 // === Map Mishran tokens onto Payload's CSS variables ===
 // Payload 3.x exposes its palette under --theme-elevation-* and --theme-* tokens.
 // Verify exact names in node_modules/@payloadcms/ui/dist/scss/_variables.scss.
@@ -213,4 +247,69 @@ body[data-admin-theme="mishran-monsoon"] {
 @keyframes mishran-skeleton-shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+// === Sidebar rail (follow-up to the 2026-08-18 overhaul) ===
+// The stock sidebar inherits the page canvas — no panel separation, group
+// titles at 13px/400 in a faint border color, links with no active state.
+// Here the rail becomes a solid themed field: deeper than the canvas, gold
+// uppercase section titles, cream links, and a gold marker for the current
+// route. All rules are unlayered so they outrank Payload's
+// @layer payload-default nav styles.
+//
+// Active-route note: Payload 3.87 marks the current collection/global by
+// swapping its nav entry from <a class="nav__link"> to a non-navigable
+// <div class="nav__link"> (no aria-current, no class hook) — so the div
+// variant is the active state, styled below by tag selector.
+.nav {
+  background-color: var(--t-nav-bg);
+  border-right: 1px solid var(--t-nav-border);
+}
+
+// Section titles ("Collections", "05 Settings", …) — bolder, bigger,
+// letterspaced caps in the theme accent instead of the faint border tan.
+.nav .nav-group__toggle {
+  color: var(--t-nav-accent);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--t-nav-text);
+  }
+}
+
+.nav .nav-group__label {
+  // px, not rem — Payload's admin root computes rem values ~25% smaller
+  // than expected (0.75rem → 9.75px), which undid the "bigger" intent.
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.nav .nav-group__indicator svg .stroke {
+  stroke: var(--t-nav-accent);
+}
+
+// Collection links — cream at rest, brighter + tinted row on hover.
+// Inset shadow (not border) so the marker never shifts layout.
+.nav a.nav__link {
+  color: var(--t-nav-muted);
+  font-weight: 500;
+  box-shadow: inset 2px 0 0 transparent;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--t-nav-hover-bg);
+    box-shadow: inset 2px 0 0 var(--t-nav-accent);
+    color: var(--t-nav-text);
+    opacity: 1;
+  }
+}
+
+// Current route (the div variant) — gold bar, tinted row, strongest text.
+.nav div.nav__link {
+  background-color: var(--t-nav-active-bg);
+  box-shadow: inset 3px 0 0 var(--t-nav-accent);
+  color: var(--t-nav-text);
+  font-weight: 600;
 }

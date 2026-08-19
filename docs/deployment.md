@@ -256,6 +256,20 @@ Performance is below target, check:
 - **Region change:** if you move off `bom1`, also move the Atlas cluster to
   match — keep them in the same metro to avoid round-trips on every Payload
   call.
+- **Image cache (VPS nginx):** nginx disk-caches `/_next/image` and
+  `/api/media/file/` responses for 30 days
+  (`/etc/nginx/conf.d/mishran-image-cache.conf` + the two `location` blocks
+  in `/etc/nginx/sites-available/mishran.pranavb.com`; cache lives in
+  `/var/cache/nginx/nextimg`, 2 GB cap). This is what keeps product images
+  instant after app restarts — a cold sharp optimizer takes ~0.7–1s per
+  image and the mithai hub fires ~90 at once, which used to show up as tens
+  of seconds of broken images right after a deploy. `deploy-vps.sh` warms
+  the cache in the background after every deploy
+  (`scripts/warm-image-cache.sh`); manual re-warm:
+  `ssh hermes-vps 'sudo -iu mithai bash -c "cd /opt/mithai-shop && bash scripts/warm-image-cache.sh"'`.
+  Cache-hit status is logged to `/var/log/nginx/imgcache.log`. If nginx is
+  ever rebuilt from scratch, re-create the conf.d file and the two location
+  blocks (backups live beside the originals as `*.bak-20260819`).
 
 ---
 
