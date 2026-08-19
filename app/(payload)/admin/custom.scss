@@ -388,6 +388,45 @@ body[data-admin-theme="mishran-monsoon"] {
   cursor: pointer;
 }
 
+// Keep the admin work surface light. The sidebar can keep its separate dark
+// rail tokens, but the dashboard canvas must stay like the approved white
+// background reference even if an old admin-theme cookie says "midnight".
+body[data-admin-theme] {
+  --t-bg: #ffffff;
+  --t-bg-card: #ffffff;
+  --t-bg-control: #fdf8ed;
+  --t-text: #2a1a0e;
+  --t-text-muted: #6b4f37;
+  --theme-elevation-0: #ffffff;
+  --theme-elevation-50: #ffffff;
+  --theme-elevation-100: #ffffff;
+  --theme-elevation-200: #ffffff;
+  --theme-elevation-450: #7d664c;
+  --theme-elevation-500: #6b4f37;
+  --theme-elevation-550: #6b4f37;
+  --theme-elevation-600: #4c3522;
+  --theme-elevation-700: #3a2818;
+  --theme-elevation-800: #2a1a0e;
+  --theme-elevation-900: #1e1209;
+  --theme-elevation-950: #170d06;
+  --theme-elevation-1000: #100905;
+  --theme-text: #2a1a0e;
+  --color-base-0: #ffffff;
+  --color-base-50: #ffffff;
+  --color-base-100: #ffffff;
+  --color-base-200: #ffffff;
+  --color-base-300: #fdf8ed;
+  --color-base-450: #7d664c;
+  --color-base-500: #6b4f37;
+  --color-base-550: #6b4f37;
+  --color-base-600: #4c3522;
+  --color-base-700: #3a2818;
+  --color-base-800: #2a1a0e;
+  --color-base-900: #1e1209;
+  --color-base-950: #170d06;
+  --color-base-1000: #100905;
+}
+
 // Dashboard command center and audit polish. These rules intentionally avoid
 // changing the dashboard canvas background or the sidebar/navigation styling.
 .mishran-dashboard__hero {
