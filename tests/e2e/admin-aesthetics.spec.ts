@@ -75,22 +75,14 @@ test.describe("Mishran admin aesthetics", () => {
     expect(ADMIN_THEMES).toContain(attr);
   });
 
-  test("settings menu opens + theme switcher changes body attribute", async ({page}) => {
+  test("sidebar theme switcher changes body attribute", async ({page}) => {
     await page.goto("/admin", {waitUntil: "domcontentloaded"});
     await waitForThemeAttr(page);
 
-    // Payload 3.85 settings popup: a header-side Popup component renders the
-    // AdminThemeSwitcher into a popup__hidden-content div. The popup uses
-    // CSS hover/focus to toggle visibility; the hidden content is already
-    // in the DOM. Clicking the trigger via Playwright is defeated by the
-    // dashboard overlay intercepting pointer events, so we drive the select
-    // directly: select the value through a native change event.
-    const popupTrigger = page.locator(".popup.settings-menu-button .popup-button").first();
-    await popupTrigger.click({timeout: 10000, force: true});
-
-    // The select element is in the popup's hidden content. We can't use
-    // Playwright's selectOption (it requires visibility) — instead dispatch
-    // a native change event that React's onChange handler picks up.
+    // Since audit D4 the AdminThemeSwitcher lives in the sidebar
+    // (afterNavLinks), not the header settings popup. The select is a plain
+    // visible control — drive it through a native change event so React's
+    // onChange handler fires (works regardless of RTL wrappers).
     await page.evaluate(() => {
       const sel = document.getElementById("mishran-admin-theme-select") as HTMLSelectElement | null;
       if (!sel) throw new Error("theme select not found");
@@ -140,5 +132,54 @@ test.describe("Mishran admin aesthetics", () => {
     await expect(sidebarNav).toContainText("03 Catalog Ops");
     await expect(sidebarNav).toContainText("04 Storefront");
     await expect(sidebarNav).toContainText("05 Settings");
+  });
+
+  // Audit D9: the dashboard-home crumb is a visible "Admin home" chip,
+  // not the stock 18×18 icon box. Header element — no rail dependency.
+  test("breadcrumb home renders the Admin home chip", async ({page}) => {
+    await page.goto("/admin/collections/addresses", {waitUntil: "domcontentloaded"});
+    const chip = page.locator(".step-nav__home").first();
+    await expect(chip).toBeVisible({timeout: 20000});
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() => {
+            const el = document.querySelector(".step-nav__home");
+            return el ? getComputedStyle(el, "::after").content : null;
+          }),
+        {timeout: 10000},
+      )
+      .toBe('"Admin home"');
+    const width = await chip.evaluate((el) => parseFloat(getComputedStyle(el).width));
+    expect(width).toBeGreaterThan(60); // stock crumb is a fixed 18px box
+  });
+
+  // Audit D8: Cancel on every edit view backs out to the list. A clean
+  // form navigates instantly; if the leave-guard fires (e.g. form already
+  // invalid), accepting it must still land on the list.
+  test("edit views carry Cancel that backs out", async ({page}) => {
+    await page.goto("/admin/collections/addresses/create", {waitUntil: "domcontentloaded"});
+    await page.getByRole("link", {name: "Cancel"}).click();
+    const leaveBtn = page.getByRole("button", {name: /leave anyway/i});
+    try {
+      await leaveBtn.waitFor({state: "visible", timeout: 3000});
+      await leaveBtn.click();
+    } catch {
+      // No modal — clean navigation.
+    }
+    // Payload's list view syncs default params into the URL
+    // (?depth=1&limit=10), so match on path with optional query.
+    await page.waitForURL(/\/admin\/collections\/addresses(\?.*)?$/, {timeout: 15000});
+  });
+
+  // Audit D8: a dirty form must be confirmed before Cancel discards it —
+  // Payload's native LeaveWithoutSaving modal over our link.
+  test("dirty form: Cancel opens the leave-without-saving modal", async ({page}) => {
+    await page.goto("/admin/collections/customers/create", {waitUntil: "domcontentloaded"});
+    await page.getByLabel(/^name$/i).fill("Undo Me");
+    await page.getByRole("link", {name: "Cancel"}).click();
+    await expect(page.getByText(/leave without saving/i)).toBeVisible({timeout: 10000});
+    await page.getByRole("button", {name: /leave anyway/i}).click();
+    await page.waitForURL(/\/admin\/collections\/customers(\?.*)?$/, {timeout: 15000});
   });
 });

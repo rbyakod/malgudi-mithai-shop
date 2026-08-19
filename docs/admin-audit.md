@@ -397,3 +397,61 @@ the cell layer:
   (`scripts/warm-image-cache.sh`, runs as step 5/5 of `scripts/deploy-vps.sh`)
   — this is what ended the broken-image burst on product pages after each
   deploy. Ops notes in `docs/deployment.md` §8.
+
+### D8 — no Cancel on any edit view — fixed
+
+Every create/edit form had Save/Publish but no way to back out (browser-back
+or URL editing was the only escape). Fix: one shared component injected from
+a single place in the config — no per-collection edits.
+
+- `components/payload-admin/actions/CancelAction.tsx` renders a secondary
+  **Cancel** link-button via `beforeDocumentControls`, the slot Payload
+  renders **first in the DocumentControls row — immediately left of
+  Save/Publish — on both create and edit views**.
+- Injection is central (`payload.config.ts`): two typed helpers map over the
+  collections and globals arrays. **The slot key differs by entity type** —
+  collections use `admin.components.edit.beforeDocumentControls`, globals
+  use `admin.components.elements.beforeDocumentControls` (Payload has no
+  `components.edit` on globals; wrong key = silent no-render). Future
+  entities inherit Cancel automatically.
+- Targets: collection → its list; global → dashboard (a global's route *is*
+  its edit view). Relationship "create new" drawers are excluded via
+  `useEditDepth() > 1` — the drawer has its own close control.
+- **Known gap — `/admin/account` has no Cancel.** Payload's AccountView
+  renders `EditView → DefaultEditView` without `renderDocumentSlots`, so it
+  never consumes `beforeDocumentControls` (verified against 3.87.1
+  internals; the slot has exactly one consumer). Wiring Cancel there would
+  mean replacing the entire account view via
+  `admin.components.views.account` — disproportionate for a profile form,
+  and stock Payload offers no back-out there either. Left as-is.
+- **Dirty-form protection is free**: Cancel is a real `<a>` (Payload
+  `Button el="link"`), so the native `LeaveWithoutSaving` guard — a
+  capture-phase document click listener — opens the styled "Leave anyway /
+  Stay on this page" modal before navigating away from a modified or invalid
+  form. No custom confirm code.
+- Covered by 4 unit tests (`tests/unit/payload-admin/CancelAction.test.tsx`,
+  the suite's first `@payloadcms/ui` mock) + 2 e2e tests in
+  `tests/e2e/admin-aesthetics.spec.ts` (clean back-out; dirty-form modal).
+
+### D9 — breadcrumb home crumb unreadable — fixed
+
+The first breadcrumb step (back to the dashboard) is a hardcoded icon-only
+link Payload clamps to 18×18 (`step-nav__home`) — the Mishran crest at 18px
+was effectively invisible. It now renders as a visible chip matching the
+owner's reference: cream pill, brown rounded-square badge with a white "M",
+label **"Admin home"**.
+
+- **Pure CSS** in unlayered `custom.scss` (same cascade mechanism as the
+  `.nav` block — outranks Payload's `@layer payload-default`): `::before`
+  draws the badge, `::after` the label, `width/height: auto` beats the fixed
+  18px box (both viewport breakpoints). Styling the class covers both
+  variants — the `<a>` on sub-pages and the `<div>` on the dashboard root.
+- `admin.components.graphics.Icon` was deliberately **left as CrestIcon**:
+  that slot also feeds Payload's OG-image route (satori render) — replacing
+  the component with a text chip would leak into OG rendering.
+- The crest `<span>` inside the crumb is visually hidden but kept in the
+  a11y tree (it carries the "Dashboard" tooltip). Type is px-based per the
+  admin rem landmine; colors come from `--t-*` tokens so the chip re-skins
+  in all three admin themes.
+- e2e guard: computed `::after` content === "Admin home" and chip width
+  > 60px in `admin-aesthetics.spec.ts`.

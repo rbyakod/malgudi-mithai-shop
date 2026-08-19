@@ -13,6 +13,7 @@ import sharp from "sharp";
 import { mongooseAdapter } from "@payloadcms/db-mongodb";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
+import type { CollectionConfig, GlobalConfig } from "payload";
 
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
@@ -30,6 +31,11 @@ const WordmarkLogoPath = "./components/payload-admin/graphics/WordmarkLogo";
 const MishranLoginHeroPath = "./components/payload-admin/login/MishranLoginHero";
 const MishranDashboardPath = "./components/payload-admin/dashboard/MishranDashboard";
 const AdminThemeSwitcherPath = "./components/payload-admin/theme/AdminThemeSwitcher";
+// Audit D8: every edit view gets a Cancel that backs out (left of
+// Save/Publish). Slot keys differ by entity type — collections use
+// components.edit, globals use components.elements
+// (@payloadcms/next renderDocumentSlots reads both).
+const CancelActionPath = "./components/payload-admin/actions/CancelAction";
 // Product stubs — expanded by Task 7.
 import { MithaiProducts } from "./collections/MithaiProducts";
 import { GiftBoxes } from "./collections/GiftBoxes";
@@ -84,6 +90,46 @@ const isLocalDev =
   process.env.NODE_ENV !== "production" &&
   !process.env.VERCEL &&
   !process.env.CI;
+
+// Central Cancel injection (Audit D8) — one helper instead of edits in
+// every collection/global file; future entities inherit it automatically.
+function withCancelAction(collection: CollectionConfig): CollectionConfig {
+  return {
+    ...collection,
+    admin: {
+      ...collection.admin,
+      components: {
+        ...collection.admin?.components,
+        edit: {
+          ...collection.admin?.components?.edit,
+          beforeDocumentControls: [
+            ...(collection.admin?.components?.edit?.beforeDocumentControls ?? []),
+            CancelActionPath,
+          ],
+        },
+      },
+    },
+  };
+}
+
+function withCancelActionGlobal(global: GlobalConfig): GlobalConfig {
+  return {
+    ...global,
+    admin: {
+      ...global.admin,
+      components: {
+        ...global.admin?.components,
+        elements: {
+          ...global.admin?.components?.elements,
+          beforeDocumentControls: [
+            ...(global.admin?.components?.elements?.beforeDocumentControls ?? []),
+            CancelActionPath,
+          ],
+        },
+      },
+    },
+  };
+}
 
 export default buildConfig({
   admin: {
@@ -164,7 +210,8 @@ export default buildConfig({
     CartDrafts,
     // Known-gaps campaign (B6): coupon codes.
     Coupons,
-  ],
+    // Audit D8: Cancel on every edit view (create + edit).
+  ].map(withCancelAction),
   globals: [
     BrandSettings,
     NavSettings,
@@ -172,7 +219,8 @@ export default buildConfig({
     AnalyticsSettings,
     StoreSettings,
     HomeHero,
-  ],
+    // Audit D8: Cancel on every global edit view.
+  ].map(withCancelActionGlobal),
   secret: process.env.PAYLOAD_SECRET ?? "dev-secret-change-me",
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),

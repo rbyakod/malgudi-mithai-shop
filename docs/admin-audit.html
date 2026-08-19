@@ -779,7 +779,7 @@
     </div>
 
     <h3>D7 — list thumbnails 400 on bare media IDs</h3>
-    <div class="status-row" style="border-bottom: 0;">
+    <div class="status-row">
       <span class="id">D7</span>
       <span class="pill pill--ok">Fixed</span>
       <span class="what">List views query at <code>depth=0</code> (Payload’s
@@ -798,12 +798,63 @@
         payload-admin suite 92/92.</span>
     </div>
 
+    <h3>D8 — no Cancel on any edit view</h3>
+    <div class="status-row">
+      <span class="id">D8</span>
+      <span class="pill pill--ok">Fixed</span>
+      <span class="what">Every create/edit form had Save/Publish but no way to
+        back out. One shared component
+        (<code>components/payload-admin/actions/CancelAction.tsx</code>) now
+        renders a secondary <strong>Cancel</strong> immediately left of
+        Save/Publish via <code>beforeDocumentControls</code>, injected
+        centrally in <code>payload.config.ts</code> — two typed helpers map
+        over the collections and globals arrays (slot keys differ:
+        collections use <code>components.edit</code>, globals use
+        <code>components.elements</code>; the wrong key silently no-renders).
+        Targets: collection → its list, global → dashboard; relationship
+        drawers excluded via
+        <code>useEditDepth()&nbsp;&gt;&nbsp;1</code>. Known gap:
+        <code>/admin/account</code> has no Cancel — Payload’s AccountView
+        renders <code>EditView</code> without <code>renderDocumentSlots</code>
+        (the slot’s only consumer), and wiring it would mean replacing the
+        whole account view; left as stock. Dirty forms are
+        protected for free — Cancel is a real <code>&lt;a&gt;</code>, so
+        Payload’s native <code>LeaveWithoutSaving</code> guard opens the
+        styled “Leave anyway / Stay” modal first. 4 unit tests + 2 e2e.</span>
+    </div>
+
+    <h3>D9 — breadcrumb home crumb unreadable</h3>
+    <div class="status-row" style="border-bottom: 0;">
+      <span class="id">D9</span>
+      <span class="pill pill--ok">Fixed</span>
+      <span class="what">The first breadcrumb step (back to the dashboard) is
+        a hardcoded icon-only link clamped to 18×18
+        (<code>step-nav__home</code>) — the crest at 18px was invisible. Now a
+        visible chip matching the owner’s reference: cream pill, brown
+        rounded-square badge with a white “M”, label <strong>Admin
+        home</strong>. Pure CSS in unlayered <code>custom.scss</code>
+        (<code>::before</code> badge, <code>::after</code> label,
+        <code>width/height: auto</code> beats the fixed box at both
+        breakpoints; the class covers both the <code>&lt;a&gt;</code> and
+        dashboard-root <code>&lt;div&gt;</code> variants).
+        <code>graphics.Icon</code> deliberately left as CrestIcon — that slot
+        also feeds Payload’s OG-image route (satori), so a component swap
+        would leak there. Crest <code>&lt;span&gt;</code> visually hidden but
+        kept for screen readers; px type; <code>--t-*</code> tokens re-skin
+        the chip in all three themes. e2e asserts the computed label and a
+        &gt;60px chip width.</span>
+    </div>
+
     <div class="ok-box">
       <p class="box-title">Verification</p>
       <p>Local probe with a real image relation: row rendered at
         <code>depth=0</code> resolved to
         <code>/_next/image?url=%2Fapi%2Fmedia%2Ffile%2F…&amp;w=96</code>, zero
-        bare-ID srcs · 92/92 admin tests · <code>pnpm build</code> green.</p>
+        bare-ID srcs · 92/92 admin tests · <code>pnpm build</code> green.
+        D8/D9 pass: Cancel present left of Save on collection create/edit,
+        globals (→ dashboard), absent inside drawers; dirty form
+        raises the native leave modal; “Admin home” chip visible on every
+        view in all three themes.</p>
     </div>
   </section>
 

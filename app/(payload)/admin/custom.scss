@@ -313,3 +313,77 @@ body[data-admin-theme="mishran-monsoon"] {
   color: var(--t-nav-text);
   font-weight: 600;
 }
+
+// === Breadcrumb home chip (audit D9) ===
+// Payload renders the home crumb as an 18×16px icon-only link. The chip is
+// pure CSS: "M" badge via ::before, "Admin home" via ::after, and the crest
+// <span> is visually hidden but kept in the a11y tree (it carries the
+// "Dashboard" title). Styling .step-nav__home covers both variants — the
+// <a> on sub-pages and the <div> on the dashboard root. Unlayered rules
+// outrank Payload's @layer payload-default (18px/16px box, hover underline,
+// ::after focus ring). px units: the admin root computes rem ~25% small.
+.step-nav .step-nav__home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: auto; // beats the layered 18px/16px fixed box
+  height: auto;
+  padding: 3px 12px 3px 4px;
+  background-color: var(--t-bg-card);
+  border: 1px solid var(--t-border);
+  border-radius: var(--mishran-radius-md);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  text-decoration: none; // Payload underlines .step-nav a on hover
+  transition: border-color 120ms ease;
+
+  // "M" badge
+  &::before {
+    content: "M";
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--mishran-radius-sm);
+    background-color: var(--t-primary);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  // "Admin home" label
+  &::after {
+    content: "Admin home";
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--t-text);
+    white-space: nowrap;
+  }
+
+  // Hide the crest slot visually, keep it for screen readers.
+  > span {
+    position: absolute; // __home is position:relative in Payload's layer
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  &:hover {
+    border-color: var(--t-primary);
+    text-decoration: none;
+  }
+
+  // Payload's focus ring lives on __home::after — our ::after holds the
+  // label now, so draw a real outline on the chip instead.
+  &:focus-visible {
+    outline: 2px solid var(--t-primary);
+    outline-offset: 2px;
+  }
+}
+
+.step-nav a.step-nav__home {
+  cursor: pointer;
+}
