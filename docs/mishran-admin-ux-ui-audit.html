@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mishran Admin UX/UI Audit</title>
+  <style>
+    :root {
+      --ink: #171412;
+      --muted: #665f57;
+      --soft: #f7f1e7;
+      --paper: #fffdf8;
+      --panel: #ffffff;
+      --line: #e4d6c2;
+      --gold: #b7791f;
+      --saffron: #d6942f;
+      --brown: #2b1b10;
+      --red: #a33a32;
+      --green: #2f6b4f;
+      --blue: #2f5d7c;
+      --shadow: 0 18px 50px rgba(43, 27, 16, .10);
+      --radius: 8px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(183,121,31,.09) 0 1px, transparent 1px 100%),
+        linear-gradient(180deg, rgba(183,121,31,.07) 0 1px, transparent 1px 100%),
+        var(--paper);
+      background-size: 36px 36px;
+      font-family: var(--sans);
+      line-height: 1.55;
+    }
+    a { color: inherit; }
+    .shell { display: grid; grid-template-columns: 296px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 22px;
+      border-right: 1px solid var(--line);
+      background: rgba(255,253,248,.92);
+      backdrop-filter: blur(18px);
+      overflow: auto;
+    }
+    .brand { display: grid; gap: 10px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    .eyebrow { font: 700 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--gold); }
+    .brand h1 { margin: 0; font-size: 22px; line-height: 1.12; }
+    .brand p { margin: 0; color: var(--muted); font-size: 13px; }
+    nav { display: grid; gap: 6px; margin-top: 22px; }
+    nav a {
+      display: block;
+      padding: 9px 10px;
+      border-radius: 7px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    nav a:hover { background: var(--soft); color: var(--ink); }
+    main { min-width: 0; }
+    section { padding: 64px clamp(24px, 5vw, 76px); border-bottom: 1px solid var(--line); }
+    .hero {
+      min-height: 88vh;
+      display: grid;
+      align-content: center;
+      background: linear-gradient(135deg, #fffdf8 0%, #f5ead8 60%, #fff7e8 100%);
+    }
+    .hero h2 { margin: 0; max-width: 980px; font-size: clamp(42px, 6vw, 86px); line-height: .96; letter-spacing: -0.03em; }
+    .hero .dek { max-width: 780px; margin: 24px 0 0; color: var(--muted); font-size: 20px; }
+    .scorebar { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .score {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.72);
+      min-width: 150px;
+    }
+    .score strong { display: block; font-size: 24px; line-height: 1; }
+    .score span { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    h2 { margin: 0 0 18px; font-size: clamp(28px, 3vw, 44px); line-height: 1.04; letter-spacing: -0.02em; }
+    h3 { margin: 28px 0 10px; font-size: 21px; }
+    p { margin: 0 0 14px; }
+    .lead { max-width: 880px; color: var(--muted); font-size: 18px; }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; margin-top: 22px; }
+    .card {
+      grid-column: span 6;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.82);
+      box-shadow: var(--shadow);
+    }
+    .card.full { grid-column: 1 / -1; }
+    .card.third { grid-column: span 4; }
+    .tag { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 999px; background: var(--soft); color: var(--brown); font: 700 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .05em; }
+    .p0 { color: #fff; background: var(--red); }
+    .p1 { color: #fff; background: #995f12; }
+    .p2 { color: #fff; background: var(--blue); }
+    .p3 { color: #fff; background: var(--green); }
+    table { width: 100%; border-collapse: collapse; margin-top: 18px; background: var(--panel); border: 1px solid var(--line); }
+    th, td { padding: 13px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 14px; }
+    th { background: var(--soft); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    tr:last-child td { border-bottom: 0; }
+    ul { margin: 10px 0 0; padding-left: 20px; }
+    li { margin: 7px 0; }
+    figure { margin: 24px 0 0; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; overflow: hidden; box-shadow: var(--shadow); }
+    figure img { display: block; width: 100%; height: auto; }
+    figcaption { padding: 10px 12px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+    .mobile-shot { max-width: 390px; }
+    .callout {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border-left: 4px solid var(--gold);
+      background: #fff7e9;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    code { font-family: var(--mono); font-size: .92em; background: var(--soft); padding: 2px 5px; border-radius: 4px; }
+    .footer-note { color: var(--muted); font-size: 13px; }
+    @media (max-width: 920px) {
+      .shell { grid-template-columns: 1fr; }
+      aside { position: relative; height: auto; }
+      nav { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      section { padding: 42px 20px; }
+      .card, .card.third { grid-column: 1 / -1; }
+      .two { grid-template-columns: 1fr; }
+      .hero h2 { font-size: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand">
+        <div class="eyebrow">UX/UI Audit</div>
+        <h1>Mishran Admin Console</h1>
+        <p>Live audit of <code>/admin</code>, authenticated on August 18, 2026.</p>
+      </div>
+      <nav aria-label="Report sections">
+        <a href="#summary">Executive Summary</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#taste">Taste Findings</a>
+        <a href="#impeccable">Impeccable Findings</a>
+        <a href="#hallmark">Hallmark Findings</a>
+        <a href="#uimax">UX/UI Max Pro</a>
+        <a href="#matrix">Priority Matrix</a>
+        <a href="#systems">Design System</a>
+        <a href="#roadmap">Feature Roadmap</a>
+        <a href="#implementation">Implementation</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section class="hero" id="summary">
+        <div class="eyebrow">Verdict</div>
+        <h2>The admin works, but it feels like a themed CMS shell, not a premium ecommerce command center.</h2>
+        <p class="dek">Mishran has useful operational data underneath: orders, product counts, freshness grouping, hero settings, catalog families, payments, shipments, coupons, and security events. The current UI hides that value behind pale surfaces, generic collection grids, weak table formatting, broken media thumbnails, and reliability errors.</p>
+        <div class="scorebar">
+          <div class="score"><strong>17/40</strong><span>Nielsen UX score</span></div>
+          <div class="score"><strong>9/20</strong><span>Technical UI health</span></div>
+          <div class="score"><strong>P0</strong><span>Hydration + API errors</span></div>
+          <div class="score"><strong>P1</strong><span>Navigation + table utility</span></div>
+        </div>
+        <div class="callout">
+          <strong>Most important fix:</strong> turn the first screen into an operations dashboard: order queue, payment exceptions, shipment backlog, low-stock or stale catalog items, fresh/made-to-order batches, pending storefront changes, and failed integrations.
+        </div>
+      </section>
+
+      <section id="evidence">
+        <h2>Live Evidence</h2>
+        <p class="lead">I inspected the logged-in Payload admin at desktop and mobile widths. Confirmed pages include Dashboard, Orders, Mithai Products, Gift Boxes, Customers, Leads, Store Settings, Theme Settings, and Home Hero.</p>
+        <div class="two">
+          <figure>
+            <img src="evidence-dashboard.png" alt="Mishran admin dashboard screenshot">
+            <figcaption>Dashboard: useful panels, but the Recent Leads widget fails and generic collection cards dominate the fold.</figcaption>
+          </figure>
+          <figure>
+            <img src="evidence-orders.png" alt="Mishran orders table screenshot">
+            <figcaption>Orders: raw IDs, phone numbers, paise values, and machine statuses make order triage slower than needed.</figcaption>
+          </figure>
+        </div>
+        <div class="two">
+          <figure>
+            <img src="evidence-products.png" alt="Mishran products table screenshot">
+            <figcaption>Products: thumbnails are broken or cramped; the table has data but little catalog QA value.</figcaption>
+          </figure>
+          <figure class="mobile-shot">
+            <img src="evidence-orders-mobile.png" alt="Mishran orders mobile screenshot">
+            <figcaption>Mobile Orders: table columns overflow horizontally; it needs card-style rows or a focused mobile queue.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="taste">
+        <h2>Taste Skill Findings</h2>
+        <p class="lead">Reading this as an ecommerce operations dashboard for internal staff, with a premium mithai brand language, leaning toward restrained luxury plus high-density admin patterns.</p>
+        <div class="grid">
+          <div class="card">
+            <span class="tag p1">P1</span>
+            <h3>Too pale for operational confidence</h3>
+            <p>The warm cream theme suits Mishran’s storefront, but the admin uses it everywhere with low contrast and little hierarchy. Result: the interface feels sleepy, not decisive.</p>
+            <p><strong>Fix:</strong> keep warm paper as a background, but add ink-black headers, stronger gold state markers, darker table headers, and crisp semantic badges.</p>
+          </div>
+          <div class="card">
+            <span class="tag p1">P1</span>
+            <h3>Brand is present, not useful</h3>
+            <p>The crest and mithai palette appear, but the admin does not express mithai operations: batch freshness, gifting readiness, delivery health, festive demand, SKU QA, or store availability.</p>
+            <p><strong>Fix:</strong> make brand-specific operational objects the core visual language: batch chips, mithai family colors, cold-chain/freshness badges, hamper readiness indicators.</p>
+          </div>
+          <div class="card">
+            <span class="tag p2">P2</span>
+            <h3>Generic Payload chrome leaks through</h3>
+            <p>The layout still reads as Payload CMS: “Create New,” raw collection cards, generic empty states, and default list tables. That makes the admin feel unfinished.</p>
+            <p><strong>Fix:</strong> create a custom dashboard route and custom list cells for high-value collections instead of relying on default Payload views.</p>
+          </div>
+          <div class="card">
+            <span class="tag p2">P2</span>
+            <h3>Wrong density rhythm</h3>
+            <p>Dashboard cards are oversized and low-information, while tables are dense but unformatted. The admin needs the inverse: compact metrics and richly formatted rows.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="impeccable">
+        <h2>Impeccable Findings</h2>
+        <p class="lead">Operate-mode score: familiarity is good, but task confidence is weak. The interface should help staff finish work faster, not simply expose records.</p>
+        <table>
+          <thead><tr><th>#</th><th>Heuristic</th><th>Score</th><th>Key issue</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Visibility of system status</td><td>1/4</td><td>Recent Leads fails with <code>405 Method Not Allowed</code>; hydration errors appear repeatedly.</td></tr>
+            <tr><td>2</td><td>Match system / real world</td><td>2/4</td><td>Order totals show paise and statuses show machine names like <code>pending_payment</code>.</td></tr>
+            <tr><td>3</td><td>User control and freedom</td><td>2/4</td><td>Filters and columns exist, but no clear saved views, back-to-work queue, or undo confidence.</td></tr>
+            <tr><td>4</td><td>Consistency and standards</td><td>2/4</td><td>Payload patterns are consistent, but Mishran-specific formatting is inconsistent.</td></tr>
+            <tr><td>5</td><td>Error prevention</td><td>1/4</td><td>Critical ops actions are exposed as raw records; no evidence of guided checks for products, orders, shipments, or hero slides.</td></tr>
+            <tr><td>6</td><td>Recognition over recall</td><td>2/4</td><td>Navigation has many collections and numbered groups, but no task shortcuts or role-based prioritization.</td></tr>
+            <tr><td>7</td><td>Flexibility and efficiency</td><td>1/4</td><td>No command palette, saved filters, bulk action queues, exception inbox, or keyboard-forward workflow visible.</td></tr>
+            <tr><td>8</td><td>Aesthetic and minimalist design</td><td>2/4</td><td>Visuals are simple, but not minimal in a useful way; too much space is spent on generic cards.</td></tr>
+            <tr><td>9</td><td>Error recovery</td><td>1/4</td><td>Errors are raw technical messages or generic Not Found pages.</td></tr>
+            <tr><td>10</td><td>Help and documentation</td><td>3/4</td><td>Some form helper copy is strong, especially Home Hero settings; list screens need more operational guidance.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>Total:</strong> 17/40. This is functional but not yet an effective operator console.</div>
+      </section>
+
+      <section id="hallmark">
+        <h2>Hallmark Findings</h2>
+        <p class="lead">Hallmark lens: the UI avoids garish AI-default visuals, but it also lacks authored structure. It is visually safe, structurally generic.</p>
+        <div class="grid">
+          <div class="card third"><span class="tag p0">P0</span><h3>Reliability breaks the visual promise</h3><p>Repeated React hydration errors and a failing leads widget make the admin feel fragile. Polish cannot compensate for broken first-screen data.</p></div>
+          <div class="card third"><span class="tag p1">P1</span><h3>No strong first viewport</h3><p>The dashboard should immediately answer: What needs attention now? Instead it leads with a broken panel and collection directory.</p></div>
+          <div class="card third"><span class="tag p1">P1</span><h3>Structural sameness</h3><p>Orders, products, customers, and gifts share the same table shell even though their decisions differ. The UI needs collection-specific row design.</p></div>
+          <div class="card third"><span class="tag p2">P2</span><h3>Weak material system</h3><p>Cards, inputs, tables, and nav all sit in similar pale tones. There is no clear foreground/background hierarchy.</p></div>
+          <div class="card third"><span class="tag p2">P2</span><h3>Broken imagery</h3><p>Product rows show broken thumbnails. For a mithai brand, product imagery is not decoration; it is QA and merchandising data.</p></div>
+          <div class="card third"><span class="tag p3">P3</span><h3>Microcopy is mixed</h3><p>Some settings copy is helpful, but table statuses, errors, and empty states remain generic or technical.</p></div>
+        </div>
+      </section>
+
+      <section id="uimax">
+        <h2>UX/UI Max Pro Findings</h2>
+        <p class="lead">Database guidance points to premium black + gold for luxury ecommerce, Fira-style precision for dashboards, and special care for responsive tables, inline validation, submit feedback, and accessible contrast.</p>
+        <div class="grid">
+          <div class="card"><h3>Recommended pattern</h3><p>Use a task-first admin dashboard, not a showcase pattern. The design database suggested “Feature-Rich Showcase,” but this surface is operations; apply the palette, not the marketing structure.</p></div>
+          <div class="card"><h3>Color direction</h3><p>Primary ink <code>#1C1917</code>, gold action <code>#CA8A04</code>, warm paper <code>#FAFAF9</code>, and semantic status colors. Avoid beige-on-beige as the dominant system.</p></div>
+          <div class="card"><h3>Table handling</h3><p>Mobile tables must not overflow as raw grids. Orders need cards with status, amount, payment, customer, time, and next action visible without horizontal scrolling.</p></div>
+          <div class="card"><h3>Form behavior</h3><p>Settings and edit forms need clear required indicators, inline validation on blur, field-level helper copy, save progress, success state, and error recovery.</p></div>
+        </div>
+      </section>
+
+      <section id="matrix">
+        <h2>Consolidated Severity Matrix</h2>
+        <table>
+          <thead><tr><th>Priority</th><th>Issue</th><th>Evidence</th><th>Recommended action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag p0">P0</span></td><td>React hydration failures</td><td>Console repeatedly reports minified React error #418 across admin routes.</td><td>Fix nested HTML/body or server/client markup mismatch before UI polish.</td></tr>
+            <tr><td><span class="tag p0">P0</span></td><td>Dashboard Recent Leads API failure</td><td>Widget shows <code>405 Method Not Allowed on /leads?limit=5...</code>.</td><td>Use correct Payload API path/method and show resilient empty/error state.</td></tr>
+            <tr><td><span class="tag p1">P1</span></td><td>Dashboard does not prioritize work</td><td>Collection cards dominate; no order exception queue or shipment backlog.</td><td>Replace with operations overview and role-based task queues.</td></tr>
+            <tr><td><span class="tag p1">P1</span></td><td>Orders table not operator-friendly</td><td>Raw IDs, paise totals, machine statuses, no visual payment/shipping risk.</td><td>Format currency, status badges, customer identity, SLA age, and next action.</td></tr>
+            <tr><td><span class="tag p1">P1</span></td><td>Mobile tables overflow</td><td>Orders mobile screenshot shows cropped columns and horizontal dependency.</td><td>Create responsive card rows for orders/products/customers.</td></tr>
+            <tr><td><span class="tag p1">P1</span></td><td>Product thumbnails broken</td><td>Product list displays broken image icons in first column.</td><td>Fix media source, fallback image, and image QA column.</td></tr>
+            <tr><td><span class="tag p2">P2</span></td><td>Navigation too collection-centric</td><td>More than 30 items across numbered groups; no task home.</td><td>Add role-based nav: Today, Orders, Catalog, Storefront, Customers, Ops, Settings.</td></tr>
+            <tr><td><span class="tag p2">P2</span></td><td>Weak visual hierarchy</td><td>Pale cards and headings compete; little contrast between panels and background.</td><td>Define admin tokens for surface, table, status, action, and focus.</td></tr>
+            <tr><td><span class="tag p3">P3</span></td><td>Generic empty/error pages</td><td>Not Found and Leads empty states are generic Payload copy.</td><td>Use Mishran-specific guidance and recovery links.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="systems">
+        <h2>Recommended Design System Direction</h2>
+        <p class="lead">Preserve Mishran’s premium mithai feel through material, tone, and data semantics; make the admin operational through density, contrast, and structured workflows.</p>
+        <div class="grid">
+          <div class="card">
+            <h3>Palette</h3>
+            <ul>
+              <li>Base: warm paper for page background only.</li>
+              <li>Foreground: ink and charcoal for headers, nav, active states.</li>
+              <li>Accent: restrained gold/saffron for primary actions and selection.</li>
+              <li>Semantic: green confirmed, amber pending, red failed, blue shipped/info.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Typography</h3>
+            <ul>
+              <li>Use one sturdy sans for the admin, 14-16px body, compact scale.</li>
+              <li>Use mono only for order IDs, SKUs, phone numbers, and debug detail.</li>
+              <li>Avoid oversized collection headings; reserve size for dashboard sections.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Components</h3>
+            <ul>
+              <li>Status badges for payment, fulfillment, freshness, draft/published.</li>
+              <li>Dense data cards for mobile order rows.</li>
+              <li>Custom Payload list cells for product image, price, freshness, family.</li>
+              <li>Persistent top action bar on edit forms with save state.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Dashboard layout</h3>
+            <ul>
+              <li>Top row: revenue today, orders awaiting action, failed payments, shipments pending.</li>
+              <li>Queue row: urgent orders, stale carts, new leads, inventory/catalog QA.</li>
+              <li>Merch row: hero slides, featured mithai, gift-box readiness, review moderation.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="roadmap">
+        <h2>Missing Feature Roadmap</h2>
+        <table>
+          <thead><tr><th>Phase</th><th>Feature</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Quick win</td><td>Order exception inbox</td><td>Show failed payments, old pending orders, unshipped confirmed orders, COD review.</td></tr>
+            <tr><td>Quick win</td><td>Custom status badges</td><td>Translate machine states into human labels and colors.</td></tr>
+            <tr><td>Quick win</td><td>Product media health column</td><td>Catch broken thumbnails, missing hero images, low-quality assets.</td></tr>
+            <tr><td>Quick win</td><td>Saved filters</td><td>One-click views for today, pending payment, COD, made-to-order, low stock, unpublished.</td></tr>
+            <tr><td>Medium</td><td>Batch and freshness board</td><td>Track made daily, made to order, batch frozen, expiry, prep queue.</td></tr>
+            <tr><td>Medium</td><td>Gift hamper builder</td><td>Manage box size, compartments, margin, images, festive availability.</td></tr>
+            <tr><td>Medium</td><td>Storefront preview center</td><td>Preview hero, nav, theme, product cards, and mobile storefront before publishing.</td></tr>
+            <tr><td>Medium</td><td>Customer profile timeline</td><td>Orders, addresses, payments, abandoned carts, support notes in one place.</td></tr>
+            <tr><td>Large</td><td>Operations command center</td><td>Role-based work queues for fulfillment, merchandising, support, admin.</td></tr>
+            <tr><td>Large</td><td>Analytics layer</td><td>Sales by mithai family, festival demand, conversion, payment failures, delivery zones.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="implementation">
+        <h2>Implementation Guidance</h2>
+        <div class="grid">
+          <div class="card full">
+            <h3>Fix first</h3>
+            <ul>
+              <li>Resolve React hydration error #418. Server-rendered admin HTML appears to contain nested document structure behavior; inspect app layout boundaries and Payload admin integration.</li>
+              <li>Fix dashboard leads request. The collection page works but dashboard fetch uses a route returning 405.</li>
+              <li>Fix product image URLs and add a fallback thumbnail so catalog QA never shows broken media.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Quick wins, 1-2 days</h3>
+            <ul>
+              <li>Format order totals from paise to rupees.</li>
+              <li>Map statuses: <code>pending_payment</code> → Pending payment.</li>
+              <li>Add dashboard cards for today’s orders, payment failures, pending shipments.</li>
+              <li>Add empty/error states with recovery actions.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Larger redesign, 1-3 weeks</h3>
+            <ul>
+              <li>Build custom Payload dashboard components.</li>
+              <li>Customize list cell renderers for Orders, Products, Customers, Gift Boxes.</li>
+              <li>Create mobile-specific row cards for primary collections.</li>
+              <li>Add role-aware navigation and saved operational views.</li>
+            </ul>
+          </div>
+          <div class="card full">
+            <h3>Target admin information architecture</h3>
+            <p><strong>Today</strong> → live operational queue. <strong>Orders</strong> → payments, fulfillment, shipments, returns. <strong>Catalog</strong> → mithai, snacks, QSR, gift boxes, media QA. <strong>Storefront</strong> → hero, nav, theme, reviews, drafts. <strong>Customers</strong> → profiles, addresses, leads, carts. <strong>Operations</strong> → serviceable pincodes, batch freshness, devices, security. <strong>Settings</strong> → users, analytics, store config.</p>
+          </div>
+        </div>
+        <p class="footer-note">Audit methods used: live authenticated browser inspection, desktop/mobile screenshots, DOM accessibility snapshots, console error review, Taste / Impeccable / Hallmark / UX/UI Max Pro lenses. No destructive actions performed.</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

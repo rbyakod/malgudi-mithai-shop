@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mishran Admin User Guide</title>
+  <style>
+    :root {
+      --ink: #24160f;
+      --muted: #735845;
+      --soft: #f8f3eb;
+      --paper: #fffdfa;
+      --line: #e4cda8;
+      --gold: #d89a2b;
+      --saffron: #a9552f;
+      --espresso: #351b0d;
+      --sage: #66735b;
+      --rose: #8d3d45;
+      --shadow: 0 18px 50px rgba(53, 27, 13, 0.1);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 26px 20px 32px;
+      color: #fff8ec;
+      background:
+        linear-gradient(180deg, rgba(216, 154, 43, 0.12), rgba(169, 85, 47, 0.04)),
+        var(--espresso);
+      border-right: 1px solid rgba(216, 154, 43, 0.28);
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .brand-logo {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      background: var(--saffron);
+      color: #fff;
+      font-weight: 900;
+      font-size: 24px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .brand-kicker {
+      margin: 0;
+      color: rgba(255, 248, 236, 0.68);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.15;
+      font-weight: 900;
+    }
+
+    nav {
+      display: grid;
+      gap: 4px;
+    }
+
+    nav a {
+      display: block;
+      padding: 9px 11px;
+      border-radius: 8px;
+      color: rgba(255, 248, 236, 0.82);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      color: #fff;
+      background: rgba(255, 248, 236, 0.1);
+      outline: none;
+    }
+
+    .nav-group {
+      margin: 22px 0 8px;
+      color: #e3b262;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    main {
+      min-width: 0;
+      padding: 44px min(6vw, 76px) 80px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 22px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--saffron);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin: 0;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 980px;
+      font-size: clamp(46px, 7vw, 88px);
+      font-weight: 950;
+    }
+
+    h2 {
+      margin-top: 58px;
+      padding-top: 8px;
+      font-size: clamp(30px, 4vw, 52px);
+      font-weight: 950;
+    }
+
+    h3 {
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    h4 {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .lead {
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .meta-grid,
+    .card-grid,
+    .feature-grid,
+    .workflow-grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .meta-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .card-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .workflow-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card,
+    .feature,
+    .sample,
+    .matrix,
+    .callout {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .card,
+    .feature,
+    .sample,
+    .callout {
+      padding: 22px;
+    }
+
+    .card strong {
+      display: block;
+      margin-top: 14px;
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .card span,
+    .feature p,
+    .sample p,
+    .callout p,
+    li {
+      color: var(--muted);
+    }
+
+    .section-copy {
+      max-width: 930px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .feature {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .feature ul,
+    .callout ul,
+    .checklist {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .feature li,
+    .callout li {
+      margin: 7px 0;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--soft);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .sample {
+      margin-top: 16px;
+      background: linear-gradient(180deg, #fff, #fffaf2);
+    }
+
+    pre {
+      overflow: auto;
+      margin: 12px 0 0;
+      padding: 16px;
+      border-radius: 8px;
+      color: #f8ead8;
+      background: #2b160b;
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: var(--ink);
+      background: var(--soft);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    td {
+      color: var(--muted);
+    }
+
+    .matrix {
+      overflow: hidden;
+      margin-top: 22px;
+    }
+
+    .priority {
+      display: inline-block;
+      min-width: 34px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #fff;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .p0 { background: var(--rose); }
+    .p1 { background: var(--saffron); }
+    .p2 { background: var(--gold); color: var(--ink); }
+    .p3 { background: var(--sage); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      margin-top: 22px;
+    }
+
+    .callout {
+      border-left: 5px solid var(--gold);
+      background: #fffaf2;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .print-note {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 1180px) {
+      .layout { grid-template-columns: 1fr; }
+      aside {
+        position: relative;
+        height: auto;
+      }
+      nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .meta-grid,
+      .card-grid,
+      .feature-grid,
+      .workflow-grid,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      aside { display: none; }
+      .layout { display: block; }
+      main { padding: 0; }
+      .card,
+      .feature,
+      .sample,
+      .matrix,
+      .callout {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+      a { text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside aria-label="Guide navigation">
+      <div class="brand-mark">
+        <div class="brand-logo">M</div>
+        <div>
+          <p class="brand-kicker">Mishran</p>
+          <p class="brand-title">Admin User Guide</p>
+        </div>
+      </div>
+      <nav>
+        <span class="nav-group">Start</span>
+        <a href="#overview">Overview</a>
+        <a href="#daily-rhythm">Daily rhythm</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#shared-actions">Shared admin actions</a>
+        <span class="nav-group">Operate</span>
+        <a href="#orders">Orders</a>
+        <a href="#payments">Payments</a>
+        <a href="#shipments">Shipments</a>
+        <a href="#coupons">Coupons</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#leads">Leads</a>
+        <span class="nav-group">Catalog</span>
+        <a href="#mithai">Mithai</a>
+        <a href="#gift-boxes">Gift boxes</a>
+        <a href="#qsr">QSR menu</a>
+        <a href="#snacks-merch">Snacks and merch</a>
+        <a href="#media">Media</a>
+        <span class="nav-group">Brand</span>
+        <a href="#stories">Stories</a>
+        <a href="#brand-building">Karigars, farms, packaging</a>
+        <a href="#storefront">Storefront settings</a>
+        <a href="#customers">Customers and delivery</a>
+        <span class="nav-group">Reference</span>
+        <a href="#sample-data">Sample data library</a>
+        <a href="#status-glossary">Status glossary</a>
+        <a href="#handoff-checklist">New admin checklist</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section class="hero" id="overview">
+        <p class="eyebrow">For new Mishran admins</p>
+        <h1>Run the Mishran admin from first login to daily operations.</h1>
+        <p class="lead">This guide explains what each admin feature does, when to use it, how to update it, and what good sample data looks like. Use it for onboarding, daily checklists, and operational handoffs.</p>
+        <div class="meta-grid" aria-label="Guide summary">
+          <div class="card"><h4>Primary goal</h4><strong>Operate</strong><span>Orders, payments, shipments, leads, catalog, and storefront content from one place.</span></div>
+          <div class="card"><h4>Best first page</h4><strong>Dashboard</strong><span>The Mishran command center shows fulfillment, COD risk, revenue, reviews, leads, freshness, and catalog health.</span></div>
+          <div class="card"><h4>Admin pattern</h4><strong>List, open, edit</strong><span>Use collection lists to search and filter. Open a row to update. Save or publish when done.</span></div>
+          <div class="card"><h4>Data rule</h4><strong>Be exact</strong><span>Product names, slugs, order states, money in paise, and delivery areas affect customer-facing behavior.</span></div>
+        </div>
+      </section>
+
+      <section id="daily-rhythm">
+        <h2>Daily Rhythm</h2>
+        <p class="section-copy">A new admin should start here every day. The dashboard is designed to surface the most important work before editing individual records.</p>
+        <div class="workflow-grid">
+          <div class="feature">
+            <h3>Morning opening check</h3>
+            <ul>
+              <li>Open <strong>Admin home</strong> after login.</li>
+              <li>Review <strong>To fulfill</strong> and move paid orders into the next operational stage.</li>
+              <li>Review <strong>COD cash to collect</strong> so staff know which deliveries need payment collection.</li>
+              <li>Check <strong>Mithai freshness</strong> for products marked made daily, made to order, or batch frozen.</li>
+              <li>Open <strong>Reviews to moderate</strong> and reject unsafe or irrelevant reviews before approving good ones.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>End of day close</h3>
+            <ul>
+              <li>Confirm delivered orders have shipment history updated.</li>
+              <li>Make sure COD delivered orders have payment status updated when cash is collected.</li>
+              <li>Review recent leads and mark contacted, qualified, won, or lost.</li>
+              <li>Check drafts and pending stories so promotional content does not sit unfinished.</li>
+              <li>Disable expired coupons or confirm the active date range is correct.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout">
+          <h3>Golden rule</h3>
+          <p>Never change order totals, payment records, or webhook data unless you are correcting a confirmed operational error. These fields are tied to customer receipts and payment reconciliation.</p>
+        </div>
+      </section>
+
+      <section id="dashboard">
+        <h2>Dashboard</h2>
+        <p class="section-copy">The dashboard is the admin home page. The top command center gives the business pulse, then the widgets guide the next action.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>Mishran Command Center</h3>
+            <p>The top dashboard area is a premium overview for operations. It tells the admin what matters today and gives a direct <strong>Review orders</strong> button.</p>
+            <ul>
+              <li><strong>Use when:</strong> starting a shift, checking what needs attention, or briefing a store manager.</li>
+              <li><strong>How to use:</strong> click Review orders to open recent orders sorted newest first.</li>
+              <li><strong>Good habit:</strong> begin every admin session from Admin home, then go into the specific collection.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>Ops Pulse Tiles</h3>
+            <p>These tiles summarize core operational risk and revenue.</p>
+            <ul>
+              <li><strong>To fulfill:</strong> confirmed, packed, dispatched, or out for delivery orders.</li>
+              <li><strong>COD cash to collect:</strong> COD orders with pending payment status.</li>
+              <li><strong>Paid today and paid this week:</strong> paid order totals.</li>
+              <li><strong>Reviews to moderate:</strong> pending customer reviews.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>Recent Leads</h3>
+            <p>Shows new wedding, corporate, wholesale, gift, merch, or general enquiries.</p>
+            <ul>
+              <li>Use quick status updates to mark contacted, qualified, won, or lost.</li>
+              <li>Use the phone or WhatsApp link when a phone number is present.</li>
+              <li>Keep the lead status clean so future follow-up is easy.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>Freshness and Catalog Health</h3>
+            <p>The freshness board groups published mithai by fulfillment promise. Catalog counts show how much content exists in each product collection.</p>
+            <ul>
+              <li>Use made daily for fresh products with short shelf life.</li>
+              <li>Use made to order for products that need lead time.</li>
+              <li>Use batch frozen only when the product promise allows it.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="shared-actions">
+        <h2>Shared Admin Actions</h2>
+        <p class="section-copy">Most admin pages follow the same pattern. Learn these once, then use them everywhere.</p>
+        <div class="card-grid">
+          <div class="feature">
+            <h3>Find records</h3>
+            <p>Open a collection from the sidebar, search by name or identifier, sort columns, then open the row.</p>
+          </div>
+          <div class="feature">
+            <h3>Create records</h3>
+            <p>Use the plus button or Create new button. Fill required fields first. Add media, relationships, and sidebar fields before publishing.</p>
+          </div>
+          <div class="feature">
+            <h3>Save, publish, cancel</h3>
+            <p>Use Save for normal updates. Use Publish on drafted content. Use Cancel to leave edit screens without saving unwanted changes.</p>
+          </div>
+          <div class="feature">
+            <h3>Use slugs carefully</h3>
+            <p>Slugs power stable URLs and app references. Use lowercase words with hyphens, for example <code>kaju-katli</code>.</p>
+          </div>
+          <div class="feature">
+            <h3>Use media intentionally</h3>
+            <p>Upload clean product photos. For product galleries, the first image is used as the hero image on cards and detail pages.</p>
+          </div>
+          <div class="feature">
+            <h3>Check localized fields</h3>
+            <p>Some copy fields are localized. Make sure the main English copy is complete first, then add language variants when available.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="orders">
+        <h2>Orders</h2>
+        <p class="section-copy">Orders are the operational source of truth for customer purchase, payment status, delivery slot, items, and totals.</p>
+        <div class="two-col">
+          <div class="feature">
+            <h3>How to use Orders</h3>
+            <ul>
+              <li>Open <strong>06 Commerce</strong>, then <strong>Orders</strong>.</li>
+              <li>Sort by created date to see the newest orders first.</li>
+              <li>Filter by status when working through fulfillment.</li>
+              <li>Open an order and review customer, order status, payment status, payment method, source, coupon code, and delivery slot.</li>
+              <li>Use the Items tab to verify products, quantity, pack label, unit, and unit price.</li>
+              <li>Use Payment and delivery to confirm Razorpay order ID, delivery address, and cart snapshot reference.</li>
+            </ul>
+          </div>
+          <div class="sample">
+            <h3>Sample order</h3>
+            <pre>{
+  "customer": "Asha Rao",
+  "status": "confirmed",
+  "paymentStatus": "paid",
+  "paymentMethod": "razorpay",
+  "source": "mobile-ios",
+  "couponCode": "DIWALI10",
+  "slot": {
+    "date": "2026-10-18",
+    "window": "10:00 AM to 12:00 PM"
+  },
+  "items": [
+    {
+      "name": "Kaju Katli",
+      "quantity": 2,
+      "packLabel": "500 g",
+      "unit": "box",
+      "priceInPaise": 58000
+    }
+  ],
+  "totalInPaise": 116000
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="payments">
+        <h2>Payments</h2>
+        <p class="section-copy">Payments track provider status and reconciliation. Payment amounts are stored in paise, so 10000 means INR 100.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>What it is</h3>
+            <p>A payment row connects an order to a payment provider such as Razorpay, Cashfree, or PhonePe. It stores provider IDs, payment status, amount, method, and raw webhook events.</p>
+          </div>
+          <div class="feature">
+            <h3>How to use</h3>
+            <ul>
+              <li>Use Payments to investigate failed, captured, refunded, or partially refunded transactions.</li>
+              <li>Compare provider order ID and provider payment ID with the payment dashboard.</li>
+              <li>Do not edit raw webhook events by hand.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="sample">
+          <h3>Sample payment</h3>
+          <pre>{
+  "order": "Order 1042",
+  "provider": "razorpay",
+  "providerOrderId": "order_RZP_1042",
+  "providerPaymentId": "pay_RZP_7788",
+  "status": "captured",
+  "amountInPaise": 116000,
+  "currency": "INR",
+  "method": "upi"
+}</pre>
+        </div>
+      </section>
+
+      <section id="shipments">
+        <h2>Shipments</h2>
+        <p class="section-copy">Shipments track fulfillment stage, delivery ETA, external tracking IDs, and the stage history that staff can audit later.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>How to use</h3>
+            <ul>
+              <li>Create one shipment per order.</li>
+              <li>Keep current stage aligned with the order status.</li>
+              <li>Add a history row whenever a shipment moves stage.</li>
+              <li>Add ETA and provider tracking ID when available.</li>
+            </ul>
+          </div>
+          <div class="sample">
+            <h3>Sample shipment</h3>
+            <pre>{
+  "order": "Order 1042",
+  "currentStage": "out_for_delivery",
+  "eta": "2026-10-18T12:00:00",
+  "providerShipmentId": "SHIP-7788",
+  "providerTrackingId": "TRK-7788",
+  "history": [
+    {
+      "stage": "packed",
+      "at": "2026-10-18T08:45:00",
+      "note": "Packed at Indiranagar store",
+      "actor": "Store staff"
+    }
+  ]
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="coupons">
+        <h2>Coupons</h2>
+        <p class="section-copy">Coupons define campaign rules. Enforcement happens in commerce services, while admins manage the code, discount rule, active dates, limits, and active flag.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>How to create a coupon</h3>
+            <ul>
+              <li>Open <strong>06 Commerce</strong>, then <strong>Coupons</strong>.</li>
+              <li>Use uppercase coupon codes, for example <code>DIWALI10</code>.</li>
+              <li>Choose percent or flat discount.</li>
+              <li>For flat discounts, enter paise. INR 100 is <code>10000</code>.</li>
+              <li>Add active from and active to dates.</li>
+              <li>Set usage limits when the campaign should stop automatically.</li>
+            </ul>
+          </div>
+          <div class="sample">
+            <h3>Sample coupon</h3>
+            <pre>{
+  "code": "DIWALI10",
+  "discountType": "percent",
+  "value": 10,
+  "minSubtotalInPaise": 100000,
+  "maxDiscountInPaise": 25000,
+  "activeFrom": "2026-10-01",
+  "activeTo": "2026-10-31",
+  "usageLimitTotal": 500,
+  "usageLimitPerCustomer": 1,
+  "active": true
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="reviews">
+        <h2>Reviews</h2>
+        <p class="section-copy">Reviews are created by the mobile review API and moderated in admin. They are not manually created from the collection page.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>Moderation workflow</h3>
+            <ul>
+              <li>Open Reviews from the dashboard tile or Storefront group.</li>
+              <li>Filter status to <strong>pending</strong>.</li>
+              <li>Open each review and inspect product, customer, rating, body, order, and verified purchase.</li>
+              <li>Set status to approved if useful and safe.</li>
+              <li>Set status to rejected if spam, abusive, unrelated, or unsafe.</li>
+            </ul>
+          </div>
+          <div class="sample">
+            <h3>Sample review</h3>
+            <pre>{
+  "product": "Kaju Katli",
+  "customer": "Asha Rao",
+  "authorName": "Asha",
+  "rating": 5,
+  "body": "Fresh, delicate, and perfect for gifting.",
+  "order": "Order 1042",
+  "verifiedPurchase": true,
+  "status": "pending"
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="leads">
+        <h2>Leads</h2>
+        <p class="section-copy">Leads capture high intent enquiries such as wedding, corporate, wholesale, gift builder, merch, and general requests.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>How to use Leads</h3>
+            <ul>
+              <li>Open the dashboard Recent Leads widget or the Leads collection.</li>
+              <li>Read contact name, email, phone, company, GSTIN, source, and payload.</li>
+              <li>Use payload for event date, quantity, budget, city, selected products, and message.</li>
+              <li>Update status after each follow-up: new, contacted, qualified, won, or lost.</li>
+              <li>Use convertedFromDraft when a cart or gift builder draft becomes a real lead.</li>
+            </ul>
+          </div>
+          <div class="sample">
+            <h3>Sample wedding lead</h3>
+            <pre>{
+  "type": "wedding",
+  "contact": {
+    "name": "Neha Iyer",
+    "email": "neha@example.com",
+    "phone": "+91 98765 43210",
+    "company": "",
+    "GSTIN": ""
+  },
+  "payload": {
+    "occasion": "Wedding",
+    "qty": 250,
+    "budget": "INR 1,50,000",
+    "date": "2026-12-12",
+    "city": "Bengaluru",
+    "selectedProducts": ["Kaju Katli", "Pista Roll"],
+    "message": "Need premium boxed mithai for guest rooms."
+  },
+  "status": "new",
+  "source": "gift-builder"
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="mithai">
+        <h2>Mithai</h2>
+        <p class="section-copy">Mithai is the core product collection. It powers product cards, product detail pages, freshness messaging, sourcing, cross-sells, and featured rails.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>Create a mithai product</h3>
+            <ul>
+              <li>Open <strong>02 Products</strong>, then <strong>Mithai</strong>.</li>
+              <li>Fill Details: name, slug, family, freshness status, display price, weight, featured.</li>
+              <li>Fill Content: ingredients, allergens, dietary tags, and story.</li>
+              <li>Add Media. The first image becomes the hero image.</li>
+              <li>Add Sourcing relationships: karigar, box compatibility, packaging compatibility.</li>
+              <li>Add Logistics: shelf life, storage, and lead time.</li>
+              <li>Save draft if incomplete. Publish when ready for the storefront.</li>
+            </ul>
+          </div>
+          <div class="sample">
+            <h3>Sample mithai</h3>
+            <pre>{
+  "name": "Kaju Katli",
+  "slug": "kaju-katli",
+  "family": "classic",
+  "freshnessStatus": "made-daily",
+  "displayPrice": "INR 580",
+  "weight": "500 g",
+  "featured": true,
+  "ingredients": "Cashew, sugar, ghee, cardamom.",
+  "allergens": ["tree nuts", "dairy"],
+  "dietaryTags": ["vegetarian"],
+  "shelfLife": "7 days",
+  "storage": "Keep in a cool, dry place.",
+  "leadTime": "24 hours"
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="gift-boxes">
+        <h2>Gift Boxes</h2>
+        <p class="section-copy">Gift boxes define gifting products, packaging layouts, compatible mithai, add-ons, and curated assortments.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>How to use Gift Boxes</h3>
+            <ul>
+              <li>Create one gift box per sellable hamper or packaging concept.</li>
+              <li>Choose size: 4-piece, 8-piece, 16-piece, or custom.</li>
+              <li>Add compartment layout so operations know the packing plan.</li>
+              <li>Link compatible mithai and packaging.</li>
+              <li>Add optional add-ons such as carry bag, sleeve, ribbon, or card.</li>
+              <li>Add curated assortments for common gift choices.</li>
+            </ul>
+          </div>
+          <div class="sample">
+            <h3>Sample gift box</h3>
+            <pre>{
+  "name": "Diwali Heritage Box",
+  "size": "16-piece",
+  "compartmentLayout": "4 compartments, 4 pieces each",
+  "displayPrice": "INR 2,600",
+  "excerpt": "A premium festive box with classic mithai.",
+  "compatibleMithai": ["Kaju Katli", "Pista Roll", "Motichoor Laddoo"],
+  "addOns": [
+    { "label": "Gold sleeve", "type": "sleeve" },
+    { "label": "Greeting card", "type": "card" }
+  ]
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="qsr">
+        <h2>QSR Menu</h2>
+        <p class="section-copy">QSR menu items are quick service items such as chaat, chole bhature, kulcha, thaali, Chinese, and South Indian dishes.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>How to use QSR Menu</h3>
+            <ul>
+              <li>Create one row per menu item.</li>
+              <li>Choose the correct category.</li>
+              <li>Add description, image, veg flag, and spice level.</li>
+              <li>Add store slugs in availableAtStores so staff know where the item is available.</li>
+            </ul>
+          </div>
+          <div class="sample">
+            <h3>Sample QSR item</h3>
+            <pre>{
+  "name": "Raj Kachori",
+  "category": "chaat",
+  "description": "Crisp shell filled with yogurt, chutney, potato, and sev.",
+  "veg": true,
+  "spiceLevel": "medium",
+  "availableAtStores": ["indiranagar", "jayanagar"]
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="snacks-merch">
+        <h2>Snacks And Merch</h2>
+        <p class="section-copy">Snack products and merch support non-mithai catalog lines. Use them for namkeen, cookies, dry fruit products, and branded items.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>Snack product use</h3>
+            <ul>
+              <li>Create rows for namkeen, cookie, and dry fruit products.</li>
+              <li>Add weight, description, images, retailers, and MSRP.</li>
+              <li>Use clean product naming so catalog counts and storefront cards stay readable.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>Merch product use</h3>
+            <ul>
+              <li>Create rows for branded bags, tins, gifting accessories, or limited merchandise.</li>
+              <li>Add images and customer-facing copy before publishing.</li>
+              <li>Use Merch for real sellable branded objects, not packaging records.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="sample">
+          <h3>Sample snack</h3>
+          <pre>{
+  "name": "Masala Kaju",
+  "category": "dry-fruit",
+  "weight": "200 g",
+  "description": "Roasted cashews with Mishran house masala.",
+  "msrp": "INR 420",
+  "externalRetailers": [
+    { "label": "Amazon", "url": "https://example.com/masala-kaju" }
+  ]
+}</pre>
+        </div>
+      </section>
+
+      <section id="media">
+        <h2>Media</h2>
+        <p class="section-copy">Media stores images used by products, stories, hero slides, karigars, farms, packaging, and brand settings.</p>
+        <div class="card-grid">
+          <div class="feature">
+            <h3>What to upload</h3>
+            <p>Use sharp, bright, premium product photos. Avoid screenshots, low light images, overly cropped images, and files with unclear names.</p>
+          </div>
+          <div class="feature">
+            <h3>Good naming</h3>
+            <p>Use descriptive names such as <code>kaju-katli-500g-hero.jpg</code> or <code>diwali-heritage-box-open.jpg</code>.</p>
+          </div>
+          <div class="feature">
+            <h3>Operational note</h3>
+            <p>For product image arrays, drag the strongest image to the first row because it becomes the hero image.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="stories">
+        <h2>Stories</h2>
+        <p class="section-copy">Stories support Mishran brand storytelling across farm, milk, karigar, packaging, festival, regional, recipe, and journal pillars.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>Create a story</h3>
+            <ul>
+              <li>Add title and slug.</li>
+              <li>Choose the correct pillar.</li>
+              <li>Write body and excerpt.</li>
+              <li>Add hero image.</li>
+              <li>Link related products and verticals.</li>
+              <li>Add publishedAt and publish when ready.</li>
+            </ul>
+          </div>
+          <div class="sample">
+            <h3>Sample story</h3>
+            <pre>{
+  "title": "The Karigar Behind Our Kaju Katli",
+  "slug": "karigar-behind-kaju-katli",
+  "pillar": "karigar",
+  "excerpt": "Meet the maker behind a Mishran classic.",
+  "relatedProducts": ["Kaju Katli"],
+  "relatedVerticals": ["mithai"],
+  "publishedAt": "2026-09-01"
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="brand-building">
+        <h2>Karigars, Farms, Packaging</h2>
+        <p class="section-copy">These collections give the storefront its premium mithai brand feel. They connect products to craft, sourcing, and gifting quality.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>Karigars</h3>
+            <p>Use Karigars to profile makers. Link signature products and specialties so customer pages feel human and credible.</p>
+            <div class="tag-row">
+              <span class="tag">Name</span>
+              <span class="tag">Portrait</span>
+              <span class="tag">Story</span>
+              <span class="tag">Specialties</span>
+              <span class="tag">Signature products</span>
+            </div>
+          </div>
+          <div class="feature">
+            <h3>Farms</h3>
+            <p>Use Farms for sourcing stories, milk process notes, certification claims, and farm galleries.</p>
+            <div class="tag-row">
+              <span class="tag">Name</span>
+              <span class="tag">Location</span>
+              <span class="tag">Story</span>
+              <span class="tag">Gallery</span>
+              <span class="tag">Certifications</span>
+            </div>
+          </div>
+          <div class="feature">
+            <h3>Packaging</h3>
+            <p>Use Packaging for box materials, sleeves, gift packaging, and compatibility with mithai and gift boxes.</p>
+          </div>
+          <div class="feature">
+            <h3>Occasions</h3>
+            <p>Use Occasions for festival, wedding, corporate, and seasonal merchandising. Link products and gift boxes to the occasion.</p>
+          </div>
+        </div>
+        <div class="sample">
+          <h3>Sample brand data</h3>
+          <pre>{
+  "karigar": {
+    "name": "Master Ramesh",
+    "specialties": ["Kaju Katli", "Pista Roll"],
+    "signatureProducts": ["Kaju Katli"]
+  },
+  "farm": {
+    "name": "Nandi Valley Dairy",
+    "location": "Chikkaballapur",
+    "certifications": ["A2 milk supply", "Daily cold chain"]
+  },
+  "occasion": {
+    "name": "Diwali gifting",
+    "relatedProducts": ["Diwali Heritage Box"]
+  }
+}</pre>
+        </div>
+      </section>
+
+      <section id="storefront">
+        <h2>Storefront Settings</h2>
+        <p class="section-copy">Storefront globals control brand presentation, navigation, home hero, theme direction, analytics, and store locations.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>Brand Settings</h3>
+            <p>Controls logo, brand name, tagline, positioning, hero copy, and default theme.</p>
+            <pre>{
+  "brandName": "Mishran",
+  "tagline": "Premium mithai, made with craft.",
+  "defaultTheme": "mishran-default"
+}</pre>
+          </div>
+          <div class="feature">
+            <h3>Home Hero</h3>
+            <p>Controls the home page hero carousel. Add up to 12 product slides and drag to reorder. First row appears first.</p>
+            <pre>{
+  "autoplayMs": 5000,
+  "slides": [
+    {
+      "product": "Diwali Heritage Box",
+      "captionOverride": "Festive gifting, ready to send"
+    }
+  ]
+}</pre>
+          </div>
+          <div class="feature">
+            <h3>Navigation Settings</h3>
+            <p>Controls primary and utility navigation labels and links. Keep labels short and customer friendly.</p>
+          </div>
+          <div class="feature">
+            <h3>Theme Settings</h3>
+            <p>Controls storefront theme tokens, layout mode, hero style, product image motion, theme switcher visibility, and catalog page size.</p>
+          </div>
+          <div class="feature">
+            <h3>Analytics Settings</h3>
+            <p>Stores GA4 ID, Meta Pixel ID, Hotjar ID, and WhatsApp number. Use exact IDs from each platform.</p>
+          </div>
+          <div class="feature">
+            <h3>Store Settings</h3>
+            <p>Stores physical locations, city, address, hours, delivery radius, latitude, and longitude.</p>
+            <pre>{
+  "name": "Mishran Indiranagar",
+  "city": "Bengaluru",
+  "address": "100 Feet Road, Indiranagar",
+  "hours": "10:00 AM to 9:00 PM",
+  "deliveryRadiusKm": 8,
+  "lat": 12.9784,
+  "lng": 77.6408
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="customers">
+        <h2>Customers And Delivery</h2>
+        <p class="section-copy">Customer and delivery collections help admins support orders, addresses, delivery coverage, app devices, and customer service.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>Customers</h3>
+            <p>Stores phone, Apple sign-in ID, auth provider, name, email, locale, default addresses, last IP, and last seen time. Use this to identify the customer behind an order.</p>
+          </div>
+          <div class="feature">
+            <h3>Addresses</h3>
+            <p>Stores customer address, city, state, pincode, coordinates, address tag, and default flag.</p>
+          </div>
+          <div class="feature">
+            <h3>Delivery Areas</h3>
+            <p>Serviceable pincodes decide whether Mishran can deliver fresh or shelf stable products to a location.</p>
+          </div>
+          <div class="feature">
+            <h3>Devices and security</h3>
+            <p>Devices, OTP requests, revoked tokens, idempotency keys, and security events are mostly system records. Use them for support and security investigation, not routine editing.</p>
+          </div>
+        </div>
+        <div class="sample">
+          <h3>Sample delivery area</h3>
+          <pre>{
+  "pincode": "560038",
+  "tier": "fresh",
+  "city": "Bengaluru",
+  "state": "Karnataka",
+  "slaDays": 0,
+  "active": true
+}</pre>
+        </div>
+      </section>
+
+      <section id="sample-data">
+        <h2>Sample Data Library</h2>
+        <p class="section-copy">Use these examples as shape references when training a new admin. Replace names, dates, money, and IDs with real operational data.</p>
+        <div class="matrix">
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Good sample value</th>
+                <th>Why it matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mithai slug</td>
+                <td><code>kaju-katli</code></td>
+                <td>Readable, stable, lowercase URL identifier.</td>
+              </tr>
+              <tr>
+                <td>Freshness status</td>
+                <td><code>made-daily</code></td>
+                <td>Controls fulfillment promise and dashboard freshness grouping.</td>
+              </tr>
+              <tr>
+                <td>Coupon value</td>
+                <td><code>10</code> for percent, <code>10000</code> for INR 100 flat</td>
+                <td>Money math uses paise for flat discounts.</td>
+              </tr>
+              <tr>
+                <td>Lead status</td>
+                <td><code>qualified</code></td>
+                <td>Signals a real opportunity that needs sales attention.</td>
+              </tr>
+              <tr>
+                <td>Review status</td>
+                <td><code>approved</code> or <code>rejected</code></td>
+                <td>Moderation keeps customer-facing proof high quality.</td>
+              </tr>
+              <tr>
+                <td>Delivery area tier</td>
+                <td><code>fresh</code> or <code>shelf</code></td>
+                <td>Defines product delivery promise by pincode.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="status-glossary">
+        <h2>Status Glossary</h2>
+        <p class="section-copy">Use exact status values. They drive filters, dashboard counts, and downstream workflow logic.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>Order statuses</h3>
+            <div class="tag-row">
+              <span class="tag">created</span>
+              <span class="tag">pending_payment</span>
+              <span class="tag">confirmed</span>
+              <span class="tag">packed</span>
+              <span class="tag">dispatched</span>
+              <span class="tag">out_for_delivery</span>
+              <span class="tag">delivered</span>
+              <span class="tag">payment_failed</span>
+              <span class="tag">cancelled</span>
+              <span class="tag">returned</span>
+              <span class="tag">failed_delivery</span>
+              <span class="tag">abandoned</span>
+            </div>
+          </div>
+          <div class="feature">
+            <h3>Payment statuses</h3>
+            <div class="tag-row">
+              <span class="tag">pending</span>
+              <span class="tag">paid</span>
+              <span class="tag">failed</span>
+              <span class="tag">refunded</span>
+              <span class="tag">partially_refunded</span>
+            </div>
+          </div>
+          <div class="feature">
+            <h3>Provider payment statuses</h3>
+            <div class="tag-row">
+              <span class="tag">created</span>
+              <span class="tag">create_failed</span>
+              <span class="tag">captured</span>
+              <span class="tag">failed</span>
+              <span class="tag">refunded</span>
+              <span class="tag">partially_refunded</span>
+            </div>
+          </div>
+          <div class="feature">
+            <h3>Shipment stages</h3>
+            <div class="tag-row">
+              <span class="tag">confirmed</span>
+              <span class="tag">packed</span>
+              <span class="tag">dispatched</span>
+              <span class="tag">out_for_delivery</span>
+              <span class="tag">delivered</span>
+              <span class="tag">cancelled</span>
+              <span class="tag">returned</span>
+              <span class="tag">failed_delivery</span>
+            </div>
+          </div>
+          <div class="feature">
+            <h3>Lead statuses</h3>
+            <div class="tag-row">
+              <span class="tag">new</span>
+              <span class="tag">contacted</span>
+              <span class="tag">qualified</span>
+              <span class="tag">won</span>
+              <span class="tag">lost</span>
+            </div>
+          </div>
+          <div class="feature">
+            <h3>Review statuses</h3>
+            <div class="tag-row">
+              <span class="tag">pending</span>
+              <span class="tag">approved</span>
+              <span class="tag">rejected</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="handoff-checklist">
+        <h2>New Admin Checklist</h2>
+        <p class="section-copy">Use this checklist in the first training session. The admin is ready when they can complete these without help.</p>
+        <div class="matrix">
+          <table>
+            <thead>
+              <tr>
+                <th>Priority</th>
+                <th>Task</th>
+                <th>Admin should demonstrate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="priority p0">P0</span></td>
+                <td>Open Admin home and explain every dashboard tile.</td>
+                <td>Understands to fulfill, COD cash, revenue, reviews, leads, freshness, and catalog counts.</td>
+              </tr>
+              <tr>
+                <td><span class="priority p0">P0</span></td>
+                <td>Find an order and update its status correctly.</td>
+                <td>Can move an order through confirmed, packed, dispatched, out for delivery, and delivered.</td>
+              </tr>
+              <tr>
+                <td><span class="priority p0">P0</span></td>
+                <td>Moderate pending reviews.</td>
+                <td>Approves useful reviews and rejects unsafe or irrelevant reviews.</td>
+              </tr>
+              <tr>
+                <td><span class="priority p1">P1</span></td>
+                <td>Create or update a mithai product.</td>
+                <td>Uses slug, freshness, image order, content, sourcing, and logistics correctly.</td>
+              </tr>
+              <tr>
+                <td><span class="priority p1">P1</span></td>
+                <td>Follow up and update a lead.</td>
+                <td>Reads payload, contacts customer, changes status, and keeps notes clean.</td>
+              </tr>
+              <tr>
+                <td><span class="priority p2">P2</span></td>
+                <td>Create a coupon.</td>
+                <td>Uses percent or paise values correctly and sets date and usage limits.</td>
+              </tr>
+              <tr>
+                <td><span class="priority p2">P2</span></td>
+                <td>Update home hero and brand settings.</td>
+                <td>Can reorder slides, choose products, and keep brand copy polished.</td>
+              </tr>
+              <tr>
+                <td><span class="priority p3">P3</span></td>
+                <td>Explain system records.</td>
+                <td>Knows that OTP, devices, security events, revoked tokens, and idempotency records are for investigation, not daily editing.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="print-note">Print tip: this guide is designed to print cleanly. Use browser Print to PDF when giving it to a new admin offline.</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
