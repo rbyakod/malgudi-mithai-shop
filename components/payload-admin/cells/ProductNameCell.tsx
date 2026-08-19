@@ -6,6 +6,7 @@
 // next/image which establishes its own client boundary.
 import Image from "next/image";
 import type {DefaultCellComponentProps} from "payload";
+import MediaThumb from "./MediaThumb";
 
 type MetaItem = {
   label: string;
@@ -28,21 +29,35 @@ type Row = Record<string, unknown> & {id: string; name?: string};
 
 type MediaDoc = {url?: string; alt?: string; filename?: string};
 
-function pickImageUrl(row: Row, spec: ImageSpec): {url: string; alt?: string} | null {
+// The admin list view fetches rows with depth=0, so relation values arrive
+// as bare media IDs (strings), never populated docs. A bare ID must NOT be
+// used as an image src — next/image would request /_next/image?url=<id> and
+// get a 400. Return it as a mediaId so the cell renders <MediaThumb>, which
+// resolves it through the batched /api/media lookup in mediaResolver.ts.
+// Strings that already look like URLs (legacy/direct data) pass through.
+type PickedImage = {url: string; alt?: string} | {mediaId: string; alt?: string};
+
+function isLikelyUrl(value: string): boolean {
+  return value.startsWith("/") || value.startsWith("http://") || value.startsWith("https://");
+}
+
+function pickImage(row: Row, spec: ImageSpec): PickedImage | null {
   if (spec.kind === "array") {
     const arr = (row as Record<string, unknown>)[spec.field];
     if (!Array.isArray(arr) || arr.length === 0) return null;
     const first = arr[0] as Record<string, unknown>;
     const media = first[spec.imageKey] as MediaDoc | string | undefined;
-    if (typeof media === "string") return {url: media};
-    if (media && typeof media === "object" && media.url) {
-      return {url: media.url, alt: media.alt};
-    }
-    return null;
+    return coerceMedia(media);
   }
   // single
   const media = (row as Record<string, unknown>)[spec.field] as MediaDoc | string | undefined;
-  if (typeof media === "string") return {url: media};
+  return coerceMedia(media);
+}
+
+function coerceMedia(media: MediaDoc | string | undefined): PickedImage | null {
+  if (typeof media === "string") {
+    return isLikelyUrl(media) ? {url: media} : {mediaId: media};
+  }
   if (media && typeof media === "object" && media.url) {
     return {url: media.url, alt: media.alt};
   }
@@ -64,27 +79,32 @@ export function makeProductNameCell(behavior: ProductCellBehavior) {
     rowData,
   }: DefaultCellComponentProps) {
     const row = rowData as Row;
-    const image = pickImageUrl(row, behavior.image);
+    const image = pickImage(row, behavior.image);
     const meta = behavior.meta(row);
     const badges = behavior.badges?.(row) ?? [];
     const name = (cellData as string | null | undefined) ?? row.name ?? "";
 
+    const thumb =
+      image && "mediaId" in image ? (
+        <MediaThumb id={image.mediaId} alt={image.alt ?? name} />
+      ) : image ? (
+        <Image
+          src={image.url}
+          alt={image.alt ?? name}
+          width={48}
+          height={48}
+          style={{objectFit: "cover", borderRadius: "6px", border: "1px solid var(--t-border)"}}
+        />
+      ) : (
+        <div
+          className="mishran-cell-fallback"
+          style={{width: 48, height: 48, borderRadius: "6px", background: "var(--t-bg-control)"}}
+        />
+      );
+
     return (
       <div style={{display: "flex", alignItems: "center", gap: "0.75rem"}}>
-        {image ? (
-          <Image
-            src={image.url}
-            alt={image.alt ?? name}
-            width={48}
-            height={48}
-            style={{objectFit: "cover", borderRadius: "6px", border: "1px solid var(--t-border)"}}
-          />
-        ) : (
-          <div
-            className="mishran-cell-fallback"
-            style={{width: 48, height: 48, borderRadius: "6px", background: "var(--t-bg-control)"}}
-          />
-        )}
+        {thumb}
         <div style={{display: "flex", flexDirection: "column", gap: "0.125rem"}}>
           <span style={{fontWeight: 500, color: "var(--t-text)"}}>{String(name)}</span>
           {meta.length > 0 && (

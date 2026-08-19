@@ -348,3 +348,52 @@ title suffix renders; authenticated `GET /api/leads` → 200.
 CSV import/export, drafts & live preview, customer 360, media governance, localization
 switcher, command palette, scheduled publishing, roles & audit log. These remain the
 P1/P2 backlog.
+
+## 14. Post-deploy follow-ups — 2026-08-19
+
+Follow-ups from live use after the overhaul shipped (commits `4abf17b` + the
+thumbnail fix).
+
+### Sidebar visibility & Mishran theme (§4 polish)
+
+- Group titles are now **bolder and larger** (px-based — the admin root computes
+  rem ~25% smaller than the storefront, so rem-scaled admin type renders tiny).
+- The persistent rail (≥1441px viewports) carries the Mishran maroon with the
+  cream/gold accents. Below 1441px Payload swaps to an off-canvas drawer, which
+  was the "white/invisible sidebar" red herring during verification — probe the
+  admin at ≥1441px wide or you are not looking at the rail.
+- The active-route marker styles the **current** nav entry via a
+  `div.nav__link` tag selector in unlayered `custom.scss`: Payload renders the
+  current route as a `<div>`, not an `<a>`, so no class or aria hook
+  distinguishes it.
+
+### D7 — list thumbnails 400 on bare media IDs — fixed
+
+Product rows in list views arrive from a `depth=0` query (Payload's design for
+list performance), so `images[0].image` is a bare media ID string, never a
+populated doc. The custom product cells passed that string straight to
+`next/image`, producing `/_next/image?url=<24-hex>&w=96&q=75` → instant 400
+for every row (514 logged on prod nginx in one afternoon). Fix, contained in
+the cell layer:
+
+- `pickImage` now classifies strings: URL-looking values pass through; bare
+  IDs render `<MediaThumb>` (`components/payload-admin/cells/MediaThumb.tsx`).
+- `MediaThumb` subscribes to a module-level store (`mediaResolver.ts`) that
+  **batches** every pending ID on the page into one
+  `GET /api/media?where[id][in]=…&depth=0` call (40 ms coalescing window,
+  50-ID batches, stable snapshots via `useSyncExternalStore`). Rows show the
+  styled fallback until the batch lands, then swap to a real 48px thumbnail.
+  A failed lookup keeps the fallback; nothing ever 400s.
+- Covered by 4 new unit tests (fallback→resolve swap, failed lookup,
+  URL-string passthrough, single-field shape) — payload-admin suite 92/92.
+
+### Storefront reliability landed in the same window
+
+- **Cinematic hero autoplay**: a resting cursor no longer pauses the rotation
+  (hover-pause now applies to the framed hero only); keyboard focus still
+  pauses and reduced-motion is honored.
+- **nginx image cache on the VPS** (`/_next/image` + `/api/media/file/`,
+  30-day disk cache, ~8.6× faster repeat loads) plus a post-deploy warm step
+  (`scripts/warm-image-cache.sh`, runs as step 5/5 of `scripts/deploy-vps.sh`)
+  — this is what ended the broken-image burst on product pages after each
+  deploy. Ops notes in `docs/deployment.md` §8.

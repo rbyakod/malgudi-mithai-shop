@@ -1,5 +1,6 @@
-import {describe, it, expect, vi} from "vitest";
-import {render, screen} from "@testing-library/react";
+import {describe, it, expect, vi, afterEach} from "vitest";
+import type {ComponentType} from "react";
+import {render, screen, waitFor} from "@testing-library/react";
 import {makeProductNameCell} from "@/components/payload-admin/cells/ProductNameCell";
 import type {ProductCellBehavior} from "@/components/payload-admin/cells/ProductNameCell";
 
@@ -76,5 +77,100 @@ describe("ProductNameCell", () => {
     const rowData = {id: "6", name: "Chai", image: {url: "/media/chai.jpg"}};
     render(<SingleCell cellData="Chai" rowData={rowData} collectionField={{name: "name"} as any} />);
     expect(screen.getByTestId("img")).toHaveAttribute("src", "/media/chai.jpg");
+  });
+
+  // The admin list fetches rows at depth=0, so relations arrive as bare IDs.
+  // A bare ID must never become an img src (it 400s in /_next/image); the
+  // cell defers to MediaThumb, which resolves it via a batched /api/media
+  // lookup and swaps the fallback for a real thumbnail.
+  describe("bare relation IDs (depth=0 list rows)", () => {
+    const fetchMock = vi.fn();
+    const mediaId = "6a7fc2cff20fc342eafe0e2e";
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      fetchMock.mockReset();
+    });
+
+    it("shows fallback first, then the resolved thumbnail, never the ID as src", async () => {
+      fetchMock.mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          docs: [{id: mediaId, url: "/api/media/file/kaju.jpg", alt: "Kaju Katli"}],
+        }),
+      });
+      vi.stubGlobal("fetch", fetchMock);
+
+      const rowData = {
+        id: "7",
+        name: "Kaju Katli",
+        images: [{image: mediaId}],
+      };
+      const {container} = render(
+        <Cell cellData="Kaju Katli" rowData={rowData} collectionField={{name: "name"}} />,
+      );
+
+      // Before the batch resolves: styled fallback, no img at all.
+      expect(container.querySelector("img")).toBeNull();
+      expect(container.querySelector(".mishran-cell-fallback")).not.toBeNull();
+
+      // After the batched /api/media lookup: real thumbnail URL.
+      await waitFor(() => {
+        expect(screen.getByTestId("img")).toHaveAttribute("src", "/api/media/file/kaju.jpg");
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      const query = String(fetchMock.mock.calls[0][0]);
+      expect(query).toContain("/api/media");
+      expect(query).toContain(mediaId);
+    });
+
+    it("keeps the fallback when the media lookup fails", async () => {
+      fetchMock.mockResolvedValue({ok: false, json: async () => ({})});
+      vi.stubGlobal("fetch", fetchMock);
+
+      const rowData = {id: "8", name: "Broken", images: [{image: "6a7fc2cff20fc342eafe0f3f"}]};
+      const {container} = render(
+        <Cell cellData="Broken" rowData={rowData} collectionField={{name: "name"}} />,
+      );
+
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenCalled();
+      });
+      await new Promise((r) => setTimeout(r, 80));
+      expect(container.querySelector("img")).toBeNull();
+      expect(container.querySelector(".mishran-cell-fallback")).not.toBeNull();
+    });
+
+    it("passes URL-looking strings straight to the image", () => {
+      const rowData = {id: "9", name: "Legacy", images: [{image: "/api/media/file/legacy.jpg"}]};
+      render(<Cell cellData="Legacy" rowData={rowData} collectionField={{name: "name"}} />);
+      expect(screen.getByTestId("img")).toHaveAttribute("src", "/api/media/file/legacy.jpg");
+    });
+
+    it("resolves bare IDs in single-image (upload) shape too", async () => {
+      // Unique ID: the resolver's module-level cache persists across tests.
+      const singleMediaId = "6a7fc2cff20fc342eafe0a4a";
+      fetchMock.mockResolvedValue({
+        ok: true,
+        json: async () => ({docs: [{id: singleMediaId, url: "/api/media/file/chai.jpg"}]}),
+      });
+      vi.stubGlobal("fetch", fetchMock);
+      const singleBehavior: ProductCellBehavior = {
+        image: {kind: "single", field: "image"},
+        meta: () => [],
+        badges: () => [],
+      };
+      type LooseCell = ComponentType<{
+        cellData?: string | null;
+        rowData?: Record<string, unknown>;
+        collectionField?: {name: string};
+      }>;
+      const SingleCell = makeProductNameCell(singleBehavior) as LooseCell;
+      const rowData = {id: "10", name: "Chai", image: singleMediaId};
+      render(<SingleCell cellData="Chai" rowData={rowData} collectionField={{name: "name"}} />);
+      await waitFor(() => {
+        expect(screen.getByTestId("img")).toHaveAttribute("src", "/api/media/file/chai.jpg");
+      });
+    });
   });
 });

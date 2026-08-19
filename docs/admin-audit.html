@@ -238,6 +238,7 @@
     <a href="#s11"><span class="n">11</span>Roadmap P0–P2</a>
     <a href="#s12"><span class="n">12</span>Appendix: evidence</a>
     <a href="#s13"><span class="n">13</span>Implementation status</a>
+    <a href="#s14"><span class="n">14</span>Post-deploy follow-ups</a>
   </nav>
   <div class="sidebar-foot">
     Live audit · 2026-08-18<br />
@@ -735,6 +736,74 @@
       <p>CSV import/export · drafts &amp; live preview · customer 360 · media governance ·
         localization switcher · command palette · scheduled publishing · roles &amp;
         audit log.</p>
+    </div>
+  </section>
+
+  <!-- ================= 14 ================= -->
+  <section id="s14">
+    <h2>14 · Post-deploy follow-ups — 2026-08-19</h2>
+    <p>
+      Follow-ups from live use after the overhaul shipped (commits
+      <code>4abf17b</code> + the thumbnail fix).
+    </p>
+
+    <div class="ship-grid">
+      <div class="ship-card">
+        <h4>Sidebar visibility</h4>
+        <p>Group titles bolder and larger — px-based, because the admin root
+        computes rem ~25% smaller than the storefront. The persistent rail
+        (≥1441px viewports) now wears the Mishran maroon with cream/gold
+        accents.</p>
+      </div>
+      <div class="ship-card">
+        <h4>Active-route marker</h4>
+        <p>The current nav entry is a <code>&lt;div&gt;</code>, not an
+        <code>&lt;a&gt;</code> — Payload renders no class or aria hook for it.
+        Styled via a <code>div.nav__link</code> tag selector in unlayered
+        <code>custom.scss</code> (gold marker).</p>
+      </div>
+      <div class="ship-card">
+        <h4>Cinematic hero autoplay</h4>
+        <p>A resting cursor no longer pauses the rotation — hover-pause now
+        applies to the framed hero only. Keyboard focus still pauses;
+        reduced-motion is honored.</p>
+      </div>
+      <div class="ship-card">
+        <h4>VPS image cache</h4>
+        <p>nginx disk-caches <code>/_next/image</code> + media files (30-day
+        TTL, ~8.6× faster repeat loads); deploys warm the cache automatically
+        (<code>scripts/warm-image-cache.sh</code>). Ended the broken-image
+        burst on product pages after each deploy — see
+        <code>docs/deployment.md</code> §8.</p>
+      </div>
+    </div>
+
+    <h3>D7 — list thumbnails 400 on bare media IDs</h3>
+    <div class="status-row" style="border-bottom: 0;">
+      <span class="id">D7</span>
+      <span class="pill pill--ok">Fixed</span>
+      <span class="what">List views query at <code>depth=0</code> (Payload’s
+        design for list performance), so <code>images[0].image</code> arrives
+        as a bare media ID string — which the product cells passed straight to
+        <code>next/image</code>: <code>/_next/image?url=&lt;24-hex&gt;&amp;w=96</code>
+        → instant 400 for every row (514 logged on prod nginx in one
+        afternoon). Fix, contained in the cell layer: <code>pickImage</code>
+        classifies strings (URL-looking pass through, bare IDs render
+        <code>&lt;MediaThumb&gt;</code>), and a module-level resolver batches
+        every pending ID on the page into one
+        <code>GET /api/media?where[id][in]=…&amp;depth=0</code> call (40 ms
+        coalescing, 50-ID batches, <code>useSyncExternalStore</code>). Rows
+        show the styled fallback until the batch lands, then swap to a real
+        48px thumbnail; failed lookups keep the fallback. 4 new unit tests —
+        payload-admin suite 92/92.</span>
+    </div>
+
+    <div class="ok-box">
+      <p class="box-title">Verification</p>
+      <p>Local probe with a real image relation: row rendered at
+        <code>depth=0</code> resolved to
+        <code>/_next/image?url=%2Fapi%2Fmedia%2Ffile%2F…&amp;w=96</code>, zero
+        bare-ID srcs · 92/92 admin tests · <code>pnpm build</code> green.</p>
     </div>
   </section>
 

@@ -109,6 +109,23 @@ vercel.ts             Vercel project config (framework, region bom1, maxDuration
 payload.config.ts     Payload CMS root config
 ```
 
+## Admin & media reliability pass (2026-08-19)
+
+Follow-ups from live use, shipped in `4abf17b` + the thumbnail fix:
+
+- **Admin list thumbnails fixed** — list rows arrive at `depth=0` (bare media
+  IDs); the product cells previously fed those IDs to `next/image`, 400-ing
+  every thumbnail. New `MediaThumb` + batched `mediaResolver` resolve IDs via
+  one `GET /api/media` call per page (see `docs/admin-audit.md` §14 / D7).
+- **Admin sidebar visibility** — bolder/larger section titles and the Mishran
+  maroon theme on the persistent rail, with a gold active-route marker.
+- **Cinematic hero autoplay** — a resting cursor no longer pauses rotation;
+  framed hero keeps hover-pause, reduced-motion still honored.
+- **VPS image cache** — nginx now disk-caches `/_next/image` and media files
+  (30-day TTL, ~8.6× faster repeat loads) and deploys warm the cache
+  automatically (`scripts/warm-image-cache.sh`), ending the broken-image
+  burst on product pages after each deploy (`docs/deployment.md` §8).
+
 ## Plan + ledger
 
 - Plan: `docs/superpowers/plans/2026-08-10-mishran-foundation-phase.md`
