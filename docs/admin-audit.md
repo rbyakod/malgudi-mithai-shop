@@ -455,3 +455,69 @@ label **"Admin home"**.
   in all three admin themes.
 - e2e guard: computed `::after` content === "Admin home" and chip width
   > 60px in `admin-aesthetics.spec.ts`.
+
+### D10 — near-black form fields on the light canvas — fixed
+
+After the white-canvas commits, every create/edit form still rendered
+near-black inputs with dark typed text (owner screenshots of
+`/admin/collections/users/create`). Root cause was **two stacked
+mechanisms**, both verified against Payload 3.87.1 internals:
+
+1. **Payload's native dark mode was active on `html`.** The config left
+   `admin.theme` at its default `'all'`, so `html[data-theme]` followed
+   the 365-day `payload-theme` cookie or the OS `Sec-CH-Prefers-Color-Scheme`
+   header (an evening dark-mode Mac is enough). Under
+   `html[data-theme='dark']` Payload inverts its elevation ladder to
+   near-black rungs.
+2. **The input token is resolved and frozen on `html`.** All field
+   styling funnels through the `formInput` mixin consuming
+   `--theme-input-bg` — declared only on `:root` as
+   `var(--theme-elevation-0)`. CSS `var()` substitution happens on the
+   *declaring* element, so the value froze at `html` against the dark
+   ladder. The repo's `body[data-admin-theme]` elevation overrides sit
+   one level *below* that resolution point — they repaint anything that
+   resolves at the element (typed text, hence dark-on-dark) but can
+   never flow into `--theme-input-bg`.
+
+Fix (two prongs, `payload.config.ts` + one `custom.scss` section):
+
+- **Lock the native theme**: `admin.theme: "light"` short-circuits
+  `getRequestTheme` before cookie/header (`@payloadcms/next/dist/utilities/getRequestTheme.js:8`),
+  so `html[data-theme='light']` is always rendered and the stock
+  light/dark toggle disappears — the Mishran sidebar switcher is the
+  single source of admin theming now. This also unfreezes drawers and
+  the doc-header (they follow `--theme-bg`, resolved on `html`).
+- **Re-declare the input token cluster on `body[data-admin-theme]`**
+  (custom properties inherit, so a body-level declaration beats the
+  html-inherited value for the whole subtree): cream `--theme-input-bg
+  #fdf8ed` plus warm-tan border rungs `-150/-250`, hover `-300`,
+  focus/placeholder `-400`, panels/stripes `-50/-100`, and
+  `--theme-border-color` (html-frozen otherwise — radio borders,
+  toasts). Values are literals so **all three admin themes get
+  identical Mishran forms**; themes differ only in rail + accents,
+  matching the already-forced white canvas. Filled text is
+  `#2a1a0e` on `#fdf8ed` (~13:1).
+- Polish on top: a house-gold focus ring (`formInput` does border-only
+  focus with `outline: 0`), restored borders on the list search pill and
+  drawer combobox (Payload strips them — they vanished on white), and
+  espresso text on selected react-select options (cream-on-cream fill
+  would read washed).
+- Covers every `formInput` consumer in one block: text/email/password/
+  number/slug/point inputs, textareas, select + relationship controls
+  and their open menus and option states, date picker input + calendar
+  sheet, code field, checkboxes/radios, popups, toasts, where-builder
+  conditions, block/items-drawer searches, upload filename rows, table
+  striping, disabled fills. Left as-is deliberately: Monaco's internal
+  chrome, black box-shadows (fine on light).
+- e2e guard in `admin-aesthetics.spec.ts`: input computed bg
+  `rgb(253, 248, 237)`, filled text `rgb(42, 26, 14)`, select control
+  same cream, `html[data-theme="light"]`.
+- Verified beyond the e2e: a settle-aware probe (poll `getComputedStyle`
+  until stable, mirroring `toHaveCSS`) reads exact cream + espresso on
+  the create form across **all three themes** and the list search pill,
+  7/7. Note for future probing: one-shot style reads catch fields
+  mid-mount-transition and return interpolated values with fractional
+  alphas — poll to settle, don't trust a single read.
+- Owner note: any browser still holding a stale `payload-theme=dark`
+  cookie is harmless now (config wins server-side), but a hard refresh
+  clears the old dark CSS from cache.

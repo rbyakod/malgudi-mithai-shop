@@ -139,6 +139,14 @@ export default buildConfig({
     meta: {
       titleSuffix: " — Mishran",
     },
+    // Audit D10: lock Payload's native light/dark theme to "light". At the
+    // default "all", html[data-theme] follows the OS Sec-CH header or a
+    // sticky 365-day payload-theme cookie — flipping Payload's elevation
+    // ladder dark. That was the source of the near-black form inputs: the
+    // input bg token --theme-input-bg is var()-resolved on <html>, out of
+    // reach of body-level overrides. The Mishran sidebar switcher owns
+    // admin theming now; the stock appearance toggle is retired.
+    theme: "light",
     // Auto-login in dev so /admin opens without credentials during local development.
     autoLogin: isLocalDev
       ? {

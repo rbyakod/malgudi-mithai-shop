@@ -182,4 +182,23 @@ test.describe("Mishran admin aesthetics", () => {
     await page.getByRole("button", {name: /leave anyway/i}).click();
     await page.waitForURL(/\/admin\/collections\/customers(\?.*)?$/, {timeout: 15000});
   });
+
+  // Audit D10: form fields are Mishran cream with readable espresso filled
+  // text — never the html-dark near-black inputs. Also pins the config fix:
+  // html stays data-theme="light" (admin.theme is locked, so the OS header
+  // and the sticky payload-theme cookie can no longer flip it dark).
+  test("form fields are Mishran cream with readable filled text", async ({page}) => {
+    await page.goto("/admin/collections/users/create", {waitUntil: "domcontentloaded"});
+    const email = page.locator(".field-type.email input").first();
+    await expect(email).toBeVisible({timeout: 30000});
+    await expect(email).toHaveCSS("background-color", "rgb(253, 248, 237)");
+    await email.fill("cream-check@mishran.shop");
+    await expect(email).toHaveCSS("color", "rgb(42, 26, 14)");
+    // Role select control (type: "select" → ReactSelect) — same cream fill,
+    // not the old dark chip.
+    const roleControl = page.locator(".react-select .rs__control").first();
+    await expect(roleControl).toHaveCSS("background-color", "rgb(253, 248, 237)");
+    // Prong 1: the native theme lock that unfreezes the input tokens.
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  });
 });

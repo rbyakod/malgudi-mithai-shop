@@ -824,7 +824,7 @@
     </div>
 
     <h3>D9 — breadcrumb home crumb unreadable</h3>
-    <div class="status-row" style="border-bottom: 0;">
+    <div class="status-row">
       <span class="id">D9</span>
       <span class="pill pill--ok">Fixed</span>
       <span class="what">The first breadcrumb step (back to the dashboard) is
@@ -845,6 +845,50 @@
         &gt;60px chip width.</span>
     </div>
 
+    <h3>D10 — near-black form fields on the light canvas</h3>
+    <div class="status-row" style="border-bottom: 0;">
+      <span class="id">D10</span>
+      <span class="pill pill--ok">Fixed</span>
+      <span class="what">After the white-canvas commits, every create/edit
+        form still rendered near-black inputs with dark typed text. Two
+        stacked causes, verified against Payload 3.87.1 internals:
+        <strong>(1)</strong> the config left <code>admin.theme</code> at
+        <code>'all'</code>, so <code>html[data-theme]</code> followed the
+        365-day <code>payload-theme</code> cookie or the OS
+        <code>Sec-CH-Prefers-Color-Scheme</code> header — an evening
+        dark-mode Mac was enough to flip Payload’s elevation ladder to
+        near-black rungs; <strong>(2)</strong> all field styling funnels
+        through the <code>formInput</code> mixin consuming
+        <code>--theme-input-bg</code>, declared only on
+        <code>:root</code> — CSS <code>var()</code> substitution happens
+        on the <em>declaring</em> element, so the value froze at
+        <code>html</code> against the dark ladder, one level above every
+        body-level override in this theme. Fix: lock
+        <code>admin.theme: "light"</code> (short-circuits
+        <code>getRequestTheme</code> before cookie/header; the stock
+        light/dark toggle retires — the Mishran sidebar switcher is the
+        single source of theming), then re-declare the input token
+        cluster on <code>body[data-admin-theme]</code> — custom
+        properties inherit, so cream <code>--theme-input-bg #fdf8ed</code>
+        plus warm-tan border rungs repaint every
+        <code>formInput</code> consumer: inputs, textareas, select +
+        relationship controls with their open menus and option states,
+        date pickers, code fields, checkboxes/radios, popups, toasts,
+        where-builder conditions, drawer searches, upload rows, table
+        striping. Identical Mishran forms in all three themes (they
+        differ only in rail + accents); filled text
+        <code>#2a1a0e</code> on <code>#fdf8ed</code> ≈ 13:1. Polish:
+        house-gold focus ring, restored borders on the list search pill
+        and drawer combobox, espresso text on selected options. e2e
+        asserts the computed cream fill, the filled-text color, and
+        <code>html[data-theme="light"]</code>. A settle-aware probe
+        (poll <code>getComputedStyle</code> until stable, mirroring
+        <code>toHaveCSS</code>) reads exact cream + espresso on the
+        create form in all three themes and the list search pill, 7/7 —
+        one-shot style reads catch fields mid-mount-transition and
+        return interpolated fractional-alpha values, so poll to settle.</span>
+    </div>
+
     <div class="ok-box">
       <p class="box-title">Verification</p>
       <p>Local probe with a real image relation: row rendered at
@@ -854,7 +898,10 @@
         D8/D9 pass: Cancel present left of Save on collection create/edit,
         globals (→ dashboard), absent inside drawers; dirty form
         raises the native leave modal; “Admin home” chip visible on every
-        view in all three themes.</p>
+        view in all three themes. D10 pass: every form field renders the
+        Mishran cream fill with espresso typed text across all three
+        themes, select menus/popovers included, and
+        <code>html</code> stays <code>data-theme="light"</code>.</p>
     </div>
   </section>
 

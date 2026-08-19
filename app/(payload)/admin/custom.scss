@@ -438,6 +438,54 @@ body[data-admin-theme] main {
   color: #2a1a0e;
 }
 
+// === Form controls: Mishran cream fills, warm borders, gold focus (D10) ===
+// Payload paints every input via the formInput mixin consuming
+// --theme-input-bg — a token declared (and var()-resolved) on <html>, so
+// the body-level elevation overrides above never reached it: inputs stayed
+// near-black whenever html[data-theme='dark'] flipped on (OS header or the
+// 365-day payload-theme cookie; the config now locks html to light).
+// Custom properties inherit, so re-declaring the cluster on body repaints
+// every formInput consumer in the subtree. Values are literals, not --t-*:
+// all three themes get identical Mishran forms — the canvas is already
+// forced light globally, themes differ only in rail + accents.
+body[data-admin-theme] {
+  --theme-input-bg: #fdf8ed;      // cream fill: inputs, select menus, popups, toasts
+  --theme-elevation-50: #f7efe0;  // panels, table stripes, search pill fills
+  --theme-elevation-100: #f6ead2; // focused options, disabled fills, dividers
+  --theme-elevation-150: #e3cfa9; // field + table borders (warm tan)
+  --theme-elevation-250: #cfb27f; // hover borders
+  --theme-elevation-300: #f0dfc0; // react-select selected option fill
+  --theme-elevation-400: #a3854f; // focus borders, placeholders, disabled text
+  --theme-border-color: #e3cfa9;  // frozen on html otherwise (radio, toasts)
+}
+
+// Filled text is #2a1a0e on #fdf8ed (~13:1) via --theme-elevation-800 above.
+// formInput kills the outline and only tints the border on focus — give
+// focused fields a visible house-gold ring instead. Checkboxes keep their
+// own !important green ring, so they're excluded.
+body[data-admin-theme] .field-type :is(input, textarea):not(.checkbox-input__input):focus-visible,
+body[data-admin-theme] .where-builder input:focus-visible,
+body[data-admin-theme] .search-filter__input:focus-visible,
+body[data-admin-theme] .react-select .rs__control:focus-within {
+  border-color: #b08838;
+  box-shadow: 0 0 0 3px rgba(176, 136, 56, 0.22);
+}
+
+// Payload strips the border/shadow off the list search pill and the drawer
+// combobox — on the white canvas they used to vanish into the page.
+body[data-admin-theme] .search-filter__input,
+body[data-admin-theme] .combobox__search-input {
+  background-color: #fdf8ed;
+  border: 1px solid #e3cfa9;
+  border-radius: var(--mishran-radius-sm);
+}
+
+// Selected select options fill cream-on-cream (#f0dfc0 on #fdf8ed) — keep
+// the label espresso so the choice stays readable.
+body[data-admin-theme] .react-select .rs__option--is-selected {
+  color: #2a1a0e;
+}
+
 // Dashboard command center and audit polish. These rules intentionally avoid
 // changing the dashboard canvas background or the sidebar/navigation styling.
 .mishran-dashboard__hero {
