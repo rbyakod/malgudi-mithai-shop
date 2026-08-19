@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mishran — Remaining Work · v1 Close-Out</title>
+<style>
+  :root {
+    --bg: #faf6f1; --card: #ffffff; --ink: #1a1410; --muted: #6b5e54;
+    --rule: #e5dccf; --primary: #6b1e1e; --gold: #b08838; --gold-bright: #d9a441;
+    --sidebar-bg: #211711; --sidebar-ink: #f3e9da; --sidebar-muted: #b7a690;
+    --ok-bg: #eaf6ec; --ok-rule: #4a8a5c;
+    --warn-bg: #fff5e0; --warn-rule: #e6b94a;
+    --note-bg: #f4ecdf; --note-rule: var(--gold);
+    --serif: "Iowan Old Style", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+    --sidebar-w: 284px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16.5px/1.68 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    position: fixed; inset: 0 auto 0 0; width: var(--sidebar-w);
+    background: var(--sidebar-bg); color: var(--sidebar-ink);
+    padding: 1.6rem 1.1rem 2rem; overflow-y: auto; z-index: 40;
+  }
+  .sidebar-brand { display: block; text-decoration: none; margin-bottom: 1.4rem; }
+  .sidebar-brand .mark {
+    font-family: var(--serif); font-size: 1.55rem; letter-spacing: .02em;
+    color: var(--sidebar-ink); display: block;
+  }
+  .sidebar-brand .sub {
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .22em;
+    color: var(--gold-bright); margin-top: .25rem; display: block;
+  }
+  .sidebar nav { border-top: 1px solid rgba(243,233,218,.14); padding-top: .9rem; }
+  .sidebar nav a {
+    display: flex; gap: .6rem; align-items: baseline;
+    padding: .38rem .6rem; margin: .06rem 0; border-radius: 7px;
+    color: var(--sidebar-muted); text-decoration: none;
+    font-size: .86rem; line-height: 1.35;
+  }
+  .sidebar nav a .n {
+    font-family: var(--serif); font-size: .78rem; color: var(--gold);
+    min-width: 1.3rem; text-align: right; flex: none;
+  }
+  .sidebar nav a:hover { color: var(--sidebar-ink); background: rgba(243,233,218,.07); }
+  .sidebar nav a.active {
+    color: var(--sidebar-bg); background: var(--gold-bright); font-weight: 600;
+  }
+  .sidebar nav a.active .n { color: var(--sidebar-bg); }
+  .sidebar-foot {
+    margin-top: 1.6rem; padding: .9rem .7rem 0; border-top: 1px solid rgba(243,233,218,.14);
+    font-size: .74rem; color: var(--sidebar-muted); line-height: 1.5;
+  }
+
+  /* ---------- Layout ---------- */
+  .content { margin-left: var(--sidebar-w); padding: 2.8rem 3rem 5rem; max-width: 900px; }
+  .doc-header { border-bottom: 1px solid var(--rule); padding-bottom: 1.6rem; margin-bottom: 2rem; }
+  .eyebrow {
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .24em;
+    color: var(--gold); margin: 0 0 .5rem;
+  }
+  h1, h2, h3, h4 { font-family: var(--serif); line-height: 1.22; font-weight: 600; }
+  h1 { font-size: 2.5rem; margin: 0 0 .45rem; letter-spacing: -.01em; }
+  .lede { font-size: 1.14rem; color: var(--muted); margin: 0; max-width: 44rem; }
+  .meta { font-size: .82rem; color: var(--muted); margin-top: 1rem; }
+  .meta strong { color: var(--ink); }
+
+  main h2 {
+    font-size: 1.72rem; margin: 3.2rem 0 .9rem; scroll-margin-top: 1.4rem;
+    border-bottom: 1px solid var(--rule); padding-bottom: .4rem;
+  }
+  main h3 { font-size: 1.18rem; margin: 1.9rem 0 .5rem; color: var(--primary); scroll-margin-top: 1.4rem; }
+  h4 { font-size: 1rem; margin: 1.2rem 0 .3rem; }
+  p { margin: .7rem 0; }
+  ul, ol { padding-left: 1.5rem; }
+  li { margin: .38rem 0; }
+  li::marker { color: var(--gold); }
+  strong { font-weight: 700; }
+  a { color: var(--primary); }
+  a:hover { color: var(--gold); }
+  code {
+    background: #efe6d8; padding: .12em .4em; border-radius: 4px;
+    font-family: var(--mono); font-size: .88em;
+  }
+  pre {
+    background: #2a211a; color: #f0e6d6; border-radius: 10px;
+    padding: 1.1rem 1.3rem; overflow-x: auto; line-height: 1.55;
+    font-size: .84rem; margin: 1.2rem 0;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+  section { scroll-margin-top: 1.2rem; }
+
+  /* ---------- Tables ---------- */
+  .tablewrap { overflow-x: auto; margin: 1.2rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; background: var(--card); }
+  th, td { border: 1px solid var(--rule); padding: .55rem .75rem; text-align: left; vertical-align: top; }
+  th {
+    background: #f4ede1; font-family: var(--serif); font-size: .85rem;
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  tbody tr:nth-child(even) { background: #fbf8f2; }
+
+  /* ---------- Callouts ---------- */
+  .note-box, .ok-box, .warn-box {
+    padding: .95rem 1.15rem; margin: 1.3rem 0; border-radius: 0 8px 8px 0;
+  }
+  .note-box { background: var(--note-bg); border-left: 4px solid var(--note-rule); }
+  .ok-box { background: var(--ok-bg); border-left: 4px solid var(--ok-rule); }
+  .warn-box { background: var(--warn-bg); border-left: 4px solid var(--warn-rule); }
+  .note-box p, .ok-box p, .warn-box p { margin: .3rem 0; }
+  .note-box .box-title, .ok-box .box-title, .warn-box .box-title {
+    font-family: var(--serif); font-weight: 700; margin: 0 0 .2rem; font-size: .98rem;
+  }
+
+  /* ---------- Item cards ---------- */
+  .item-card {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 1rem 1.2rem; margin: .7rem 0;
+  }
+  .item-card .item-head {
+    display: flex; gap: .7rem; align-items: baseline; flex-wrap: wrap;
+  }
+  .item-card .item-id {
+    font-family: var(--serif); font-weight: 700; color: var(--gold);
+    font-size: 1.02rem; flex: none;
+  }
+  .item-card .item-title { font-weight: 700; }
+  .pill {
+    display: inline-block; padding: .1rem .55rem; border-radius: 99px;
+    font-size: .72rem; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; margin-left: auto; flex: none;
+  }
+  .pill--owner { background: #fff5e0; color: #8a6a14; border: 1px solid #e6b94a; }
+  .pill--code { background: #eaf6ec; color: #2f5e3d; border: 1px solid #4a8a5c; }
+  .pill--defer { background: #f4ecdf; color: #6b5e54; border: 1px solid #b08838; }
+
+  @media (max-width: 900px) {
+    .sidebar { position: static; width: auto; }
+    .content { margin-left: 0; padding: 1.6rem 1.2rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a class="sidebar-brand" href="#top">
+    <span class="mark">Mishran</span>
+    <span class="sub">Remaining Work · v1 Close-Out</span>
+  </a>
+  <nav id="toc">
+    <a href="#s1"><span class="n">01</span>Where we stand</a>
+    <a href="#s2"><span class="n">02</span>Owner actions (portals)</a>
+    <a href="#s3"><span class="n">03</span>Your test pass</a>
+    <a href="#s4"><span class="n">04</span>Code work (agent)</a>
+    <a href="#s5"><span class="n">05</span>Accepted gaps</a>
+    <a href="#s6"><span class="n">06</span>Deferred by design</a>
+    <a href="#s7"><span class="n">07</span>Execution order</a>
+  </nav>
+  <div class="sidebar-foot">
+    Audited 2026-08-18 · resumes 2026-08-19<br />
+    Canon <code>main</code> @ c4b9d2e · prod healthy
+  </div>
+</aside>
+
+<div class="content" id="top">
+  <header class="doc-header">
+    <p class="eyebrow">v1 Close-Out</p>
+    <h1>Remaining Work</h1>
+    <p class="lede">The v1 goal — a working product across web storefront,
+      admin console, iOS app, and Android app — is code-complete and live.
+      This is the audit of what stands between here and family testing.</p>
+    <p class="meta"><strong>Status:</strong> 122 of 123 tracked tasks closed ·
+      <a href="https://mishran.pranavb.com">mishran.pranavb.com</a> healthy ·
+      D10 admin form restyle shipped &amp; prod-verified this session.</p>
+  </header>
+
+  <main>
+    <section id="s1">
+      <h2>01 · Where we stand</h2>
+      <p>Every surface is shipped: the storefront (catalog, cart, checkout
+        with Razorpay + COD, account, loyalty, reviews, gifts, occasions,
+        9 locales), the overhauled admin console (ops dashboard, orders
+        console, theming), and both apps on the live API (parity batches
+        A–E, known-gaps campaign B1–B16). The paid-checkout smoke passed
+        end-to-end with a real ₹2,258 netbanking transaction.</p>
+      <div class="ok-box">
+        <p class="box-title">The short version</p>
+        <p>Nothing remaining is <em>code-blocked</em>. What's left: five
+          owner-side account actions, one owner test pass, three scoped
+          code clean-ups, and a register of deliberate v2/v3 deferrals.</p>
+      </div>
+    </section>
+
+    <section id="s2">
+      <h2>02 · Owner actions — portals &amp; accounts (~1 hour)</h2>
+      <p>All of these need logins only you hold.</p>
+
+      <div class="item-card">
+        <div class="item-head"><span class="item-id">1</span>
+          <span class="item-title">Deliver the iOS app</span>
+          <span class="pill pill--owner">TestFlight</span></div>
+        <p>Drag <code>apps/ios/build/Mishran-0.1.0-202608180816.ipa</code>
+          into Transporter → Deliver. Create the App Store Connect record
+          first if not yet: name <em>Mishran</em>, bundle
+          <code>com.mishran.app</code>, SKU <em>mishran</em>, Full Access.
+          Signing, entitlements, and Team ID <code>2X7B7DMV95</code> are
+          verified done — this is task #41's last step. Family can't test
+          iOS until TestFlight processes.</p>
+      </div>
+
+      <div class="item-card">
+        <div class="item-head"><span class="item-id">2</span>
+          <span class="item-title">Register the Razorpay webhook</span>
+          <span class="pill pill--owner">Payments</span></div>
+        <p>URL <code>https://mishran.pranavb.com/api/webhooks/razorpay</code>,
+          events <code>payment.captured</code> + <code>payment.failed</code>.
+          The secret's local copy was purged by the OS — read it on the VPS:</p>
+        <pre><code>ssh hermes-vps 'sudo -iu mithai grep RAZORPAY_WEBHOOK_SECRET /opt/mithai-shop/.env'</code></pre>
+        <p>Payments work today (client verify + the reconcile cron cover it —
+          proven by the paid smoke), but the webhook is belt-and-suspenders.</p>
+      </div>
+
+      <div class="item-card">
+        <div class="item-head"><span class="item-id">3</span>
+          <span class="item-title">Enable UPI on the Razorpay account</span>
+          <span class="pill pill--owner">Payments</span></div>
+        <p>The UPI checkout rail on web + both apps (B14/B15) is built but
+          can't transact until UPI methods are enabled on the account.</p>
+      </div>
+
+      <div class="item-card">
+        <div class="item-head"><span class="item-id">4</span>
+          <span class="item-title">MSG91 real keys + missing SMS template</span>
+          <span class="pill pill--owner">SMS</span></div>
+        <p>OTP currently runs on the bypass list, and the order-confirmed SMS
+          silently fails — template
+          <code>push.order.confirmed.body</code> isn't registered. When real
+          keys arrive, the OTP_BYPASS vars get stripped per deployment doc
+          §10.</p>
+      </div>
+
+      <div class="item-card">
+        <div class="item-head"><span class="item-id">5</span>
+          <span class="item-title">Resend: API key + verify mishran.shop</span>
+          <span class="pill pill--owner">Email</span></div>
+        <p>Set <code>RESEND_API_KEY</code> and verify the domain in Resend —
+          abandoned-cart and lead emails are no-ops until then.</p>
+      </div>
+
+      <h3>Content decisions (no code — waiting on you)</h3>
+      <ul>
+        <li>Real WhatsApp / support number (placeholder
+          <code>+91 80000 00000</code> everywhere).</li>
+        <li>FSSAI number for the web footer chip ("pending").</li>
+        <li>Karigar + leadTime data in admin — the PDP provenance block
+          stays hidden on all platforms until products have these filled.</li>
+      </ul>
+    </section>
+
+    <section id="s3">
+      <h2>03 · Your test pass (task #43)</h2>
+      <p>Drive web + Android (already on the Pixel — the hosted APK matches
+        the latest build byte-for-byte) + iOS once TestFlight processes.
+        You've already placed real orders on the web, so this is mostly the
+        two apps. Anything that surfaces gets fixed as it comes in.</p>
+    </section>
+
+    <section id="s4">
+      <h2>04 · Code work (agent-doable)</h2>
+
+      <div class="item-card">
+        <div class="item-head"><span class="item-id">#123</span>
+          <span class="item-title">eslint debt</span>
+          <span class="pill pill--code">Cleanup</span></div>
+        <p>176 <code>no-explicit-any</code> errors in committed test files
+          (pre-dates D10). Mechanical; clears the repo-wide lint gate.</p>
+      </div>
+
+      <div class="item-card">
+        <div class="item-head"><span class="item-id">#124</span>
+          <span class="item-title">Merch Enquire stub</span>
+          <span class="pill pill--code">Web</span></div>
+        <p>The web merch Enquire button is an unwired "Enquiries open soon"
+          disabled stub — wire it to the existing public
+          <code>POST /api/leads</code> (the same endpoint the gift builder
+          uses) or give it an honest label. The Play listing's "one-tap
+          reorder" claim became true when B4 shipped — resolved on its own.</p>
+      </div>
+
+      <div class="item-card">
+        <div class="item-head"><span class="item-id">#125</span>
+          <span class="item-title">Android PDP parity</span>
+          <span class="pill pill--code">Android</span></div>
+        <p>The last real parity gap — Android PDP lacks the trust strip,
+          provenance rows, same-family cross-sell rail, and sticky buy bar
+          that iOS + web have. iOS is the reference implementation; the
+          serializer already emits <code>leadTime</code> +
+          <code>karigarName</code>. Ends with a fresh APK re-host per the
+          standing rule.</p>
+      </div>
+    </section>
+
+    <section id="s5">
+      <h2>05 · Accepted gaps</h2>
+      <ul>
+        <li>Guest checkout is web-only — by design.</li>
+        <li>Apps are Razorpay-only; COD server + web shipped in B12. Adding
+          app COD UI is a deliberate v3 item unless pulled forward.</li>
+      </ul>
+    </section>
+
+    <section id="s6">
+      <h2>06 · Deferred by design (v2/v3 gates)</h2>
+      <p>Headline items from the deferred register: courier API integration
+        (Delhivery/Shadowfax), wishlist, self-serve refunds, live driver
+        map, EMI / pay-later, subscriptions, AR gift preview, loyalty Wallet
+        passes, native Kannada review of <code>kn.json</code>, and Razorpay
+        settlement-reconciliation automation.</p>
+      <div class="note-box">
+        <p class="box-title">The strategic one</p>
+        <p><strong>Shopify migration</strong> — when commerce moves, the
+          adapter layer turns it into a config + impl swap; the dual-run
+          window plan lives in the register. Surface when ready.</p>
+      </div>
+    </section>
+
+    <section id="s7">
+      <h2>07 · Execution order</h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Who</th><th>What</th><th>Why this order</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Owner</td>
+              <td>Items 1–2 (TestFlight + webhook)</td>
+              <td>They unblock everything else — family testing and payment
+                belt-and-suspenders</td>
+            </tr>
+            <tr>
+              <td>Agent</td>
+              <td>#123 → #124 → #125</td>
+              <td>Each a scoped change with its own gates; #125 ends with a
+                fresh APK re-host</td>
+            </tr>
+            <tr>
+              <td>Owner</td>
+              <td>Test pass (#43) once TestFlight processes</td>
+              <td>Real-device signoff across all three surfaces</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="meta">Session resumes 2026-08-19.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+  (function () {
+    var links = document.querySelectorAll("#toc a");
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.classList.remove("active"); });
+        var a = map[e.target.id];
+        if (a) a.classList.add("active");
+      });
+    }, { rootMargin: "-15% 0px -70% 0px", threshold: 0 });
+    document.querySelectorAll("main section").forEach(function (s) { io.observe(s); });
+    links[0] && links[0].classList.add("active");
+  })();
+</script>
+</body>
+</html>
