@@ -427,6 +427,17 @@ body[data-admin-theme] {
   --color-base-1000: #100905;
 }
 
+body[data-admin-theme],
+body[data-admin-theme] .template-default,
+body[data-admin-theme] .template-default__wrap,
+body[data-admin-theme] .template-default__content,
+body[data-admin-theme] .payload-admin,
+body[data-admin-theme] main {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #2a1a0e;
+}
+
 // Dashboard command center and audit polish. These rules intentionally avoid
 // changing the dashboard canvas background or the sidebar/navigation styling.
 .mishran-dashboard__hero {
