@@ -2,7 +2,7 @@ import type { CollectionConfig } from "payload";
 
 export const Drafts: CollectionConfig = {
   slug: "drafts",
-  admin: { useAsTitle: "sessionId", group: "04 Storefront" },
+  admin: { hidden: true, useAsTitle: "sessionId", group: "04 Storefront" },
   access: {
     read: () => true,
     create: () => true,

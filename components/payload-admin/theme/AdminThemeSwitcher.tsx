@@ -1,37 +1,70 @@
 "use client";
 
-import {useState} from "react";
+import {useCallback, useSyncExternalStore} from "react";
 import {
   ADMIN_THEMES,
   ADMIN_THEME_COOKIE,
   ADMIN_THEME_MAX_AGE,
   DEFAULT_ADMIN_THEME,
+  isAdminTheme,
   type AdminTheme,
 } from "./admin-theme";
 
 const LABELS: Record<AdminTheme, string> = {
-  "mishran-admin": "Mishran (default)",
+  "mishran-admin": "Mishran (cream)",
   "mishran-midnight": "Mishran Midnight",
   "mishran-monsoon": "Mishran Monsoon",
 };
 
-// Injected into the admin settings popup (gear icon above logout).
-// Writes a 1-year cookie so SSR reads theme on next load — eliminates flash.
-export function AdminThemeSwitcher() {
-  const initial = readCurrentTheme();
-  const [value, setValue] = useState<AdminTheme>(initial);
+// Rendered in the admin sidebar below the nav links (afterNavLinks).
+// Writes a 1-year cookie so SSR reads theme on the next load — no flash.
+//
+// Audit D4 + D2 hardening: the theme lives on document.body (an external
+// store owned by the server-side boot script), so the select reads it via
+// useSyncExternalStore with a server snapshot pinned to the default. The
+// server HTML always matches the first client render; the real value
+// (from the boot script's data attribute) takes over after hydration
+// without a mismatch.
+const listeners = new Set<() => void>();
 
-  const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+function readBodyTheme(): AdminTheme {
+  const fromBody = document.body.dataset.adminTheme;
+  return isAdminTheme(fromBody) ? fromBody : DEFAULT_ADMIN_THEME;
+}
+
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+export function AdminThemeSwitcher() {
+  const value = useSyncExternalStore(
+    subscribe,
+    readBodyTheme,
+    () => DEFAULT_ADMIN_THEME,
+  );
+
+  const onChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const next = e.target.value as AdminTheme;
-    setValue(next);
     document.body.dataset.adminTheme = next;
     document.cookie = `${ADMIN_THEME_COOKIE}=${next}; Max-Age=${ADMIN_THEME_MAX_AGE}; Path=/; SameSite=Lax`;
-  };
+    for (const listener of listeners) listener();
+  }, []);
+
   return (
-    <div style={{padding: "0.5rem 0"}}>
+    <div style={{padding: "0.75rem 0.5rem 0.25rem"}}>
       <label
         htmlFor="mishran-admin-theme-select"
-        style={{display: "block", fontSize: "0.75rem", marginBottom: "0.25rem", color: "var(--t-text-muted)"}}
+        style={{
+          display: "block",
+          fontSize: "0.6875rem",
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          marginBottom: "0.3rem",
+          color: "var(--t-text-muted)",
+        }}
       >
         Admin theme
       </label>
@@ -39,6 +72,7 @@ export function AdminThemeSwitcher() {
         id="mishran-admin-theme-select"
         value={value}
         onChange={onChange}
+        aria-label="Admin theme"
         style={{
           width: "100%",
           padding: "0.375rem 0.5rem",
@@ -46,6 +80,8 @@ export function AdminThemeSwitcher() {
           border: "1px solid var(--t-border)",
           background: "var(--t-bg-card)",
           color: "var(--t-text)",
+          fontSize: "0.8125rem",
+          cursor: "pointer",
         }}
       >
         {ADMIN_THEMES.map(t => (
@@ -54,15 +90,6 @@ export function AdminThemeSwitcher() {
       </select>
     </div>
   );
-}
-
-function readCurrentTheme(): AdminTheme {
-  if (typeof document === "undefined") return DEFAULT_ADMIN_THEME;
-  const fromBody = document.body.dataset.adminTheme;
-  if (fromBody && (ADMIN_THEMES as readonly string[]).includes(fromBody)) {
-    return fromBody as AdminTheme;
-  }
-  return DEFAULT_ADMIN_THEME;
 }
 
 export default AdminThemeSwitcher;

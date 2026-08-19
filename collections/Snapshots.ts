@@ -19,8 +19,9 @@ export const Snapshots: CollectionConfig = {
   slug: "snapshots",
   timestamps: true,
   admin: {
+    hidden: true,
     useAsTitle: "id",
-    group: "Commerce",
+    group: "06 Commerce",
     defaultColumns: ["id", "customerId", "pincodeTier", "expiresAt", "createdAt"],
   },
   indexes: [{ fields: ["customerId", "createdAt"] }],

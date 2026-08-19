@@ -17,7 +17,7 @@ describe("AdminThemeSwitcher", () => {
     expect(select).toBeInTheDocument();
     const options = screen.getAllByRole("option");
     expect(options.map(o => o.textContent)).toEqual([
-      "Mishran (default)",
+      "Mishran (cream)",
       "Mishran Midnight",
       "Mishran Monsoon",
     ]);

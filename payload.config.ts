@@ -89,6 +89,10 @@ export default buildConfig({
   admin: {
     // `user: "users"` references the Users collection registered below.
     user: "users",
+    // Audit D5: browser tab read "Dashboard - Payload" — brand every title.
+    meta: {
+      titleSuffix: " — Mishran",
+    },
     // Auto-login in dev so /admin opens without credentials during local development.
     autoLogin: isLocalDev
       ? {
@@ -110,7 +114,11 @@ export default buildConfig({
       },
       beforeLogin: [MishranLoginHeroPath],
       beforeDashboard: [MishranDashboardPath],
-      settingsMenu: [AdminThemeSwitcherPath],
+      // Audit D4: the switcher previously sat in `settingsMenu`, where it
+      // leaked into every edit form as a stray "Admin theme" field. The
+      // sidebar (below the nav links) is its home — visible everywhere,
+      // outside every form.
+      afterNavLinks: [AdminThemeSwitcherPath],
     },
   },
   collections: [

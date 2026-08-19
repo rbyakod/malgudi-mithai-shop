@@ -12,6 +12,7 @@ const MerchProductCellPath = "./components/payload-admin/cells/MerchProductCell"
 
 export const MerchProducts: CollectionConfig = {
   slug: "merch-products",
+  labels: {singular: "Merch item", plural: "Merch"},
   access: { read: () => true },
   admin: { useAsTitle: "name", group: "02 Products" },
   hooks: {

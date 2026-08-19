@@ -11,6 +11,7 @@ export const OtpRequests: CollectionConfig = {
   slug: "otpRequests",
   timestamps: true,
   admin: {
+    hidden: true,
     group: "Auth",
     defaultColumns: ["phone", "expiresAt", "createdAt"],
     useAsTitle: "phone",

@@ -22,9 +22,10 @@ describe("MishranLoginHero", () => {
     expect(screen.getByText(/Sweets & Snacks/i)).toBeInTheDocument();
   });
 
-  it("renders 'Editor Console' subtitle", () => {
+  it("renders welcome copy for returning staff", () => {
     render(<MishranLoginHero />);
-    expect(screen.getByText(/Editor Console/i)).toBeInTheDocument();
+    expect(screen.getByText(/Welcome back/i)).toBeInTheDocument();
+    expect(screen.getByText(/Sign in to tend the shop/i)).toBeInTheDocument();
   });
 
   it("applies mishran-login-hero className for layout", () => {

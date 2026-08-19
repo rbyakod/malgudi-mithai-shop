@@ -16,6 +16,9 @@ import type { CollectionConfig } from "payload";
 export const CartDrafts: CollectionConfig = {
   slug: "cart-drafts",
   admin: {
+    // Audit §04: operational exhaust — hidden from nav; data stays reachable
+    // via the abandonment cron and API.
+    hidden: true,
     useAsTitle: "sessionId",
     group: "04 Storefront",
     defaultColumns: ["id", "sessionId", "email", "marketingConsent", "status", "reminderSentAt", "updatedAt"],

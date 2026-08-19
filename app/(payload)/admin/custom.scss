@@ -60,17 +60,33 @@ body[data-admin-theme="mishran-monsoon"] {
 // Payload 3.x exposes its palette under --theme-elevation-* and --theme-* tokens.
 // Verify exact names in node_modules/@payloadcms/ui/dist/scss/_variables.scss.
 // The mappings below target the variables Payload 3.85 uses; adjust if renamed.
+//
+// AUDIT FIX (docs/admin-audit.md §02): every --theme-elevation-* rung is a
+// :root alias of --color-base-*, and --theme-border-color =
+// --theme-elevation-150. The original override only covered 50–900, so
+// inputs (elevation-0) and borders (elevation-150 + direct --color-base-*
+// consumers) kept Payload's default gray — the "dull and pale" look. Both
+// layers are now overridden: the full --color-base-* ladder per theme
+// (which every elevation rung aliases) plus the explicit rungs below.
 body[data-admin-theme] {
+  --theme-elevation-0: var(--t-bg-control); // input fills, sticky headers
   --theme-elevation-50: var(--t-bg);
   --theme-elevation-100: var(--t-bg);
+  --theme-elevation-150: var(--t-border); // --theme-border-color aliases this
   --theme-elevation-200: var(--t-bg-card);
+  --theme-elevation-250: var(--t-border);
   --theme-elevation-300: var(--t-bg-control);
+  --theme-elevation-350: var(--t-border);
   --theme-elevation-400: var(--t-border);
+  --theme-elevation-450: var(--t-text-muted);
   --theme-elevation-500: var(--t-text-muted);
+  --theme-elevation-550: var(--t-text-muted);
   --theme-elevation-600: var(--t-text);
   --theme-elevation-700: var(--t-text);
   --theme-elevation-800: var(--t-text);
   --theme-elevation-900: var(--t-text);
+  --theme-elevation-950: var(--t-text);
+  --theme-elevation-1000: var(--t-text);
   --theme-success-500: var(--t-primary);
   --theme-warning-500: var(--t-gold);
   --theme-error-500: var(--t-danger);
@@ -79,6 +95,82 @@ body[data-admin-theme] {
   background-color: var(--t-bg);
   color: var(--t-text);
   font-family: var(--mishran-font-display);
+}
+
+// Full --color-base-* ladders (0–1000) so components that read the base
+// layer directly — not just via elevation aliases — follow the theme.
+// Values track the mapping above: 0=control fill, 50/100=bg, 150/250=borders,
+// 200=card, 300=control, 350/400=borders, 450–550=muted, 600–1000=text.
+body[data-admin-theme="mishran-admin"] {
+  --color-base-0: #fdf8ed;
+  --color-base-50: #f7efe0;
+  --color-base-100: #f4ead8;
+  --color-base-150: #e8d5b8;
+  --color-base-200: #ffffff;
+  --color-base-250: #e8d5b8;
+  --color-base-300: #fdf8ed;
+  --color-base-350: #e8d5b8;
+  --color-base-400: #e8d5b8;
+  --color-base-450: #7d664c;
+  --color-base-500: #6b4f37;
+  --color-base-550: #6b4f37;
+  --color-base-600: #4c3522;
+  --color-base-650: #432f1f;
+  --color-base-700: #3a2818;
+  --color-base-750: #312013;
+  --color-base-800: #2a1a0e;
+  --color-base-850: #24170c;
+  --color-base-900: #1e1209;
+  --color-base-950: #170d06;
+  --color-base-1000: #100905;
+}
+
+body[data-admin-theme="mishran-midnight"] {
+  --color-base-0: #2f2620;
+  --color-base-50: #1a1614;
+  --color-base-100: #211b17;
+  --color-base-150: #3a2f25;
+  --color-base-200: #261f1a;
+  --color-base-250: #3a2f25;
+  --color-base-300: #2f2620;
+  --color-base-350: #3a2f25;
+  --color-base-400: #3a2f25;
+  --color-base-450: #a89878;
+  --color-base-500: #a89878;
+  --color-base-550: #a89878;
+  --color-base-600: #d8c9a8;
+  --color-base-650: #e0d2b4;
+  --color-base-700: #e6dabf;
+  --color-base-750: #ebdfc8;
+  --color-base-800: #f0e6d2;
+  --color-base-850: #f3ebda;
+  --color-base-900: #f6efe1;
+  --color-base-950: #f9f3e7;
+  --color-base-1000: #fcf8ef;
+}
+
+body[data-admin-theme="mishran-monsoon"] {
+  --color-base-0: #f4f7fa;
+  --color-base-50: #e8eef2;
+  --color-base-100: #e2eaf0;
+  --color-base-150: #cbd5e1;
+  --color-base-200: #ffffff;
+  --color-base-250: #cbd5e1;
+  --color-base-300: #f4f7fa;
+  --color-base-350: #cbd5e1;
+  --color-base-400: #cbd5e1;
+  --color-base-450: #5f6e80;
+  --color-base-500: #4b5563;
+  --color-base-550: #4b5563;
+  --color-base-600: #35404c;
+  --color-base-650: #2f3944;
+  --color-base-700: #29313c;
+  --color-base-750: #232a33;
+  --color-base-800: #1f2937;
+  --color-base-850: #1b232d;
+  --color-base-900: #171d25;
+  --color-base-950: #12171e;
+  --color-base-1000: #0d1117;
 }
 
 // Mishran-specific utility classes (used by widgets + cells)

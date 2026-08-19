@@ -20,7 +20,7 @@ export const Coupons: CollectionConfig = {
   admin: {
     useAsTitle: "code",
     defaultColumns: ["code", "discountType", "value", "active", "usedCount", "activeTo"],
-    group: "Commerce",
+    group: "06 Commerce",
   },
   indexes: [{ fields: ["code"] }],
   fields: [

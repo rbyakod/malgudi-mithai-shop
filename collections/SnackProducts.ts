@@ -12,6 +12,7 @@ const SnackProductCellPath = "./components/payload-admin/cells/SnackProductCell"
 
 export const SnackProducts: CollectionConfig = {
   slug: "snack-products",
+  labels: {singular: "Snack", plural: "Snacks"},
   access: { read: () => true },
   admin: { useAsTitle: "name", group: "02 Products" },
   hooks: {

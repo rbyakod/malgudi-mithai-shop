@@ -10,7 +10,7 @@ export const Shipments: CollectionConfig = {
   timestamps: true,
   admin: {
     useAsTitle: "orderId",
-    group: "Commerce",
+    group: "06 Commerce",
     defaultColumns: ["orderId", "currentStage", "updatedAt"],
   },
   fields: [

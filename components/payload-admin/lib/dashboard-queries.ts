@@ -163,3 +163,81 @@ export async function fetchCatalogCounts(): Promise<CatalogCounts> {
 
   return Object.fromEntries(entries) as CatalogCounts;
 }
+
+export type OrdersPulse = {
+  toFulfill: number | null;
+  codPending: number | null;
+  paidTodayPaise: number | null;
+  paidLast7dPaise: number | null;
+};
+
+type OrderTotalDoc = {
+  createdAt: string;
+  totals?: {totalInPaise?: number};
+};
+
+// Audit §07: ops KPI strip. Each metric is an independent query wrapped in
+// its own catch so one failing endpoint degrades to null ("—" in the UI)
+// instead of killing the whole row.
+export async function fetchOrdersPulse(): Promise<OrdersPulse> {
+  const now = new Date();
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const [toFulfill, codPending, paidDocs] = await Promise.all([
+    apiGet<CountResponse>(
+      `/orders?limit=1&depth=0` +
+        `&where[and][0][status][in]=confirmed,packed,dispatched,out_for_delivery`
+    )
+      .then(data => data.totalDocs)
+      .catch(() => null),
+    apiGet<CountResponse>(
+      `/orders?limit=1&depth=0` +
+        `&where[and][0][paymentMethod][equals]=cod` +
+        `&where[and][1][paymentStatus][equals]=pending`
+    )
+      .then(data => data.totalDocs)
+      .catch(() => null),
+    // Paid revenue is summed client-side — Payload has no server-side
+    // aggregation endpoint. Limited to the 200 most recent paid orders in
+    // the 7-day window, selecting only createdAt + the total. Exact at
+    // current volumes; revisit if weekly paid orders approach 200.
+    apiGet<{docs: OrderTotalDoc[]}>(
+      `/orders?limit=200&depth=0&sort=-createdAt` +
+        `&select[createdAt]=true&select[totals][totalInPaise]=true` +
+        `&where[and][0][paymentStatus][equals]=paid` +
+        `&where[and][1][createdAt][greater_than]=${encodeURIComponent(sevenDaysAgo.toISOString())}`
+    )
+      .then(data => data.docs)
+      .catch(() => null as OrderTotalDoc[] | null),
+  ]);
+
+  let paidTodayPaise = 0;
+  let paidLast7dPaise = 0;
+  if (paidDocs) {
+    for (const doc of paidDocs) {
+      const paise = doc.totals?.totalInPaise ?? 0;
+      paidLast7dPaise += paise;
+      if (new Date(doc.createdAt) >= startOfToday) paidTodayPaise += paise;
+    }
+  }
+
+  return {
+    toFulfill,
+    codPending,
+    paidTodayPaise: paidDocs ? paidTodayPaise : null,
+    paidLast7dPaise: paidDocs ? paidLast7dPaise : null,
+  };
+}
+
+export async function fetchPendingReviewCount(): Promise<number | null> {
+  try {
+    const data = await apiGet<CountResponse>(
+      `/reviews?limit=1&depth=0&where[status][equals]=pending`
+    );
+    return data.totalDocs;
+  } catch {
+    return null;
+  }
+}

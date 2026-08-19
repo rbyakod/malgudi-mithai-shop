@@ -10,6 +10,7 @@ export const Devices: CollectionConfig = {
   slug: "devices",
   timestamps: true,
   admin: {
+    hidden: true,
     group: "Auth",
     defaultColumns: ["customerId", "platform", "active", "updatedAt"],
   },

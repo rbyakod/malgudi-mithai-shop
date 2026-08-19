@@ -19,6 +19,7 @@ const QsrMenuCellPath = "./components/payload-admin/cells/QsrMenuCell";
 
 export const QsrMenuItems: CollectionConfig = {
   slug: "qsr-menu-items",
+  labels: {singular: "QSR menu item", plural: "QSR Menu"},
   access: { read: () => true },
   admin: { useAsTitle: "name", group: "02 Products" },
   hooks: {

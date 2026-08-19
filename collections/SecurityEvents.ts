@@ -8,6 +8,7 @@ export const SecurityEvents: CollectionConfig = {
   slug: "securityEvents",
   timestamps: true,
   admin: {
+    hidden: true,
     group: "Auth",
     defaultColumns: ["type", "customerId", "createdAt"],
     useAsTitle: "type",

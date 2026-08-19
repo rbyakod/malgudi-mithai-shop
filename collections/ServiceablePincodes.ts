@@ -7,10 +7,11 @@ import type { CollectionConfig } from "payload";
 
 export const ServiceablePincodes: CollectionConfig = {
   slug: "serviceablePincodes",
+  labels: {singular: "Delivery area", plural: "Delivery Areas"},
   admin: {
     useAsTitle: "pincode",
-    group: "Operations",
-    defaultColumns: ["pincode", "tier", "city", "slaDays"],
+    group: "06 Commerce",
+    defaultColumns: ["pincode", "tier", "city", "slaDays", "active"],
   },
   fields: [
     {

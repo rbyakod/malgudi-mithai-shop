@@ -280,3 +280,71 @@ names · orders `defaultColumns` · `--theme-elevation-150` override.
 - Pincodes: empty `<main>` at `/admin/collections/serviceablePincodes`.
 - Screens captured (16): login, dashboard, mithai list/edit, orders list/edit, theme /
   brand / home-hero globals, media, customers, account, coupons, pincodes, mobile ×2.
+
+---
+
+## 13. Implementation status — 2026-08-18 overhaul
+
+Shipped in the "Big admin overhaul" (all verified on a local dev build before deploy):
+
+### Theme (§2) — fixed
+
+`--theme-elevation-0/150` now resolve to theme tokens, and each theme ships a complete
+`--color-base-0…1000` ladder so every aliased rung re-themes. All three themes
+(cream / midnight / monsoon) covered.
+
+### Defects (§3)
+
+| ID | Status | Notes |
+|----|--------|-------|
+| D1 leads 405 | **Fixed** | Concrete route wraps Payload's `REST_GET` with synthetic catch-all params (`{slug: ["leads"]}`). A bare re-export of the catch-all 404s — the REST handler derives the collection from route params, not the URL. Anonymous GET now 403s (correct), authenticated GET 200s with docs. |
+| D2 hydration #418 | **Upstream — verdict recorded** | Payload's own Theme provider writes `data-theme` on `<html>` during hydration (`@payloadcms/ui/dist/providers/Theme/index.js:27`). Reproduces on stock screens (login, create-first-user) with zero Mishran widgets mounted. React recovers by client-rendering; no user-visible breakage. Not fixable from userland. |
+| D3 pincodes blank | **Not reproduced post-overhaul** | Page renders fully with the new config (labels + defaultColumns). Note: Payload admin has no `<main>` element at all — the audit's "empty `<main>`" observation reflected the pre-overhaul prod state, not a config bug. |
+| D4 theme field leaking into forms | **Fixed** | Switcher moved from `settingsMenu` to `afterNavLinks` (sidebar). Verified: 0 instances inside edit forms, exactly 1 in the sidebar on every screen. |
+| D5 title suffix | **Fixed** | `meta.titleSuffix: " — Mishran"` — every admin page now reads e.g. "Mithai — Mishran". |
+| D6 switcher discoverability | **Fixed** | Same relocation as D4 — visible on every admin screen, in the sidebar. |
+
+### IA (§4) — done
+
+Human labels on all awkward collections (QSR menu item, Snacks, Merch, Packaging,
+Delivery Areas, Wallet Passes, Order/Payment…); 5 system collections hidden
+(Cart Drafts, Drafts, OTP Requests, Security Events, Devices, Snapshots);
+commerce collections grouped under "06 Commerce".
+
+### Forms (§5) — done
+
+Mithai and Orders restructured into **unnamed tabs** (Details / Content / Media /
+Sourcing / Logistics; Order / Items / Totals / Payment & delivery). Unnamed tabs keep
+field paths flat, so API contracts, seeds, and mobile clients are untouched. Money
+fields keep their `*InPaise` names but carry human labels; the Totals tab notes the
+paise storage convention.
+
+### Lists (§6) — done
+
+Curated `defaultColumns` for Mithai, Orders, Payments, Delivery Areas. Three new cells:
+`RupeeCell` (₹ with Indian digit grouping, paise-aware decimals), `OrderStatusCell`
+(12-status tone-mapped pill), `FreshnessCell` (storefront vocabulary pill).
+
+### Dashboard (§7) — done
+
+"Shop overview" heading + `OpsPulse` KPI strip above the existing 2×2 editorial grid:
+**To fulfill** (confirmed→out-for-delivery), **COD cash to collect**, **Paid today**,
+**Paid this week**, **Reviews to moderate** — each tile deep-links to a pre-filtered
+list and degrades independently to "—" if its query fails.
+
+### Login (§8) — done
+
+Boutique restyle: cream card with gold hairline border, crest in a gradient square,
+gold eyebrow ("Mishran Sweets & Snacks"), "Welcome back" headline + one line of copy.
+
+### Verification
+
+Unit + integration suites green (90 admin/leads tests incl. 14 new cell tests);
+`pnpm build` green; local dev probe pass confirmed every widget, tab set, pill, and
+title suffix renders; authenticated `GET /api/leads` → 200.
+
+### Not in this pass (see §11 roadmap)
+
+CSV import/export, drafts & live preview, customer 360, media governance, localization
+switcher, command palette, scheduled publishing, roles & audit log. These remain the
+P1/P2 backlog.

@@ -11,8 +11,9 @@ import type { CollectionConfig } from "payload";
 export const WalletPasses: CollectionConfig = {
   slug: "walletPasses",
   timestamps: true,
+  labels: {singular: "Wallet pass", plural: "Wallet Passes (Apple)"},
   admin: {
-    group: "Commerce",
+    group: "06 Commerce",
     defaultColumns: ["customerId", "tier", "serialNumber", "active", "updatedAt"],
   },
   indexes: [{ fields: ["customerId", "active"] }],

@@ -5,12 +5,17 @@
 // on optional providerPaymentId — see brief corrections).
 import type { CollectionConfig } from "payload";
 
+// Custom Cell referenced by string path — Payload's importMap generator (and
+// admin runtime) resolves it to components/payload-admin/cells/RupeeCell.
+const RupeeCellPath = "./components/payload-admin/cells/RupeeCell";
+
 export const Payments: CollectionConfig = {
   slug: "payments",
+  labels: { singular: "Payment", plural: "Payments" },
   timestamps: true,
   admin: {
     useAsTitle: "id",
-    group: "Commerce",
+    group: "06 Commerce",
     defaultColumns: [
       "id",
       "orderId",
@@ -57,7 +62,19 @@ export const Payments: CollectionConfig = {
       ].map((v) => ({ label: v, value: v })),
       index: true,
     },
-    { name: "amountInPaise", type: "number", required: true, min: 0 },
+    {
+      name: "amountInPaise",
+      type: "number",
+      required: true,
+      min: 0,
+      label: "Amount (paise)",
+      admin: {
+        description: "Stored in paise (₹1 = 100 paise) — lists display ₹.",
+        components: {
+          Cell: RupeeCellPath,
+        },
+      },
+    },
     { name: "currency", type: "text", defaultValue: "INR", maxLength: 3 },
     {
       name: "method",

@@ -189,6 +189,26 @@
 
   .footnote { font-size: .8rem; color: var(--muted); border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: 1rem; }
 
+  /* ---------- Implementation status ---------- */
+  .status-row {
+    display: grid; grid-template-columns: 7rem 7.5rem 1fr; gap: .8rem;
+    padding: .7rem 0; border-bottom: 1px dashed var(--rule); align-items: start;
+  }
+  .status-row .id { font-family: var(--mono); font-size: .8rem; font-weight: 700; }
+  .status-row .what { font-size: .84rem; color: var(--ink); }
+  .status-row .what small { display: block; color: var(--muted); font-size: .76rem; margin-top: .15rem; }
+  .ship-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .8rem;
+    margin: 1rem 0;
+  }
+  .ship-card {
+    background: var(--card); border: 1px solid var(--rule); border-left: 4px solid var(--ok-rule);
+    border-radius: 10px; padding: .8rem 1rem;
+  }
+  .ship-card h4 { margin: 0 0 .3rem; font-size: .9rem; }
+  .ship-card p { margin: 0; font-size: .8rem; color: var(--muted); }
+  .ship-card p code { font-size: .74rem; }
+
   @media (max-width: 900px) {
     .sidebar { position: static; width: auto; }
     .content { margin-left: 0; padding: 1.6rem 1.2rem 3rem; }
@@ -217,6 +237,7 @@
     <a href="#s10"><span class="n">10</span>Accessibility &amp; trust</a>
     <a href="#s11"><span class="n">11</span>Roadmap P0–P2</a>
     <a href="#s12"><span class="n">12</span>Appendix: evidence</a>
+    <a href="#s13"><span class="n">13</span>Implementation status</a>
   </nav>
   <div class="sidebar-foot">
     Live audit · 2026-08-18<br />
@@ -609,6 +630,112 @@
       <code>docs/admin-audit.md</code> · Read-only audit; no credentials stored in this
       document.
     </p>
+  </section>
+
+  <!-- ================= 13 ================= -->
+  <section id="s13">
+    <h2>13 · Implementation status — 2026-08-18 overhaul</h2>
+    <p>
+      The P0 set plus the highest-leverage P1 items shipped in the “Big admin overhaul,”
+      gated by unit + integration suites and a production build, then verified against a
+      local dev server with a logged-in admin session before deploy.
+    </p>
+
+    <div class="ship-grid">
+      <div class="ship-card">
+        <h4>Theme (§02)</h4>
+        <p>Elevation rungs <code>0–1000</code> + full <code>--color-base-*</code> ladders
+        ×3 themes. Inputs, borders, and table headers finally wear the brand.</p>
+      </div>
+      <div class="ship-card">
+        <h4>IA (§04)</h4>
+        <p>Human labels on every awkward collection; six system tables hidden;
+        commerce grouped under <em>06 Commerce</em>.</p>
+      </div>
+      <div class="ship-card">
+        <h4>Forms (§05)</h4>
+        <p>Mithai + Orders in unnamed tabs — paths stay flat, so APIs and seeds are
+        untouched. Human labels; paise convention documented in-form.</p>
+      </div>
+      <div class="ship-card">
+        <h4>Lists (§06)</h4>
+        <p>Curated <code>defaultColumns</code> + three new cells: <code>RupeeCell</code>
+        (₹, Indian grouping), <code>OrderStatusCell</code> (12-status tone map),
+        <code>FreshnessCell</code> (storefront vocabulary).</p>
+      </div>
+      <div class="ship-card">
+        <h4>Dashboard (§07)</h4>
+        <p>“Shop overview” + <code>OpsPulse</code> KPI strip — to fulfill, COD cash to
+        collect, paid today/this week, reviews to moderate — each tile deep-links to a
+        pre-filtered list.</p>
+      </div>
+      <div class="ship-card">
+        <h4>Login (§08)</h4>
+        <p>Boutique restyle: cream card, gold hairline, crest in a gradient square,
+        “Welcome back” headline.</p>
+      </div>
+    </div>
+
+    <h3>Defect ledger</h3>
+    <div class="status-row">
+      <span class="id">D1</span>
+      <span class="pill pill--ok">Fixed</span>
+      <span class="what">Leads 405 → the concrete route wraps Payload’s
+        <code>REST_GET</code> with synthetic catch-all params
+        (<code>{slug: ["leads"]}</code>) — a bare re-export 404s because the handler
+        reads route params, not the URL. Anonymous GET now 403s (correct access
+        control); authenticated GET returns 200 with docs.</span>
+    </div>
+    <div class="status-row">
+      <span class="id">D2</span>
+      <span class="pill pill--warn">Upstream</span>
+      <span class="what">Hydration #418 → Payload’s own Theme provider writes
+        <code>data-theme</code> on <code>&lt;html&gt;</code> during hydration
+        (<code>@payloadcms/ui …/providers/Theme/index.js:27</code>). Reproduces on
+        stock screens with zero Mishran widgets mounted; React recovers by
+        client-rendering. Not fixable from userland — verdict recorded, monitoring
+        for an upstream fix.</span>
+    </div>
+    <div class="status-row">
+      <span class="id">D3</span>
+      <span class="pill pill--ok">Resolved</span>
+      <span class="what">Pincodes blank → does not reproduce post-overhaul; the page
+        renders fully with the new labels + columns. Note: Payload admin has no
+        <code>&lt;main&gt;</code> element at all — the audit observation reflected the
+        pre-overhaul prod state.</span>
+    </div>
+    <div class="status-row">
+      <span class="id">D4</span>
+      <span class="pill pill--ok">Fixed</span>
+      <span class="what">Theme field leaking into every form → switcher moved from
+        <code>settingsMenu</code> to <code>afterNavLinks</code>. Verified: 0 instances
+        inside edit forms, exactly 1 in the sidebar on every screen.</span>
+    </div>
+    <div class="status-row">
+      <span class="id">D5</span>
+      <span class="pill pill--ok">Fixed</span>
+      <span class="what">Title suffix → <code>meta.titleSuffix: " — Mishran"</code>;
+        every page now reads e.g. <em>Mithai — Mishran</em>.</span>
+    </div>
+    <div class="status-row" style="border-bottom: 0;">
+      <span class="id">D6</span>
+      <span class="pill pill--ok">Fixed</span>
+      <span class="what">Switcher discoverability → same relocation as D4; the theme
+        select is visible in the sidebar on every admin screen.</span>
+    </div>
+
+    <div class="ok-box">
+      <p class="box-title">Verification</p>
+      <p>90 admin + leads tests green (14 new cell tests) · <code>pnpm build</code> green ·
+        local dev probe pass confirmed every widget, tab set, pill, and title suffix ·
+        authenticated <code>GET /api/leads</code> → 200.</p>
+    </div>
+    <div class="note-box">
+      <p class="box-title">Still open (§11 roadmap)</p>
+      <p>CSV import/export · drafts &amp; live preview · customer 360 · media governance ·
+        localization switcher · command palette · scheduled publishing · roles &amp;
+        audit log.</p>
+    </div>
   </section>
 
   </main>

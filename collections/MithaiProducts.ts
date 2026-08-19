@@ -12,17 +12,28 @@
 //
 // Slug "mithai-products" is the stable contract — referenced by Stories,
 // Karigars, Occasions, GiftBoxes, and SnackProducts via relationships.
+//
+// Audit §05: fields are grouped into unnamed tabs (label-only, no `name`)
+// which reorganize the edit view while keeping every field at the TOP LEVEL
+// — API paths, seeds, and the storefront serializers are unchanged.
 import type { CollectionConfig } from "payload";
 import { makeRevalidateHook, makeRevalidateDeleteHook } from "./_revalidate-hook";
 
-// Custom Cell is referenced by string path — Payload's importMap generator
-// (and admin runtime) resolves it to components/payload-admin/cells/MithaiProductCell.
+// Custom Cells are referenced by string path — Payload's importMap generator
+// (and admin runtime) resolves them to components/payload-admin/cells/*.
 const MithaiProductCellPath = "./components/payload-admin/cells/MithaiProductCell";
+const FreshnessCellPath = "./components/payload-admin/cells/FreshnessCell";
 
 export const MithaiProducts: CollectionConfig = {
   slug: "mithai-products",
+  labels: { singular: "Mithai", plural: "Mithai" },
   access: { read: () => true },
-  admin: { useAsTitle: "name", group: "02 Products" },
+  admin: {
+    useAsTitle: "name",
+    group: "02 Products",
+    // Audit §06: curated list — name cell already renders thumbnail + name.
+    defaultColumns: ["name", "family", "freshnessStatus", "displayPrice", "featured"],
+  },
   versions: { drafts: true },
   hooks: {
     afterChange: [makeRevalidateHook("mithai-products")],
@@ -30,82 +41,141 @@ export const MithaiProducts: CollectionConfig = {
   },
   fields: [
     {
-      name: "name",
-      type: "text",
-      required: true,
-      localized: true,
-      admin: {
-        components: {
-          Cell: MithaiProductCellPath,
+      // Unnamed tabs → fields stay top-level (see file header).
+      type: "tabs",
+      tabs: [
+        {
+          label: "Details",
+          fields: [
+            {
+              name: "name",
+              type: "text",
+              required: true,
+              localized: true,
+              admin: {
+                components: {
+                  Cell: MithaiProductCellPath,
+                },
+              },
+            },
+            {
+              name: "slug",
+              type: "text",
+              required: true,
+              unique: true,
+              admin: { position: "sidebar" },
+            },
+            {
+              name: "family",
+              type: "select",
+              required: true,
+              options: ["classic", "original", "sugar-free", "regional", "seasonal"],
+            },
+            {
+              name: "freshnessStatus",
+              type: "select",
+              admin: {
+                description:
+                  "Drives fulfillment copy and delivery promises on the storefront.",
+                components: {
+                  Cell: FreshnessCellPath,
+                },
+              },
+              options: ["made-daily", "made-to-order", "batch-frozen"],
+            },
+            {
+              name: "displayPrice",
+              type: "text",
+              admin: {
+                description:
+                  'Price label shown to customers, e.g. "₹290". Display-only — commerce pricing is computed server-side.',
+              },
+            },
+            {
+              name: "weight",
+              type: "text",
+              admin: {
+                description:
+                  'Net pack weight as display text, e.g. "250 g", "1 kg", "1 pack". Drives the PDP pack-size chip.',
+              },
+            },
+            {
+              name: "featured",
+              type: "checkbox",
+              admin: {
+                description:
+                  "Flags the product for the apps' Best sellers rail. Keep the set small (~8–12), one per major family where possible.",
+              },
+            },
+          ],
         },
-      },
-    },
-    {
-      name: "slug",
-      type: "text",
-      required: true,
-      unique: true,
-      admin: { position: "sidebar" },
-    },
-    {
-      name: "family",
-      type: "select",
-      required: true,
-      options: ["classic", "original", "sugar-free", "regional", "seasonal"],
-    },
-    { name: "ingredients", type: "textarea", localized: true },
-    { name: "allergens", type: "text", hasMany: true },
-    { name: "shelfLife", type: "text" },
-    { name: "storage", type: "textarea", localized: true },
-    {
-      name: "freshnessStatus",
-      type: "select",
-      options: ["made-daily", "made-to-order", "batch-frozen"],
-    },
-    { name: "dietaryTags", type: "text", hasMany: true },
-    {
-      name: "boxCompatibility",
-      type: "relationship",
-      relationTo: "gift-boxes",
-      hasMany: true,
-    },
-    {
-      name: "packagingCompatibility",
-      type: "relationship",
-      relationTo: "packaging",
-      hasMany: true,
-    },
-    { name: "leadTime", type: "text" },
-    {
-      name: "images",
-      type: "array",
-      fields: [{ name: "image", type: "upload", relationTo: "media" }],
-      // minRows: 1 deferred to Task 16 — see file header.
-    },
-    { name: "story", type: "richText", localized: true },
-    { name: "karigar", type: "relationship", relationTo: "karigars" },
-    {
-      name: "displayPrice",
-      type: "text",
-      admin: {
-        description: "Display-only. Commerce deferred to Phase 8.",
-      },
-    },
-    {
-      name: "featured",
-      type: "checkbox",
-      admin: {
-        description:
-          "Flags the product for the apps' Best sellers rail. Keep the set small (~8–12), one per major family where possible.",
-      },
-    },
-    {
-      name: "weight",
-      type: "text",
-      admin: {
-        description:
-          'Net pack weight as display text, e.g. "250 g", "1 kg", "1 pack". Drives the PDP pack-size chip.',
-      },
+        {
+          label: "Content",
+          description: "Customer-facing copy.",
+          fields: [
+            { name: "ingredients", type: "textarea", localized: true },
+            { name: "allergens", type: "text", hasMany: true },
+            { name: "dietaryTags", type: "text", hasMany: true },
+            { name: "story", type: "richText", localized: true },
+          ],
+        },
+        {
+          label: "Media",
+          description: "First row is the hero image used on cards and the PDP gallery.",
+          fields: [
+            {
+              name: "images",
+              type: "array",
+              labels: { singular: "Image", plural: "Images" },
+              admin: {
+                description: "Drag to reorder — the first image is the hero everywhere.",
+              },
+              fields: [
+                {
+                  name: "image",
+                  type: "upload",
+                  relationTo: "media",
+                  label: "Photo",
+                },
+              ],
+              // minRows: 1 deferred to Task 16 — see file header.
+            },
+          ],
+        },
+        {
+          label: "Sourcing",
+          description: "Provenance and cross-sell relationships.",
+          fields: [
+            { name: "karigar", type: "relationship", relationTo: "karigars" },
+            {
+              name: "boxCompatibility",
+              type: "relationship",
+              relationTo: "gift-boxes",
+              hasMany: true,
+            },
+            {
+              name: "packagingCompatibility",
+              type: "relationship",
+              relationTo: "packaging",
+              hasMany: true,
+            },
+          ],
+        },
+        {
+          label: "Logistics",
+          fields: [
+            { name: "shelfLife", type: "text" },
+            { name: "storage", type: "textarea", localized: true },
+            {
+              name: "leadTime",
+              type: "text",
+              admin: {
+                description: 'e.g. "24 hours", "3 days" — shown on the PDP trust strip.',
+              },
+            },
+          ],
+        },
+      ],
     },
   ],
 };
