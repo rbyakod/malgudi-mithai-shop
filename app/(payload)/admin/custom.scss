@@ -387,3 +387,109 @@ body[data-admin-theme="mishran-monsoon"] {
 .step-nav a.step-nav__home {
   cursor: pointer;
 }
+
+// Dashboard command center and audit polish. These rules intentionally avoid
+// changing the dashboard canvas background or the sidebar/navigation styling.
+.mishran-dashboard__hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1.1rem 0 1.2rem;
+  border-bottom: 1px solid var(--t-border);
+}
+
+.mishran-dashboard__kicker {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--t-primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mishran-dashboard__title {
+  margin: 0;
+  color: var(--t-text);
+  font-family: var(--mishran-font-display);
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.96;
+}
+
+.mishran-dashboard__summary {
+  max-width: 44rem;
+  margin: 0.7rem 0 0;
+  color: var(--t-text-muted);
+  font-size: 0.98rem;
+}
+
+.mishran-dashboard__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  justify-content: flex-end;
+}
+
+.mishran-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.55rem;
+  padding: 0 0.95rem;
+  border-radius: var(--mishran-radius-sm);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.mishran-button--primary {
+  background: var(--t-primary);
+  color: var(--t-bg-card);
+}
+
+.mishran-catalog-counts {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+body[data-admin-theme] .collection-list__wrap,
+body[data-admin-theme] .table {
+  border-color: var(--t-border);
+}
+
+body[data-admin-theme] table th {
+  color: var(--t-primary);
+  font-weight: 800;
+}
+
+body[data-admin-theme] table td {
+  color: var(--t-text);
+}
+
+@media (max-width: 900px) {
+  .mishran-dashboard__hero {
+    flex-direction: column;
+  }
+
+  .mishran-dashboard__actions {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .mishran-button {
+    flex: 1 1 10rem;
+    justify-content: center;
+  }
+
+  .mishran-dashboard__grid,
+  .mishran-catalog-counts {
+    grid-template-columns: 1fr !important;
+  }
+
+  body[data-admin-theme] .table {
+    min-width: 48rem;
+  }
+}

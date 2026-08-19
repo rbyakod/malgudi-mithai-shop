@@ -1,5 +1,6 @@
 // app/layout.tsx
 import type {Metadata} from "next";
+import {headers} from "next/headers";
 import "./globals.css";
 import {CartProvider} from "@/context/CartContext";
 import {AuthProvider} from "@/context/AuthContext";
@@ -19,11 +20,17 @@ export const metadata: Metadata = {
   description: "Modern Indian mithai, delivered fresh."
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = (await headers()).get("x-mishran-pathname");
+
+  if (pathname?.startsWith("/admin")) {
+    return children;
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body>

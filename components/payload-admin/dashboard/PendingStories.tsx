@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {useEffect, useState} from "react";
 import {fetchPendingStories, type StoryRow} from "@/components/payload-admin/lib/dashboard-queries";
 import {formatRelativeTime} from "@/components/payload-admin/lib/relative-time";
@@ -43,7 +44,7 @@ export function PendingStories() {
       <div>
         <h3 style={{fontSize: "0.875rem", fontWeight: 600, margin: "0 0 0.75rem"}}>Pending stories</h3>
         <p style={{fontSize: "0.8125rem", color: "var(--t-text-muted)"}}>No pending drafts.</p>
-        <a href="/admin/collections/stories/create" style={{fontSize: "0.75rem", color: "var(--t-primary)"}}>Start a new story →</a>
+        <Link href="/admin/collections/stories/create" style={{fontSize: "0.75rem", color: "var(--t-primary)"}}>Start a new story →</Link>
       </div>
     );
   }
@@ -63,7 +64,7 @@ export function PendingStories() {
       <ul style={{listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.5rem"}}>
         {state.rows.map(story => (
           <li key={story.id}>
-            <a
+            <Link
               href={`/admin/collections/stories/${story.id}`}
               style={{display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", textDecoration: "none", color: "var(--t-text)"}}
             >
@@ -80,7 +81,7 @@ export function PendingStories() {
               <span style={{fontSize: "0.6875rem", color: "var(--t-text-muted)"}}>
                 edited {formatRelativeTime(story.updatedAt)}
               </span>
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

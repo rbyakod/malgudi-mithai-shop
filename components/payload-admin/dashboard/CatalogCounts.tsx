@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {useEffect, useState} from "react";
 import {fetchCatalogCounts, type CatalogCounts as Counts} from "@/components/payload-admin/lib/dashboard-queries";
 
@@ -44,7 +45,7 @@ export function CatalogCounts() {
     return (
       <div>
         <h3 style={{fontSize: "0.875rem", fontWeight: 600, margin: "0 0 0.75rem"}}>Catalog</h3>
-        <div style={{display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "0.5rem"}}>
+        <div className="mishran-catalog-counts">
           {Array.from({length: 5}).map((_, i) => (
             <div key={i} data-testid="skeleton-card" className="mishran-skeleton" style={{height: "5rem"}} />
           ))}
@@ -56,11 +57,11 @@ export function CatalogCounts() {
   return (
     <div>
       <h3 style={{fontSize: "0.875rem", fontWeight: 600, margin: "0 0 0.75rem"}}>Catalog</h3>
-      <div style={{display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "0.5rem"}}>
+      <div className="mishran-catalog-counts">
         {COLLECTIONS.map(coll => {
           const count = state.counts[coll.slug];
           return (
-            <a
+            <Link
               key={coll.slug}
               href={`/admin/collections/${coll.slug}`}
               style={{
@@ -81,7 +82,7 @@ export function CatalogCounts() {
               <span style={{fontSize: "1.5rem", fontWeight: 700}}>
                 {count === null || count === undefined ? "—" : count}
               </span>
-            </a>
+            </Link>
           );
         })}
       </div>

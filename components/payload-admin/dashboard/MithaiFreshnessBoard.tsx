@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {useEffect, useState} from "react";
 import {
   fetchMithaiByFreshness,
@@ -68,12 +69,12 @@ export function MithaiFreshnessBoard() {
         <p style={{fontSize: "0.8125rem", color: "var(--t-text-muted)"}}>
           No mithai published yet.
         </p>
-        <a
+        <Link
           href="/admin/collections/mithai-products/create"
           style={{fontSize: "0.75rem", color: "var(--t-primary)"}}
         >
           Create one →
-        </a>
+        </Link>
       </div>
     );
   }
@@ -100,7 +101,7 @@ export function MithaiFreshnessBoard() {
         {COLUMNS.map(col => {
           const rows: MithaiRow[] = state.groups[col.key];
           return (
-            <a
+            <Link
               key={col.key}
               href={`/admin/collections/mithai-products?where[and][0][freshnessStatus][equals]=${col.key}`}
               style={{
@@ -137,7 +138,7 @@ export function MithaiFreshnessBoard() {
               >
                 {rows.slice(0, 3).map(r => r.name).join(", ") || "—"}
               </span>
-            </a>
+            </Link>
           );
         })}
       </div>

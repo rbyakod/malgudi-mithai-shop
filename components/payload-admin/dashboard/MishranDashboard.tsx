@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {RecentLeads} from "./RecentLeads";
 import {MithaiFreshnessBoard} from "./MithaiFreshnessBoard";
 import {PendingStories} from "./PendingStories";
@@ -15,15 +16,27 @@ export function MishranDashboard() {
   return (
     <div
       className="mishran-dashboard"
-      style={{paddingBottom: "1.5rem", marginBottom: "1.5rem", borderBottom: "1px solid var(--t-border)"}}
+      style={{paddingBottom: "1.75rem", marginBottom: "1.75rem", borderBottom: "1px solid var(--t-border)"}}
     >
-      <h2 style={{fontFamily: "var(--mishran-font-display)", fontSize: "1.125rem", fontWeight: 600, margin: "0 0 1rem"}}>
-        Shop overview
-      </h2>
+      <div className="mishran-dashboard__hero">
+        <div>
+          <span className="mishran-dashboard__kicker">Mishran command center</span>
+          <h1 className="mishran-dashboard__title">Today at Mishran</h1>
+          <p className="mishran-dashboard__summary">
+            Track orders, payment risk, freshness, catalog health, and storefront work from one place.
+          </p>
+        </div>
+        <div className="mishran-dashboard__actions">
+          <Link href="/admin/collections/orders?sort=-createdAt" className="mishran-button mishran-button--primary">
+            Review orders
+          </Link>
+        </div>
+      </div>
       <WidgetErrorBoundary name="Ops pulse">
         <OpsPulse />
       </WidgetErrorBoundary>
       <div
+        className="mishran-dashboard__grid"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(2, minmax(0, 1fr))",

@@ -105,9 +105,15 @@ export function RecentLeads() {
         <h3 style={{fontSize: "0.875rem", fontWeight: 600, margin: "0 0 0.75rem"}}>
           Recent leads
         </h3>
-        <p style={{fontSize: "0.8125rem", color: "var(--t-danger)"}}>
-          Couldn&apos;t load leads. {state.message}
+        <p style={{fontSize: "0.8125rem", color: "var(--t-danger)", marginBottom: "0.65rem"}}>
+          Couldn&apos;t load leads.
         </p>
+        <p style={{fontSize: "0.75rem", color: "var(--t-text-muted)", marginBottom: "0.75rem"}}>
+          The full leads collection may still be available.
+        </p>
+        <Link href="/admin/collections/leads" style={{fontSize: "0.75rem", color: "var(--t-primary)"}}>
+          Open leads →
+        </Link>
       </div>
     );
   }
