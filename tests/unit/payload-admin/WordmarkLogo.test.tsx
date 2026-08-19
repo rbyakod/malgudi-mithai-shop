@@ -3,7 +3,7 @@ import {render} from "@testing-library/react";
 import {WordmarkLogo} from "@/components/payload-admin/graphics/WordmarkLogo";
 
 vi.mock("next/image", () => ({
-  default: ({src, alt, width, height, className}: any) => (
+  default: ({src, alt, width, height, className}: {src?: string; alt?: string; width?: number; height?: number; className?: string}) => (
     <img src={src} alt={alt} width={width} height={height} className={className} data-testid="img" />
   ),
 }));

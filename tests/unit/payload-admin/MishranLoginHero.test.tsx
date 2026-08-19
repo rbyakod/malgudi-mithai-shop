@@ -3,7 +3,7 @@ import {render, screen} from "@testing-library/react";
 import {MishranLoginHero} from "@/components/payload-admin/login/MishranLoginHero";
 
 vi.mock("next/image", () => ({
-  default: ({src, alt, width, height}: any) => (
+  default: ({src, alt, width, height}: {src?: string; alt?: string; width?: number; height?: number}) => (
     <img src={src} alt={alt} width={width} height={height} data-testid="img" />
   ),
 }));

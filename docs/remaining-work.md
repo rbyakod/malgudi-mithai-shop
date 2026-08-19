@@ -36,18 +36,29 @@ on the web, so this is mostly the two apps.
 
 ## B. Code work (agent-doable)
 
-1. **#123 — eslint debt**: 176 `no-explicit-any` errors in committed test
-   files (pre-dates D10). Mechanical; clears the repo-wide lint gate.
+1. **#123 — eslint debt**: ✅ done (2026-08-19) — 146 `no-explicit-any` /
+   `prefer-const` errors typed out (real Doc shapes in
+   `catalogSerializers` + mobile routes; `as Parameters<typeof VERB>[0]`
+   in tests), 6 `set-state-in-effect` findings fixed via setTimeout-hop
+   effects (OrdersTable/Board/List, AddressBook, OrderDetail,
+   PaymentReconciliation), CheckoutFlow `<a>`→locale-aware `<Link>`, and
+   a scoped `no-require-imports` exemption for the DI container's
+   intentional lazy singletons. `pnpm lint` = 0 errors (41 advisory
+   warnings remain); tsc clean; 757/757 unit tests pass.
 2. **#124 — merch Enquire stub**: ✅ done (2026-08-19) — both availability
    states now anchor to an inline `MerchEnquiry` LeadForm (type `merch`)
    posting to the public `POST /api/leads`; dead button removed, i18n ×3.
    (The Play listing's "one-tap reorder" claim became true when B4
    shipped — resolved.)
-3. **#125 — Android PDP parity**: the last real parity gap — Android PDP
-   lacks the trust strip, provenance rows, same-family cross-sell rail,
-   and sticky buy bar that iOS + web have. iOS is the reference
-   implementation; the serializer already emits `leadTime` + `karigarName`.
-   Ends with a fresh APK re-host per the standing rule.
+3. **#125 — Android PDP parity**: ✅ done (2026-08-19) — trust strip under
+   the price (freshness · shelf life · lead time · dietary), provenance
+   rows (hidden while karigar/lead-time are blank), same-family cross-sell
+   rail (cache-first, prefix-4, tap pushes sibling PDP), and a sticky buy
+   bar (name + compact stepper synced with the in-page stepper + Add to
+   cart). Room v6→v7 additive migration; 414/414 gradle tests; APK
+   re-hosted per the standing rule. iOS remains the reference; noted
+   deviation: Android's rail sits below reviews (buy module anchors the
+   bottom), trust strip sits under price (web placement).
 
 ### Accepted gaps (documented, no action)
 

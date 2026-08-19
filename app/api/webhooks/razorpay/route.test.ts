@@ -219,7 +219,7 @@ describe('POST /api/webhooks/razorpay', () => {
     seedOrderAndPayment();
     const body = JSON.stringify(buildPaymentCapturedEvent());
 
-    const res = await POST(webhookReq(body) as any);
+    const res = await POST(webhookReq(body) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(200);
 
     const order = stores.orders.get('order-1')!;
@@ -240,12 +240,12 @@ describe('POST /api/webhooks/razorpay', () => {
     seedOrderAndPayment();
     const body = JSON.stringify(buildPaymentCapturedEvent());
 
-    const r1 = await POST(webhookReq(body) as any);
+    const r1 = await POST(webhookReq(body) as Parameters<typeof POST>[0]);
     expect(r1.status).toBe(200);
 
     // Second call: payment is already captured. Route must short-circuit
     // and return 200 without writing again.
-    const r2 = await POST(webhookReq(body) as any);
+    const r2 = await POST(webhookReq(body) as Parameters<typeof POST>[0]);
     expect(r2.status).toBe(200);
 
     const order = stores.orders.get('order-1')!;
@@ -262,7 +262,7 @@ describe('POST /api/webhooks/razorpay', () => {
     const body = JSON.stringify(buildPaymentCapturedEvent());
 
     const res = await POST(
-      webhookReq(body, { 'x-razorpay-signature': 'bogus' }) as any,
+      webhookReq(body, { 'x-razorpay-signature': 'bogus' }) as Parameters<typeof POST>[0],
     );
     expect(res.status).toBe(400);
 
@@ -277,7 +277,7 @@ describe('POST /api/webhooks/razorpay', () => {
     seedOrderAndPayment();
     const body = JSON.stringify(buildPaymentCapturedEvent());
 
-    const res = await POST(webhookReq(body, { 'x-razorpay-signature': '' }) as any);
+    const res = await POST(webhookReq(body, { 'x-razorpay-signature': '' }) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(400);
     expect(securityEvents.created.length).toBe(1);
     expect(securityEvents.created[0]!.type).toBe('webhook_signature_fail');
@@ -298,7 +298,7 @@ describe('POST /api/webhooks/razorpay', () => {
       },
       body,
     });
-    const res = await POST(req as any);
+    const res = await POST(req as Parameters<typeof POST>[0]);
     expect(res.status).toBe(500);
     expect(securityEvents.created.length).toBe(1);
     expect(securityEvents.created[0]!.type).toBe('webhook_config_error');
@@ -317,7 +317,7 @@ describe('POST /api/webhooks/razorpay', () => {
       },
       body: malformed,
     });
-    const res = await POST(req as any);
+    const res = await POST(req as Parameters<typeof POST>[0]);
     expect(res.status).toBe(400);
     expect(securityEvents.created.length).toBe(1);
     expect(securityEvents.created[0]!.type).toBe('webhook_malformed_json');
@@ -332,7 +332,7 @@ describe('POST /api/webhooks/razorpay', () => {
     };
     const body = JSON.stringify(refundEvent);
 
-    const res = await POST(webhookReq(body) as any);
+    const res = await POST(webhookReq(body) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(200);
 
     // Order/payment untouched
@@ -345,7 +345,7 @@ describe('POST /api/webhooks/razorpay', () => {
   it('payment not found in our DB: returns 200 ok (webhook may arrive before we persist)', async () => {
     // No payment row seeded — Razorpay race where webhook beats create-order.
     const body = JSON.stringify(buildPaymentCapturedEvent());
-    const res = await POST(webhookReq(body) as any);
+    const res = await POST(webhookReq(body) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(200);
     expect(stores.payments.size).toBe(0);
   });
@@ -368,7 +368,7 @@ describe('POST /api/webhooks/razorpay', () => {
     });
 
     const body = JSON.stringify(buildPaymentCapturedEvent());
-    const res = await POST(webhookReq(body) as any);
+    const res = await POST(webhookReq(body) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(200);
 
     // Still captured; no extra raw events appended.

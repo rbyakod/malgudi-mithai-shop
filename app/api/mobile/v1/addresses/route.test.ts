@@ -58,7 +58,7 @@ describe("GET /api/mobile/v1/addresses", () => {
 
   it("200 lists the caller's addresses only", async () => {
     payloadMock.find.mockResolvedValue({ docs: [{ id: "a1", line1: "X" }] });
-    const res = await GET(req("GET") as any);
+    const res = await GET(req("GET") as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.items).toHaveLength(1);
@@ -79,7 +79,7 @@ describe("POST /api/mobile/v1/addresses", () => {
 
   it("201 creates an address scoped to the JWT customer", async () => {
     payloadMock.create.mockResolvedValue({ id: "a1", ...validAddress });
-    const res = await POST(req("POST", validAddress) as any);
+    const res = await POST(req("POST", validAddress) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(201);
     const created = payloadMock.create.mock.calls[0][0].data;
     expect(created.customerId).toBe("cust-1");
@@ -88,19 +88,19 @@ describe("POST /api/mobile/v1/addresses", () => {
 
   it("clears any prior default when isDefault=true", async () => {
     payloadMock.create.mockResolvedValue({ id: "a2" });
-    await POST(req("POST", { ...validAddress, isDefault: true }) as any);
+    await POST(req("POST", { ...validAddress, isDefault: true }) as Parameters<typeof POST>[0]);
     expect(clearDefaultAddress).toHaveBeenCalledWith(expect.anything(), "cust-1");
   });
 
   it("ignores a forged customerId in the body (uses the JWT id)", async () => {
     payloadMock.create.mockResolvedValue({ id: "a3" });
-    await POST(req("POST", { ...validAddress, customerId: "attacker" }) as any);
+    await POST(req("POST", { ...validAddress, customerId: "attacker" }) as Parameters<typeof POST>[0]);
     // create data still carries the verified customer, not the body value.
     expect(payloadMock.create.mock.calls[0][0].data.customerId).toBe("cust-1");
   });
 
   it("422 VALIDATION when required fields are missing", async () => {
-    const res = await POST(req("POST", { line1: "only line" }) as any);
+    const res = await POST(req("POST", { line1: "only line" }) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.error.code).toBe("VALIDATION");

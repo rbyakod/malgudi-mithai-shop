@@ -55,7 +55,7 @@ describe("POST /api/mobile/v1/notifications/register-device", () => {
     payloadMock.find.mockResolvedValue({ docs: [] });
     payloadMock.create.mockResolvedValue({ id: "dev-1" });
 
-    const res = await POST(req(validBody) as any);
+    const res = await POST(req(validBody) as Parameters<typeof POST>[0]);
 
     expect(res.status).toBe(200);
     expect(payloadMock.create).toHaveBeenCalledOnce();
@@ -70,7 +70,7 @@ describe("POST /api/mobile/v1/notifications/register-device", () => {
     payloadMock.find.mockResolvedValue({ docs: [{ id: "dev-9", active: false }] });
     payloadMock.update.mockResolvedValue({ id: "dev-9" });
 
-    const res = await POST(req({ ...validBody, platform: "ios" }) as any);
+    const res = await POST(req({ ...validBody, platform: "ios" }) as Parameters<typeof POST>[0]);
 
     expect(res.status).toBe(200);
     expect(payloadMock.update).toHaveBeenCalledOnce();
@@ -81,7 +81,7 @@ describe("POST /api/mobile/v1/notifications/register-device", () => {
   });
 
   it("422 VALIDATION when platform is missing or invalid", async () => {
-    const res = await POST(req({ pushToken: "t" }) as any);
+    const res = await POST(req({ pushToken: "t" }) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.error.code).toBe("VALIDATION");
@@ -89,14 +89,14 @@ describe("POST /api/mobile/v1/notifications/register-device", () => {
   });
 
   it("422 VALIDATION when pushToken is empty", async () => {
-    const res = await POST(req({ platform: "android", pushToken: "" }) as any);
+    const res = await POST(req({ platform: "android", pushToken: "" }) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(422);
   });
 
   it("401 when the caller is unauthenticated", async () => {
     const { ApiError, ErrorCode } = await import("../../../../../../lib/api/errors");
     requireCustomer.mockRejectedValue(new ApiError(ErrorCode.TOKEN_EXPIRED, "no token"));
-    const res = await POST(req(validBody, false) as any);
+    const res = await POST(req(validBody, false) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(401);
     const body = await res.json();
     expect(body.error.code).toBe("TOKEN_EXPIRED");
@@ -109,7 +109,7 @@ describe("POST /api/mobile/v1/notifications/register-device", () => {
     payloadMock.update.mockResolvedValue({ id: "dev-7" });
 
     const res = await POST(
-      req({ platform: "ios", pushToken: "apns-1", liveActivityToken: "la-1" }) as any,
+      req({ platform: "ios", pushToken: "apns-1", liveActivityToken: "la-1" }) as Parameters<typeof POST>[0],
     );
 
     expect(res.status).toBe(200);
@@ -118,7 +118,7 @@ describe("POST /api/mobile/v1/notifications/register-device", () => {
 
   it("422 VALIDATION when liveActivityToken is present but empty", async () => {
     const res = await POST(
-      req({ platform: "ios", pushToken: "t", liveActivityToken: "" }) as any,
+      req({ platform: "ios", pushToken: "t", liveActivityToken: "" }) as Parameters<typeof POST>[0],
     );
     expect(res.status).toBe(422);
   });

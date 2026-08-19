@@ -181,10 +181,15 @@ Common to all platforms:
    "pan-India shipping coming soon." The result is remembered, so the next
    product page (and on every platform, the cart's delivery estimate)
    reuses it.
-7. **Trust information**: freshness, shelf life, lead time, dietary tags
-   (web + iOS), ingredients, story, **allergens**, **storage**, and the
-   **karigar** who made it (web + iOS).
-8. **Cross-sell rail** — "More from the {family} collection" (web + iOS).
+7. **Trust information**: freshness, shelf life, lead time, dietary tags,
+   ingredients, story, **allergens**, **storage**, and the **karigar** who
+   made it (web + iOS + Android). Android shows a compact trust strip under
+   the price (freshness promise · shelf life · lead time · dietary tags) and
+   provenance rows that hide while a product's karigar/lead-time data is
+   blank.
+8. **Cross-sell rail** — "More from the {family} collection" (web, iOS,
+   Android). On Android it sits below customer reviews and needs one
+   catalog fetch on a cold cache before it fills.
 9. **Customer reviews** (web, iOS, Android) — the average star rating, up
    to five approved reviews (newest first) with author display name, date,
    and a gold **Verified purchase** badge when the review came from a real
@@ -194,9 +199,9 @@ Common to all platforms:
    allergens section.
 
 Platform specifics: **web** has a sticky buy bar on mobile screens;
-**iOS** has a sticky bottom buy bar everywhere; **Android** keeps Add to
-cart / Buy now inline in the scroll. **iOS** is the only app with the
-trust strip, provenance rows, and cross-sell rail.
+**iOS** has a sticky bottom buy bar everywhere; **Android** now has one
+too — product name, a compact quantity stepper (kept in sync with the
+one in the page), and Add to cart pinned above the bottom edge.
 
 ### Snack / QSR / Merch pages
 - **Snack**: price (MRP), weight, description, and **Where to buy** —

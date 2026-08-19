@@ -1,10 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Path depth: app/api/mobile/v1/catalog/serviceable/ = 6 dirs -> 6 ../ to root.
-let mockDocs: any[] = [];
+// serviceablePincodes doc shape the route echoes back (tier/city/slaDays).
+type ServiceablePincodeDoc = {
+  pincode: string;
+  tier: string;
+  city: string;
+  slaDays: number;
+  active: boolean;
+};
+let mockDocs: ServiceablePincodeDoc[] = [];
 
 vi.mock('payload', () => {
-  const find = vi.fn(async function (args: any) {
+  const find = vi.fn(async function (args: unknown) {
     return { docs: mockDocs };
   });
   const payloadStub = { find: find };
@@ -25,7 +33,7 @@ describe('GET /catalog/serviceable', () => {
   it('returns 200 with serviceable=true for matching pincode', async () => {
     mockDocs = [{ pincode: '560001', tier: 'shelf', city: 'Bengaluru', slaDays: 3, active: true }];
     const req = new Request('http://localhost/api/mobile/v1/catalog/serviceable?pincode=560001');
-    const res = await GET(req as any);
+    const res = await GET(req as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.serviceable).toBe(true);
@@ -37,7 +45,7 @@ describe('GET /catalog/serviceable', () => {
   it('returns 200 with serviceable=false for unknown pincode', async () => {
     mockDocs = [];
     const req = new Request('http://localhost/api/mobile/v1/catalog/serviceable?pincode=999999');
-    const res = await GET(req as any);
+    const res = await GET(req as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.serviceable).toBe(false);
@@ -48,7 +56,7 @@ describe('GET /catalog/serviceable', () => {
 
   it('returns 422 with invalid_pincode reason for non-numeric pincode', async () => {
     const req = new Request('http://localhost/api/mobile/v1/catalog/serviceable?pincode=abc');
-    const res = await GET(req as any);
+    const res = await GET(req as Parameters<typeof GET>[0]);
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.data.serviceable).toBe(false);

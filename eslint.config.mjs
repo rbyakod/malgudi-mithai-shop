@@ -17,6 +17,17 @@ const eslintConfig = defineConfig([
     "apps/ios/build/**",
     "apps/android/**/build/**",
   ]),
+  {
+    // #123: the DI container lazy-loads heavy service implementations with
+    // synchronous require() inside factory functions (singletons resolve
+    // synchronously on first use; swapping to await import() would force
+    // every factory async for no runtime win). Scoped exemption, not a
+    // repo-wide rule change.
+    files: ["lib/container.ts"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

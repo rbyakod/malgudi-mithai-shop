@@ -2,12 +2,13 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { JwtService } from './JwtService';
 import { generateKeyPairSync } from 'node:crypto';
+import type { KeyObject } from 'node:crypto';
 
 describe('JwtService', () => {
   let svc: JwtService;
   beforeAll(() => {
     const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
-    const pem = (k: any) => k.export({ type: 'pkcs1', format: 'pem' }).toString();
+    const pem = (k: KeyObject) => k.export({ type: 'pkcs1', format: 'pem' }).toString();
     svc = new JwtService({ privateKey: pem(privateKey), publicKey: pem(publicKey), accessTtlSeconds: 60, refreshTtlSeconds: 3600 });
   });
 

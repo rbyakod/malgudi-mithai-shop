@@ -18,7 +18,6 @@ class ProductTrustTest {
         freshDaily = "Made fresh each morning",
         freshToOrder = "Made to order, finished on request",
         frozen = "Finished fresh, frozen at peak",
-        shelfLife = { "$it shelf life" },
         vegetarian = "Vegetarian",
         sugarFree = "Sugar-free",
     )
@@ -56,7 +55,7 @@ class ProductTrustTest {
         )
         assertEquals(
             listOf("7 days shelf life"),
-            trustStripItems(product(shelfLife = "7 days"), copy),
+            trustStripItems(product(shelfLife = "7 days"), copy, shelfLifeLabel = "7 days shelf life"),
         )
         assertEquals(
             listOf("Made to order in 24h"),
@@ -99,11 +98,11 @@ class ProductTrustTest {
         val items = trustStripItems(
             product(
                 freshnessStatus = Product.FreshnessStatus.madeMinusDaily,
-                shelfLife = "7 days",
                 leadTime = "Made to order in 24h",
                 dietaryTags = listOf("vegetarian", "sugar-free", "jain"),
             ),
             copy,
+            shelfLifeLabel = "7 days shelf life",
         )
         assertEquals(
             listOf(
@@ -122,7 +121,11 @@ class ProductTrustTest {
     fun `blank strings never leak a slot`() {
         assertEquals(
             emptyList<String>(),
-            trustStripItems(product(shelfLife = "  ", leadTime = "", dietaryTags = emptyList()), copy),
+            trustStripItems(
+                product(shelfLife = "  ", leadTime = "", dietaryTags = emptyList()),
+                copy,
+                shelfLifeLabel = null,
+            ),
         )
     }
 
@@ -142,9 +145,9 @@ class ProductTrustTest {
     fun `karigar renders the made-by row with the name as the value`() {
         val rows = provenanceRows(
             product(karigarName = "Karigar Suresh"),
-            karigar = "Karigar",
-            freshness = "Freshness",
-            shelfLife = "Shelf life",
+            karigarLabel = "Karigar",
+            freshnessLabel = "Freshness",
+            shelfLifeLabel = "Shelf life",
         )
         assertEquals(listOf(ProvenanceRow("Karigar", "Karigar Suresh")), rows)
     }
@@ -165,9 +168,9 @@ class ProductTrustTest {
     fun `a fully populated product renders karigar, freshness then shelf life`() {
         val rows = provenanceRows(
             product(karigarName = "Karigar Suresh", leadTime = "48h notice", shelfLife = "5 days"),
-            karigar = "Karigar",
-            freshness = "Freshness",
-            shelfLife = "Shelf life",
+            karigarLabel = "Karigar",
+            freshnessLabel = "Freshness",
+            shelfLifeLabel = "Shelf life",
         )
         assertEquals(
             listOf(

@@ -109,7 +109,7 @@ describe('GET /orders', () => {
   it('returns 200 with items + total + pagination', async () => {
     seedOrder({ id: 'order-1' });
     seedOrder({ id: 'order-2' });
-    const res = await GET(authedReq() as any);
+    const res = await GET(authedReq() as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.items.length).toBe(2);
@@ -122,7 +122,7 @@ describe('GET /orders', () => {
   it('returns 401 when auth is missing', async () => {
     seedOrder();
     const req = new Request('http://localhost/api/mobile/v1/orders');
-    const res = await GET(req as any);
+    const res = await GET(req as Parameters<typeof GET>[0]);
     expect(res.status).toBe(401);
     const body = await res.json();
     expect(body.error.code).toBe('TOKEN_EXPIRED');
@@ -130,7 +130,7 @@ describe('GET /orders', () => {
 
   it('defaults to page=1 pageSize=20 when no query params', async () => {
     seedOrder();
-    const res = await GET(authedReq() as any);
+    const res = await GET(authedReq() as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.page).toBe(1);
@@ -139,7 +139,7 @@ describe('GET /orders', () => {
 
   it('caps pageSize to 50', async () => {
     seedOrder();
-    const res = await GET(authedReq('?pageSize=500') as any);
+    const res = await GET(authedReq('?pageSize=500') as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.pageSize).toBe(50);
@@ -147,7 +147,7 @@ describe('GET /orders', () => {
 
   it('respects page and pageSize query params', async () => {
     for (let i = 1; i <= 5; i++) seedOrder({ id: `order-${i}` });
-    const res = await GET(authedReq('?page=2&pageSize=2') as any);
+    const res = await GET(authedReq('?page=2&pageSize=2') as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.page).toBe(2);
@@ -158,7 +158,7 @@ describe('GET /orders', () => {
 
   it('falls back to defaults when query params are NaN', async () => {
     seedOrder();
-    const res = await GET(authedReq('?page=abc&pageSize=xyz') as any);
+    const res = await GET(authedReq('?page=abc&pageSize=xyz') as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.page).toBe(1);
@@ -167,7 +167,7 @@ describe('GET /orders', () => {
 
   it('clamps negative page to 1', async () => {
     seedOrder();
-    const res = await GET(authedReq('?page=-3&pageSize=10') as any);
+    const res = await GET(authedReq('?page=-3&pageSize=10') as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.page).toBe(1);
@@ -180,7 +180,7 @@ describe('GET /orders', () => {
     // Here we just assert the route calls through and returns whatever
     // payload.find yields (the service is the source of the filter).
     seedOrder({ id: 'mine', customerId: 'cust-1' });
-    const res = await GET(authedReq() as any);
+    const res = await GET(authedReq() as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.items.length).toBe(1);

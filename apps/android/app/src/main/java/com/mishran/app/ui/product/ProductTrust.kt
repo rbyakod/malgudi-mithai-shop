@@ -18,14 +18,14 @@ import com.mishran.api.models.Product.FreshnessStatus
 /**
  * The localized strings the trust strip derives from. The composables fill
  * this from string resources at render time; tests pass plain strings. The
- * shelf-life entry is a formatter ("{value} shelf life") because the value
- * rides inside the localized phrase.
+ * shelf-life phrase ("{value} shelf life") cannot ride in here — its value
+ * interleaves into the localized string — so the composable resolves it via
+ * stringResource and hands it to [trustStripItems] separately.
  */
 data class TrustStripCopy(
     val freshDaily: String,
     val freshToOrder: String,
     val frozen: String,
-    val shelfLife: (String) -> String,
     val vegetarian: String,
     val sugarFree: String,
 )
@@ -56,12 +56,18 @@ internal fun dietaryTrustLabel(tag: String, copy: TrustStripCopy): String =
 /**
  * Trust-strip items — only the fields the product actually carries, in the
  * fixed order freshness promise → shelf life → lead time → dietary tags.
- * Empty list means the whole strip hides (no empty placeholders).
+ * [shelfLifeLabel] is the pre-localized "{value} shelf life" phrase (null
+ * when the product carries no shelf life). Empty list means the whole strip
+ * hides (no empty placeholders).
  */
-internal fun trustStripItems(product: Product, copy: TrustStripCopy): List<String> {
+internal fun trustStripItems(
+    product: Product,
+    copy: TrustStripCopy,
+    shelfLifeLabel: String? = null,
+): List<String> {
     val items = mutableListOf<String>()
     freshnessPromise(product.freshnessStatus, copy)?.let(items::add)
-    product.shelfLife?.takeIf { it.isNotBlank() }?.let { items.add(copy.shelfLife(it)) }
+    shelfLifeLabel?.let(items::add)
     product.leadTime?.takeIf { it.isNotBlank() }?.let(items::add)
     product.dietaryTags.orEmpty().forEach { items.add(dietaryTrustLabel(it, copy)) }
     return items

@@ -29,6 +29,13 @@ vi.mock('payload', () => {
     karigar: { id: string } | null;
     updatedAt: string;
   };
+  // `where` clauses the route builds (family/freshnessStatus/dietaryTags/name).
+  type MockWhere = {
+    family?: { equals?: string };
+    freshnessStatus?: { equals?: string };
+    dietaryTags?: { in?: string[] };
+    name?: { contains?: string };
+  };
   const ALL: Fixture[] = [
     {
       id: 'p1',
@@ -66,25 +73,25 @@ vi.mock('payload', () => {
     },
   ];
 
-  function applyFilters(where: any) {
+  function applyFilters(where: MockWhere | undefined) {
     if (!where) return ALL;
     let filtered = ALL;
     if (where.family && where.family.equals)
-      filtered = filtered.filter(function (p) { return p.family === where.family.equals; });
+      filtered = filtered.filter(function (p) { return p.family === where.family?.equals; });
     if (where.freshnessStatus && where.freshnessStatus.equals)
-      filtered = filtered.filter(function (p) { return p.freshnessStatus === where.freshnessStatus.equals; });
+      filtered = filtered.filter(function (p) { return p.freshnessStatus === where.freshnessStatus?.equals; });
     if (where.dietaryTags && where.dietaryTags.in) {
-      const wanted: string[] = where.dietaryTags.in;
+      const wanted: string[] = where.dietaryTags?.in ?? [];
       filtered = filtered.filter(function (p) {
         return wanted.every(function (d) { return p.dietaryTags.indexOf(d) !== -1; });
       });
     }
     if (where.name && where.name.contains)
-      filtered = filtered.filter(function (p) { return p.name.indexOf(where.name.contains) !== -1; });
+      filtered = filtered.filter(function (p) { return p.name.indexOf(where.name?.contains ?? '') !== -1; });
     return filtered;
   }
 
-  const find = vi.fn(async function (args: any) {
+  const find = vi.fn(async function (args: { where?: MockWhere; page?: number; limit?: number }) {
     const where = args && args.where;
     const page = (args && args.page) || 1;
     const limit = (args && args.limit) || 50;
@@ -118,7 +125,7 @@ function etagFor(docs: Array<{ id: string; updatedAt: string }>) {
 describe('GET /catalog/products', () => {
   it('returns 200 with product list + ETag', async () => {
     const req = new Request('http://localhost/api/mobile/v1/catalog/products');
-    const res = await GET(req as any);
+    const res = await GET(req as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     expect(res.headers.get('ETag')).toBeTruthy();
     const body = await res.json();
@@ -130,7 +137,7 @@ describe('GET /catalog/products', () => {
 
   it('returns 304 when If-None-Match matches', async () => {
     const req1 = new Request('http://localhost/api/mobile/v1/catalog/products');
-    const res1 = await GET(req1 as any);
+    const res1 = await GET(req1 as Parameters<typeof GET>[0]);
     const etag = res1.headers.get('ETag');
     expect(etag).toBeTruthy();
     // Sanity: ETag matches the documented algorithm.
@@ -143,17 +150,17 @@ describe('GET /catalog/products', () => {
     const req2 = new Request('http://localhost/api/mobile/v1/catalog/products', {
       headers: { 'If-None-Match': etag as string },
     });
-    const res2 = await GET(req2 as any);
+    const res2 = await GET(req2 as Parameters<typeof GET>[0]);
     expect(res2.status).toBe(304);
     expect(res2.headers.get('ETag')).toBe(etag);
   });
 
   it('filters by family=sugar-free', async () => {
     const req = new Request('http://localhost/api/mobile/v1/catalog/products?family=sugar-free');
-    const res = await GET(req as any);
+    const res = await GET(req as Parameters<typeof GET>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.items.length).toBe(1);
-    expect(body.data.items.every((p: any) => p.family === 'sugar-free')).toBe(true);
+    expect(body.data.items.every((p: { family?: string | null }) => p.family === 'sugar-free')).toBe(true);
   });
 });

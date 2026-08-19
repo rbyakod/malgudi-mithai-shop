@@ -5,23 +5,31 @@ import {makeProductNameCell} from "@/components/payload-admin/cells/ProductNameC
 import type {ProductCellBehavior} from "@/components/payload-admin/cells/ProductNameCell";
 
 vi.mock("next/image", () => ({
-  default: ({src, alt, width, height}: any) => (
+  default: ({src, alt, width, height}: {src?: string; alt?: string; width?: number; height?: number}) => (
     <img src={src} alt={alt} width={width} height={height} data-testid="img" />
   ),
 }));
 
+// Payload's DefaultCellComponentProps requires `collectionSlug` and `field` and
+// forbids unknown `collectionField`. For unit testing we only care about
+// `cellData` and `rowData`, so cast to a permissive render type.
+type LooseCell = ComponentType<{
+  cellData?: string | null;
+  rowData?: Record<string, unknown>;
+  collectionField?: {name: string};
+}>;
+
 describe("ProductNameCell", () => {
   const behavior: ProductCellBehavior = {
     image: {kind: "array", field: "images", imageKey: "image"},
-    meta: (row: any) => [row.displayPrice, row.family].filter(Boolean),
-    badges: (row: any) => row.freshnessStatus
-      ? [{label: row.freshnessStatus, tone: "gold"}]
+    // Component renders plain-string meta items verbatim (its
+    // `typeof m === "string"` branch), which these fixtures rely on.
+    meta: (row: Record<string, unknown>) => [row.displayPrice, row.family].filter(Boolean) as unknown as {label: string}[],
+    badges: (row: Record<string, unknown>) => row.freshnessStatus
+      ? [{label: row.freshnessStatus as string, tone: "gold"}]
       : [],
   };
-  // Payload's DefaultCellComponentProps requires `collectionSlug` and `field` and
-  // forbids unknown `collectionField`. For unit testing we only care about
-  // `cellData` and `rowData`, so cast to a permissive render type.
-  const Cell = makeProductNameCell(behavior) as any;
+  const Cell = makeProductNameCell(behavior) as LooseCell;
 
   it("renders thumbnail when image present", () => {
     const rowData = {
@@ -32,14 +40,14 @@ describe("ProductNameCell", () => {
       family: "classic",
       freshnessStatus: "made-daily",
     };
-    render(<Cell cellData="Kaju Katli" rowData={rowData} collectionField={{name: "name"} as any} />);
+    render(<Cell cellData="Kaju Katli" rowData={rowData} collectionField={{name: "name"}} />);
     const img = screen.getByTestId("img");
     expect(img).toHaveAttribute("src", "/media/kaju.jpg");
   });
 
   it("renders fallback block when no image", () => {
     const rowData = {id: "2", name: "No-image sweet", images: [], displayPrice: "₹200", family: "classic"};
-    const {container} = render(<Cell cellData="No-image sweet" rowData={rowData} collectionField={{name: "name"} as any} />);
+    const {container} = render(<Cell cellData="No-image sweet" rowData={rowData} collectionField={{name: "name"}} />);
     expect(container.querySelector("img")).toBeNull();
     // Fallback is a div with bg-muted class
     expect(container.querySelector(".mishran-cell-fallback")).not.toBeNull();
@@ -47,7 +55,7 @@ describe("ProductNameCell", () => {
 
   it("renders meta items in order", () => {
     const rowData = {id: "3", name: "X", images: [], displayPrice: "₹500", family: "classic"};
-    const {container} = render(<Cell cellData="X" rowData={rowData} collectionField={{name: "name"} as any} />);
+    const {container} = render(<Cell cellData="X" rowData={rowData} collectionField={{name: "name"}} />);
     const meta = container.querySelector(".mishran-cell-meta");
     expect(meta?.textContent).toContain("₹500");
     expect(meta?.textContent).toContain("classic");
@@ -55,7 +63,7 @@ describe("ProductNameCell", () => {
 
   it("renders badges when present", () => {
     const rowData = {id: "4", name: "Y", images: [], displayPrice: "₹100", family: "classic", freshnessStatus: "made-daily"};
-    const {container} = render(<Cell cellData="Y" rowData={rowData} collectionField={{name: "name"} as any} />);
+    const {container} = render(<Cell cellData="Y" rowData={rowData} collectionField={{name: "name"}} />);
     const badges = container.querySelectorAll(".mishran-pill");
     expect(badges.length).toBe(1);
     expect(badges[0].textContent).toContain("made-daily");
@@ -63,19 +71,19 @@ describe("ProductNameCell", () => {
 
   it("falls back to rowData.name when cellData is empty", () => {
     const rowData = {id: "5", name: "Fallback Name", images: []};
-    const {container} = render(<Cell cellData={null} rowData={rowData} collectionField={{name: "name"} as any} />);
+    const {container} = render(<Cell cellData={null} rowData={rowData} collectionField={{name: "name"}} />);
     expect(container.textContent).toContain("Fallback Name");
   });
 
   it("handles single-image (upload) shape", () => {
     const singleBehavior: ProductCellBehavior = {
       image: {kind: "single", field: "image"},
-      meta: (row: any) => [],
+      meta: (row: Record<string, unknown>) => [],
       badges: () => [],
     };
-    const SingleCell = makeProductNameCell(singleBehavior) as any;
+    const SingleCell = makeProductNameCell(singleBehavior) as LooseCell;
     const rowData = {id: "6", name: "Chai", image: {url: "/media/chai.jpg"}};
-    render(<SingleCell cellData="Chai" rowData={rowData} collectionField={{name: "name"} as any} />);
+    render(<SingleCell cellData="Chai" rowData={rowData} collectionField={{name: "name"}} />);
     expect(screen.getByTestId("img")).toHaveAttribute("src", "/media/chai.jpg");
   });
 
@@ -160,11 +168,6 @@ describe("ProductNameCell", () => {
         meta: () => [],
         badges: () => [],
       };
-      type LooseCell = ComponentType<{
-        cellData?: string | null;
-        rowData?: Record<string, unknown>;
-        collectionField?: {name: string};
-      }>;
       const SingleCell = makeProductNameCell(singleBehavior) as LooseCell;
       const rowData = {id: "10", name: "Chai", image: singleMediaId};
       render(<SingleCell cellData="Chai" rowData={rowData} collectionField={{name: "name"}} />);

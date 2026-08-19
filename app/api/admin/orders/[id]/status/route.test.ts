@@ -169,7 +169,7 @@ describe("POST /api/admin/orders/:id/status", () => {
 
   it("200 happy path: admin transitions order confirmed -> packed", async () => {
     seedOrder({ id: "order-1", status: "confirmed" });
-    const res = await POST(authedReq("order-1", { newStatus: "packed" }) as any, {
+    const res = await POST(authedReq("order-1", { newStatus: "packed" }) as Parameters<typeof POST>[0], {
       params: Promise.resolve({ id: "order-1" }),
     });
     expect(res.status).toBe(200);
@@ -184,7 +184,7 @@ describe("POST /api/admin/orders/:id/status", () => {
   it("200 includes optional note propagation", async () => {
     seedOrder({ id: "order-1", status: "confirmed" });
     const res = await POST(
-      authedReq("order-1", { newStatus: "packed", note: "packed by Ravi" }) as any,
+      authedReq("order-1", { newStatus: "packed", note: "packed by Ravi" }) as Parameters<typeof POST>[0],
       { params: Promise.resolve({ id: "order-1" }) },
     );
     expect(res.status).toBe(200);
@@ -192,7 +192,7 @@ describe("POST /api/admin/orders/:id/status", () => {
 
   it("401 when admin auth is missing", async () => {
     seedOrder({ id: "order-1", status: "confirmed" });
-    const res = await POST(unauthedReq("order-1", { newStatus: "packed" }) as any, {
+    const res = await POST(unauthedReq("order-1", { newStatus: "packed" }) as Parameters<typeof POST>[0], {
       params: Promise.resolve({ id: "order-1" }),
     });
     expect(res.status).toBe(401);
@@ -202,7 +202,7 @@ describe("POST /api/admin/orders/:id/status", () => {
 
   it("422 VALIDATION when body is missing newStatus", async () => {
     seedOrder({ id: "order-1", status: "confirmed" });
-    const res = await POST(authedReq("order-1", {}) as any, {
+    const res = await POST(authedReq("order-1", {}) as Parameters<typeof POST>[0], {
       params: Promise.resolve({ id: "order-1" }),
     });
     expect(res.status).toBe(422);
@@ -213,7 +213,7 @@ describe("POST /api/admin/orders/:id/status", () => {
   it("422 VALIDATION when newStatus is not a known OrderStatus", async () => {
     seedOrder({ id: "order-1", status: "confirmed" });
     const res = await POST(
-      authedReq("order-1", { newStatus: "not-a-real-status" }) as any,
+      authedReq("order-1", { newStatus: "not-a-real-status" }) as Parameters<typeof POST>[0],
       { params: Promise.resolve({ id: "order-1" }) },
     );
     expect(res.status).toBe(422);
@@ -224,7 +224,7 @@ describe("POST /api/admin/orders/:id/status", () => {
   it("409 INVALID_STATE_TRANSITION when transition is illegal (delivered -> confirmed)", async () => {
     seedOrder({ id: "order-1", status: "delivered" });
     const res = await POST(
-      authedReq("order-1", { newStatus: "confirmed" }) as any,
+      authedReq("order-1", { newStatus: "confirmed" }) as Parameters<typeof POST>[0],
       { params: Promise.resolve({ id: "order-1" }) },
     );
     expect(res.status).toBe(409);
@@ -236,7 +236,7 @@ describe("POST /api/admin/orders/:id/status", () => {
 
   it("404 ORDER_NOT_FOUND when order id is unknown", async () => {
     const res = await POST(
-      authedReq("missing-id", { newStatus: "packed" }) as any,
+      authedReq("missing-id", { newStatus: "packed" }) as Parameters<typeof POST>[0],
       { params: Promise.resolve({ id: "missing-id" }) },
     );
     expect(res.status).toBe(404);

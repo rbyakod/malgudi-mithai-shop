@@ -42,7 +42,7 @@ vi.mock('payload', () => ({
         limit?: number;
       }) => {
         const col = (stores as Record<string, Map<string, Record<string, unknown>>>)[collection];
-        let all = col ? Array.from(col.values()) : [];
+        const all = col ? Array.from(col.values()) : [];
         const clauses =
           (where as { and?: Array<Record<string, unknown>> })?.and ?? (where ? [where] : []);
         const docs = all.filter((d) =>

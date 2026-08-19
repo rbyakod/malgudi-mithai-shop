@@ -66,7 +66,7 @@ vi.mock('payload', () => {
     },
   ];
 
-  const find = vi.fn(async function (args: any) {
+  const find = vi.fn(async function (args: { where?: { slug?: { equals?: string } }; limit?: number }) {
     const where = args && args.where;
     const slugEq = where && where.slug && where.slug.equals;
     const docs = slugEq ? ALL.filter(function (p) { return p.slug === slugEq; }) : ALL;
@@ -92,7 +92,7 @@ import { GET } from './route';
 describe('GET /catalog/products/{slug}', () => {
   it('returns 200 with serialized product detail', async () => {
     const req = new Request('http://localhost/api/mobile/v1/catalog/products/kaju-katli');
-    const res = await GET(req as any, { params: Promise.resolve({ slug: 'kaju-katli' }) });
+    const res = await GET(req as Parameters<typeof GET>[0], { params: Promise.resolve({ slug: 'kaju-katli' }) });
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.slug).toBe('kaju-katli');
@@ -114,7 +114,7 @@ describe('GET /catalog/products/{slug}', () => {
 
   it('returns 404 with PRODUCT_NOT_FOUND when slug is missing', async () => {
     const req = new Request('http://localhost/api/mobile/v1/catalog/products/does-not-exist');
-    const res = await GET(req as any, {
+    const res = await GET(req as Parameters<typeof GET>[0], {
       params: Promise.resolve({ slug: 'does-not-exist' }),
     });
     expect(res.status).toBe(404);

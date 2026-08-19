@@ -23,7 +23,7 @@
 
 import {useEffect, useRef, useState} from "react";
 import {useLocale, useTranslations} from "next-intl";
-import {useRouter} from "@/i18n/navigation";
+import {useRouter, Link} from "@/i18n/navigation";
 import {apiFetch, ApiClientError} from "@/lib/web/apiClient";
 import {useAuth} from "@/context/AuthContext";
 import {useCart} from "@/context/CartContext";
@@ -848,12 +848,12 @@ export function CheckoutFlow({whatsapp}: Props) {
                   className="mt-5 text-sm italic leading-relaxed text-text-muted"
                 >
                   {validateError}{" "}
-                  <a
+                  <Link
                     href="/cart"
                     className="text-primary underline-offset-4 hover:underline"
                   >
                     {t("backToCart")}
-                  </a>
+                  </Link>
                 </p>
               ) : null}
 

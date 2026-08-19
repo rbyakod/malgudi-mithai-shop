@@ -192,7 +192,7 @@ describe('POST /payments/razorpay/create-order', () => {
     const originalKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID = 'rzp_test_key';
 
-    const res = await POST(authedReq(VALID_BODY) as any);
+    const res = await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.orderId).toBeTruthy();
@@ -218,7 +218,7 @@ describe('POST /payments/razorpay/create-order', () => {
     const originalKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     delete process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
-    const res = await POST(authedReq(VALID_BODY) as any);
+    const res = await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     // Same value RAZORPAY_KEY_ID holds on the server — keyId must never be
@@ -238,7 +238,7 @@ describe('POST /payments/razorpay/create-order', () => {
         totalInPaise: 0,
       },
     });
-    const res = await POST(authedReq(VALID_BODY) as any);
+    const res = await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.error.code).toBe('VALIDATION');
@@ -255,7 +255,7 @@ describe('POST /payments/razorpay/create-order', () => {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(VALID_BODY),
     });
-    const res = await POST(req as any);
+    const res = await POST(req as Parameters<typeof POST>[0]);
     expect(res.status).toBe(401);
     const body = await res.json();
     expect(body.error.code).toBe('TOKEN_EXPIRED');
@@ -263,7 +263,7 @@ describe('POST /payments/razorpay/create-order', () => {
 
   it('returns 422 VALIDATION when body is missing fields', async () => {
     seedSnapshot();
-    const res = await POST(authedReq({ snapshotId: 'snap-1' }) as any);
+    const res = await POST(authedReq({ snapshotId: 'snap-1' }) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.error.code).toBe('VALIDATION');
@@ -271,7 +271,7 @@ describe('POST /payments/razorpay/create-order', () => {
 
   it('returns 404 SNAPSHOT_NOT_FOUND when snapshot does not exist', async () => {
     // no snapshot seeded
-    const res = await POST(authedReq({ snapshotId: 'gone', deliveryAddressId: 'addr-1' }) as any);
+    const res = await POST(authedReq({ snapshotId: 'gone', deliveryAddressId: 'addr-1' }) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(404);
     const body = await res.json();
     expect(body.error.code).toBe('SNAPSHOT_NOT_FOUND');
@@ -279,7 +279,7 @@ describe('POST /payments/razorpay/create-order', () => {
 
   it('returns 404 SNAPSHOT_NOT_FOUND when snapshot belongs to a different customer', async () => {
     seedSnapshot({ customerId: 'cust-other' });
-    const res = await POST(authedReq(VALID_BODY) as any);
+    const res = await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(404);
     const body = await res.json();
     expect(body.error.code).toBe('SNAPSHOT_NOT_FOUND');
@@ -287,7 +287,7 @@ describe('POST /payments/razorpay/create-order', () => {
 
   it('returns 422 VALIDATION when snapshot has expired', async () => {
     seedSnapshot({ expiresAt: new Date(Date.now() - 60_000).toISOString() });
-    const res = await POST(authedReq(VALID_BODY) as any);
+    const res = await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.error.code).toBe('VALIDATION');
@@ -298,12 +298,12 @@ describe('POST /payments/razorpay/create-order', () => {
     const headers = { 'Idempotency-Key': 'idem-1' };
     const body = JSON.stringify(VALID_BODY);
 
-    const r1 = await POST(authedReq(body, headers) as any);
+    const r1 = await POST(authedReq(body, headers) as Parameters<typeof POST>[0]);
     expect(r1.status).toBe(200);
     expect(paymentCalls.createOrder).toBe(1);
     expect(stores.orders.size).toBe(1);
 
-    const r2 = await POST(authedReq(body, headers) as any);
+    const r2 = await POST(authedReq(body, headers) as Parameters<typeof POST>[0]);
     expect(r2.status).toBe(200);
     // handler NOT called again — payment adapter call count stays at 1
     expect(paymentCalls.createOrder).toBe(1);
@@ -319,13 +319,13 @@ describe('POST /payments/razorpay/create-order', () => {
   it('idempotent replay with DIFFERENT body same key returns 409 CONFLICT', async () => {
     seedSnapshot();
     const headers = { 'Idempotency-Key': 'idem-2' };
-    await POST(authedReq(JSON.stringify(VALID_BODY), headers) as any);
+    await POST(authedReq(JSON.stringify(VALID_BODY), headers) as Parameters<typeof POST>[0]);
 
     const r2 = await POST(
       authedReq(
         JSON.stringify({ snapshotId: 'snap-1', deliveryAddressId: 'addr-2' }),
         headers,
-      ) as any,
+      ) as Parameters<typeof POST>[0],
     );
     expect(r2.status).toBe(409);
   });
@@ -333,7 +333,7 @@ describe('POST /payments/razorpay/create-order', () => {
   it('respects X-Client-Source header and stamps it on the order', async () => {
     seedSnapshot();
     const res = await POST(
-      authedReq(VALID_BODY, { 'X-Client-Source': 'mobile-ios' }) as any,
+      authedReq(VALID_BODY, { 'X-Client-Source': 'mobile-ios' }) as Parameters<typeof POST>[0],
     );
     expect(res.status).toBe(200);
     const order = Array.from(stores.orders.values())[0]!;
@@ -343,7 +343,7 @@ describe('POST /payments/razorpay/create-order', () => {
   it('returns 422 when X-Client-Source is not in the allow-list', async () => {
     seedSnapshot();
     const res = await POST(
-      authedReq(VALID_BODY, { 'X-Client-Source': 'kiosk' }) as any,
+      authedReq(VALID_BODY, { 'X-Client-Source': 'kiosk' }) as Parameters<typeof POST>[0],
     );
     expect(res.status).toBe(422);
     const body = await res.json();

@@ -89,7 +89,7 @@ describe('GET /orders/{id}', () => {
 
   it('returns 200 with the serialized order', async () => {
     seedOrder({ id: 'order-1' });
-    const res = await GET(authedReq('order-1') as any, {
+    const res = await GET(authedReq('order-1') as Parameters<typeof GET>[0], {
       params: Promise.resolve({ id: 'order-1' }),
     });
     expect(res.status).toBe(200);
@@ -101,7 +101,7 @@ describe('GET /orders/{id}', () => {
   });
 
   it('returns 404 ORDER_NOT_FOUND when order does not exist', async () => {
-    const res = await GET(authedReq('missing-id') as any, {
+    const res = await GET(authedReq('missing-id') as Parameters<typeof GET>[0], {
       params: Promise.resolve({ id: 'missing-id' }),
     });
     expect(res.status).toBe(404);
@@ -111,7 +111,7 @@ describe('GET /orders/{id}', () => {
 
   it('returns 404 ORDER_NOT_FOUND (no leak) when order belongs to a different customer', async () => {
     seedOrder({ id: 'theirs', customerId: 'cust-other' });
-    const res = await GET(authedReq('theirs') as any, {
+    const res = await GET(authedReq('theirs') as Parameters<typeof GET>[0], {
       params: Promise.resolve({ id: 'theirs' }),
     });
     expect(res.status).toBe(404);
@@ -122,7 +122,7 @@ describe('GET /orders/{id}', () => {
   it('returns 401 when auth is missing', async () => {
     seedOrder({ id: 'order-1' });
     const req = new Request('http://localhost/api/mobile/v1/orders/order-1');
-    const res = await GET(req as any, {
+    const res = await GET(req as Parameters<typeof GET>[0], {
       params: Promise.resolve({ id: 'order-1' }),
     });
     expect(res.status).toBe(401);

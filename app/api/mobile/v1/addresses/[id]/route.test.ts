@@ -53,7 +53,7 @@ describe("GET /api/mobile/v1/addresses/:id", () => {
 
   it("200 returns the address when owned by the caller", async () => {
     payloadMock.findByID.mockResolvedValue({ id: "a1", customerId: "cust-1", line1: "X" });
-    const res = await GET(req("GET") as any, ctx());
+    const res = await GET(req("GET") as Parameters<typeof GET>[0], ctx());
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.address.id).toBe("a1");
@@ -61,14 +61,14 @@ describe("GET /api/mobile/v1/addresses/:id", () => {
 
   it("404 when the address belongs to another customer (IDOR)", async () => {
     payloadMock.findByID.mockResolvedValue({ id: "a1", customerId: "cust-other" });
-    const res = await GET(req("GET") as any, ctx());
+    const res = await GET(req("GET") as Parameters<typeof GET>[0], ctx());
     expect(res.status).toBe(404);
     expect(payloadMock.delete).not.toHaveBeenCalled();
   });
 
   it("404 when the address is missing (findByID throws)", async () => {
     payloadMock.findByID.mockRejectedValue(Object.assign(new Error("nf"), { statusCode: 404 }));
-    const res = await GET(req("GET") as any, ctx("missing"));
+    const res = await GET(req("GET") as Parameters<typeof GET>[0], ctx("missing"));
     expect(res.status).toBe(404);
   });
 });
@@ -86,7 +86,7 @@ describe("PATCH /api/mobile/v1/addresses/:id", () => {
   it("200 updates an owned address", async () => {
     payloadMock.findByID.mockResolvedValue({ id: "a1", customerId: "cust-1" });
     payloadMock.update.mockResolvedValue({ id: "a1", line1: "new" });
-    const res = await PATCH(req("PATCH", { line1: "new" }) as any, ctx());
+    const res = await PATCH(req("PATCH", { line1: "new" }) as Parameters<typeof PATCH>[0], ctx());
     expect(res.status).toBe(200);
     expect(payloadMock.update.mock.calls[0][0].data).toEqual({ line1: "new" });
   });
@@ -94,13 +94,13 @@ describe("PATCH /api/mobile/v1/addresses/:id", () => {
   it("clears prior default when promoting to isDefault, preserving self", async () => {
     payloadMock.findByID.mockResolvedValue({ id: "a1", customerId: "cust-1" });
     payloadMock.update.mockResolvedValue({ id: "a1" });
-    await PATCH(req("PATCH", { isDefault: true }) as any, ctx());
+    await PATCH(req("PATCH", { isDefault: true }) as Parameters<typeof PATCH>[0], ctx());
     expect(clearDefaultAddress).toHaveBeenCalledWith(expect.anything(), "cust-1", "a1");
   });
 
   it("404 when PATCH targets another customer's address", async () => {
     payloadMock.findByID.mockResolvedValue({ id: "a1", customerId: "cust-other" });
-    const res = await PATCH(req("PATCH", { line1: "new" }) as any, ctx());
+    const res = await PATCH(req("PATCH", { line1: "new" }) as Parameters<typeof PATCH>[0], ctx());
     expect(res.status).toBe(404);
     expect(payloadMock.update).not.toHaveBeenCalled();
   });
@@ -116,14 +116,14 @@ describe("DELETE /api/mobile/v1/addresses/:id", () => {
 
   it("200 deletes an owned address", async () => {
     payloadMock.findByID.mockResolvedValue({ id: "a1", customerId: "cust-1" });
-    const res = await DELETE(req("DELETE") as any, ctx());
+    const res = await DELETE(req("DELETE") as Parameters<typeof DELETE>[0], ctx());
     expect(res.status).toBe(200);
     expect(payloadMock.delete).toHaveBeenCalledOnce();
   });
 
   it("404 when deleting another customer's address (no delete call)", async () => {
     payloadMock.findByID.mockResolvedValue({ id: "a1", customerId: "cust-other" });
-    const res = await DELETE(req("DELETE") as any, ctx());
+    const res = await DELETE(req("DELETE") as Parameters<typeof DELETE>[0], ctx());
     expect(res.status).toBe(404);
     expect(payloadMock.delete).not.toHaveBeenCalled();
   });

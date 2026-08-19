@@ -183,7 +183,7 @@ describe('POST /payments/razorpay/verify', () => {
 
   it('happy path: verifies sig, captures payment, transitions to confirmed', async () => {
     seedOrderAndPayment();
-    const res = await POST(authedReq(VALID_BODY) as any);
+    const res = await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data.order.status).toBe('confirmed');
@@ -201,7 +201,7 @@ describe('POST /payments/razorpay/verify', () => {
     seedOrderAndPayment();
     verifySig.mockResolvedValue(false);
 
-    const res = await POST(authedReq(VALID_BODY) as any);
+    const res = await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(402);
     const body = await res.json();
     expect(body.error.code).toBe('PAYMENT_FAILED');
@@ -212,7 +212,7 @@ describe('POST /payments/razorpay/verify', () => {
 
   it('returns 404 ORDER_NOT_FOUND when order id is unknown', async () => {
     const res = await POST(
-      authedReq({ orderId: 'nope', razorpayPaymentId: 'p', signature: 's' }) as any,
+      authedReq({ orderId: 'nope', razorpayPaymentId: 'p', signature: 's' }) as Parameters<typeof POST>[0],
     );
     expect(res.status).toBe(404);
     const body = await res.json();
@@ -221,7 +221,7 @@ describe('POST /payments/razorpay/verify', () => {
 
   it('returns 404 ORDER_NOT_FOUND when order belongs to a different customer', async () => {
     seedOrderAndPayment({ customerId: 'cust-other' });
-    const res = await POST(authedReq(VALID_BODY) as any);
+    const res = await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(404);
     const body = await res.json();
     expect(body.error.code).toBe('ORDER_NOT_FOUND');
@@ -229,7 +229,7 @@ describe('POST /payments/razorpay/verify', () => {
 
   it('returns 402 PAYMENT_FAILED when order has no razorpayOrderId', async () => {
     seedOrderAndPayment({ razorpayOrderId: undefined });
-    const res = await POST(authedReq(VALID_BODY) as any);
+    const res = await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(402);
     const body = await res.json();
     expect(body.error.code).toBe('PAYMENT_FAILED');
@@ -238,7 +238,7 @@ describe('POST /payments/razorpay/verify', () => {
   it('in-handler short-circuit: payment already captured returns order without re-transitioning', async () => {
     seedOrderAndPayment();
     // first call captures + transitions
-    await POST(authedReq(VALID_BODY) as any);
+    await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(verifySig).toHaveBeenCalledTimes(1);
     expect(stores.orders.get('order-1')!.status).toBe('confirmed');
 
@@ -246,7 +246,7 @@ describe('POST /payments/razorpay/verify', () => {
     // is still re-verified (every callback must prove provenance), but the
     // in-handler short-circuit sees payment.status === 'captured' and
     // returns the order WITHOUT re-transitioning or re-writing rows.
-    const r2 = await POST(authedReq(VALID_BODY) as any);
+    const r2 = await POST(authedReq(VALID_BODY) as Parameters<typeof POST>[0]);
     expect(r2.status).toBe(200);
     expect(verifySig).toHaveBeenCalledTimes(2); // sig re-verified, safe by design
     const body2 = await r2.json();
@@ -262,10 +262,10 @@ describe('POST /payments/razorpay/verify', () => {
     const headers = { 'Idempotency-Key': 'idem-v-1' };
     const bodyStr = JSON.stringify(VALID_BODY);
 
-    const r1 = await POST(authedReq(bodyStr, headers) as any);
+    const r1 = await POST(authedReq(bodyStr, headers) as Parameters<typeof POST>[0]);
     expect(r1.status).toBe(200);
 
-    const r2 = await POST(authedReq(bodyStr, headers) as any);
+    const r2 = await POST(authedReq(bodyStr, headers) as Parameters<typeof POST>[0]);
     expect(r2.status).toBe(200);
     expect(verifySig).toHaveBeenCalledTimes(1);
     const b1 = await r1.json();
@@ -280,13 +280,13 @@ describe('POST /payments/razorpay/verify', () => {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(VALID_BODY),
     });
-    const res = await POST(req as any);
+    const res = await POST(req as Parameters<typeof POST>[0]);
     expect(res.status).toBe(401);
   });
 
   it('returns 422 VALIDATION when body is missing fields', async () => {
     seedOrderAndPayment();
-    const res = await POST(authedReq({ orderId: 'order-1' }) as any);
+    const res = await POST(authedReq({ orderId: 'order-1' }) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.error.code).toBe('VALIDATION');

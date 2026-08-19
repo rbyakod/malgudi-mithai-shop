@@ -347,11 +347,16 @@ private fun TrustStrip(product: Product) {
         freshDaily = stringResource(R.string.product_trust_fresh_daily),
         freshToOrder = stringResource(R.string.product_trust_fresh_to_order),
         frozen = stringResource(R.string.product_trust_frozen),
-        shelfLife = { stringResource(R.string.product_trust_shelf_life, it) },
         vegetarian = stringResource(R.string.product_trust_vegetarian),
         sugarFree = stringResource(R.string.product_trust_sugar_free),
     )
-    val items = trustStripItems(product, copy)
+    // The shelf-life phrase interleaves the value into the localized string,
+    // so it resolves here (inline lambdas keep the composable context) and
+    // rides into the pure builder as a pre-formatted label.
+    val shelfLifeLabel = product.shelfLife
+        ?.takeIf { it.isNotBlank() }
+        ?.let { stringResource(R.string.product_trust_shelf_life, it) }
+    val items = trustStripItems(product, copy, shelfLifeLabel)
     if (items.isEmpty()) return
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),

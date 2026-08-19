@@ -51,7 +51,7 @@ describe("POST /api/mobile/v1/wallet/register-pass-device", () => {
     });
     payloadMock.update.mockResolvedValue({ id: "pass-1" });
 
-    const res = await POST(req(validBody) as any);
+    const res = await POST(req(validBody) as Parameters<typeof POST>[0]);
 
     expect(res.status).toBe(200);
     expect(payloadMock.update).toHaveBeenCalledOnce();
@@ -68,7 +68,7 @@ describe("POST /api/mobile/v1/wallet/register-pass-device", () => {
       docs: [{ id: "pass-1", devices: [{ pushToken: "pass-token-1" }] }],
     });
 
-    const res = await POST(req(validBody) as any);
+    const res = await POST(req(validBody) as Parameters<typeof POST>[0]);
 
     expect(res.status).toBe(200);
     expect(payloadMock.update).not.toHaveBeenCalled();
@@ -78,7 +78,7 @@ describe("POST /api/mobile/v1/wallet/register-pass-device", () => {
     payloadMock.find.mockResolvedValue({ docs: [{ id: "pass-1", devices: [] }] });
     payloadMock.update.mockResolvedValue({ id: "pass-1" });
 
-    const res = await POST(req(validBody) as any);
+    const res = await POST(req(validBody) as Parameters<typeof POST>[0]);
 
     expect(res.status).toBe(200);
     expect(payloadMock.update.mock.calls[0][0].data.devices).toEqual([
@@ -89,7 +89,7 @@ describe("POST /api/mobile/v1/wallet/register-pass-device", () => {
   it("404 NOT_FOUND when no active owned pass matches the serial", async () => {
     payloadMock.find.mockResolvedValue({ docs: [] });
 
-    const res = await POST(req(validBody) as any);
+    const res = await POST(req(validBody) as Parameters<typeof POST>[0]);
 
     expect(res.status).toBe(404);
     const body = await res.json();
@@ -98,7 +98,7 @@ describe("POST /api/mobile/v1/wallet/register-pass-device", () => {
   });
 
   it("422 VALIDATION when the body is missing required fields", async () => {
-    const res = await POST(req({ pushToken: "t" }) as any);
+    const res = await POST(req({ pushToken: "t" }) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.error.code).toBe("VALIDATION");
@@ -108,7 +108,7 @@ describe("POST /api/mobile/v1/wallet/register-pass-device", () => {
   it("401 when the caller is unauthenticated", async () => {
     const { ApiError, ErrorCode } = await import("../../../../../../lib/api/errors");
     requireCustomer.mockRejectedValue(new ApiError(ErrorCode.TOKEN_EXPIRED, "no token"));
-    const res = await POST(req(validBody, false) as any);
+    const res = await POST(req(validBody, false) as Parameters<typeof POST>[0]);
     expect(res.status).toBe(401);
   });
 });

@@ -56,7 +56,7 @@ describe("DELETE /api/mobile/v1/wallet/unregister-pass-device", () => {
     });
     payloadMock.update.mockResolvedValue({ id: "pass-1" });
 
-    const res = await DELETE(req(validBody) as any);
+    const res = await DELETE(req(validBody) as Parameters<typeof DELETE>[0]);
 
     expect(res.status).toBe(200);
     expect(payloadMock.update).toHaveBeenCalledOnce();
@@ -70,7 +70,7 @@ describe("DELETE /api/mobile/v1/wallet/unregister-pass-device", () => {
       docs: [{ id: "pass-1", devices: [{ pushToken: "other-token" }] }],
     });
 
-    const res = await DELETE(req(validBody) as any);
+    const res = await DELETE(req(validBody) as Parameters<typeof DELETE>[0]);
 
     expect(res.status).toBe(200);
     expect(payloadMock.update).not.toHaveBeenCalled();
@@ -79,14 +79,14 @@ describe("DELETE /api/mobile/v1/wallet/unregister-pass-device", () => {
   it("200 is idempotent when the pass is not found", async () => {
     payloadMock.find.mockResolvedValue({ docs: [] });
 
-    const res = await DELETE(req(validBody) as any);
+    const res = await DELETE(req(validBody) as Parameters<typeof DELETE>[0]);
 
     expect(res.status).toBe(200);
     expect(payloadMock.update).not.toHaveBeenCalled();
   });
 
   it("422 VALIDATION when the body is missing required fields", async () => {
-    const res = await DELETE(req({ serialNumber: "s" }) as any);
+    const res = await DELETE(req({ serialNumber: "s" }) as Parameters<typeof DELETE>[0]);
     expect(res.status).toBe(422);
     const body = await res.json();
     expect(body.error.code).toBe("VALIDATION");
@@ -95,7 +95,7 @@ describe("DELETE /api/mobile/v1/wallet/unregister-pass-device", () => {
   it("401 when the caller is unauthenticated", async () => {
     const { ApiError, ErrorCode } = await import("../../../../../../lib/api/errors");
     requireCustomer.mockRejectedValue(new ApiError(ErrorCode.TOKEN_EXPIRED, "no token"));
-    const res = await DELETE(req(validBody, false) as any);
+    const res = await DELETE(req(validBody, false) as Parameters<typeof DELETE>[0]);
     expect(res.status).toBe(401);
   });
 });
