@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mishran — Admin Console UX/UI Audit</title>
+<style>
+  :root {
+    --bg: #faf6f1; --card: #ffffff; --ink: #1a1410; --muted: #6b5e54;
+    --rule: #e5dccf; --primary: #6b1e1e; --gold: #b08838; --gold-bright: #d9a441;
+    --sidebar-bg: #211711; --sidebar-ink: #f3e9da; --sidebar-muted: #b7a690;
+    --ok-bg: #eaf6ec; --ok-rule: #4a8a5c;
+    --warn-bg: #fff5e0; --warn-rule: #e6b94a;
+    --bad-bg: #fbeceb; --bad-rule: #b3403a;
+    --note-bg: #f4ecdf; --note-rule: var(--gold);
+    --serif: "Iowan Old Style", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+    --sidebar-w: 284px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16.5px/1.68 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    position: fixed; inset: 0 auto 0 0; width: var(--sidebar-w);
+    background: var(--sidebar-bg); color: var(--sidebar-ink);
+    padding: 1.6rem 1.1rem 2rem; overflow-y: auto; z-index: 40;
+  }
+  .sidebar-brand { display: block; text-decoration: none; margin-bottom: 1.4rem; }
+  .sidebar-brand .mark {
+    font-family: var(--serif); font-size: 1.55rem; letter-spacing: .02em;
+    color: var(--sidebar-ink); display: block;
+  }
+  .sidebar-brand .sub {
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .22em;
+    color: var(--gold-bright); margin-top: .25rem; display: block;
+  }
+  .sidebar nav { border-top: 1px solid rgba(243,233,218,.14); padding-top: .9rem; }
+  .sidebar nav a {
+    display: flex; gap: .6rem; align-items: baseline;
+    padding: .38rem .6rem; margin: .06rem 0; border-radius: 7px;
+    color: var(--sidebar-muted); text-decoration: none;
+    font-size: .86rem; line-height: 1.35;
+  }
+  .sidebar nav a .n {
+    font-family: var(--serif); font-size: .78rem; color: var(--gold);
+    min-width: 1.3rem; text-align: right; flex: none;
+  }
+  .sidebar nav a:hover { color: var(--sidebar-ink); background: rgba(243,233,218,.07); }
+  .sidebar nav a.active {
+    color: var(--sidebar-bg); background: var(--gold-bright); font-weight: 600;
+  }
+  .sidebar nav a.active .n { color: var(--sidebar-bg); }
+  .sidebar-foot {
+    margin-top: 1.6rem; padding: .9rem .7rem 0; border-top: 1px solid rgba(243,233,218,.14);
+    font-size: .74rem; color: var(--sidebar-muted); line-height: 1.5;
+  }
+
+  /* ---------- Layout ---------- */
+  .content { margin-left: var(--sidebar-w); padding: 2.8rem 3rem 5rem; max-width: 900px; }
+  .doc-header { border-bottom: 1px solid var(--rule); padding-bottom: 1.6rem; margin-bottom: 2rem; }
+  .eyebrow {
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .24em;
+    color: var(--gold); margin: 0 0 .5rem;
+  }
+  h1, h2, h3, h4 { font-family: var(--serif); line-height: 1.22; font-weight: 600; }
+  h1 { font-size: 2.5rem; margin: 0 0 .45rem; letter-spacing: -.01em; }
+  .lede { font-size: 1.14rem; color: var(--muted); margin: 0; max-width: 44rem; }
+  .meta { font-size: .82rem; color: var(--muted); margin-top: 1rem; }
+  .meta strong { color: var(--ink); }
+
+  main h2 {
+    font-size: 1.72rem; margin: 3.2rem 0 .9rem; scroll-margin-top: 1.4rem;
+    border-bottom: 1px solid var(--rule); padding-bottom: .4rem;
+  }
+  main h3 { font-size: 1.18rem; margin: 1.9rem 0 .5rem; color: var(--primary); scroll-margin-top: 1.4rem; }
+  h4 { font-size: 1rem; margin: 1.2rem 0 .3rem; }
+  p { margin: .7rem 0; }
+  ul, ol { padding-left: 1.5rem; }
+  li { margin: .38rem 0; }
+  li::marker { color: var(--gold); }
+  strong { font-weight: 700; }
+  a { color: var(--primary); }
+  a:hover { color: var(--gold); }
+  code {
+    background: #efe6d8; padding: .12em .4em; border-radius: 4px;
+    font-family: var(--mono); font-size: .88em;
+  }
+  pre {
+    background: #2a211a; color: #f0e6d6; border-radius: 10px;
+    padding: 1.1rem 1.3rem; overflow-x: auto; line-height: 1.55;
+    font-size: .84rem; margin: 1.2rem 0;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  pre .c { color: #b7a690; }
+
+  section { scroll-margin-top: 1.2rem; }
+
+  /* ---------- Tables ---------- */
+  .tablewrap { overflow-x: auto; margin: 1.2rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; background: var(--card); }
+  th, td { border: 1px solid var(--rule); padding: .55rem .75rem; text-align: left; vertical-align: top; }
+  th {
+    background: #f4ede1; font-family: var(--serif); font-size: .85rem;
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  tbody tr:nth-child(even) { background: #fbf8f2; }
+
+  /* ---------- Callouts ---------- */
+  .note-box, .ok-box, .warn-box, .bad-box {
+    padding: .95rem 1.15rem; margin: 1.3rem 0; border-radius: 0 8px 8px 0;
+  }
+  .note-box { background: var(--note-bg); border-left: 4px solid var(--note-rule); }
+  .ok-box { background: var(--ok-bg); border-left: 4px solid var(--ok-rule); }
+  .warn-box { background: var(--warn-bg); border-left: 4px solid var(--warn-rule); }
+  .bad-box { background: var(--bad-bg); border-left: 4px solid var(--bad-rule); }
+  .note-box p, .ok-box p, .warn-box p, .bad-box p { margin: .3rem 0; }
+  .note-box .box-title, .ok-box .box-title, .warn-box .box-title, .bad-box .box-title {
+    font-family: var(--serif); font-weight: 700; margin: 0 0 .2rem; font-size: .98rem;
+  }
+
+  /* ---------- Scorecard ---------- */
+  .score-row {
+    display: flex; align-items: center; gap: 1rem; padding: .7rem .9rem;
+    background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
+    margin: .5rem 0;
+  }
+  .score-row .lens {
+    font-family: var(--serif); font-weight: 700; min-width: 11.5rem; flex: none;
+  }
+  .score-row .bar {
+    flex: 1; height: 8px; border-radius: 99px; background: #efe6d8; overflow: hidden;
+  }
+  .score-row .bar i {
+    display: block; height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--gold), var(--primary));
+  }
+  .score-row .val { font-size: .82rem; color: var(--muted); min-width: 4.2rem; text-align: right; }
+  .score-row.total { border-color: var(--gold); background: #fdf9f0; }
+  .score-row.total .lens { color: var(--primary); }
+  .score-row .verdict { font-size: .84rem; color: var(--muted); flex: 1 1 100%; }
+
+  /* ---------- Defect cards ---------- */
+  .defect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: .8rem; margin: 1.2rem 0; }
+  .defect {
+    background: var(--card); border: 1px solid var(--rule); border-top: 3px solid var(--bad-rule);
+    border-radius: 10px; padding: .85rem 1rem;
+  }
+  .defect .id {
+    font-family: var(--mono); font-size: .74rem; color: var(--bad-rule);
+    letter-spacing: .08em; text-transform: uppercase;
+  }
+  .defect .t { font-family: var(--serif); font-weight: 700; margin: .25rem 0 .35rem; }
+  .defect p { font-size: .86rem; color: var(--muted); margin: .25rem 0; }
+  .defect p.fix { color: var(--ink); }
+  .defect p.fix::before { content: "Fix → "; color: var(--gold); font-weight: 700; }
+
+  /* ---------- Roadmap ---------- */
+  .phase {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 12px;
+    padding: 1.2rem 1.4rem; margin: 1.1rem 0;
+  }
+  .phase.p0 { border-left: 4px solid var(--bad-rule); }
+  .phase.p1 { border-left: 4px solid var(--gold); }
+  .phase.p2 { border-left: 4px solid var(--ok-rule); }
+  .phase h3 { margin: 0 0 .4rem; }
+  .phase .when { font-size: .78rem; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+
+  .pill {
+    display: inline-block; padding: .1rem .6rem; border-radius: 99px;
+    font-size: .74rem; font-weight: 600; letter-spacing: .02em;
+    background: #f4ede1; color: var(--primary); border: 1px solid var(--rule);
+  }
+  .pill--ok { background: var(--ok-bg); color: #2e5c3c; border-color: var(--ok-rule); }
+  .pill--warn { background: var(--warn-bg); color: #7a5a12; border-color: var(--warn-rule); }
+  .pill--bad { background: var(--bad-bg); color: #8a2f2a; border-color: var(--bad-rule); }
+
+  kbd {
+    font-family: var(--mono); font-size: .8em; padding: .1em .45em;
+    border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 5px;
+    background: #fff;
+  }
+
+  .footnote { font-size: .8rem; color: var(--muted); border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: 1rem; }
+
+  @media (max-width: 900px) {
+    .sidebar { position: static; width: auto; }
+    .content { margin-left: 0; padding: 1.6rem 1.2rem 3rem; }
+    .score-row .lens { min-width: 8rem; }
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a class="sidebar-brand" href="#top">
+    <span class="mark">Mishran</span>
+    <span class="sub">Admin Console Audit</span>
+  </a>
+  <nav id="toc">
+    <a href="#s0"><span class="n">00</span>Summary &amp; scorecard</a>
+    <a href="#s1"><span class="n">01</span>Method &amp; evidence</a>
+    <a href="#s2"><span class="n">02</span>“Dull &amp; pale” root cause</a>
+    <a href="#s3"><span class="n">03</span>Live defects</a>
+    <a href="#s4"><span class="n">04</span>Information architecture</a>
+    <a href="#s5"><span class="n">05</span>Forms &amp; workflows</a>
+    <a href="#s6"><span class="n">06</span>Lists &amp; tables</a>
+    <a href="#s7"><span class="n">07</span>Dashboard</a>
+    <a href="#s8"><span class="n">08</span>Login &amp; brand</a>
+    <a href="#s9"><span class="n">09</span>Mobile</a>
+    <a href="#s10"><span class="n">10</span>Accessibility &amp; trust</a>
+    <a href="#s11"><span class="n">11</span>Roadmap P0–P2</a>
+    <a href="#s12"><span class="n">12</span>Appendix: evidence</a>
+  </nav>
+  <div class="sidebar-foot">
+    Live audit · 2026-08-18<br />
+    Payload 3.87.1 · mishran.pranavb.com<br /><br />
+    Read-only, owner-authorized.<br />
+    Credentials never stored.
+  </div>
+</aside>
+
+<div class="content" id="top">
+  <header class="doc-header">
+    <p class="eyebrow">UX / UI Audit · Taste · Impeccable · Hallmark · UX-UI-Max-Pro</p>
+    <h1>The Mishran admin deserves better clothes</h1>
+    <p class="lede">
+      A full walkthrough of the Payload admin at <code>mishran.pranavb.com/admin</code>:
+      what makes it feel dull and pale (a two-token CSS gap — fixable in an afternoon),
+      six live defects, the information-architecture cleanup, and a three-tier roadmap
+      that turns the console into the shop’s cockpit.
+    </p>
+    <p class="meta">
+      <strong>2026-08-18</strong> · 16 screens captured (desktop 1440px + mobile 390px) ·
+      DOM-fact + computed-style verified · read-only with owner-provided credentials
+    </p>
+  </header>
+
+  <main>
+
+  <!-- ================= 00 ================= -->
+  <section id="s0">
+    <h2>00 · Summary &amp; scorecard</h2>
+    <p>
+      The admin has <strong>good bones and a broken skin</strong>. The cream Mishran theme
+      does apply to the page canvas — but a token gap leaves every input, border, and table
+      header on Payload’s default gray. Warm cream wearing gray accessories is exactly the
+      “dull and pale” impression. Beneath that: a widget that 405s, eleven hydration
+      errors, one blank admin screen, a stray field leaking into every form, 36 slug-speak
+      sidebar links, and raw API names (“Totals &gt; Total In Paise”) on money fields.
+    </p>
+
+    <div class="score-row"><span class="lens">Visual taste</span><span class="bar"><i style="width:40%"></i></span><span class="val">4 / 10</span></div>
+    <div class="score-row"><span class="lens">Craft · impeccable</span><span class="bar"><i style="width:30%"></i></span><span class="val">3 / 10</span></div>
+    <div class="score-row"><span class="lens">Distinctiveness · hallmark</span><span class="bar"><i style="width:50%"></i></span><span class="val">5 / 10</span></div>
+    <div class="score-row"><span class="lens">Workflow · ux-ui-max-pro</span><span class="bar"><i style="width:40%"></i></span><span class="val">4 / 10</span></div>
+    <div class="score-row"><span class="lens">Trust &amp; reliability</span><span class="bar"><i style="width:30%"></i></span><span class="val">3 / 10</span></div>
+    <div class="score-row total"><span class="lens">Overall</span><span class="bar"><i style="width:38%"></i></span><span class="val">3.8 / 10</span></div>
+
+    <div class="ok-box">
+      <p class="box-title">Highest-leverage single fix</p>
+      <p>
+        Close the theme token gap — <code>--theme-elevation-0/150</code> plus the
+        <code>--color-base-*</code> layer — in <code>custom.scss</code>. One CSS block
+        recolors every control, border, and table header across the entire admin.
+        See <a href="#s2">§02</a>.
+      </p>
+    </div>
+    <div class="note-box">
+      <p class="box-title">Verdict</p>
+      <p>A weekend of P0 fixes moves this to 7+. The foundation — data model, custom widgets,
+      theme system — is worth dressing properly.</p>
+    </div>
+  </section>
+
+  <!-- ================= 01 ================= -->
+  <section id="s1">
+    <h2>01 · Method &amp; evidence</h2>
+    <ul>
+      <li><strong>Live traversal</strong> (automated browser, 1440×900 and 390×844): login →
+        dashboard → 13 admin routes → mobile drawer; 16 screenshots plus per-screen DOM
+        dumps (columns, field labels, computed styles, console errors).</li>
+      <li><strong>Code-level theme analysis:</strong> <code>app/(payload)/admin/custom.scss</code>
+        traced against <code>@payloadcms/ui</code> v3.87.1’s <code>colors.scss</code> to
+        find every token’s consumer.</li>
+      <li><strong>Safety:</strong> a fail-fast form-shape check ran before submitting login
+        (Payload locks accounts after 5 attempts); 3 successful logins, all read-only.</li>
+      <li>DOM facts are authoritative; no finding rests on a screenshot alone.</li>
+    </ul>
+    <p class="meta">Lenses (taste · impeccable · hallmark · ux-ui-max-pro) applied manually —
+      the named skills are not installed in this workspace.</p>
+  </section>
+
+  <!-- ================= 02 ================= -->
+  <section id="s2">
+    <h2>02 · The “dull &amp; pale” root cause</h2>
+    <p><strong>Working:</strong> <code>body[data-admin-theme="mishran-admin"]</code> applies —
+      live-computed background <code>rgb(247,239,224)</code> (the cream), text
+      <code>rgb(42,26,14)</code>, and <code>--theme-elevation-50</code> correctly overridden
+      to <code>#f7efe0</code>.</p>
+    <p><strong>Broken:</strong> Payload’s component library doesn’t read “background” for
+      most chrome — it reads an <em>elevation ladder</em>, and <code>custom.scss</code>
+      overrides only <code>--theme-elevation-50…900</code>. It never touches:</p>
+    <ul>
+      <li><code>--theme-elevation-0</code> — input and card fills</li>
+      <li><code>--theme-elevation-150</code> — <strong>the border color</strong>
+        (<code>--theme-border-color</code> aliases it)</li>
+      <li>the entire <code>--color-base-*</code> layer the ladder is built from</li>
+    </ul>
+
+    <div class="tablewrap"><table>
+      <thead><tr><th>Token</th><th>On <code>:root</code></th><th>On themed <code>body</code></th></tr></thead>
+      <tbody>
+        <tr><td><code>--theme-elevation-50</code></td><td><code>#f5f5f5</code></td><td><code>#f7efe0</code> <span class="pill pill--ok">overridden</span></td></tr>
+        <tr><td><code>--theme-elevation-150</code></td><td><code>#ddd</code></td><td><code>#ddd</code> <span class="pill pill--bad">missed</span></td></tr>
+        <tr><td>text-input border (computed)</td><td>—</td><td><code>rgb(221,221,221)</code> = <code>#ddd</code></td></tr>
+      </tbody>
+    </table></div>
+
+    <p>So: cream canvas, white inputs with default gray hairline borders, gray 13px table
+      headers, gray rules. That dissonance <em>is</em> the pale.</p>
+
+    <h3>The fix — one block in <code>custom.scss</code></h3>
+<pre><code>body[data-admin-theme] {
+  <span class="c">/* close the ladder: the two missing rungs + the base layer it is built from */</span>
+  --theme-elevation-0:   #fffdf8; <span class="c">/* inputs, sticky headers on cream */</span>
+  --theme-elevation-150: #e6d9bd; <span class="c">/* ALL borders — the #ddd culprit */</span>
+  --color-base-0:   #fffdf8;
+  --color-base-100: #f7efe0;
+  --color-base-150: #e6d9bd;
+  <span class="c">/* …mirror the warm ramp already used for elevation-50…900 */</span>
+}</code></pre>
+
+    <div class="warn-box">
+      <p class="box-title">Verify after applying</p>
+      <p>Keep the ladder monotonic with the existing 50–900 ramp; re-check computed borders
+      in DevTools. The alternate themes (<code>mishran-midnight</code>,
+      <code>mishran-monsoon</code>) need the same two rungs + base layer.</p>
+    </div>
+  </section>
+
+  <!-- ================= 03 ================= -->
+  <section id="s3">
+    <h2>03 · Live defects <span class="pill pill--bad">P0</span></h2>
+    <div class="defect-grid">
+      <div class="defect">
+        <span class="id">D1</span>
+        <div class="t">Recent-leads widget 405s</div>
+        <p>“Couldn’t load leads. Error: 405 Method Not Allowed on
+          <code>/leads?limit=5&amp;sort=-createdAt&amp;depth=0</code>” — the REST base is
+          <code>/api/…</code>; the widget calls the page route.</p>
+        <p class="fix">Point the fetch at <code>/api/leads</code> — or use the Local API since the widget renders server-side.</p>
+      </div>
+      <div class="defect">
+        <span class="id">D2</span>
+        <div class="t">11 hydration errors, every page</div>
+        <p><code>Minified React error #418</code> (text/HTML mismatch) ×11 in one session.</p>
+        <p class="fix">Usually a date/relative-time rendered differently server vs client — audit the four dashboard widgets first.</p>
+      </div>
+      <div class="defect">
+        <span class="id">D3</span>
+        <div class="t">Pincodes admin is blank</div>
+        <p>The correct camelCase route <code>/admin/collections/serviceablePincodes</code>
+          renders an empty <code>&lt;main&gt;</code> — no list, no “Create New”.</p>
+        <p class="fix">Debug the view config — likely a broken <code>admin</code> block or access function on that collection.</p>
+      </div>
+      <div class="defect">
+        <span class="id">D4</span>
+        <div class="t">“Admin theme” leaks into every form</div>
+        <p>The label appears at the end of all five dumped forms (order edit, theme/brand
+          settings, home hero). The settingsMenu component renders as a pseudo-field.</p>
+        <p class="fix">Relocate the switcher out of <code>settingsMenu</code> — e.g. <code>afterNavLinks</code> in the sidebar, or the account view.</p>
+      </div>
+      <div class="defect">
+        <span class="id">D5</span>
+        <div class="t">Title says “Dashboard - Payload”</div>
+        <p><code>document.title</code> on every screen — no suffix configured.</p>
+        <p class="fix"><code>admin.meta.titleSuffix: " — Mishran"</code> in <code>payload.config.ts</code>.</p>
+      </div>
+      <div class="defect">
+        <span class="id">D6</span>
+        <div class="t">Theme switcher undiscoverable</div>
+        <p>The only “theme” affordance found by traversal is the Theme Settings global link.</p>
+        <p class="fix">Ships with D4’s relocation into visible chrome.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 04 ================= -->
+  <section id="s4">
+    <h2>04 · Information architecture — 36 links, six groups, slug-speak</h2>
+    <p>The sidebar exposes <strong>36 destinations</strong> across
+      <code>01 Brand · 02 Products · 03 Catalog Ops · 04 Storefront · 05 Settings</code>
+      plus an unnumbered commerce cluster. Three problems:</p>
+    <ol>
+      <li><strong>Slug-derived labels.</strong> “Qsr Menu Items”, “Otp Requests”,
+        “Packagings” — the collection slug with a space and a capital. Payload’s
+        <code>labels: {singular, plural}</code> exists for exactly this.</li>
+      <li><strong>System tables sit beside merchandising.</strong> Cart Drafts, Otp
+        Requests, Security Events, Snapshots, Devices are operational exhaust an owner
+        shouldn’t scroll past daily — hide via <code>admin.hidden</code> (or a collapsed
+        “System” group) without removing the data.</li>
+      <li><strong>No task entry points.</strong> The nav answers “which table?” — never
+        “fulfill today’s orders”, “moderate reviews”, “reconcile COD cash”.</li>
+    </ol>
+
+    <div class="tablewrap"><table>
+      <thead><tr><th>Current label</th><th>Proposed</th></tr></thead>
+      <tbody>
+        <tr><td>Qsr Menu Items</td><td>QSR Menu</td></tr>
+        <tr><td>Snack Products / Merch Products</td><td>Snacks · Merch (or fold under “Catalog”)</td></tr>
+        <tr><td>Otp Requests</td><td>hidden <span class="pill">system</span></td></tr>
+        <tr><td>Cart Drafts, Security Events, Snapshots, Devices</td><td>hidden <span class="pill">system</span></td></tr>
+        <tr><td>Serviceable Pincodes</td><td>Delivery Areas</td></tr>
+        <tr><td>Wallet Passes</td><td>Wallet Passes (Apple) — or hidden until public</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ================= 05 ================= -->
+  <section id="s5">
+    <h2>05 · Forms &amp; workflows — raw fields, no shape</h2>
+    <p><strong>Product edit:</strong> one flat column of ~20 labels — Name, Slug, Family,
+      Ingredients, Allergens, Shelf Life, Storage, Freshness Status, Dietary Tags, Box
+      Compatibility, Packaging Compatibility, Lead Time, <em>three upload fields all
+      labeled just “Image”</em>, Story, Karigar, Display Price, Featured, Weight. No tabs,
+      no sections, no descriptions.</p>
+    <p><strong>Order edit:</strong> 26 flat labels including <code>Customer Id</code>,
+      <code>Price In Paise</code>, <code>Items Total In Paise</code>,
+      <code>Delivery Fee In Paise</code>, <code>Taxes In Paise</code>,
+      <code>Razorpay Order Id</code>, <code>Cart Snapshot Id</code> — and the stray
+      “Admin theme” (D4). Tabs: none.</p>
+    <p><strong>Globals:</strong> same story — Home Hero is an autoplay-interval field plus
+      five identical <code>Product + Caption Override</code> pairs: no thumbnails, no
+      reorder, no preview.</p>
+    <h3>Fixes, in impact order</h3>
+    <ol>
+      <li><strong>Tabs / named groups</strong> — product (Content · Sourcing · Logistics ·
+        Media) and order (Items · Totals · Payment · Fulfillment).</li>
+      <li><strong>Human labels + <code>admin.description</code></strong> everywhere:
+        “Price (₹)” not <code>Price In Paise</code>.</li>
+      <li><strong>Rupee-display components</strong> for money fields — store paise,
+        display ₹.</li>
+      <li><strong>Named uploads</strong>: “Hero image”, “Gallery image 2”, “Packaging
+        photo” — not 3× “Image”.</li>
+      <li><strong>Relationship fields with searchable select</strong> and a human secondary
+        display (customer name, not raw id).</li>
+    </ol>
+  </section>
+
+  <!-- ================= 06 ================= -->
+  <section id="s6">
+    <h2>06 · Lists &amp; tables — data without affordances</h2>
+    <ul>
+      <li><strong>Orders:</strong> <code>ID · Customer Id · Status · Payment Method ·
+        Totals &gt; Total In Paise · Created At</code> — an id and a paise integer where a
+        name and ₹ belong.</li>
+      <li><strong>Mithai:</strong> <code>Name · Slug · Family · Ingredients</code> —
+        <strong>no thumbnail, no price</strong> for a visual catalog of 91 sweets.</li>
+      <li><strong>Media:</strong> a text table of <code>File Name · Alt · Updated At ·
+        Created At</code> — the brand’s food photography has no grid view.</li>
+      <li><strong>Customers / Coupons:</strong> the same gray grid (Phone · Name · Locale;
+        Code · Discount Type · Value · Active · Used Count).</li>
+    </ul>
+    <p>Fixes: curated <code>defaultColumns</code> per collection (thumbnail + display
+      price + freshness pill for mithai; customer name + ₹ total + status pill for orders),
+      a media grid view, status rendered as colored pills, and saved filter presets —
+      “New orders today”, “Pending COD”, “Low freshness stock”.</p>
+  </section>
+
+  <!-- ================= 07 ================= -->
+  <section id="s7">
+    <h2>07 · Dashboard — four good widgets drowning in 92 cards</h2>
+    <p>The custom grid (Recent leads · Mithai freshness · Pending stories · Catalog
+      counts) is the right instinct — freshness (<em>Made daily 11 · Made to order 8 ·
+      Batch frozen 1</em>) and catalog counts (<em>Mithai 91 · QSR 33 · Snacks 39 ·
+      Merch 1 · Gift Boxes 23</em>) are genuinely useful. But below them sit
+      <strong>92 default collection cards</strong>, the leads widget is a 405 (D1), and
+      there are no orders, no revenue, no imagery.</p>
+    <div class="note-box">
+      <p class="box-title">An owner’s dashboard should answer the day in one glance</p>
+      <p>Orders to fulfill · revenue today/this week · COD cash to reconcile · reviews
+        awaiting moderation · freshness alerts. All five derive from data that already
+        exists.</p>
+    </div>
+  </section>
+
+  <!-- ================= 08 ================= -->
+  <section id="s8">
+    <h2>08 · Login &amp; brand moments</h2>
+    <p>The login screen reads muted and internal: small wordmark, technical
+      “Mishran editor console” tone, no boutique warmth. High-impact moves: a warm ivory
+      card on a deeper maroon field, the serif display lockup with tagline hierarchy, a
+      gold rule, tactile focus and hover states. The custom wordmark/crest graphics
+      already exist — they’re under-dressed, not missing.</p>
+    <p>Empty states (“No pending drafts. Start a new story →”) already have the right
+      friendly voice — keep it everywhere.</p>
+  </section>
+
+  <!-- ================= 09 ================= -->
+  <section id="s9">
+    <h2>09 · Mobile (390px)</h2>
+    <p>The shell survives: nav collapses to a drawer, widgets stack. But 92 cards make
+      the dashboard an endless scroll, and no owner task (check today’s orders, reconcile
+      COD) is reachable in under a minute. Post-P1 (ops dashboard + hidden system cards),
+      consider a deliberate “owner mobile” surface: today’s orders + COD tally + review
+      queue.</p>
+  </section>
+
+  <!-- ================= 10 ================= -->
+  <section id="s10">
+    <h2>10 · Accessibility &amp; trust</h2>
+    <ul>
+      <li>Hydration errors (D2) are robustness bugs with accessibility echoes — mismatched
+        text nodes.</li>
+      <li>Gray-on-cream table headers at 13px sit near the contrast edge; when the warm
+        token fix lands (§02), re-check text tokens
+        (<code>--theme-elevation-600+</code>) for ≥ 4.5:1.</li>
+      <li>Focus states exist but are default — brand the ring in gold.</li>
+    </ul>
+  </section>
+
+  <!-- ================= 11 ================= -->
+  <section id="s11">
+    <h2>11 · Roadmap — missing features &amp; manageability</h2>
+
+    <div class="phase p0">
+      <span class="when">Days · fix &amp; align</span>
+      <h3>P0</h3>
+      <ol>
+        <li>Theme token block (§02) — all three themes.</li>
+        <li>Defects D1–D6 (§03).</li>
+        <li>Label pass + hide system collections (§04).</li>
+        <li><code>titleSuffix</code>; wordmark in the nav header.</li>
+      </ol>
+    </div>
+
+    <div class="phase p1">
+      <span class="when">Weeks · manageability</span>
+      <h3>P1</h3>
+      <ol>
+        <li><strong>Ops dashboard</strong> — orders-to-fulfill, revenue today/week, COD
+          pending reconciliation, unmoderated reviews, freshness/low-batch alerts.</li>
+        <li><strong>Order console depth</strong> — formatted ₹, customer name, item
+          summary; status/payment/date filters; packing-slip print; refund/capture hooks.</li>
+        <li><strong>Product list upgrade</strong> — thumbnail + price + freshness pills.</li>
+        <li><strong>Bulk ops + CSV import/export</strong> — bulk publish/feature; pincode
+          import (exactly CSV-shaped data).</li>
+        <li><strong>Drafts &amp; live preview</strong> for catalog edits.</li>
+        <li><strong>Home Hero curation UX</strong> — drag-reorder, per-slide thumbnails,
+          preview link, ≥1-slide validation.</li>
+        <li><strong>Customer 360</strong> — orders, addresses, last-seen on one panel.</li>
+        <li><strong>Media governance</strong> — grid view, alt-text completion score,
+          usage backlinks.</li>
+        <li><strong>Localization completeness</strong> — locale switcher on content edit
+          (hi/kn exist).</li>
+      </ol>
+    </div>
+
+    <div class="phase p2">
+      <span class="when">Quarter · delight</span>
+      <h3>P2</h3>
+      <ol>
+        <li>Command palette (<kbd>⌘</kbd><kbd>K</kbd>) + global search across
+          products/orders/customers.</li>
+        <li>Scheduled publishing &amp; seasonal windows.</li>
+        <li>Roles &amp; audit log (staff vs owner; change history).</li>
+        <li>Autosave + unsaved-changes guard.</li>
+        <li>In-admin storefront preview (device-frame toggle).</li>
+      </ol>
+    </div>
+
+    <h3>Quick wins — ≤ 1 hour each</h3>
+    <p>
+      <span class="pill pill--ok">titleSuffix</span>
+      <span class="pill pill--ok">D1 fetch path</span>
+      <span class="pill pill--ok">hide 5 system collections</span>
+      <span class="pill pill--ok">label pass, 6 worst names</span>
+      <span class="pill pill--ok">orders defaultColumns</span>
+      <span class="pill pill--ok">elevation-150 override</span>
+    </p>
+  </section>
+
+  <!-- ================= 12 ================= -->
+  <section id="s12">
+    <h2>12 · Appendix — evidence log</h2>
+    <ul>
+      <li>Console: 11× React #418; no other page errors.</li>
+      <li>Computed: <code>bodyBg rgb(247,239,224)</code> · <code>rootElevation50 #f5f5f5</code>
+        · <code>bodyElevation150 #ddd</code> · text-input border
+        <code>rgb(221,221,221)</code> · <code>data-admin-theme="mishran-admin"</code> present.</li>
+      <li>Title: <code>Dashboard - Payload</code>. Sidebar: 36 links; groups 01–05 + commerce cluster.</li>
+      <li>Widgets: leads = 405 text · freshness = Made daily 11 / Made to order 8 / Batch
+        frozen 1 · stories = none pending · catalog = Mithai 91 / QSR 33 / Snacks 39 /
+        Merch 1 / Gift Boxes 23.</li>
+      <li>Default collection cards: 92.</li>
+      <li>Pincodes: empty <code>&lt;main&gt;</code> at <code>/admin/collections/serviceablePincodes</code>.</li>
+      <li>Screens (16): login, dashboard, mithai list/edit, orders list/edit, theme/brand/
+        home-hero globals, media, customers, account, coupons, pincodes, mobile ×2.</li>
+    </ul>
+    <p class="footnote">
+      Mishran · Admin console UX/UI audit · 2026-08-18 · Companion to
+      <code>docs/admin-audit.md</code> · Read-only audit; no credentials stored in this
+      document.
+    </p>
+  </section>
+
+  </main>
+</div>
+
+<script>
+  (function () {
+    var links = document.querySelectorAll("#toc a");
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.classList.remove("active"); });
+        var a = map[e.target.id];
+        if (a) a.classList.add("active");
+      });
+    }, { rootMargin: "-15% 0px -70% 0px", threshold: 0 });
+    document.querySelectorAll("main section").forEach(function (s) { io.observe(s); });
+    links[0] && links[0].classList.add("active");
+  })();
+</script>
+</body>
+</html>
