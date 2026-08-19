@@ -52,13 +52,43 @@ type HeroSlide = {
   imageAlt: string;
 };
 
+/**
+ * One `home-hero` slide row as stored on the global (globals/HomeHero.ts):
+ * a polymorphic product relationship (populated doc or bare ref id — the
+ * normalization comment below covers both) plus an optional caption.
+ */
+interface HeroGlobalSlide {
+  product?: {
+    relationTo?: string;
+    value?: { id?: string | number } | string | number | null;
+  } | null;
+  captionOverride?: string | null;
+}
+
+/**
+ * Wide read-shape of a hero-eligible product doc (mithai/qsr/snacks/merch
+ * each fill a subset — only the fields the slide projection touches).
+ */
+interface HeroDoc {
+  id?: string | number;
+  name?: string | null;
+  slug?: string | null;
+  _status?: string;
+  displayPrice?: string | null;
+  price?: string | null;
+  image?: { url?: unknown; alt?: unknown } | null;
+  images?: { image?: { url?: unknown; alt?: unknown } | null }[];
+}
+
 export async function GET(req: NextRequest) {
   const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
   try {
     const payload = await getPayload({ config });
-    const global = await payload.findGlobal({ slug: 'home-hero' } as any);
-    const autoplayMs = clampAutoplayMs((global as any)?.autoplayMs);
-    const rows: any[] = Array.isArray((global as any)?.slides) ? (global as any).slides : [];
+    const global = await payload.findGlobal({ slug: 'home-hero' });
+    const autoplayMs = clampAutoplayMs(global?.autoplayMs);
+    const rows: HeroGlobalSlide[] = Array.isArray(global?.slides)
+      ? (global.slides as HeroGlobalSlide[])
+      : [];
 
     const slides = (
       await Promise.all(
@@ -75,9 +105,9 @@ export async function GET(req: NextRequest) {
           const vertical = VERTICAL_BY_COLLECTION[collection ?? ''];
           if (!collection || !id || !vertical) return null;
 
-          let doc: any;
+          let doc: HeroDoc;
           try {
-            doc = await payload.findByID({ collection, id, draft: false });
+            doc = (await payload.findByID({ collection, id, draft: false })) as HeroDoc;
           } catch {
             return null;
           }

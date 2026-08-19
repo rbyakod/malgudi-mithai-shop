@@ -3,7 +3,8 @@
 // Room database for the offline-first catalog + local cart + order cache +
 // push dedup ledger. v2 added cart_items; v3 the orders cache; v4 the
 // notifications_seen table; v5 the P1-parity columns (products.weight +
-// products.featured, cart_items.packLabel); v6 the stories journal cache.
+// products.featured, cart_items.packLabel); v6 the stories journal cache; v7
+// the iOS-PDP-parity columns (products.leadTime + products.karigarName).
 // v5+ migrations are plain additive DDL — the cart is user data now, so it is
 // preserved instead of falling back destructively; older paths (v1–v4 fresh
 // installs of a prior build) still use the pre-launch destructive fallback.
@@ -37,7 +38,7 @@ import com.mishran.app.data.local.entity.StoryEntity
         NotificationSeenEntity::class,
         StoryEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = false,
 )
 abstract class MishranDatabase : RoomDatabase() {
@@ -85,6 +86,20 @@ val MIGRATION_5_6: Migration = object : Migration(5, 6) {
             )
             """.trimIndent(),
         )
+    }
+}
+
+/**
+ * v6 → v7 (iOS PDP parity): two nullable columns, additive only — `leadTime`
+ * drives the PDP trust strip + freshness provenance row, `karigarName` the
+ * "Made by" provenance row. Both arrive unset in production today, so the
+ * sections simply hide until the catalog carries values. Nullable-with-
+ * Kotlin-default matches Room's fresh v7 schema (see MIGRATION_4_5).
+ */
+val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE products ADD COLUMN leadTime TEXT")
+        db.execSQL("ALTER TABLE products ADD COLUMN karigarName TEXT")
     }
 }
 

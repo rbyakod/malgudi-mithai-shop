@@ -2,10 +2,9 @@
 // Merchandise PDP. Tools / books / experiences. Most merch is enquiry-only
 // (lead-gen, not direct checkout) per the collection default.
 //
-// CTA: enquiry-only docs surface a disabled "Enquiries open soon" button for
-// now — the real `/merch/[slug]/enquire` route + LeadForm modal is Task 17.
-// When Task 17 lands, swap the disabled button for a Link to the enquire
-// route (or wire the modal). The brief allows either; we chose defer.
+// CTA (#124): both availability states anchor to the inline MerchEnquiry
+// form below, which posts to the public /api/leads endpoint (type "merch")
+// — same rail as the wedding/corporate/gift forms. No more dead button.
 //
 // Same slugless-collection approach as QSR/Snacks (slugify(name) === :slug).
 
@@ -18,6 +17,7 @@ import {routing} from "@/i18n/routing";
 import {Link} from "@/i18n/navigation";
 import {slugify} from "@/lib/slugify";
 import {InlineScript} from "@/components/InlineScript";
+import {MerchEnquiry} from "@/components/ledger/MerchEnquiry";
 import {productSchema} from "@/lib/seo/schema";
 
 export const revalidate = 60;
@@ -83,8 +83,6 @@ export default async function Page({params}: Context) {
   const imageUrl = (doc.images ?? []).flatMap((row) =>
     row?.image?.url ? [row.image.url] : [],
   )[0];
-
-  const enquiryOnly = doc.availability !== "in-stock";
 
   // Product JSON-LD — emitted only when the price parses to a real number
   // (the helper omits `offers` otherwise, and an offer-less Product adds
@@ -181,25 +179,22 @@ export default async function Page({params}: Context) {
           </div>
 
           <aside className="border-l border-border-card pl-6 lg:pl-10">
-            {enquiryOnly ? (
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                title={t("enquireDisabled")}
-                className="inline-flex cursor-not-allowed items-center justify-center gap-3 border-y border-border-card px-6 py-3 font-display text-sm font-medium uppercase tracking-[0.22em] text-text-muted opacity-70"
-              >
-                {t("enquireDisabled")}
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="group inline-flex items-center justify-center gap-3 border-y border-gold/60 bg-bg-control px-6 py-3 font-display text-sm font-medium uppercase tracking-[0.22em] text-primary transition-colors hover:bg-bg-accent hover:text-primary-hover"
-              >
-                {t("enquire")}
-              </button>
-            )}
+            <a
+              href="#enquire"
+              className="group inline-flex items-center justify-center gap-3 border-y border-gold/60 bg-bg-control px-6 py-3 font-display text-sm font-medium uppercase tracking-[0.22em] text-primary transition-colors hover:bg-bg-accent hover:text-primary-hover"
+            >
+              {t("enquire")}
+            </a>
           </aside>
+        </section>
+
+        {/* Enquiry form (#124) — the CTA above anchors here. */}
+        <section id="enquire" className="scroll-mt-24">
+          <MerchEnquiry
+            productId={String(doc.id)}
+            productName={doc.name ?? ""}
+            price={doc.price}
+          />
         </section>
       </div>
       {productLdHtml ? (

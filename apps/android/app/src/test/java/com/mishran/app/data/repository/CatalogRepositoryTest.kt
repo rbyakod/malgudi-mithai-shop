@@ -241,6 +241,92 @@ class CatalogRepositoryTest {
         coVerify(exactly = 0) { productDao.upsertAll(any()) }
     }
 
+    // ---- getFamilySiblings (PDP cross-sell rail, iOS parity) ----------------
+
+    @Test
+    fun `getFamilySiblings serves cached same-family rows without the network`() = runTest {
+        table += listOf(wireProduct, sibling("besan-ladoo")).map { it.toEntity(staleAt = 0L) }
+
+        val siblings = repository.getFamilySiblings(Product.Family.classic, excludeSlug = "kaju-katli")
+
+        assertEquals(listOf(sibling("besan-ladoo")), siblings)
+        coVerify(exactly = 0) { api.getCatalog(any(), any(), any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `getFamilySiblings refreshes once on a cold cache then re-reads`() = runTest {
+        // The wire page seeds the cache with the open product plus a sibling.
+        val seeded = CatalogProductsGet200Response(
+            data = CatalogProductsGet200ResponseData(
+                items = listOf(wireProduct, sibling("motichoor-ladoo")),
+                total = 2,
+                page = 1,
+                pageSize = 50,
+            ),
+        )
+        coEvery {
+            api.getCatalog(
+                etag = any(), family = any(), freshnessStatus = any(),
+                dietaryTags = any(), query = any(), page = any(), pageSize = any(),
+            )
+        } returns Response.success(seeded, okhttp3.Headers.headersOf("ETag", NEW_ETAG))
+
+        val siblings = repository.getFamilySiblings(Product.Family.classic, excludeSlug = "kaju-katli")
+
+        assertEquals(listOf(sibling("motichoor-ladoo")), siblings)
+        coVerify(exactly = 1) { api.getCatalog(any(), any(), any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `getFamilySiblings on an offline cold cache resolves empty`() = runTest {
+        coEvery {
+            api.getCatalog(any(), any(), any(), any(), any(), any(), any())
+        } throws java.io.IOException("offline")
+
+        assertEquals(
+            emptyList<Product>(),
+            repository.getFamilySiblings(Product.Family.classic, excludeSlug = "kaju-katli"),
+        )
+    }
+
+    // ---- crossSellSiblings (the rail's pure slice) ---------------------------
+
+    @Test
+    fun `crossSellSiblings keeps the family, drops the open product, caps at four`() {
+        val catalog = listOf(
+            wireProduct, // the open product — excluded by slug
+            sibling("motichoor-ladoo"),
+            sibling("besan-ladoo"),
+            sibling("malai-barfi"),
+            sibling("milk-cake"),
+            sibling("pinni"), // fifth sibling — beyond the cap
+            Product(id = "snack-1", slug = "aaloo-bhujiya", name = "Aaloo Bhujiya", family = Product.Family.regional),
+        )
+
+        val rail = crossSellSiblings(catalog, Product.Family.classic, excludeSlug = "kaju-katli")
+
+        assertEquals(
+            listOf("motichoor-ladoo", "besan-ladoo", "malai-barfi", "milk-cake"),
+            rail.map { it.slug },
+        )
+    }
+
+    @Test
+    fun `crossSellSiblings is empty for a single-product family`() {
+        assertEquals(
+            emptyList<Product>(),
+            crossSellSiblings(listOf(wireProduct), Product.Family.classic, excludeSlug = "kaju-katli"),
+        )
+    }
+
+    /** A same-family sibling row for cross-sell assertions. */
+    private fun sibling(slug: String) = Product(
+        id = slug,
+        slug = slug,
+        name = slug.replace('-', ' '),
+        family = Product.Family.classic,
+    )
+
     private companion object {
         const val STORED_ETAG = "\"catalog-v1\""
         const val NEW_ETAG = "\"catalog-v2\""

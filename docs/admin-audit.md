@@ -545,8 +545,12 @@ sign-in-at-`/admin` hint). Unit tests per feature; gates green.
 | 130 | Ops-initiated refunds (P1.2) | **Shipped** | `POST /api/staff/orders/:id/refund` refunds through the `PaymentService` adapter (provider-swap-safe, fake in tests). Full remainder by default; `amountInPaise` for partials. Guards: COD → 409 (cash settles offline), no captured payment → 409, over-remainder → 409. Payments doc accumulates `refundedInPaise` + a `refunds[]` audit row (provider id, amount, reason, who, when); order `paymentStatus` follows. **Provider-first ordering**: if the provider refund lands but local bookkeeping fails, the error names the provider refund id for manual reconcile — the refund is never retried. Fulfillment status untouched (that's the transition route's job). Refund button on prepaid rows with paid/partially_refunded status. 7 unit tests. |
 | 131 | Drafts + autosave on products (P1.5, partial) | **Shipped** | All five product collections (Mithai, Snacks, QSR, Merch, Gift Boxes) carry `versions: { drafts: { autosave: { interval: 1200 } } }`. Edits autosave as drafts; **Publish is explicit**; the stock "Save Draft" button hides as redundant. Storefront/mobile reads are unchanged — `find()` defaults to published, and existing prod docs without `_status` remain visible (`$ne: 'draft'` matches missing field). Seeds verified safe: Payload's create defaults to published when `draft` isn't requested (create.js). Note: *live preview* from P1.5 is not part of this — the admin `preview` seam exists only on Home Hero so far. |
 
-Known gap recorded: `components/admin/OrdersTable.tsx` still trips react-hooks
-v6's `set-state-in-effect` under a direct `eslint` run (mount effect calls
-`load(false)` → synchronous `setLoading`). Pre-existing on HEAD, not part of
-this wave's diffs; the repo gate (`pnpm lint`) doesn't run that rule. Parked
-with #123's eslint debt.
+Known gap resolved with #123 (2026-08-19): the `set-state-in-effect`
+findings — `OrdersTable` (mount effect's direct `load()` call) plus the
+same shape in `OrdersBoard`, `OrdersList`, `AddressBook`, `OrderDetail`,
+and `PaymentReconciliation` — now defer the load through a
+`window.setTimeout(…, 0)` hop with cancel-on-cleanup, which react-hooks
+v6 accepts and which also cancels stale refetches when deps change
+mid-flight. `OrdersTable.load` additionally lost its synchronous
+`setLoading(true)`/`setError(null)` prefix (loading starts true; error
+clears only after a successful fetch).

@@ -76,22 +76,29 @@ export function OrderDetail({orderId}: Props) {
   useEffect(() => {
     if (!ready || !session) return;
     let cancelled = false;
-    setState("loading");
-    void apiFetch<Order>(`/orders/${orderId}`)
-      .then((data) => {
-        if (!cancelled) {
-          setOrder(data);
-          setState("ok");
-        }
-      })
-      .catch(() => {
-        if (cancelled) return;
-        // ORDER_NOT_FOUND covers both "missing" and "someone else's order";
-        // transient errors surface the same honest not-found copy.
-        setState("missing");
-      });
+    // setTimeout hop — react-hooks v6 flags a sync setState("loading")
+    // in the effect body; the hop also lets cleanup cancel a refetch
+    // that hasn't fired yet.
+    const timer = window.setTimeout(() => {
+      if (cancelled) return;
+      setState("loading");
+      void apiFetch<Order>(`/orders/${orderId}`)
+        .then((data) => {
+          if (!cancelled) {
+            setOrder(data);
+            setState("ok");
+          }
+        })
+        .catch(() => {
+          if (cancelled) return;
+          // ORDER_NOT_FOUND covers both "missing" and "someone else's order";
+          // transient errors surface the same honest not-found copy.
+          setState("missing");
+        });
+    }, 0);
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
     };
   }, [ready, session, orderId]);
 

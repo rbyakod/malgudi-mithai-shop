@@ -339,6 +339,9 @@ fun MishranAppRoot() {
                         )
                         context.startActivity(chat)
                     },
+                    // iOS PDP parity: a cross-sell card pushes that sibling's
+                    // own PDP onto the stack (Back returns to this product).
+                    onSelectProduct = { slug -> navController.navigate(Routes.product(slug)) },
                 )
             }
             composable(Routes.CART) {

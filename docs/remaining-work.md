@@ -38,11 +38,11 @@ on the web, so this is mostly the two apps.
 
 1. **#123 — eslint debt**: 176 `no-explicit-any` errors in committed test
    files (pre-dates D10). Mechanical; clears the repo-wide lint gate.
-2. **#124 — merch Enquire stub**: the web merch Enquire button is an
-   unwired "Enquiries open soon" disabled stub — wire it to the existing
-   public `POST /api/leads` (same endpoint the gift builder uses) or give
-   it an honest label. (The Play listing's "one-tap reorder" claim became
-   true when B4 shipped — resolved.)
+2. **#124 — merch Enquire stub**: ✅ done (2026-08-19) — both availability
+   states now anchor to an inline `MerchEnquiry` LeadForm (type `merch`)
+   posting to the public `POST /api/leads`; dead button removed, i18n ×3.
+   (The Play listing's "one-tap reorder" claim became true when B4
+   shipped — resolved.)
 3. **#125 — Android PDP parity**: the last real parity gap — Android PDP
    lacks the trust strip, provenance rows, same-family cross-sell rail,
    and sticky buy bar that iOS + web have. iOS is the reference

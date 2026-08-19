@@ -83,9 +83,12 @@ export function OrdersList({nextBase = "/account"}: Props) {
     }
   }, [orders, loadingMore, total, t]);
 
+  // setTimeout hop — react-hooks v6 flags a direct `void load()` in the
+  // effect body (setState inside a synchronously-called function).
   useEffect(() => {
     if (!ready || !session) return;
-    void load();
+    const id = window.setTimeout(() => void load(), 0);
+    return () => window.clearTimeout(id);
   }, [ready, session, load]);
 
   function formatDate(iso: string): string {

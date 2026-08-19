@@ -23,6 +23,8 @@ class CatalogMappersTest {
         images: List<String>? = listOf("https://cdn.mishran.in/kaju-katli.jpg"),
         weight: String? = "500 g",
         featured: Boolean? = true,
+        leadTime: String? = "Made to order in 24h",
+        karigarName: String? = "Karigar Suresh",
     ) = Product(
         id = "prod-1",
         slug = "kaju-katli",
@@ -40,6 +42,8 @@ class CatalogMappersTest {
         images = images,
         story = "Slivered-cashew fudge",
         karigar = "karigar-9",
+        leadTime = leadTime,
+        karigarName = karigarName,
         updatedAt = "2026-08-01T10:00:00Z",
     )
 
@@ -122,5 +126,36 @@ class CatalogMappersTest {
         val legacy = sampleProduct().toEntity(staleAt = 0L).copy(featured = null, weight = null)
         assertNull(legacy.toDomain().featured)
         assertNull(legacy.toDomain().weight)
+    }
+
+    // ---- iOS PDP parity: leadTime + karigarName (trust strip / provenance) --
+
+    @Test
+    fun `leadTime and karigarName persist onto the cache row`() {
+        val product = sampleProduct(leadTime = "Made to order in 24h", karigarName = "Karigar Suresh")
+        val entity = product.toEntity(staleAt = 0L)
+        assertEquals("Made to order in 24h", entity.leadTime)
+        assertEquals("Karigar Suresh", entity.karigarName)
+        assertEquals(product, entity.toDomain())
+    }
+
+    @Test
+    fun `null leadTime and karigarName stay null end to end`() {
+        // Today's production payloads leave both unset — the PDP trust strip
+        // and provenance block hide on those rows.
+        val domain = sampleProduct(leadTime = null, karigarName = null)
+            .toEntity(staleAt = 0L)
+            .toDomain()
+        assertNull(domain.leadTime)
+        assertNull(domain.karigarName)
+    }
+
+    @Test
+    fun `a pre-v7 cache row reads back with null provenance fields`() {
+        val legacy = sampleProduct(leadTime = "48h notice", karigarName = "Karigar Suresh")
+            .toEntity(staleAt = 0L)
+            .copy(leadTime = null, karigarName = null)
+        assertNull(legacy.toDomain().leadTime)
+        assertNull(legacy.toDomain().karigarName)
     }
 }

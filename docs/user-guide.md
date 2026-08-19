@@ -204,8 +204,9 @@ trust strip, provenance rows, and cross-sell rail.
 - **QSR**: veg badge, spice level, description, and which counters carry
   it. No prices, no ordering — walk in.
 - **Merch**: price, availability, description, and **Enquire** → opens the
-  bulk & events enquiry form. On web the Enquire button is still a stub
-  ("Enquiries open soon" for non-stocked items).
+  bulk & events enquiry form. On web, **Enquire** jumps to an enquiry form
+  right on the page (name, email, phone, quantity, notes) — it lands in the
+  shop's leads inbox and the team replies by email.
 
 ---
 
@@ -479,8 +480,8 @@ ask you to sign in there first, then reload.
   Use test cards/UPI from the Razorpay test dashboard.
 - **What's intentionally still placeholder**: WhatsApp/support numbers
   (show +91 80000 00000 until the real one is configured), FSSAI licence
-  ("pending" chip in the web footer), occasion page content, merch
-  Enquire button on web, and social links in the footer.
+  ("pending" chip in the web footer), occasion page content, and social
+  links in the footer.
 
 ---
 

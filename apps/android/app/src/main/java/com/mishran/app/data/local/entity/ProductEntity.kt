@@ -14,6 +14,9 @@
 //
 // P1 parity added `weight` (drives the PDP pack-size chips) and `featured`
 // (flags the Home best-sellers rail; null = unflagged, pre-migration rows).
+// iOS-PDP parity (v7) added `leadTime` + `karigarName` — both feed the PDP
+// trust strip / provenance block and are null on rows cached before the
+// field existed, so those sections hide gracefully on legacy rows.
 package com.mishran.app.data.local.entity
 
 import androidx.room.Entity
@@ -39,6 +42,10 @@ data class ProductEntity(
     val images: List<String> = emptyList(),
     val story: String? = null,
     val karigar: String? = null,
+    /** e.g. "Made to order in 24h" — PDP trust strip + provenance row. */
+    val leadTime: String? = null,
+    /** Karigar display name — PDP provenance row; null when unpopulated. */
+    val karigarName: String? = null,
     val updatedAt: String? = null,
     /** Epoch millis after which this row is considered stale. See deleteStale(). */
     val staleAt: Long = 0L,

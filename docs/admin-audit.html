@@ -1009,13 +1009,17 @@
     </div>
 
     <div class="note-box">
-      <p class="box-title">Known gap recorded</p>
-      <p><code>OrdersTable.tsx</code> still trips react-hooks v6’s
-      <code>set-state-in-effect</code> under a direct <code>eslint</code> run
-      (mount effect → synchronous <code>setLoading</code>). Pre-existing on
-      HEAD, not part of this wave’s diffs; the repo gate
-      (<code>pnpm lint</code>) doesn’t run that rule. Parked with the #123
-      eslint debt.</p>
+      <p class="box-title">Known gap — resolved with #123 (2026-08-19)</p>
+      <p>The <code>set-state-in-effect</code> findings — <code>OrdersTable</code>
+      (mount effect’s direct <code>load()</code> call) plus the same shape in
+      <code>OrdersBoard</code>, <code>OrdersList</code>, <code>AddressBook</code>,
+      <code>OrderDetail</code>, and <code>PaymentReconciliation</code> — now
+      defer the load through a <code>window.setTimeout(…, 0)</code> hop with
+      cancel-on-cleanup, which react-hooks v6 accepts and which also cancels
+      stale refetches when deps change mid-flight. <code>OrdersTable.load</code>
+      additionally lost its synchronous <code>setLoading(true)</code> /
+      <code>setError(null)</code> prefix (loading starts true; error clears
+      only after a successful fetch).</p>
     </div>
   </section>
 

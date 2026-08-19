@@ -16,6 +16,7 @@ import androidx.room.Room
 import com.mishran.app.data.local.MishranDatabase
 import com.mishran.app.data.local.MIGRATION_4_5
 import com.mishran.app.data.local.MIGRATION_5_6
+import com.mishran.app.data.local.MIGRATION_6_7
 import com.mishran.app.data.local.dao.CartDao
 import com.mishran.app.data.local.dao.NotificationSeenDao
 import com.mishran.app.data.local.dao.OrderDao
@@ -55,10 +56,11 @@ object DatabaseModule {
         @ApplicationContext context: Context,
     ): MishranDatabase =
         Room.databaseBuilder(context, MishranDatabase::class.java, "mishran.db")
-            // P1 parity (v5) + P2 stories (v6): explicit additive migrations so
-            // an app update keeps the local cart; anything older still falls
-            // back destructively (pre-launch churn, see Database.kt).
-            .addMigrations(MIGRATION_4_5, MIGRATION_5_6)
+            // P1 parity (v5) + P2 stories (v6) + iOS-PDP parity (v7): explicit
+            // additive migrations so an app update keeps the local cart;
+            // anything older still falls back destructively (pre-launch
+            // churn, see Database.kt).
+            .addMigrations(MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
             .fallbackToDestructiveMigration()
             .build()
 

@@ -8,7 +8,7 @@ import { getPayload } from 'payload';
 import config from '../../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../../lib/api/errors';
-import { serializeSnack, slugify } from '../../../../../../../lib/api/catalogSerializers';
+import { serializeSnack, slugify, type SnackProductDoc } from '../../../../../../../lib/api/catalogSerializers';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       collection: 'snack-products',
       limit: 500,
     });
-    const doc = result.docs.find((d: any) => slugify(d.name ?? '') === slug);
+    const doc = (result.docs as SnackProductDoc[]).find((d) => slugify(d.name ?? '') === slug);
     if (!doc) {
       throw new ApiError(ErrorCode.NOT_FOUND, `Snack "${slug}" not found`, { traceId });
     }

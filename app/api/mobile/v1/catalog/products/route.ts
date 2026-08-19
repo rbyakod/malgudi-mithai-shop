@@ -8,11 +8,12 @@
 // truncated to 16 hex chars. If `If-None-Match` matches → 304.
 import { NextRequest } from 'next/server';
 import { getPayload } from 'payload';
+import type { Where } from 'payload';
 import { createHash } from 'node:crypto';
 // 6 ../ to repo root from app/api/mobile/v1/catalog/products/
 import config from '../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../lib/api/response';
-import { serializeProduct } from '../../../../../../lib/api/catalogSerializers';
+import { serializeProduct, type MithaiProductDoc } from '../../../../../../lib/api/catalogSerializers';
 
 export async function GET(req: NextRequest) {
   const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
@@ -27,9 +28,9 @@ export async function GET(req: NextRequest) {
 
     const payload = await getPayload({ config });
 
-    // Build Payload `where` clause. Use `any` because Payload's `Where`
-    // type is a discriminated union that rejects plain object literals.
-    const where: Record<string, any> = {};
+    // Build Payload `where` clause. `Where` is loosely keyed — per-field
+    // operator objects (`{equals}`, `{in}`, `{contains}`) assign directly.
+    const where: Where = {};
     if (family) where.family = { equals: family };
     if (freshnessStatus) where.freshnessStatus = { equals: freshnessStatus };
     if (dietaryTags.length) where.dietaryTags = { in: dietaryTags };
@@ -43,7 +44,7 @@ export async function GET(req: NextRequest) {
       sort: '-updatedAt',
     });
 
-    const etagInput = result.docs.map((d: any) => `${d.id}:${d.updatedAt ?? ''}`).join('|');
+    const etagInput = result.docs.map((d) => `${d.id}:${d.updatedAt ?? ''}`).join('|');
     const etag = '"' + createHash('sha1').update(etagInput).digest('hex').slice(0, 16) + '"';
     if (req.headers.get('If-None-Match') === etag) {
       return new Response(null, { status: 304, headers: { ETag: etag } });
@@ -51,7 +52,7 @@ export async function GET(req: NextRequest) {
 
     return jsonResponse(
       {
-        items: result.docs.map(serializeProduct),
+        items: (result.docs as MithaiProductDoc[]).map(serializeProduct),
         total: result.totalDocs,
         page: result.page,
         pageSize: result.limit,

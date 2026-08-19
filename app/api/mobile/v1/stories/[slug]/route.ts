@@ -8,7 +8,7 @@ import { getPayload } from 'payload';
 import config from '../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../lib/api/errors';
-import { serializeStory } from '../../../../../../lib/api/catalogSerializers';
+import { serializeStory, type StoryDoc } from '../../../../../../lib/api/catalogSerializers';
 import { flattenLexical } from '../../../../../../lib/api/richText';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       draft: false,
     });
 
-    const doc = result.docs[0];
+    const doc = result.docs[0] as StoryDoc | undefined;
     if (!doc) {
       throw new ApiError(ErrorCode.STORY_NOT_FOUND, `Story "${slug}" not found`, { traceId });
     }

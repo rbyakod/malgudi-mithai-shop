@@ -9,11 +9,12 @@
 // optional for a future pillar-tab UI; sort is newest-first.
 import { NextRequest } from 'next/server';
 import { getPayload } from 'payload';
+import type { Where } from 'payload';
 import { createHash } from 'node:crypto';
 // 5 ../ to repo root from app/api/mobile/v1/stories/
 import config from '../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../lib/api/response';
-import { serializeStory } from '../../../../../lib/api/catalogSerializers';
+import { serializeStory, type StoryDoc } from '../../../../../lib/api/catalogSerializers';
 
 export async function GET(req: NextRequest) {
   const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest) {
 
     const payload = await getPayload({ config });
 
-    const where: Record<string, any> = { _status: { equals: 'published' } };
+    const where: Where = { _status: { equals: 'published' } };
     if (pillar) where.pillar = { equals: pillar };
 
     const result = await payload.find({
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
       draft: false,
     });
 
-    const etagInput = result.docs.map((d: any) => `${d.id}:${d.updatedAt ?? ''}`).join('|');
+    const etagInput = result.docs.map((d) => `${d.id}:${d.updatedAt ?? ''}`).join('|');
     const etag = '"' + createHash('sha1').update(etagInput).digest('hex').slice(0, 16) + '"';
     if (req.headers.get('If-None-Match') === etag) {
       return new Response(null, { status: 304, headers: { ETag: etag } });
@@ -46,7 +47,7 @@ export async function GET(req: NextRequest) {
 
     return jsonResponse(
       {
-        items: result.docs.map(serializeStory),
+        items: (result.docs as StoryDoc[]).map(serializeStory),
         total: result.totalDocs,
         page: result.page,
         pageSize: result.limit,

@@ -43,23 +43,117 @@ export function absoluteMediaURL(url: string): string {
   return url.startsWith('/') ? `${mediaOrigin()}${url}` : url;
 }
 
+/**
+ * Wide read-shape of a media upload ref: a populated media doc (`{url, alt}`),
+ * a bare ref id, or a row wrapper (`{image: …}` / `{url}`). Every field is
+ * optional because population depth varies per query (see header conventions).
+ */
+interface UploadRefLike {
+  url?: unknown;
+  alt?: unknown;
+  image?: UploadRefLike | null;
+}
+
+/** External retailer row on snack-products: `{label, url}`. */
+type RetailerRef = { label?: string | null; url?: string | null };
+
+/** Relationship value as these routes read it: bare id when unpopulated,
+ *  `{id, name}` doc when populated. */
+type RelationRef = { id?: string | number; name?: string | null } | string | number | null;
+
+// Doc shapes mirror collections/*.ts as the mobile routes read them: required
+// only where the serializer dereferences without a fallback.
+
+/** collections/MithaiProducts.ts doc shape. */
+export type MithaiProductDoc = {
+  id: string | number;
+  slug?: string | null;
+  name: string;
+  family?: string | null;
+  displayPrice?: string | null;
+  weight?: string | null;
+  featured?: boolean | null;
+  freshnessStatus?: string | null;
+  dietaryTags?: string[];
+  allergens?: string[];
+  ingredients?: string | null;
+  shelfLife?: string | null;
+  storage?: string | null;
+  images?: UploadRefLike[];
+  story?: unknown;
+  karigar?: RelationRef;
+  leadTime?: string | null;
+  updatedAt?: string | null;
+};
+
+/** collections/QsrMenuItems.ts doc shape. */
+export type QsrMenuItemDoc = {
+  id: string | number;
+  name: string;
+  category?: string | null;
+  description?: string | null;
+  image?: UploadRefLike | null;
+  veg?: boolean | null;
+  spiceLevel?: string | null;
+  availableAtStores?: string[];
+  updatedAt?: string | null;
+};
+
+/** collections/SnackProducts.ts doc shape. */
+export type SnackProductDoc = {
+  id: string | number;
+  name: string;
+  category?: string | null;
+  description?: string | null;
+  images?: UploadRefLike[];
+  weight?: string | null;
+  msrp?: string | null;
+  externalRetailers?: RetailerRef[];
+  updatedAt?: string | null;
+};
+
+/** collections/MerchProducts.ts doc shape. */
+export type MerchProductDoc = {
+  id: string | number;
+  name: string;
+  type?: string | null;
+  description?: string | null;
+  images?: UploadRefLike[];
+  price?: string | null;
+  availability?: string | null;
+  updatedAt?: string | null;
+};
+
+/** collections/Stories.ts doc shape. */
+export type StoryDoc = {
+  id: string | number;
+  slug?: string | null;
+  title: string;
+  pillar?: string | null;
+  excerpt?: string | null;
+  heroImage?: UploadRefLike | null;
+  body?: unknown;
+  publishedAt?: string | null;
+  updatedAt?: string | null;
+};
+
 /** Upload-ref array → string[] (populated url → ref id → bare string). */
 export function flattenImages(images: unknown): string[] {
   return (Array.isArray(images) ? images : [])
-    .map((i: any) => i?.image?.url ?? i?.image ?? i?.url ?? i)
+    .map((i: UploadRefLike) => i?.image?.url ?? i?.image ?? i?.url ?? i)
     .filter((u: unknown): u is string => typeof u === 'string')
     .map(absoluteMediaURL);
 }
 
 /** Single upload field → string | null (qsr uses this shape). */
 function flattenImage(image: unknown): string | null {
-  const url = (image as any)?.url ?? image;
+  const url = (image as UploadRefLike | null | undefined)?.url ?? image;
   return typeof url === 'string' && url.length > 0 ? absoluteMediaURL(url) : null;
 }
 
-// Shape mirrors collections/MithaiProducts.ts. `featured` drives the apps'
-// "Best sellers" rail; `story` is flattened for the mobile contract.
-export function serializeProduct(p: any) {
+// `featured` drives the apps' "Best sellers" rail; `story` is flattened for
+// the mobile contract.
+export function serializeProduct(p: MithaiProductDoc) {
   return {
     id: p.id,
     slug: p.slug,
@@ -87,9 +181,9 @@ export function serializeProduct(p: any) {
   };
 }
 
-// Shape mirrors collections/QsrMenuItems.ts. Counter-menu vertical: no price,
-// no cart — walk-in only; `availableAtStores` is a plain store-slug list.
-export function serializeQsrItem(d: any) {
+// Counter-menu vertical: no price, no cart — walk-in only;
+// `availableAtStores` is a plain store-slug list.
+export function serializeQsrItem(d: QsrMenuItemDoc) {
   return {
     id: d.id,
     slug: slugify(d.name ?? ''),
@@ -104,9 +198,9 @@ export function serializeQsrItem(d: any) {
   };
 }
 
-// Shape mirrors collections/SnackProducts.ts. Retail-only vertical: MSRP for
-// display, purchases happen at external retailers.
-export function serializeSnack(d: any) {
+// Retail-only vertical: MSRP for display, purchases happen at external
+// retailers.
+export function serializeSnack(d: SnackProductDoc) {
   return {
     id: d.id,
     slug: slugify(d.name ?? ''),
@@ -117,15 +211,15 @@ export function serializeSnack(d: any) {
     weight: d.weight ?? null,
     msrp: d.msrp ?? null,
     retailers: (d.externalRetailers ?? []).map(
-      (r: any) => ({ label: r?.label ?? '', url: r?.url ?? '' }),
+      (r: RetailerRef) => ({ label: r?.label ?? '', url: r?.url ?? '' }),
     ).filter((r: { label: string; url: string }) => r.label && r.url),
     updatedAt: d.updatedAt ?? null,
   };
 }
 
-// Shape mirrors collections/MerchProducts.ts. Enquiry-led vertical;
-// `availability: "enquiry-only"` routes the app UI to the leads form.
-export function serializeMerch(d: any) {
+// Enquiry-led vertical; `availability: "enquiry-only"` routes the app UI to
+// the leads form.
+export function serializeMerch(d: MerchProductDoc) {
   return {
     id: d.id,
     slug: slugify(d.name ?? ''),
@@ -139,9 +233,8 @@ export function serializeMerch(d: any) {
   };
 }
 
-// Shape mirrors collections/Stories.ts. List projection — the [slug] route
-// additionally flattens `body`.
-export function serializeStory(s: any) {
+// List projection — the [slug] route additionally flattens `body`.
+export function serializeStory(s: StoryDoc) {
   return {
     id: s.id,
     slug: s.slug,

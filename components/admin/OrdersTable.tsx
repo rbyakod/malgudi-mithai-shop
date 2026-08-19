@@ -16,7 +16,7 @@
 //   - Export CSV (#128): walks every page of the CURRENT filters through the
 //     same staff feed, maps rows client-side (lib/admin/ordersCsv), and
 //     downloads. Capped at 5000 rows — beyond that, narrow the dates.
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   STATUS_LABEL,
   isCashToCollect,
@@ -95,12 +95,14 @@ export function OrdersTable({
   const [q, setQ] = useState("");
   // Bump to refetch without changing filters (after actions / poll tick).
   const [tick, setTick] = useState(0);
-  const firstLoad = useRef(true);
 
+  // #123: no synchronous setState before the first await — the
+  // react-hooks v6 set-state-in-effect rule flags that. `loading` starts
+  // true (covers mount), flips false in `finally`, and error clears only
+  // after a successful fetch. Filter changes refetch against the stale
+  // feed instead of flashing a skeleton.
   const load = useCallback(
-    async (silent: boolean) => {
-      if (!silent) setLoading(true);
-      setError(null);
+    async () => {
       try {
         const params = new URLSearchParams({ page: String(page), pageSize: "50" });
         if (status) params.set("status", status);
@@ -119,25 +121,29 @@ export function OrdersTable({
         }
         if (!res.ok) throw new Error(`orders fetch failed: ${res.status}`);
         setFeed((await res.json()).data as Feed);
+        setError(null);
       } catch (e) {
         setError(e instanceof Error ? e.message : "failed to load orders");
       } finally {
-        if (!silent) setLoading(false);
-        firstLoad.current = false;
+        setLoading(false);
       }
     },
     [page, status, paymentMethod, paymentStatus, source, from, to, q, onAuthError],
   );
 
-  // Fetch on mount / filter / page / action tick.
+  // Fetch on mount / filter / page / action tick. The setTimeout hop
+  // defers the load out of the effect body — react-hooks v6 flags a
+  // direct `void load()` here (setState inside a synchronously-called
+  // function) — and cancels the stale fetch when deps change mid-flight.
   useEffect(() => {
-    void load(false);
+    const id = window.setTimeout(() => void load(), 0);
+    return () => window.clearTimeout(id);
   }, [load, tick]);
 
   // Background poll every 20 s; skip while hidden or a row action is busy.
   useEffect(() => {
     const id = window.setInterval(() => {
-      if (!document.hidden && !busyId) void load(true);
+      if (!document.hidden && !busyId) void load();
     }, 20_000);
     return () => window.clearInterval(id);
   }, [load, busyId]);

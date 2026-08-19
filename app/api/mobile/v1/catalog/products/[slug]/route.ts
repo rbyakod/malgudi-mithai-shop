@@ -15,7 +15,7 @@ import { getPayload } from 'payload';
 import config from '../../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../../lib/api/errors';
-import { serializeProduct } from '../../../../../../../lib/api/catalogSerializers';
+import { serializeProduct, type MithaiProductDoc } from '../../../../../../../lib/api/catalogSerializers';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       throw new ApiError(ErrorCode.PRODUCT_NOT_FOUND, `Product "${slug}" not found`, { traceId });
     }
 
-    return jsonResponse(serializeProduct(result.docs[0]), {
+    return jsonResponse(serializeProduct(result.docs[0] as MithaiProductDoc), {
       headers: { 'X-Request-Id': traceId },
     });
   } catch (err) {

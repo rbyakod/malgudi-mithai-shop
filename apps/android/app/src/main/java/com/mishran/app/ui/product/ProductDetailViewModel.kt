@@ -25,6 +25,12 @@
 // reviews (GET /reviews, pageSize 5) loads alongside. Failures and empty
 // lists both surface as a null state so the section renders NOTHING — web
 // parity, no empty state.
+//
+// iOS PDP parity adds the same-family cross-sell rail: once the product
+// resolves, up to four same-family siblings (current product excluded) load
+// cache-first off the shared catalog cache — see CatalogRepository
+// .getFamilySiblings. Empty (cold offline cache or a single-product family)
+// keeps the rail hidden; failures never surface an error state.
 package com.mishran.app.ui.product
 
 import androidx.lifecycle.SavedStateHandle
@@ -121,6 +127,12 @@ class ProductDetailViewModel @Inject constructor(
     private val _reviews = MutableStateFlow<ReviewsUi?>(null)
     val reviews: StateFlow<ReviewsUi?> = _reviews.asStateFlow()
 
+    // ---- Same-family cross-sell rail (iOS PDP parity) ----------------------
+
+    /** Up to 4 same-family siblings; empty keeps the rail hidden. */
+    private val _crossSell = MutableStateFlow<List<Product>>(emptyList())
+    val crossSell: StateFlow<List<Product>> = _crossSell.asStateFlow()
+
     init {
         load()
         viewModelScope.launch {
@@ -139,6 +151,12 @@ class ProductDetailViewModel @Inject constructor(
             // the product resolves. Failure/empty both map to null (hidden).
             if (product != null) {
                 _reviews.value = reviewRepository.getProductReviews(product.id)?.toReviewsUi()
+                // Cross-sell rides the same resolve trigger (iOS loads both in
+                // .task(id: slug)); a repository failure resolves to empty and
+                // the rail hides — never an error surface on the PDP.
+                _crossSell.value = runCatching {
+                    repository.getFamilySiblings(product.family, product.slug)
+                }.getOrDefault(emptyList())
             }
         }
     }

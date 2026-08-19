@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Mobile build artifacts (iOS archives carry Razorpay's minified
+    // EncryptedOtpelf.js, which trips the parser; Android gradle output).
+    "apps/ios/build/**",
+    "apps/android/**/build/**",
   ]),
 ]);
 

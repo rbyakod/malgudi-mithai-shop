@@ -10,7 +10,7 @@ import { getPayload } from 'payload';
 import config from '../../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../../lib/api/response';
 import { ApiError, ErrorCode } from '../../../../../../../lib/api/errors';
-import { serializeQsrItem, slugify } from '../../../../../../../lib/api/catalogSerializers';
+import { serializeQsrItem, slugify, type QsrMenuItemDoc } from '../../../../../../../lib/api/catalogSerializers';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       collection: 'qsr-menu-items',
       limit: 500,
     });
-    const doc = result.docs.find((d: any) => slugify(d.name ?? '') === slug);
+    const doc = (result.docs as QsrMenuItemDoc[]).find((d) => slugify(d.name ?? '') === slug);
     if (!doc) {
       throw new ApiError(ErrorCode.NOT_FOUND, `QSR item "${slug}" not found`, { traceId });
     }

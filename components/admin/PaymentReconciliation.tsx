@@ -46,8 +46,12 @@ export function PaymentReconciliation() {
     }
   }, []);
 
+  // The setTimeout hop defers the load out of the effect body — react-hooks
+  // v6 flags a direct `void loadCash()` here (setState inside a
+  // synchronously-called function) — mirroring the orders console.
   useEffect(() => {
-    void loadCash();
+    const id = window.setTimeout(() => void loadCash(), 0);
+    return () => window.clearTimeout(id);
   }, [loadCash]);
 
   const cashTotalInPaise = useMemo(

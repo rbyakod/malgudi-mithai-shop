@@ -5,11 +5,12 @@
 // ETag pattern mirrors catalog/products/route.ts.
 import { NextRequest } from 'next/server';
 import { getPayload } from 'payload';
+import type { Where } from 'payload';
 import { createHash } from 'node:crypto';
 // 6 ../ to repo root from app/api/mobile/v1/catalog/snacks/
 import config from '../../../../../../payload.config';
 import { jsonResponse, errorResponse } from '../../../../../../lib/api/response';
-import { serializeSnack } from '../../../../../../lib/api/catalogSerializers';
+import { serializeSnack, type SnackProductDoc } from '../../../../../../lib/api/catalogSerializers';
 
 export async function GET(req: NextRequest) {
   const traceId = req.headers.get('X-Request-Id') ?? crypto.randomUUID();
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest) {
 
     const payload = await getPayload({ config });
 
-    const where: Record<string, any> = {};
+    const where: Where = {};
     if (category) where.category = { equals: category };
 
     const result = await payload.find({
@@ -32,7 +33,7 @@ export async function GET(req: NextRequest) {
       sort: '-updatedAt',
     });
 
-    const etagInput = result.docs.map((d: any) => `${d.id}:${d.updatedAt ?? ''}`).join('|');
+    const etagInput = result.docs.map((d) => `${d.id}:${d.updatedAt ?? ''}`).join('|');
     const etag = '"' + createHash('sha1').update(etagInput).digest('hex').slice(0, 16) + '"';
     if (req.headers.get('If-None-Match') === etag) {
       return new Response(null, { status: 304, headers: { ETag: etag } });
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest) {
 
     return jsonResponse(
       {
-        items: result.docs.map(serializeSnack),
+        items: (result.docs as SnackProductDoc[]).map(serializeSnack),
         total: result.totalDocs,
         page: result.page,
         pageSize: result.limit,

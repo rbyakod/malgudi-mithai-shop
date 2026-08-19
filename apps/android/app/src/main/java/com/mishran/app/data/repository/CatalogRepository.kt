@@ -84,6 +84,27 @@ class CatalogRepository @Inject constructor(
         }
     }
 
+    /**
+     * Same-family siblings for the PDP cross-sell rail ("More from the X
+     * collection"): the Room cache answers when it holds any of that family;
+     * a cold cache (a deep link straight into the PDP) triggers ONE catalog
+     * refresh — seeding the shared cache for later screens too — and the
+     * re-read answers. Both reads run through [crossSellSiblings], so the
+     * current product is excluded and the rail is capped at
+     * [CROSS_SELL_LIMIT]. Network failure on a cold cache yields empty (the
+     * rail hides — never an error surface). Mirrors iOS loadCrossSell().
+     */
+    suspend fun getFamilySiblings(
+        family: Product.Family,
+        excludeSlug: String,
+    ): List<Product> {
+        suspend fun siblings(): List<Product> =
+            crossSellSiblings(productDao.getAll().map { it.toDomain() }, family, excludeSlug)
+        siblings().takeIf { it.isNotEmpty() }?.let { return it }
+        refreshFromNetwork(force = false)
+        return siblings()
+    }
+
     private suspend fun refreshFromNetwork(force: Boolean) {
         val etag = if (force) null else dataStore.data.first()[DataStoreKeys.CATALOG_ETAG]
         val response: Response<CatalogProductsGet200Response> = try {
@@ -133,6 +154,8 @@ internal fun Product.toEntity(staleAt: Long): ProductEntity = ProductEntity(
     images = images.orEmpty().map(::resolveMediaUrl),
     story = story,
     karigar = karigar,
+    leadTime = leadTime,
+    karigarName = karigarName,
     updatedAt = updatedAt,
     staleAt = staleAt,
 )
@@ -161,9 +184,27 @@ internal fun ProductEntity.toDomain(): Product {
         images = images.takeIf { it.isNotEmpty() }?.map(::resolveMediaUrl),
         story = story,
         karigar = karigar,
+        leadTime = leadTime,
+        karigarName = karigarName,
         updatedAt = updatedAt,
     )
 }
 
 /** Epoch millis — extracted so tests can pin time if needed later. */
 internal fun now(): Long = System.currentTimeMillis()
+
+/** How many same-family cards the PDP cross-sell rail shows (web + iOS cap). */
+internal const val CROSS_SELL_LIMIT = 4
+
+/**
+ * The cross-sell rail's slice of the catalog: same [family] as the open
+ * product, the current product ([excludeSlug]) dropped, capped at
+ * [CROSS_SELL_LIMIT]. Pure — one function owns the rail's rules on every path
+ * (cache hit and post-refresh alike).
+ */
+internal fun crossSellSiblings(
+    catalog: List<Product>,
+    family: Product.Family,
+    excludeSlug: String,
+): List<Product> = catalog.filter { it.family == family && it.slug != excludeSlug }
+    .take(CROSS_SELL_LIMIT)

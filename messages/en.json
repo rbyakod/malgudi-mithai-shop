@@ -195,8 +195,7 @@
       "type": "Type",
       "price": "Price",
       "availability": "Availability",
-      "enquire": "Enquire",
-      "enquireDisabled": "Enquiries open soon"
+      "enquire": "Enquire"
     },
     "breadcrumbHome": "Mishran",
     "notFound": "We couldn't find that one.",
@@ -311,6 +310,20 @@
       "orderHint": "Approximate",
       "message": "Anything else?",
       "submit": "Submit enquiry"
+    },
+    "merch": {
+      "eyebrow": "Merchandise Enquiries",
+      "formTitle": "Enquire about this piece",
+      "formIntro": "Quantity, deadline, customisation — tell us what you need and the studio replies within one business day.",
+      "groupContact": "Your details",
+      "groupOrder": "The enquiry",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "quantity": "Quantity",
+      "quantityHint": "Approximate",
+      "message": "Anything else?",
+      "submit": "Send enquiry"
     }
   },
   "Cart": {

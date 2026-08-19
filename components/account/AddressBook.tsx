@@ -84,10 +84,14 @@ export function AddressBook({variant = "full", selectedId, onSelect}: Props) {
     }
   }, [t]);
 
-  // Load once when signed in (after the hydration restore pass).
+  // Load once when signed in (after the hydration restore pass). The
+  // setTimeout hop defers reload out of the effect body — react-hooks v6
+  // flags a direct `void reload()` (setState inside a synchronously-
+  // called function).
   useEffect(() => {
     if (!ready || !session) return;
-    void reload();
+    const id = window.setTimeout(() => void reload(), 0);
+    return () => window.clearTimeout(id);
   }, [ready, session, reload]);
 
   // Serviceability badge per distinct pincode.

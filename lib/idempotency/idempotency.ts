@@ -17,7 +17,12 @@ export async function withIdempotency<T extends Response>(
 
   const existing = await payload.find({ collection: 'idempotencyKeys', where: { key: { equals: key } }, limit: 1 });
   if (existing.docs[0]) {
-    const doc = existing.docs[0] as any;
+    // idempotencyKeys doc fields this replay path reads (collections/IdempotencyKeys.ts).
+    const doc = existing.docs[0] as {
+      requestHash?: string;
+      responseStatus?: number;
+      responseBody?: unknown;
+    };
     if (doc.requestHash !== hash) {
       const err = new ApiError(ErrorCode.CONFLICT, 'Idempotency key reused with different body');
       return NextResponse.json(err.toJSON(), { status: 409 });

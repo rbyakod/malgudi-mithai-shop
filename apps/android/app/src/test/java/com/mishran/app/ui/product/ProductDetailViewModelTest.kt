@@ -66,11 +66,13 @@ class ProductDetailViewModelTest {
         // Parity batch: both init seams answer "nothing cached" by default,
         // and the product lookup answers the happy path — per-test stubs
         // recorded later take precedence in mockk. B11: no reviews by default.
+        // iOS PDP parity: no same-family siblings by default (rail hidden).
         coEvery { repository.getProduct(any()) } returns product
         coEvery { settingsRepository.deliveryCheck() } returns null
         coEvery { settingsRepository.setDeliveryCheck(any()) } returns Unit
         coEvery { brandRepository.getSupportContact() } returns null
         coEvery { reviewRepository.getProductReviews(any(), any()) } returns null
+        coEvery { repository.getFamilySiblings(any(), any()) } returns emptyList()
     }
 
     @After
@@ -195,6 +197,48 @@ class ProductDetailViewModelTest {
         coVerify(exactly = 1) { cartRepository.add(product, 1, fiveHundred) }
         boughtCollector.cancel()
         addedCollector.cancel()
+    }
+
+    // ---- iOS PDP parity: sticky buy bar -------------------------------------
+
+    @Test
+    fun `the sticky stepper drives the same quantity the cart write sees`() =
+        runTest(dispatcher) {
+            // The sticky bar's stepper and Add-to-cart call the SAME ViewModel
+            // functions as the in-content module — bump via the sticky path,
+            // then verify the write carries the bumped quantity.
+            coEvery { repository.getProduct(any()) } returns product
+            coEvery { cartRepository.add(any(), any(), any()) } returns Unit
+
+            val vm = viewModel()
+            advanceUntilIdle()
+
+            var added = 0
+            val collector = launch { vm.added.collect { added++ } }
+            advanceUntilIdle()
+
+            vm.incrementQuantity() // sticky bar's "+"
+            vm.incrementQuantity()
+            vm.decrementQuantity() // sticky bar's "—" (floored at 1 like the in-content one)
+            vm.addToCart(null) // sticky bar's Add to cart
+            advanceUntilIdle()
+
+            assertEquals(1, added)
+            coVerify(exactly = 1) { cartRepository.add(product, 2, null) }
+            collector.cancel()
+        }
+
+    @Test
+    fun `sticky bar quantity line tracks the stepper and hides without a price`() {
+        coEvery { repository.getProduct(any()) } returns product
+
+        val vm = viewModel()
+        vm.incrementQuantity()
+        vm.incrementQuantity()
+
+        // "qty × price" off the live VM state, as the bar renders it.
+        assertEquals("3 × ₹920 / 250g", stickyQuantityLine(vm.quantity.value, "₹920 / 250g"))
+        assertNull(stickyQuantityLine(vm.quantity.value, product.displayPrice))
     }
 
     // ---- Parity batch: "Check delivery" ----------------------------------
@@ -365,6 +409,54 @@ class ProductDetailViewModelTest {
 
         assertNull(vm.reviews.value)
     }
+
+    // ---- iOS PDP parity: same-family cross-sell rail -----------------------
+
+    @Test
+    fun `cross-sell loads once the product resolves and surfaces the siblings`() =
+        runTest(dispatcher) {
+            val siblings = listOf(
+                sibling("motichoor-ladoo"),
+                sibling("besan-ladoo"),
+            )
+            coEvery {
+                repository.getFamilySiblings(Product.Family.classic, "kaju-katli")
+            } returns siblings
+
+            val vm = viewModel()
+            advanceUntilIdle()
+
+            assertEquals(siblings, vm.crossSell.value)
+            coVerify(exactly = 1) { repository.getFamilySiblings(Product.Family.classic, "kaju-katli") }
+        }
+
+    @Test
+    fun `no siblings keeps the rail hidden without an error`() = runTest(dispatcher) {
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        assertEquals(emptyList<Product>(), vm.crossSell.value)
+    }
+
+    @Test
+    fun `a sibling lookup failure degrades to an empty rail`() = runTest(dispatcher) {
+        coEvery { repository.getFamilySiblings(any(), any()) } throws java.io.IOException("offline")
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        // The PDP still renders — the rail hides, never an error surface.
+        assertTrue(vm.state.value is UiState.Success)
+        assertEquals(emptyList<Product>(), vm.crossSell.value)
+    }
+
+    /** A minimal same-family sibling for rail assertions. */
+    private fun sibling(slug: String) = Product(
+        id = slug,
+        slug = slug,
+        name = slug.replace('-', ' '),
+        family = Product.Family.classic,
+    )
 
     @Test
     fun `toReviewsUi maps rows with nullable author, string date and verified stamp`() {

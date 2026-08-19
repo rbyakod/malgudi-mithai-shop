@@ -98,8 +98,11 @@ export function OrdersBoard() {
     }
   }, []);
 
+  // setTimeout hop — react-hooks v6 flags a direct `void refresh()` in
+  // the effect body (setState inside a synchronously-called function).
   useEffect(() => {
-    void refresh();
+    const id = window.setTimeout(() => void refresh(), 0);
+    return () => window.clearTimeout(id);
   }, [refresh]);
 
   async function advance(orderId: string, from: OrderStatus, to: OrderStatus) {

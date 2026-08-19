@@ -13,7 +13,8 @@ export async function GET(req: NextRequest) {
     const payload = await getPayload({ config });
     const result = await payload.find({ collection: 'serviceablePincodes', where: { pincode: { equals: parsed.data.pincode }, active: { equals: true } }, limit: 1 });
     if (!result.docs[0]) return jsonResponse({ serviceable: false });
-    const p = result.docs[0] as any;
+    // serviceablePincodes doc fields echoed back (collections/ServiceablePincodes.ts).
+    const p = result.docs[0] as { tier?: string | null; city?: string | null; slaDays?: number | null };
     return jsonResponse({ serviceable: true, tier: p.tier, city: p.city, slaDays: p.slaDays });
   } catch (err) {
     return errorResponse(err);
