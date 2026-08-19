@@ -13,11 +13,15 @@
 //     posting to /api/admin/orders/:id/status (the hardened transition route)
 //   - Cash collected: COD rows with payment still pending, posting to
 //     /api/staff/orders/:id/collect-cash behind a confirm prompt
+//   - Export CSV (#128): walks every page of the CURRENT filters through the
+//     same staff feed, maps rows client-side (lib/admin/ordersCsv), and
+//     downloads. Capped at 5000 rows — beyond that, narrow the dates.
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   STATUS_LABEL,
   isCashToCollect,
 } from "@/lib/admin/ordersBoard";
+import { exportFileName, ordersToCsv } from "@/lib/admin/ordersCsv";
 import { ORDER_TRANSITIONS, type OrderStatus } from "@/lib/commerce/types";
 
 export interface StaffOrderRow {
@@ -60,20 +64,27 @@ const ALL_STATUSES: OrderStatus[] = [
 const FILTER_CLASS =
   "rounded-md border border-stone-300 bg-white px-2 py-1.5 text-sm text-stone-700";
 
+// Export safety cap: 50 pages × 100 rows. Beyond this the export demands a
+// narrower date range instead of hammering the feed from a browser tab.
+const EXPORT_ROW_CAP = 5000;
+
 function rupees(paise: number | null | undefined): string {
   return paise == null ? "—" : `₹${(paise / 100).toFixed(0)}`;
 }
 
 export function OrdersTable({
   onAuthError,
+  onOpenSlip,
 }: {
   onAuthError: () => void;
+  onOpenSlip: (id: string) => void;
 }) {
   const [feed, setFeed] = useState<Feed | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
   // Filters. Empty string = no filter (the route treats "" as absent).
   const [status, setStatus] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -157,8 +168,97 @@ export function OrdersTable({
     }
   }
 
-  async function collectCash(row: StaffOrderRow) {
+  // Export CSV (#128): walk every page of the current filters, map, download.
+  async function exportCsv() {
+    if (exporting) return;
+    const total = feed?.totalDocs ?? 0;
+    if (total === 0) {
+      setError("No orders match these filters — nothing to export.");
+      return;
+    }
+    if (total > EXPORT_ROW_CAP) {
+      setError(
+        `Too many orders to export (${total}). Narrow the date range — the cap is ${EXPORT_ROW_CAP}.`,
+      );
+      return;
+    }
+    if (!window.confirm(`Export ${total} order${total === 1 ? "" : "s"} to CSV?`)) return;
+    setExporting(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({ page: "1", pageSize: "100" });
+      if (status) params.set("status", status);
+      if (paymentMethod) params.set("paymentMethod", paymentMethod);
+      if (paymentStatus) params.set("paymentStatus", paymentStatus);
+      if (source) params.set("source", source);
+      if (from) params.set("from", new Date(`${from}T00:00:00`).toISOString());
+      if (to) params.set("to", new Date(`${to}T23:59:59`).toISOString());
+      if (q.trim()) params.set("q", q.trim());
+      const rows: StaffOrderRow[] = [];
+      let page = 1;
+      let hasNext = true;
+      while (hasNext && rows.length < EXPORT_ROW_CAP) {
+        params.set("page", String(page));
+        const res = await fetch(`/api/staff/orders?${params.toString()}`, {
+          cache: "no-store",
+        });
+        if (res.status === 401) {
+          onAuthError();
+          return;
+        }
+        if (!res.ok) throw new Error(`orders fetch failed: ${res.status}`);
+        const data = (await res.json()).data as Feed;
+        rows.push(...data.items);
+        hasNext = Boolean(data.hasNextPage);
+        page += 1;
+      }
+      const blob = new Blob([ordersToCsv(rows)], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = exportFileName(from, to);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "export failed");
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  // Ops refund (#130): full-remainder gateway refund for prepaid orders.
+  // Partial refunds go through the API directly (amountInPaise).
+  async function refund(row: StaffOrderRow) {
     const ok = window.confirm(
+      `Refund ₹${((row.totalInPaise ?? 0) / 100).toFixed(2)} to the customer for order #${row.id.slice(-6)}? This sends a real refund through the payment gateway and cannot be undone.`,
+    );
+    if (!ok) return;
+    setBusyId(row.id);
+    try {
+      const res = await fetch(`/api/staff/orders/${row.id}/refund`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ reason: "ops console refund" }),
+      });
+      if (res.status === 401) {
+        onAuthError();
+        return;
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error?.message ?? `refund failed: ${res.status}`);
+      }
+      refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "refund failed");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function collectCash(row: StaffOrderRow) {    const ok = window.confirm(
       `Mark ₹${((row.totalInPaise ?? 0) / 100).toFixed(0)} cash collected for order #${row.id.slice(-6)}?`,
     );
     if (!ok) return;
@@ -237,6 +337,15 @@ export function OrdersTable({
             Search
           </button>
         </form>
+        <button
+          type="button"
+          onClick={() => void exportCsv()}
+          disabled={exporting || !feed || feed.totalDocs === 0}
+          title="Export every order matching the current filters (max 5000)"
+          className="rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-700 hover:bg-stone-50 disabled:opacity-40"
+        >
+          {exporting ? "Exporting…" : "Export CSV"}
+        </button>
       </div>
 
       {error && (
@@ -313,6 +422,13 @@ export function OrdersTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-2">
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => onOpenSlip(row.id)}
+                        title="Open printable packing slip"
+                        className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs font-medium text-stone-700 hover:bg-stone-50"
+                      >
+                        Slip
+                      </button>
                       {nextStages.length > 0 && (
                         <select
                           aria-label={`Move order ${row.id.slice(-6)} to a new status`}
@@ -330,6 +446,17 @@ export function OrdersTable({
                           ))}
                         </select>
                       )}
+                      {row.paymentMethod !== "cod" &&
+                        (row.paymentStatus === "paid" || row.paymentStatus === "partially_refunded") && (
+                          <button
+                            onClick={() => void refund(row)}
+                            disabled={busy}
+                            title="Refund the un-refunded remainder through the gateway"
+                            className="rounded-md border border-rose-200 bg-white px-2 py-1 text-xs font-medium text-rose-700 hover:bg-rose-50 disabled:opacity-50"
+                          >
+                            Refund
+                          </button>
+                        )}
                       {cash && (
                         <button
                           onClick={() => void collectCash(row)}

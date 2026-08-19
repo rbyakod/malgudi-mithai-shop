@@ -12,6 +12,10 @@ export const HomeHero: GlobalConfig = {
   },
   admin: {
     group: "04 Storefront",
+    // #127: "Preview" button in the edit header opens the storefront home
+    // (where the hero carousel renders). Locale falls back to the store
+    // default when Payload itself has no locale context.
+    preview: (_doc, { locale }) => `/${locale ?? "en"}`,
   },
   fields: [
     {
@@ -60,9 +64,22 @@ export const HomeHero: GlobalConfig = {
             description: "Optional. Defaults to the product name.",
           },
         },
+        {
+          // #127: non-persisted preview row — thumb + product name for the
+          // picked slide. Referenced by string path; resolved via importMap.
+          name: "slidePreview",
+          type: "ui",
+          label: "Preview",
+          admin: {
+            components: {
+              Field: "./components/payload-admin/fields/SlidePreview",
+            },
+          },
+        },
       ],
       admin: {
-        description: "Drag rows to reorder. First row renders first on home.",
+        description:
+          "Drag rows to reorder. First row renders first on home. Each row previews the picked product.",
       },
     },
   ],

@@ -79,7 +79,7 @@ function pickColumn(headers: string[], candidates: string[]): number {
 }
 
 // Minimal CSV line splitter: handles quoted fields with embedded commas.
-function splitCsvLine(line: string): string[] {
+export function splitCsvLine(line: string): string[] {
   const cells: string[] = [];
   let cur = "";
   let inQuotes = false;

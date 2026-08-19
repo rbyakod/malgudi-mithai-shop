@@ -30,6 +30,7 @@ import {
   type BoardColumn,
 } from "@/lib/admin/ordersBoard";
 import { OrdersTable, type StaffOrderRow } from "@/components/admin/OrdersTable";
+import { PackingSlip } from "@/components/admin/PackingSlip";
 import type { OrderStatus } from "@/lib/commerce/types";
 
 interface OrderCard {
@@ -75,6 +76,8 @@ export function OrdersBoard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
+  // Packing slip (#126): one modal for both views; null = closed.
+  const [slipId, setSlipId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -198,7 +201,7 @@ export function OrdersBoard() {
       )}
 
       {view === "table" ? (
-        <OrdersTable onAuthError={() => setAuthError(true)} />
+        <OrdersTable onAuthError={() => setAuthError(true)} onOpenSlip={setSlipId} />
       ) : loading ? (
         <div className="p-8 text-stone-500">Loading orders…</div>
       ) : (
@@ -214,6 +217,7 @@ export function OrdersBoard() {
                 const next = nextStage(col);
                 if (next) void advance(card.id, card.status, next);
               }}
+              onOpenSlip={setSlipId}
             />
           ))}
           {buckets.blocked.length > 0 && (
@@ -223,10 +227,17 @@ export function OrdersBoard() {
               onDragStartCard={(id) => setDragging(id)}
               onDrop={(e) => e.preventDefault()}
               onAdvance={() => {}}
+              onOpenSlip={setSlipId}
             />
           )}
         </div>
       )}
+
+      <PackingSlip
+        orderId={slipId}
+        onClose={() => setSlipId(null)}
+        onAuthError={() => setAuthError(true)}
+      />
     </div>
   );
 }
@@ -244,12 +255,14 @@ function Column({
   onDragStartCard,
   onDrop,
   onAdvance,
+  onOpenSlip,
 }: {
   col: BoardColumn | "blocked";
   cards: OrderCard[];
   onDragStartCard: (id: string) => void;
   onDrop: (e: React.DragEvent) => void;
   onAdvance: (card: OrderCard) => void;
+  onOpenSlip: (id: string) => void;
 }) {
   const accent = ACCENT_CLASSES[STATUS_ACCENT[col]];
   const label = col === "blocked" ? "Blocked" : STATUS_LABEL[col];
@@ -292,6 +305,12 @@ function Column({
               {card.customerName && (
                 <p className="mt-1 truncate text-sm text-stone-800">{card.customerName}</p>
               )}
+              <button
+                onClick={() => onOpenSlip(card.id)}
+                className="mt-2 w-full rounded-md border border-stone-300 bg-white px-2 py-1 text-xs font-medium text-stone-700 hover:bg-stone-50"
+              >
+                Packing slip
+              </button>
               {next && (
                 <button
                   onClick={() => onAdvance(card)}

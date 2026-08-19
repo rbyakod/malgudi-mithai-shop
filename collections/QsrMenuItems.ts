@@ -22,6 +22,10 @@ export const QsrMenuItems: CollectionConfig = {
   labels: {singular: "QSR menu item", plural: "QSR Menu"},
   access: { read: () => true },
   admin: { useAsTitle: "name", group: "02 Products" },
+  // #131: drafts + autosave — editors iterate without publishing; published reads
+  // (storefront + mobile API) are unchanged: find() defaults to published,
+  // and seed creates without draft:true still publish.
+  versions: { drafts: { autosave: { interval: 1200 } } },
   hooks: {
     afterChange: [makeRevalidateHook("qsr-menu-items")],
     afterDelete: [makeRevalidateDeleteHook("qsr-menu-items")],

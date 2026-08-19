@@ -30,6 +30,7 @@ import { default as default_cbb56e1b615c552cb0e103e9f5888d38 } from '../../../co
 import { default as default_edaf2934291819d7f3776824d0713c5e } from '../../../components/payload-admin/cells/MerchProductCell'
 import { default as default_72eabec499e55f660ee3d370d1c6eca4 } from '../../../components/payload-admin/cells/OrderStatusCell'
 import { default as default_fbf1741c6eb6b18d699540aa82767a08 } from '../../../components/payload-admin/cells/RupeeCell'
+import { default as default_7dfee13826e61b5022cfd145d1445e48 } from '../../../components/payload-admin/fields/SlidePreview'
 import { default as default_165612c5ac185e0b8a39302fd0f462f1 } from '../../../components/payload-admin/graphics/CrestIcon'
 import { default as default_7729b2a8864a63c40bbd0abd0eb269db } from '../../../components/payload-admin/graphics/WordmarkLogo'
 import { default as default_8149a05a244bf8f960d46f90fbfe83ea } from '../../../components/payload-admin/theme/AdminThemeSwitcher'
@@ -71,6 +72,7 @@ export const importMap = {
   "./components/payload-admin/cells/MerchProductCell#default": default_edaf2934291819d7f3776824d0713c5e,
   "./components/payload-admin/cells/OrderStatusCell#default": default_72eabec499e55f660ee3d370d1c6eca4,
   "./components/payload-admin/cells/RupeeCell#default": default_fbf1741c6eb6b18d699540aa82767a08,
+  "./components/payload-admin/fields/SlidePreview#default": default_7dfee13826e61b5022cfd145d1445e48,
   "./components/payload-admin/graphics/CrestIcon#default": default_165612c5ac185e0b8a39302fd0f462f1,
   "./components/payload-admin/graphics/WordmarkLogo#default": default_7729b2a8864a63c40bbd0abd0eb269db,
   "./components/payload-admin/theme/AdminThemeSwitcher#default": default_8149a05a244bf8f960d46f90fbfe83ea,

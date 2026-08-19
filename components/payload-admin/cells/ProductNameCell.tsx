@@ -41,7 +41,7 @@ function isLikelyUrl(value: string): boolean {
   return value.startsWith("/") || value.startsWith("http://") || value.startsWith("https://");
 }
 
-function pickImage(row: Row, spec: ImageSpec): PickedImage | null {
+export function pickImage(row: Row, spec: ImageSpec): PickedImage | null {
   if (spec.kind === "array") {
     const arr = (row as Record<string, unknown>)[spec.field];
     if (!Array.isArray(arr) || arr.length === 0) return null;

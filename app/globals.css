@@ -973,3 +973,26 @@ input:focus-visible {
   text-underline-offset: 2px;
 }
 .prose-story a:hover { color: var(--t-primary-hover); }
+
+/* ---------- Packing slip print (staff orders console, #126) ----------
+   While a slip is open the component portals it to <body> as
+   .slip-portal and sets body.slip-open — so printing yields ONLY the
+   slip, regardless of where in the console tree it was opened. */
+@media print {
+  body.slip-open > *:not(.slip-portal) { display: none !important; }
+  body.slip-open .slip-portal {
+    position: static !important;
+    inset: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+    padding: 0 !important;
+  }
+  .packing-slip {
+    max-width: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+  .packing-slip__no-print { display: none !important; }
+}
+@page { margin: 14mm; }

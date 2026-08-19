@@ -34,7 +34,9 @@ export const MithaiProducts: CollectionConfig = {
     // Audit §06: curated list — name cell already renders thumbnail + name.
     defaultColumns: ["name", "family", "freshnessStatus", "displayPrice", "featured"],
   },
-  versions: { drafts: true },
+  // #131: autosave joins drafts — WIP is preserved while editing; publishing
+  // stays an explicit act (published reads unchanged).
+  versions: { drafts: { autosave: { interval: 1200 } } },
   hooks: {
     afterChange: [makeRevalidateHook("mithai-products")],
     afterDelete: [makeRevalidateDeleteHook("mithai-products")],

@@ -239,6 +239,7 @@
     <a href="#s12"><span class="n">12</span>Appendix: evidence</a>
     <a href="#s13"><span class="n">13</span>Implementation status</a>
     <a href="#s14"><span class="n">14</span>Post-deploy follow-ups</a>
+    <a href="#s15"><span class="n">15</span>Ops console wave</a>
   </nav>
   <div class="sidebar-foot">
     Live audit · 2026-08-18<br />
@@ -568,15 +569,24 @@
       <h3>P1</h3>
       <ol>
         <li><strong>Ops dashboard</strong> — orders-to-fulfill, revenue today/week, COD
-          pending reconciliation, unmoderated reviews, freshness/low-batch alerts.</li>
+          pending reconciliation, unmoderated reviews, freshness/low-batch alerts.
+          <span class="pill pill--ok">shipped · §13</span></li>
         <li><strong>Order console depth</strong> — formatted ₹, customer name, item
-          summary; status/payment/date filters; packing-slip print; refund/capture hooks.</li>
-        <li><strong>Product list upgrade</strong> — thumbnail + price + freshness pills.</li>
+          summary; status/payment/date filters; packing-slip print; refund/capture hooks.
+          <span class="pill pill--ok">shipped · §15</span></li>
+        <li><strong>Product list upgrade</strong> — thumbnail + price + freshness pills.
+          <span class="pill pill--ok">shipped · §13</span></li>
         <li><strong>Bulk ops + CSV import/export</strong> — bulk publish/feature; pincode
-          import (exactly CSV-shaped data).</li>
-        <li><strong>Drafts &amp; live preview</strong> for catalog edits.</li>
+          import (exactly CSV-shaped data).
+          <span class="pill pill--ok">CSV both ways · §15</span>
+          <span class="pill">bulk ops open</span></li>
+        <li><strong>Drafts &amp; live preview</strong> for catalog edits.
+          <span class="pill pill--ok">drafts + autosave · §15</span>
+          <span class="pill">live preview open</span></li>
         <li><strong>Home Hero curation UX</strong> — drag-reorder, per-slide thumbnails,
-          preview link, ≥1-slide validation.</li>
+          preview link, ≥1-slide validation.
+          <span class="pill pill--ok">thumbs + preview · §15</span>
+          <span class="pill">validation open</span></li>
         <li><strong>Customer 360</strong> — orders, addresses, last-seen on one panel.</li>
         <li><strong>Media governance</strong> — grid view, alt-text completion score,
           usage backlinks.</li>
@@ -593,7 +603,9 @@
           products/orders/customers.</li>
         <li>Scheduled publishing &amp; seasonal windows.</li>
         <li>Roles &amp; audit log (staff vs owner; change history).</li>
-        <li>Autosave + unsaved-changes guard.</li>
+        <li>Autosave + unsaved-changes guard.
+          <span class="pill pill--ok">autosave on products · §15</span>
+          <span class="pill pill--ok">leave-guard free via D8</span></li>
         <li>In-admin storefront preview (device-frame toggle).</li>
       </ol>
     </div>
@@ -902,6 +914,108 @@
         Mishran cream fill with espresso typed text across all three
         themes, select menus/popovers included, and
         <code>html</code> stays <code>data-theme="light"</code>.</p>
+    </div>
+  </section>
+
+  <!-- ================= 15 ================= -->
+  <section id="s15">
+    <h2>15 · Ops console wave — 2026-08-19</h2>
+    <p>
+      Second roadmap wave, executed off §11 (#126–#131). All staff-gated routes
+      follow the console pattern (<code>getPayloadAdminUser</code> → 401 → the
+      client surfaces a sign-in-at-<code>/admin</code> hint). Unit tests per
+      feature; lint, typecheck, and build gates green.
+    </p>
+
+    <div class="status-row">
+      <span class="id">#126</span>
+      <span class="pill pill--ok">Shipped</span>
+      <span class="what"><strong>Packing-slip print</strong> —
+        <code>GET /api/staff/orders/:id/packing-slip</code> projects the order
+        + items (depth 1) into a print-shaped doc;
+        <code>PackingSlip.tsx</code> renders the sheet (short id
+        <code>#last-6</code>, line totals, ₹ totals, COD/online badge,
+        delivery address) from the console’s <strong>Slip</strong> button and
+        the board’s <strong>Packing slip</strong> action, then
+        <code>window.print()</code>. Fetch state is keyed by order id —
+        switching orders mid-flight never shows stale data. 8 unit tests.</span>
+    </div>
+
+    <div class="status-row">
+      <span class="id">#127</span>
+      <span class="pill pill--ok">Shipped</span>
+      <span class="what"><strong>Home Hero per-slide thumbnails + preview</strong> —
+        each slide row renders a live <code>SlidePreview</code> (48px product
+        thumb via the D7 <code>MediaThumb</code> batch machinery + product
+        name + vertical label), and the global gains <code>admin.preview</code>
+        so Payload’s stock <strong>Preview</strong> button opens the storefront
+        home for the locale. Still open from P1.6: ≥1-slide validation.</span>
+    </div>
+
+    <div class="status-row">
+      <span class="id">#128</span>
+      <span class="pill pill--ok">Shipped</span>
+      <span class="what"><strong>Orders CSV export</strong> — “Export CSV” on the
+        all-orders console walks every page of the <em>current filters</em>
+        through the staff feed and downloads
+        <code>mishran-orders-&lt;from&gt;-&lt;to&gt;.csv</code> (RFC 4180
+        quoting, ₹ money, UTC timestamps). Capped at 5000 rows — larger sets
+        are told to narrow dates. 5 unit tests on the mapper.</span>
+    </div>
+
+    <div class="status-row">
+      <span class="id">#129</span>
+      <span class="pill pill--ok">Shipped</span>
+      <span class="what"><strong>Pincode CSV import</strong> — the
+        <code>/staff/pincodes</code> console: paste CSV or pick a file →
+        <em>Validate only</em> (dry run) or <em>Import</em>. Header aliases
+        (<code>pin</code>/<code>pin code</code>, <code>sla</code>/<code>days</code>,
+        <code>enabled</code>), BOM/CRLF tolerance, 6-digit + city/state
+        validation, tier map (fresh/perishable→fresh, else shelf), last-wins
+        dedup, per-line errors. Upserts by pincode via one batched existence
+        query; 2000-row cap. 11 unit tests. The raw collection list stays for
+        spot edits.</span>
+    </div>
+
+    <div class="status-row">
+      <span class="id">#130</span>
+      <span class="pill pill--ok">Shipped</span>
+      <span class="what"><strong>Ops-initiated refunds</strong> —
+        <code>POST /api/staff/orders/:id/refund</code> refunds through the
+        <code>PaymentService</code> adapter (provider-swap-safe; full remainder
+        by default, <code>amountInPaise</code> for partials). Guards: COD →
+        409 (cash settles offline), no captured payment → 409, over-remainder
+        → 409. The payment doc accumulates <code>refundedInPaise</code> + a
+        <code>refunds[]</code> audit row; the order’s
+        <code>paymentStatus</code> follows. <em>Provider-first ordering:</em>
+        if the provider refund lands but local bookkeeping fails, the error
+        names the provider refund id for manual reconcile — never retried.
+        Fulfillment status untouched (that’s the transition route’s job). 7
+        unit tests.</span>
+    </div>
+
+    <div class="status-row">
+      <span class="id">#131</span>
+      <span class="pill pill--ok">Shipped</span>
+      <span class="what"><strong>Drafts + autosave on products</strong> — all
+        five product collections (Mithai, Snacks, QSR, Merch, Gift Boxes)
+        carry <code>versions: { drafts: { autosave: { interval: 1200 } } }</code>.
+        Edits autosave as drafts; <strong>Publish is explicit</strong>; the
+        stock “Save Draft” button hides as redundant. Storefront/mobile reads
+        unchanged — <code>find()</code> defaults to published, existing prod
+        docs without <code>_status</code> stay visible
+        (<code>$ne:'draft'</code> matches a missing field), and seed creates
+        default to published. Live preview from P1.5 remains open.</span>
+    </div>
+
+    <div class="note-box">
+      <p class="box-title">Known gap recorded</p>
+      <p><code>OrdersTable.tsx</code> still trips react-hooks v6’s
+      <code>set-state-in-effect</code> under a direct <code>eslint</code> run
+      (mount effect → synchronous <code>setLoading</code>). Pre-existing on
+      HEAD, not part of this wave’s diffs; the repo gate
+      (<code>pnpm lint</code>) doesn’t run that rule. Parked with the #123
+      eslint debt.</p>
     </div>
   </section>
 

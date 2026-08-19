@@ -84,6 +84,32 @@ export const Payments: CollectionConfig = {
         value: v,
       })),
     },
+    // Ops-initiated refunds (#130). refundedInPaise accumulates across
+    // partial refunds; `refunds` is the audit trail. Provider-issued ids are
+    // kept so reconciliation can match them against settlement exports.
+    {
+      name: "refundedInPaise",
+      type: "number",
+      defaultValue: 0,
+      min: 0,
+      label: "Refunded (paise)",
+      admin: {
+        description:
+          "Accumulated refunds in paise. Equals amountInPaise when fully refunded.",
+      },
+    },
+    {
+      name: "refunds",
+      type: "array",
+      labels: { singular: "Refund", plural: "Refunds" },
+      fields: [
+        { name: "providerRefundId", type: "text", required: true },
+        { name: "amountInPaise", type: "number", required: true, min: 1 },
+        { name: "reason", type: "text" },
+        { name: "refundedBy", type: "text" },
+        { name: "refundedAt", type: "date" },
+      ],
+    },
     {
       name: "rawWebhookEvents",
       type: "array",

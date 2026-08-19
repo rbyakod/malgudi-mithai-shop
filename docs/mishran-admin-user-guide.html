@@ -432,6 +432,7 @@
         <a href="#shared-actions">Shared admin actions</a>
         <span class="nav-group">Operate</span>
         <a href="#orders">Orders</a>
+        <a href="#ops-consoles">Ops consoles</a>
         <a href="#payments">Payments</a>
         <a href="#shipments">Shipments</a>
         <a href="#coupons">Coupons</a>
@@ -560,6 +561,14 @@
             <p>Use Save for normal updates. Use Publish on drafted content. Use Cancel to leave edit screens without saving unwanted changes.</p>
           </div>
           <div class="feature">
+            <h3>Product drafts and autosave</h3>
+            <p>Product collections (Mithai, Snacks, QSR, Merch, Gift Boxes) autosave your work as a draft every few seconds while you edit. Nothing goes live until you press <strong>Publish</strong> — customers and the mobile apps only ever see published products, so you can rework copy or photos safely.</p>
+            <ul>
+              <li>Leaving an edit mid-work is safe: the draft keeps your progress.</li>
+              <li>Publish when the product is ready for the storefront.</li>
+            </ul>
+          </div>
+          <div class="feature">
             <h3>Use slugs carefully</h3>
             <p>Slugs power stable URLs and app references. Use lowercase words with hyphens, for example <code>kaju-katli</code>.</p>
           </div>
@@ -617,6 +626,59 @@
         </div>
       </section>
 
+      <section id="ops-consoles">
+        <h2>Ops Consoles</h2>
+        <p class="section-copy">The staff consoles are purpose-built screens for daily operations, separate from the record-editing admin. Sign in at <code>/admin</code> first — every console asks for staff auth and shows a sign-in hint if the session is missing or expired.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <h3>Orders console</h3>
+            <p>Open <code>/staff/orders-board</code>. Two views: the <strong>board</strong> (orders grouped by fulfillment stage) and <strong>All orders</strong> (one table with filters, date bounds, and phone or order-id search, refreshing every 20 seconds).</p>
+            <ul>
+              <li>Move orders through legal stages only — the <strong>Move to</strong> list shows the allowed next steps.</li>
+              <li><strong>Cash collected</strong> marks a COD delivery paid after the envelope is in hand.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>Packing slip</h3>
+            <p>Click <strong>Slip</strong> on any order row (or <strong>Packing slip</strong> on a board card) to open a print-ready slip: order short id, customer and delivery address, itemized lines with quantities and money in rupees, totals, and the payment method badge.</p>
+            <ul>
+              <li>Use <strong>Print</strong> to send it to the kitchen or courier.</li>
+              <li>Nothing is edited from the slip — it is read-only.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>Export orders to CSV</h3>
+            <p>In All orders, set the filters you want (dates, status, payment, source), then click <strong>Export CSV</strong>. The file follows the current filters exactly and downloads as <code>mishran-orders-&lt;from&gt;-&lt;to&gt;.csv</code>.</p>
+            <ul>
+              <li>Use it for accountant handoffs, reconciliation, and sales reviews.</li>
+              <li>Exports are capped at 5000 rows — narrow the dates for larger ranges.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>Refund a prepaid order</h3>
+            <p>Paid online orders show a <strong>Refund</strong> button. Confirming sends a real refund through the payment gateway — this cannot be undone.</p>
+            <ul>
+              <li>Default refunds the full un-refunded remainder; partial amounts go through the API with an explicit amount.</li>
+              <li>COD orders cannot be refunded here — cash settles offline at the door.</li>
+              <li>Every refund is recorded on the payment record with who, when, why, and the provider refund id.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>Pincode import</h3>
+            <p>Open <code>/staff/pincodes</code> to manage delivery coverage in bulk. Paste CSV text or choose a .csv file, then <strong>Validate only</strong> for a dry run or <strong>Import</strong> to write.</p>
+            <ul>
+              <li>Columns: <code>pincode</code>, <code>city</code>, <code>state</code>, <code>tier</code> (fresh or shelf), <code>slaDays</code>, <code>active</code>. Common aliases like <code>pin</code> or <code>days</code> are accepted.</li>
+              <li>Existing pincodes are updated, new ones created — upsert by pincode.</li>
+              <li>Rows with problems are listed by line number and never written; the limit is 2000 rows per import.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>Payment reconciliation</h3>
+            <p>Open <code>/staff/payment-reconciliation</code> to compare provider payments against local records before closing the books.</p>
+          </div>
+        </div>
+      </section>
+
       <section id="payments">
         <h2>Payments</h2>
         <p class="section-copy">Payments track provider status and reconciliation. Payment amounts are stored in paise, so 10000 means INR 100.</p>
@@ -631,6 +693,14 @@
               <li>Use Payments to investigate failed, captured, refunded, or partially refunded transactions.</li>
               <li>Compare provider order ID and provider payment ID with the payment dashboard.</li>
               <li>Do not edit raw webhook events by hand.</li>
+            </ul>
+          </div>
+          <div class="feature">
+            <h3>Refund records</h3>
+            <p>Ops refunds from the <a href="#ops-consoles">orders console</a> write back here automatically: the accumulated <strong>Refunded</strong> amount plus one audit row per refund — provider refund id, amount, reason, who approved it, and when.</p>
+            <ul>
+              <li>Read refunds for reconciliation; never create them by hand.</li>
+              <li>A payment is fully refunded when Refunded equals the Amount.</li>
             </ul>
           </div>
         </div>
@@ -1040,7 +1110,7 @@
           </div>
           <div class="feature">
             <h3>Home Hero</h3>
-            <p>Controls the home page hero carousel. Add up to 12 product slides and drag to reorder. First row appears first.</p>
+            <p>Controls the home page hero carousel. Add up to 12 product slides and drag to reorder. First row appears first. Every slide row shows a live preview of the picked product — photo, name, and vertical — so you can curate without guessing, and the <strong>Preview</strong> button opens the live storefront home in a new tab.</p>
             <pre>{
   "autoplayMs": 5000,
   "slides": [

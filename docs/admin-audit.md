@@ -239,15 +239,21 @@ deliberate "owner mobile" surface: today's orders + COD tally + review queue.
 ### P1 — Manageability (weeks)
 
 1. **Ops dashboard** — orders-to-fulfill, revenue today/week, COD pending reconciliation,
-   unmoderated reviews, freshness/low-batch alerts.
+   unmoderated reviews, freshness/low-batch alerts. ✅ shipped in the overhaul (§13).
 2. **Order console depth** — formatted ₹, customer name, item summary; status/payment/date
-   filters; packing-slip print; refund/capture hooks.
+   filters; packing-slip print; refund/capture hooks. ✅ shipped (console in B13;
+   packing slip #126 + refunds #130 in §15).
 3. **Product list upgrade** — thumbnail + price + freshness pills, curated columns.
+   ✅ shipped in the overhaul (§13).
 4. **Bulk ops + CSV import/export** — bulk publish/feature; pincode import (the collection
    is currently blank in admin — D3 — and pincodes are exactly CSV-shaped data).
-5. **Drafts & live preview** for catalog edits.
+   ◐ CSV both ways shipped (#128 export, #129 pincode import, §15); bulk
+   publish/feature still open.
+5. **Drafts & live preview** for catalog edits. ◐ drafts + autosave on all five product
+   collections (#131, §15); live preview still open.
 6. **Home Hero curation UX** — drag-reorder, per-slide thumbnails, preview link,
-   ≥1-slide validation.
+   ≥1-slide validation. ◐ thumbnails + preview link shipped (#127, §15);
+   drag-reorder ships free with the array field; ≥1-slide validation still open.
 7. **Customer 360** — orders, addresses, last-seen on one panel.
 8. **Media governance** — grid view, alt-text completion score, usage backlinks.
 9. **Localization completeness** — locale switcher on content edit (hi/kn exist).
@@ -257,7 +263,9 @@ deliberate "owner mobile" surface: today's orders + COD tally + review queue.
 1. Command palette (⌘K) + global search across products/orders/customers.
 2. Scheduled publishing & seasonal windows.
 3. Roles & audit log (staff vs owner; change history).
-4. Autosave + unsaved-changes guard.
+4. Autosave + unsaved-changes guard. ◐ autosave shipped on products (#131, §15 —
+   Payload hides the redundant Save-Draft button); unsaved-changes guard already
+   ships free via the native LeaveWithoutSaving modal on Cancel (§14 D8).
 5. In-admin storefront preview (device-frame toggle).
 
 ### Quick wins (≤1 hour each)
@@ -521,3 +529,24 @@ Fix (two prongs, `payload.config.ts` + one `custom.scss` section):
 - Owner note: any browser still holding a stale `payload-theme=dark`
   cookie is harmless now (config wins server-side), but a hard refresh
   clears the old dark CSS from cache.
+
+## 15. Ops console wave — 2026-08-19 (#126–#131)
+
+Second roadmap wave, executed off §11. All staff-gated routes follow the
+console pattern (`getPayloadAdminUser` → 401 → client surfaces a
+sign-in-at-`/admin` hint). Unit tests per feature; gates green.
+
+| # | Feature (§11 item) | Status | Notes |
+|---|--------------------|--------|-------|
+| 126 | Packing-slip print (P1.2) | **Shipped** | `GET /api/staff/orders/:id/packing-slip` projects order + items (depth 1) into a print-shaped doc; `components/admin/PackingSlip.tsx` renders a print-optimized sheet (short id `#last-6`, line totals, ₹ totals, COD/online badge, delivery address) from the console's Slip button and the board's "Packing slip" action. `window.print()` with a print stylesheet; fetch state keyed by order id (switching orders mid-flight never shows stale data). 8 unit tests. |
+| 127 | Home Hero per-slide thumbnails + preview (P1.6) | **Shipped** | Each slide row renders a live `SlidePreview` (48px product thumb via the D7 `MediaThumb`/mediaResolver batch machinery + product name + vertical label); `HomeHero` global gains `admin.preview` so Payload's stock **Preview** button opens the storefront home for the locale. Reuses `pickImage` (now exported). Remaining from P1.6: ≥1-slide validation (currently an empty slides array renders the fallback hero — acceptable since the global ships populated). |
+| 128 | Orders CSV export (P1.4) | **Shipped** | "Export CSV" on the all-orders console walks every page of the **current filters** through the staff feed and downloads `mishran-orders-<from>-<to>.csv` (RFC 4180 quoting, ₹ money, UTC timestamps). Capped at 5000 rows — larger sets are told to narrow dates (deliberate: no unbounded browser-driven walks). 5 unit tests on the mapper. |
+| 129 | Pincode CSV import (P1.4) | **Shipped** | `/staff/pincodes` console: paste CSV or pick a file → "Validate only" (dry run) or "Import". Header aliases (`pin`/`pin code`, `sla`/`days`, `enabled`), BOM/CRLF tolerance, 6-digit pincode + city/state validation, tier map (fresh/perishable→fresh, else shelf), last-wins dedup, per-line error surfacing. Upserts by pincode via one batched existence query; 2000-row cap. 11 unit tests. The raw collection list stays for spot edits. |
+| 130 | Ops-initiated refunds (P1.2) | **Shipped** | `POST /api/staff/orders/:id/refund` refunds through the `PaymentService` adapter (provider-swap-safe, fake in tests). Full remainder by default; `amountInPaise` for partials. Guards: COD → 409 (cash settles offline), no captured payment → 409, over-remainder → 409. Payments doc accumulates `refundedInPaise` + a `refunds[]` audit row (provider id, amount, reason, who, when); order `paymentStatus` follows. **Provider-first ordering**: if the provider refund lands but local bookkeeping fails, the error names the provider refund id for manual reconcile — the refund is never retried. Fulfillment status untouched (that's the transition route's job). Refund button on prepaid rows with paid/partially_refunded status. 7 unit tests. |
+| 131 | Drafts + autosave on products (P1.5, partial) | **Shipped** | All five product collections (Mithai, Snacks, QSR, Merch, Gift Boxes) carry `versions: { drafts: { autosave: { interval: 1200 } } }`. Edits autosave as drafts; **Publish is explicit**; the stock "Save Draft" button hides as redundant. Storefront/mobile reads are unchanged — `find()` defaults to published, and existing prod docs without `_status` remain visible (`$ne: 'draft'` matches missing field). Seeds verified safe: Payload's create defaults to published when `draft` isn't requested (create.js). Note: *live preview* from P1.5 is not part of this — the admin `preview` seam exists only on Home Hero so far. |
+
+Known gap recorded: `components/admin/OrdersTable.tsx` still trips react-hooks
+v6's `set-state-in-effect` under a direct `eslint` run (mount effect calls
+`load(false)` → synchronous `setLoading`). Pre-existing on HEAD, not part of
+this wave's diffs; the repo gate (`pnpm lint`) doesn't run that rule. Parked
+with #123's eslint debt.
