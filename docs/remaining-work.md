@@ -13,6 +13,10 @@ register.
 
 ## A. Owner actions (portal / accounts — ~1 hour, needs your logins)
 
+> Step-by-step runbook for everything in this section (plus the test pass
+> and content decisions): **`docs/owner-playbook.html`** — portal-by-portal
+> instructions, verification for each, and the hand-off checklist.
+
 | # | Action | Where | Why it gates |
 |---|--------|-------|--------------|
 | 1 | **Deliver the iOS app**: drag `apps/ios/build/Mishran-0.1.0-202608180816.ipa` into Transporter → Deliver. Create the ASC record first if not yet: name `Mishran`, bundle `com.mishran.app`, SKU `mishran`, Full Access | App Store Connect + Transporter | Family can't test iOS until TestFlight processes. Signing, entitlements, Team ID `2X7B7DMV95` all verified done. This is task #41's last step |

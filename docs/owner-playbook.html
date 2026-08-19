@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mishran — Owner Playbook (the last owner-gated items)</title>
+<style>
+  :root {
+    --bg: #faf6f1; --card: #ffffff; --ink: #1a1410; --muted: #6b5e54;
+    --rule: #e5dccf; --primary: #6b1e1e; --gold: #b08838; --gold-bright: #d9a441;
+    --sidebar-bg: #211711; --sidebar-ink: #f3e9da; --sidebar-muted: #b7a690;
+    --ok-bg: #eaf6ec; --ok-rule: #4a8a5c;
+    --warn-bg: #fff5e0; --warn-rule: #e6b94a;
+    --note-bg: #f4ecdf; --note-rule: var(--gold);
+    --serif: "Iowan Old Style", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+    --sidebar-w: 284px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16.5px/1.68 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    position: fixed; inset: 0 auto 0 0; width: var(--sidebar-w);
+    background: var(--sidebar-bg); color: var(--sidebar-ink);
+    padding: 1.6rem 1.1rem 2rem; overflow-y: auto; z-index: 40;
+  }
+  .sidebar-brand { display: block; text-decoration: none; margin-bottom: 1.4rem; }
+  .sidebar-brand .mark {
+    font-family: var(--serif); font-size: 1.55rem; letter-spacing: .02em;
+    color: var(--sidebar-ink); display: block;
+  }
+  .sidebar-brand .sub {
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .22em;
+    color: var(--gold-bright); margin-top: .25rem; display: block;
+  }
+  .sidebar nav { border-top: 1px solid rgba(243,233,218,.14); padding-top: .9rem; }
+  .sidebar nav a {
+    display: flex; gap: .6rem; align-items: baseline;
+    padding: .38rem .6rem; margin: .06rem 0; border-radius: 7px;
+    color: var(--sidebar-muted); text-decoration: none;
+    font-size: .86rem; line-height: 1.35;
+  }
+  .sidebar nav a .n {
+    font-family: var(--serif); font-size: .78rem; color: var(--gold);
+    min-width: 1.3rem; text-align: right; flex: none;
+  }
+  .sidebar nav a:hover { color: var(--sidebar-ink); background: rgba(243,233,218,.07); }
+  .sidebar nav a.active {
+    color: var(--sidebar-bg); background: var(--gold-bright); font-weight: 600;
+  }
+  .sidebar nav a.active .n { color: var(--sidebar-bg); }
+  .sidebar-foot {
+    margin-top: 1.6rem; padding: .9rem .7rem 0; border-top: 1px solid rgba(243,233,218,.14);
+    font-size: .74rem; color: var(--sidebar-muted); line-height: 1.5;
+  }
+
+  /* ---------- Layout ---------- */
+  .content {
+    margin-left: var(--sidebar-w); padding: 2.8rem 3rem 5rem; max-width: 880px;
+  }
+  .doc-header { border-bottom: 1px solid var(--rule); padding-bottom: 1.6rem; margin-bottom: 2rem; }
+  .eyebrow {
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .24em;
+    color: var(--gold); margin: 0 0 .5rem;
+  }
+  h1, h2, h3, h4 { font-family: var(--serif); line-height: 1.22; font-weight: 600; }
+  h1 { font-size: 2.55rem; margin: 0 0 .45rem; letter-spacing: -.01em; }
+  .lede { font-size: 1.14rem; color: var(--muted); margin: 0; max-width: 42rem; }
+  .meta { font-size: .82rem; color: var(--muted); margin-top: 1rem; }
+
+  main h2 {
+    font-size: 1.72rem; margin: 3.2rem 0 .9rem; scroll-margin-top: 1.4rem;
+    border-bottom: 1px solid var(--rule); padding-bottom: .4rem;
+  }
+  main h3 { font-size: 1.18rem; margin: 1.9rem 0 .5rem; color: var(--primary); scroll-margin-top: 1.4rem; }
+  h4 { font-size: 1rem; margin: 1.2rem 0 .3rem; }
+  p { margin: .7rem 0; }
+  ul, ol { padding-left: 1.5rem; }
+  li { margin: .38rem 0; }
+  li::marker { color: var(--gold); }
+  strong { font-weight: 700; }
+  a { color: var(--primary); }
+  a:hover { color: var(--gold); }
+  code {
+    background: #efe6d8; padding: .12em .4em; border-radius: 4px;
+    font-family: var(--mono); font-size: .88em;
+  }
+
+  section { scroll-margin-top: 1.2rem; }
+
+  /* ---------- Tables ---------- */
+  .tablewrap { overflow-x: auto; margin: 1.2rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; background: var(--card); }
+  th, td { border: 1px solid var(--rule); padding: .55rem .75rem; text-align: left; vertical-align: top; }
+  th {
+    background: #f4ede1; font-family: var(--serif); font-size: .85rem;
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  tbody tr:nth-child(even) { background: #fbf8f2; }
+
+  /* ---------- Callouts ---------- */
+  .note-box, .ok-box, .warn-box {
+    padding: .95rem 1.15rem; margin: 1.3rem 0; border-radius: 0 8px 8px 0;
+  }
+  .note-box { background: var(--note-bg); border-left: 4px solid var(--note-rule); }
+  .ok-box { background: var(--ok-bg); border-left: 4px solid var(--ok-rule); }
+  .warn-box { background: var(--warn-bg); border-left: 4px solid var(--warn-rule); }
+  .note-box p, .ok-box p, .warn-box p { margin: .3rem 0; }
+  .note-box .box-title, .ok-box .box-title, .warn-box .box-title {
+    font-family: var(--serif); font-weight: 700; margin: 0 0 .2rem; font-size: .98rem;
+  }
+
+  .pill {
+    display: inline-block; border: 1px solid var(--gold); color: var(--primary);
+    border-radius: 999px; padding: .05rem .6rem; font-size: .78rem; white-space: nowrap;
+  }
+  .pill--you { border-color: var(--primary); background: #f7e8e8; }
+
+  /* ---------- Step lists ---------- */
+  ol.steps { counter-reset: step; list-style: none; padding-left: 0; margin: 1.1rem 0; }
+  ol.steps > li {
+    counter-increment: step; position: relative; padding: .55rem 0 .55rem 2.7rem;
+    border-bottom: 1px dashed var(--rule); margin: 0;
+  }
+  ol.steps > li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: .62rem;
+    width: 1.75rem; height: 1.75rem; border-radius: 50%;
+    background: var(--primary); color: #fff;
+    font: 700 .82rem/1.75rem var(--sans); text-align: center;
+  }
+  ol.steps > li::marker { content: none; }
+  ol.steps ul { margin: .3rem 0 .1rem; }
+
+  .kbd {
+    font-family: var(--mono); font-size: .84em; border: 1px solid var(--rule);
+    border-bottom-width: 2px; border-radius: 5px; padding: .05em .45em; background: #fff;
+  }
+  .cmd {
+    display: block; background: #211711; color: #f3e9da;
+    font-family: var(--mono); font-size: .82rem; line-height: 1.6;
+    padding: .8rem 1rem; border-radius: 8px; margin: .8rem 0;
+    overflow-x: auto; white-space: pre;
+  }
+  .cmd .c { color: #d9a441; }
+
+  .footer {
+    margin-top: 4rem; padding-top: 1.4rem; border-top: 1px solid var(--rule);
+    font-size: .88rem; color: var(--muted);
+  }
+
+  /* ---------- Mobile ---------- */
+  .menu-btn {
+    display: none; position: fixed; top: .8rem; left: .8rem; z-index: 50;
+    background: var(--sidebar-bg); color: var(--sidebar-ink); border: none;
+    border-radius: 8px; padding: .55rem .8rem; font: 600 .85rem var(--sans);
+    cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.25);
+  }
+  @media (max-width: 900px) {
+    .menu-btn { display: block; }
+    .sidebar { transform: translateX(-100%); transition: transform .22s ease; box-shadow: none; }
+    .sidebar.open { transform: translateX(0); box-shadow: 8px 0 30px rgba(0,0,0,.35); }
+    .content { margin-left: 0; padding: 4.2rem 1.2rem 4rem; }
+    h1 { font-size: 2rem; }
+  }
+
+  @media print {
+    .sidebar, .menu-btn { display: none; }
+    .content { margin: 0; padding: 0; max-width: none; }
+    body { font-size: 11pt; }
+    a { color: inherit; text-decoration: none; }
+    ol.steps > li { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" id="menuBtn" aria-label="Toggle section menu">☰ Sections</button>
+
+<aside class="sidebar" id="sidebar" aria-label="Playbook sections">
+  <a class="sidebar-brand" href="#top">
+    <span class="mark">Mishran</span>
+    <span class="sub">Owner Playbook</span>
+  </a>
+  <nav id="toc">
+    <a href="#s0"><span class="n">·</span>Where we stand</a>
+    <a href="#s1"><span class="n">1</span>Deliver the iOS app</a>
+    <a href="#s2"><span class="n">2</span>Razorpay webhook</a>
+    <a href="#s3"><span class="n">3</span>Enable UPI</a>
+    <a href="#s4"><span class="n">4</span>MSG91 keys &amp; SMS</a>
+    <a href="#s5"><span class="n">5</span>Resend email</a>
+    <a href="#s6"><span class="n">6</span>Content decisions</a>
+    <a href="#s7"><span class="n">7</span>Your test pass</a>
+    <a href="#s8"><span class="n">8</span>Hand-off checklist</a>
+  </nav>
+  <div class="sidebar-foot">
+    Everything else is shipped and live. These pages cover the six items only
+    you can do — portals, accounts, and decisions that need your logins.
+  </div>
+</aside>
+
+<div class="content" id="top">
+  <header class="doc-header">
+    <p class="eyebrow">v1 close-out · 2026-08-19</p>
+    <h1>The Owner Playbook</h1>
+    <p class="lede">
+      The product is code-complete and live on all four surfaces — storefront,
+      admin console, iOS, Android. What remains are six items that sit behind
+      <strong>your</strong> logins. Each section below is a self-contained,
+      step-by-step runbook: where to go, what to click, and how to confirm it
+      worked.
+    </p>
+    <p class="meta">
+      Total portal time ≈ 45–60 minutes (plus the test pass, and DLT approval
+      wait if your MSG91 templates aren't registered yet). Secrets never need
+      to be typed into this document — each section says exactly what to hand
+      back and what Claude does with it.
+    </p>
+  </header>
+
+  <main>
+
+  <section id="s0">
+    <h2>Where we stand</h2>
+    <p>
+      123 of 123 tracked build tasks are closed. The last agent queue
+      (lint debt, the merch enquiry form, Android product-page parity) shipped
+      today and is deployed and verified on prod. Nothing on this page is
+      blocked on code — it's blocked on accounts, portals, and decisions.
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Item</th><th>Portal / place</th><th>Unblocks</th><th>Time</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Deliver the iOS app</td><td>App Store Connect + Transporter</td><td>Family testing via TestFlight (task #41)</td><td>~15 min</td></tr>
+          <tr><td>2</td><td>Register the payment webhook</td><td>Razorpay Dashboard</td><td>Belt-and-suspenders payment confirmation</td><td>~5 min</td></tr>
+          <tr><td>3</td><td>Enable UPI</td><td>Razorpay Dashboard</td><td>UPI checkout on web + both apps</td><td>~5 min</td></tr>
+          <tr><td>4</td><td>MSG91 keys + SMS templates</td><td>MSG91</td><td>Real OTP SMS, order-status texts</td><td>~20 min + DLT wait</td></tr>
+          <tr><td>5</td><td>Resend key + domain</td><td>Resend</td><td>Lead &amp; abandoned-cart email</td><td>~10 min</td></tr>
+          <tr><td>6</td><td>Content decisions</td><td>Admin console (+ two numbers for us)</td><td>Real WhatsApp line, FSSAI chip, provenance data</td><td>~10 min</td></tr>
+          <tr><td>7</td><td>Your test pass</td><td>Web + Pixel + iPhone</td><td>Sign-off (task #43)</td><td>~30 min</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note-box">
+      <p class="box-title">Suggested order</p>
+      <p>1 → 2 → 3 in one sitting (Apple first so TestFlight processing runs
+      while you do Razorpay), then 4 and 5, then 6, and the test pass (7)
+      last — by then UPI and SMS may be live and you'll test the real thing.</p>
+    </div>
+  </section>
+
+  <section id="s1">
+    <h2>1 · Deliver the iOS app <span class="pill pill--you">needs your Apple ID</span></h2>
+    <p>
+      The signed build is ready on this Mac:
+      <code>apps/ios/build/Mishran-0.1.0-202608180816.ipa</code> (6.1 MB,
+      App Store Connect export). Signing, entitlements, and Team ID
+      <code>2X7B7DMV95</code> are all verified. Nobody can test iOS until this
+      build is delivered and TestFlight processes it.
+    </p>
+
+    <h3>Step A — create the App Store Connect record (skip if it exists)</h3>
+    <ol class="steps">
+      <li>Open <a href="https://appstoreconnect.apple.com">appstoreconnect.apple.com</a>
+        and sign in with the Apple ID on the development team.</li>
+      <li>Go to <strong>My Apps → ＋ New App</strong>.</li>
+      <li>Fill in exactly:
+        <ul>
+          <li>Platforms: <strong>iOS</strong></li>
+          <li>Name: <strong>Mishran</strong></li>
+          <li>Primary language: <strong>English</strong></li>
+          <li>Bundle ID: <strong>com.mishran.app</strong> (appears because the
+            provisioning profile is on this team — pick it, don't register a new one)</li>
+          <li>SKU: <strong>mishran</strong></li>
+          <li>User Access: <strong>Full Access</strong></li>
+        </ul>
+      </li>
+      <li>Click <strong>Create</strong>.</li>
+    </ol>
+
+    <h3>Step B — deliver the build with Transporter</h3>
+    <ol class="steps">
+      <li>Open the <strong>Transporter</strong> app on this Mac
+        (Installed? Get it from the Mac App Store — search "Transporter" by
+        Apple, or run
+        <code>open -a Transporter</code> in a terminal).</li>
+      <li>Sign in with the <strong>same Apple ID</strong> (must hold an
+        App Store Connect role — Account Holder or Admin).</li>
+      <li>Drag <code>apps/ios/build/Mishran-0.1.0-202608180816.ipa</code>
+        from Finder into the Transporter window. It should show
+        "1 app" with a green ready indicator — a red error here means the
+        Apple ID can't deliver to the team; tell Claude what it says.</li>
+      <li>Click <strong>Deliver</strong> and wait for
+        "Delivered successfully" (upload is small; a minute or two).</li>
+    </ol>
+
+    <h3>Step C — TestFlight</h3>
+    <ol class="steps">
+      <li>Back in App Store Connect → <strong>Mishran → TestFlight</strong>.
+        The build appears within ~5–30 minutes as "Processing", then
+        "Ready to Test".</li>
+      <li>The first build asks the encryption question. Answer:
+        the app uses <strong>standard/exempt encryption only</strong>
+        (HTTPS) — select the standard-encryption exemption and save. If the
+        export-compliance form isn't offered in the UI, nothing to do; it
+        only matters at App Store submission.</li>
+      <li>Add testers: <strong>TestFlight → Internal Testing</strong>
+        (up to 100 team members, instant) or create an <strong>External
+        Group</strong> and add family emails (needs a one-page beta review on
+        first use — usually cleared in a day). The <strong>public link</strong>
+        in an external group is the easiest family distribution: share the
+        link, they install TestFlight and the app.</li>
+    </ol>
+
+    <div class="ok-box">
+      <p class="box-title">Done when</p>
+      <p>The build shows <em>Ready to Test</em> and a tester's iPhone shows
+      Mishran in TestFlight. Family installs can proceed — that closes the
+      last step of task #41.</p>
+    </div>
+  </section>
+
+  <section id="s2">
+    <h2>2 · Register the Razorpay webhook <span class="pill pill--you">needs your Razorpay login</span></h2>
+    <p>
+      Payments already work — client-side verification plus the reconcile cron
+      covered a real ₹2,258 test payment end-to-end. The webhook is
+      belt-and-suspenders: server-to-server confirmation so payments are
+      marked even if a buyer closes the browser mid-redirect.
+    </p>
+    <ol class="steps">
+      <li>Get the secret that's already configured on the server (its local
+        copy was purged for hygiene — read it straight from the VPS, don't
+        write it down anywhere else). On this Mac's terminal:
+        <span class="cmd">ssh hermes-vps 'sudo -iu mithai grep RAZORPAY_WEBHOOK_SECRET /opt/mithai-shop/.env'</span>
+        Copy just the value after <code>=</code>.</li>
+      <li>Open the <a href="https://dashboard.razorpay.com">Razorpay
+        Dashboard</a> → <strong>Settings → Webhooks → Add New Webhook</strong>.</li>
+      <li>Fill in:
+        <ul>
+          <li>Name: <code>mishran-prod</code> (anything you like)</li>
+          <li>Active URL: <code>https://mishran.pranavb.com/api/webhooks/razorpay</code></li>
+          <li>Secret: paste the value from step 1</li>
+          <li>Events: tick <strong>payment.captured</strong> and
+            <strong>payment.failed</strong> (add <strong>order.paid</strong>
+            too if the dashboard offers it)</li>
+        </ul>
+      </li>
+      <li>Click <strong>Create Webhook</strong>. If it offers "Send test
+        webhook", fire it — the endpoint logs and ignores unsigned test
+        pings safely.</li>
+    </ol>
+    <div class="warn-box">
+      <p class="box-title">Note on Razorpay's API</p>
+      <p>We tried to register this programmatically for you; Razorpay's
+      webhook-creation API has been erroring dashboard-side, which is why
+      this is a manual step. If the dashboard also refuses, send Claude the
+      exact error text.</p>
+    </div>
+    <div class="ok-box">
+      <p class="box-title">Done when</p>
+      <p>The webhook is listed as Active. Tell Claude — verification is a
+      one-liner on our side: place any TEST payment and check the payments
+      record's <code>rawWebhookEvents</code> array has started filling.</p>
+    </div>
+  </section>
+
+  <section id="s3">
+    <h2>3 · Enable UPI on the Razorpay account <span class="pill pill--you">needs your Razorpay login</span></h2>
+    <p>
+      The UPI checkout rail is built and shipped on web, iOS, and Android
+      ("UPI — GPay / PhonePe / BHIM"). It can't transact until UPI is enabled
+      as a payment method on the account itself. Until then the rail is
+      honest UI on top of a closed door.
+    </p>
+    <ol class="steps">
+      <li>In the Razorpay Dashboard, go to <strong>Settings →
+        Payment Methods</strong>.</li>
+      <li>Under <strong>UPI</strong>, make sure it is enabled for the account
+        (toggle on; some accounts see per-method sections — UPI should not be
+        greyed out or restricted).</li>
+      <li>If UPI is missing or locked, it's an account-level restriction —
+        raise it from <strong>Settings → Support / Contact Razorpay</strong>
+        ("enable UPI collections"). Test accounts sometimes need this
+        flipped by Razorpay support.</li>
+    </ol>
+    <div class="ok-box">
+      <p class="box-title">Done when</p>
+      <p>A checkout in TEST mode offers UPI and completes with a test VPA
+      (Razorpay's test docs list the success VPA like
+      <code>success@razorpay</code>). Then the rail is live on all three
+      surfaces with no further code changes.</p>
+    </div>
+  </section>
+
+  <section id="s4">
+    <h2>4 · MSG91 real keys + SMS templates <span class="pill pill--you">needs your MSG91 login</span></h2>
+    <p>
+      Today OTPs work only for a small bypass list of phones, and the
+      order-confirmed SMS silently fails because no template is registered.
+      The sending code is done and adapter-tested; it needs real credentials
+      and template IDs.
+    </p>
+
+    <h3>Step A — check DLT status (the long pole)</h3>
+    <p>
+      Indian transactional SMS requires DLT-registered templates. If your
+      MSG91 account already has DLT done, registering these takes minutes;
+      if not, DLT approval itself can take a few days — start here first.
+    </p>
+
+    <h3>Step B — register these five templates</h3>
+    <p>
+      In MSG91, create transactional templates matching these texts (wording
+      can be adjusted to taste — what matters is that you get a
+      <strong>template ID</strong> for each):
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Purpose</th><th>Suggested text</th><th>Env var the ID lands in</th></tr></thead>
+        <tbody>
+          <tr><td>Login OTP</td><td>Your Mishran login code is ##code##. It expires in 10 minutes.</td><td><code>MSG91_TEMPLATE_OTP</code></td></tr>
+          <tr><td>Order confirmed</td><td>Order ##order## confirmed at Mishran. We'll message you when it ships.</td><td><code>MSG91_TEMPLATE_SMS_CONFIRMED</code></td></tr>
+          <tr><td>Dispatched</td><td>Order ##order## from Mishran has been dispatched.</td><td><code>MSG91_TEMPLATE_SMS_DISPATCHED</code></td></tr>
+          <tr><td>Out for delivery</td><td>Order ##order## from Mishran is out for delivery today.</td><td><code>MSG91_TEMPLATE_SMS_OUT_FOR_DELIVERY</code></td></tr>
+          <tr><td>Delivered</td><td>Order ##order## from Mishran was delivered. Thank you!</td><td><code>MSG91_TEMPLATE_SMS_DELIVERED</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note-box">
+      <p class="box-title">Small correction</p>
+      <p>The repo's <code>.env.example</code> mentions
+      <code>MSG91_TEMPLATE_ORDER_STATUS</code> — that name is stale. The
+      live names are the four <code>MSG91_TEMPLATE_SMS_*</code> vars above
+      (wired in <code>lib/config.ts</code>); the example file will be fixed
+      when keys land.</p>
+    </div>
+
+    <h3>Step C — hand over three things</h3>
+    <ol class="steps">
+      <li>The <strong>auth key</strong> (Settings → API keys in MSG91) →
+        becomes <code>MSG91_AUTH_KEY</code>.</li>
+      <li>The <strong>sender ID</strong> (6-character DLT header) →
+        <code>MSG91_SENDER_ID</code>.</li>
+      <li>The five <strong>template IDs</strong> from step B.</li>
+    </ol>
+    <p>
+      Claude then sets them on the VPS <code>.env</code>, restarts, and —
+      per the deployment doc — strips the <code>OTP_BYPASS_PHONE</code> /
+      <code>OTP_BYPASS_CODE</code> test seams, so every login is a real SMS
+      from that point. Verification: an OTP to any real phone arrives by
+      SMS, and a fresh order triggers the confirmed text.
+    </p>
+  </section>
+
+  <section id="s5">
+    <h2>5 · Resend: API key + domain <span class="pill pill--you">needs a Resend account</span></h2>
+    <p>
+      Lead notifications and abandoned-cart emails currently no-op silently.
+      The code sends from <code>hello@mishran.shop</code> and
+      <code>leads@mishran.shop</code> through Resend — the domain just needs
+      verifying and a key set.
+    </p>
+    <ol class="steps">
+      <li>Create/sign in at <a href="https://resend.com">resend.com</a>.</li>
+      <li><strong>Domains → Add Domain</strong> → enter
+        <code>mishran.shop</code>.</li>
+      <li>Resend shows DNS records (a TXT for ownership, plus SPF/DKIM
+        entries). Add them at your DNS provider (wherever mishran.shop's
+        nameservers live — same place the site's A record was set). If you
+        don't manage DNS yourself, send Claude the record list and we'll
+        tell you exactly what to paste where, or apply them if the DNS is on
+        the VPS.</li>
+      <li>Back in Resend, click <strong>Verify</strong> — usually green
+        within minutes once DNS propagates.</li>
+      <li><strong>API Keys → Create API Key</strong>, full access, name it
+        <code>mishran-prod</code>. Hand the key to Claude →
+        <code>RESEND_API_KEY</code> on the VPS.</li>
+    </ol>
+    <div class="ok-box">
+      <p class="box-title">Done when</p>
+      <p>Domain shows <em>Verified</em> in Resend, and the next merch/wedding
+      enquiry on the site delivers a notification to the ops inbox. Claude
+      verifies with a live enquiry + a test abandoned-cart run.</p>
+    </div>
+  </section>
+
+  <section id="s6">
+    <h2>6 · Content decisions (no portals — your call)</h2>
+
+    <h3>6a · Real WhatsApp / support number</h3>
+    <p>
+      The site currently falls back to <code>+91-80889-83014</code> from
+      code. To point it at the real support line, set it once in the admin:
+    </p>
+    <ol class="steps">
+      <li>Sign in at <code>https://mishran.pranavb.com/admin</code>.</li>
+      <li>Open the <strong>Analytics Settings</strong> global (sidebar →
+        Settings group).</li>
+      <li>Set <strong>WhatsApp number</strong> to the real support number,
+        with country code, e.g. <code>+91 98xxx xxxxx</code>. Save.</li>
+    </ol>
+    <p>
+      The footer, brand bar, and product "Ask on WhatsApp" links all read
+      this one field. The mobile apps show the number from the brand copy —
+      if you want the apps to display a different formatting, mention it and
+      we'll align them.
+    </p>
+
+    <h3>6b · FSSAI licence number</h3>
+    <p>
+      The web footer shows an honest <em>"FSSAI — pending"</em> chip. Send us
+      the licence number and it becomes a proper chip
+      (<code>FSSAI Lic. No. 1xxxxxxxxxxx</code>) — a two-line change on our
+      side, shipped with the next deploy.
+    </p>
+
+    <h3>6c · Karigar + lead-time data (provenance)</h3>
+    <p>
+      Product pages on all three platforms have a provenance block —
+      <em>who made it, freshness, shelf life</em> — that stays hidden until
+      products carry the data. Filling it is pure admin work:
+    </p>
+    <ol class="steps">
+      <li>In admin, open <strong>Mithai Products</strong> (catalogue group).</li>
+      <li>First add your karigars once: <strong>Karigars</strong> collection →
+        add name (+ photo/blurb if you like). Even one entry — "Mishran
+        kitchen", named lead confectioner — is enough to start.</li>
+      <li>Open a product → the <strong>Karigar</strong> relationship field →
+        pick one; set <strong>Lead time</strong> (e.g. "Made fresh daily" or
+        "2 days notice"). Publish.</li>
+      <li>Repeat for flagship products. The provenance rows appear on the
+        web PDP immediately (≤60 s cache) and in both apps on next launch.
+        Products left blank simply keep hiding the block — no rush to do
+        all 91.</li>
+    </ol>
+    <div class="note-box">
+      <p class="box-title">Why this matters</p>
+      <p>The trust strip and provenance rows shipped today on Android (and
+      already on iOS/web) — this data is what makes them light up.</p>
+    </div>
+  </section>
+
+  <section id="s7">
+    <h2>7 · Your test pass (task #43) <span class="pill">after items 1–6</span></h2>
+    <p>
+      Real orders have already been placed and paid on the web, so spend your
+      time on the two apps plus a skim of the web. The full manual is
+      <code>docs/user-guide.html</code> — the short list:
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Where</th><th>How to get it</th><th>Spend time on</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Android</strong></td>
+            <td>Already on the Pixel — or install fresh:
+              <code>https://mishran.pranavb.com/download/mishran-latest.apk</code>
+              (this morning's build)</td>
+            <td>Sign-in, browse → product page (<strong>new today:</strong>
+              trust strip, provenance, "More from the collection" rail,
+              sticky buy bar), cart + checkout, addresses, orders, reorder,
+              reviews</td>
+          </tr>
+          <tr>
+            <td><strong>iOS</strong></td>
+            <td>TestFlight, once item 1 processes</td>
+            <td>Same loop as Android — the two apps should feel identical</td>
+          </tr>
+          <tr>
+            <td><strong>Web</strong></td>
+            <td><code>https://mishran.pranavb.com</code> — try Hindi and
+              Kannada via the language switcher too</td>
+            <td>Checkout end-to-end (COD + Razorpay; UPI once item 3 is
+              done), merch <strong>Enquire</strong> form (new today), gift
+              builder, account pages, order tracking</td>
+          </tr>
+          <tr>
+            <td><strong>Admin</strong></td>
+            <td><code>/admin</code> with your account</td>
+            <td>Orders console (status board, packing slip, CSV export),
+              pincode import, refund button, product drafts/autosave</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note-box">
+      <p class="box-title">Test conveniences (remove-at-launch seams)</p>
+      <p>Payments run in Razorpay <strong>TEST</strong> mode — no real money
+      moves. Your own number, <code>+91 80889 83014</code>, is on the OTP
+      bypass list — sign in anywhere with fixed OTP <code>424242</code>,
+      no SMS needed. These seams are stripped when real MSG91 keys land.</p>
+    </div>
+    <p>Log anything odd — a note per issue is plenty; we triage from there.
+    Sign-off here closes task #43 and with it the v1 close-out.</p>
+  </section>
+
+  <section id="s8">
+    <h2>8 · Hand-off checklist</h2>
+    <p>What to paste back to Claude after each section, and what happens next:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>You say…</th><th>Claude does…</th></tr></thead>
+        <tbody>
+          <tr><td>"Webhook registered" (item 2)</td><td>Places a TEST payment and confirms <code>rawWebhookEvents</code> fills; memory + audit updated</td></tr>
+          <tr><td>"UPI enabled" (item 3)</td><td>Runs a UPI TEST checkout on web + checks the app rails; user-guide wording checked</td></tr>
+          <tr><td>MSG91 auth key, sender ID, 5 template IDs (item 4)</td><td>Sets the six <code>MSG91_*</code> vars on the VPS, restarts, removes <code>OTP_BYPASS_*</code> seams, verifies a real OTP + order SMS, fixes the stale <code>.env.example</code> name</td></tr>
+          <tr><td>Resend API key + "domain verified" (item 5)</td><td>Sets <code>RESEND_API_KEY</code>, restarts, fires a live enquiry to prove delivery</td></tr>
+          <tr><td>FSSAI number (item 6b)</td><td>Swaps the footer chip, deploys</td></tr>
+          <tr><td>"TestFlight delivered" (item 1), WhatsApp set in admin (6a), provenance data filled (6c)</td><td>Nothing — records the milestone; smoke-checks the storefront effect</td></tr>
+          <tr><td>Issue list from the test pass (item 7)</td><td>Triage: fixes or files each, then v1 close-out is signed</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="warn-box">
+      <p class="box-title">Secret hygiene</p>
+      <p>Paste keys in chat when you're ready — never into documents, the
+      repo, or this file. Everything lands in the VPS <code>.env</code>
+      (root-only readable) and is never echoed back in full.</p>
+    </div>
+
+    <p class="footer">
+      Mishran · Owner Playbook · generated 2026-08-19 · canon <code>main</code> @
+      <code>c94c574</code> · companion to <code>docs/user-guide.html</code>
+      (the full feature manual) and <code>docs/remaining-work.md</code> (the
+      engineering close-out).
+    </p>
+  </section>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  var menuBtn = document.getElementById('menuBtn');
+  var sidebar = document.getElementById('sidebar');
+  menuBtn.addEventListener('click', function () {
+    sidebar.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', sidebar.classList.contains('open'));
+  });
+  sidebar.addEventListener('click', function (e) {
+    if (e.target.closest('a')) sidebar.classList.remove('open');
+  });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('#toc a'));
+  var byId = {};
+  links.forEach(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    byId[id] = a;
+  });
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+
+  function setActive(id) {
+    links.forEach(function (a) { a.classList.remove('active'); });
+    if (byId[id]) byId[id].classList.add('active');
+  }
+
+  if ('IntersectionObserver' in window) {
+    var visible = {};
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        visible[entry.target.id] = entry.isIntersecting ? entry.intersectionRatio : 0;
+      });
+      var best = null, bestRatio = 0;
+      sections.forEach(function (s) {
+        var r = visible[s.id] || 0;
+        if (r > bestRatio) { bestRatio = r; best = s.id; }
+      });
+      if (!best) {
+        var scrollY = window.scrollY + 140;
+        sections.forEach(function (s) {
+          if (s.offsetTop <= scrollY) best = s.id;
+        });
+      }
+      if (best) setActive(best);
+    }, { rootMargin: '-80px 0px -35% 0px', threshold: [0, .1, .25, .5] });
+    sections.forEach(function (s) { observer.observe(s); });
+  } else {
+    setActive('s0');
+  }
+})();
+</script>
+
+</body>
+</html>
