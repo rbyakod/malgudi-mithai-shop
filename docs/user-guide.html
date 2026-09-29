@@ -654,6 +654,26 @@
     <code>/terms</code>, <code>/accessibility</code>. The footer links all of these.</p>
   </section>
 
+  <section id="s14b">
+    <h3>Privacy choices (web)</h3>
+    <p>The first time someone opens the site, a <strong>Your privacy choices</strong> card appears at
+    the bottom of the screen (bottom-left on a computer, full width on a phone) in English, Hindi or
+    Kannada, matching the page language. It offers three equal buttons: <strong>Accept all</strong>,
+    <strong>Essential only</strong> and <strong>Choose</strong>.</p>
+    <ul>
+      <li><strong>Essential</strong> (always on): cart, sign-in, language and theme.</li>
+      <li><strong>Analytics</strong> (off until accepted): Google Analytics and Meta Pixel. Nothing from
+      Google or Meta is requested before the visitor accepts this.</li>
+      <li><strong>AI assistant</strong> (off until accepted): reserved for the chat assistant. It stores
+      a private ID and the conversation for a limited time, and only starts after this is accepted.</li>
+    </ul>
+    <p><strong>Choose</strong> shows the three categories with the optional two unticked. The choice is
+    saved in one cookie (<code>mishran_consent</code>, one year) and the card does not come back. To
+    change or withdraw a choice, tap <strong>Privacy choices</strong> in the footer. Withdrawing
+    analytics switches tracking off straight away for that visit and fully on the next page load. The
+    apps do not show this banner yet.</p>
+  </section>
+
   <section id="s15">
     <h2>15. Staff &amp; ops tools (web)</h2>
     <p>Staff tools live behind the admin login at <code>/admin</code> — the pages below
@@ -705,6 +725,8 @@
     <div class="warn-box">
       <p class="box-title">So nobody hunts for what isn't there</p>
       <ul>
+        <li><strong>Analytics numbers dropped after the consent banner</strong> — GA4 and Meta Pixel now only count
+        visitors who accepted analytics, so compare new figures with older ones carefully.</li>
         <li><strong>No guest checkout on web</strong> — ordering there requires an account.
         Both apps let you browse and fill a cart without signing in; ordering asks.</li>
         <li><strong>Web Build-a-gift is a quote form</strong>, not an interactive box builder

@@ -9,9 +9,10 @@
 // `window.fbq` (Meta Pixel custom event). On the server it is a no-op so
 // server-side call sites can call `track()` unconditionally without branching.
 //
-// TODO: consent gate. Currently fires unconditionally on first party event.
-// Wire a CMP/consent check before pushing if/when GDPR or regional consent
-// requirements mandate it.
+// Consent: pushing to window.dataLayer is local (no network). Google Analytics and Meta Pixel are
+// only loaded after the visitor accepts the analytics category (see lib/consent.ts and
+// components/Analytics/GatedAnalytics.tsx), and events pushed before that are discarded when the
+// scripts load. Other first-party scripts may observe window.dataLayer.
 
 // Canonical event names used across the Mishran storefront. Keep this list in
 // sync with any consumer (search, gift builder, lead form, locale switcher,

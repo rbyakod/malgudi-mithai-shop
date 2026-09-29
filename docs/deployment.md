@@ -120,8 +120,11 @@ request time and inlines the GA4 + Meta Pixel bootstrap scripts.
 - Defensive redundancy if you don't fully trust the DB-backed global.
 
 The `track()` helper itself only pushes to `window.dataLayer` / `fbq` — it does
-not load the GA4/Pixel scripts. Script tags live in the layout and read from
-the same Payload global + env-var fallback chain. (If the implementation
+not load the GA4/Pixel scripts. `AnalyticsScripts` reads the same Payload global +
+env-var fallback chain, but the scripts are only loaded by
+`components/Analytics/GatedAnalytics.tsx` after the visitor accepts the
+**analytics** category in the sitewide consent banner (`lib/consent.ts`, cookie
+`mishran_consent`). Before that, no request goes to Google or Meta. (If the implementation
 diverges from this paragraph, update it here — keep this as the single source
 of truth.)
 

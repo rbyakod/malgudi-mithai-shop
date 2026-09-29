@@ -838,5 +838,22 @@
     "related": {
       "title": "Featured in this story"
     }
+  },
+  "Consent": {
+    "title": "Your privacy choices",
+    "description": "We use essential storage to run the shop: your cart, sign-in, language and theme. With your permission we also use analytics to improve the site, and let you chat with Mishran's AI assistant, which keeps a private ID and your conversation. You can change your choice any time from the footer.",
+    "privacyLink": "Read our privacy policy",
+    "acceptAll": "Accept all",
+    "essentialOnly": "Essential only",
+    "choose": "Choose",
+    "save": "Save choices",
+    "categoriesLabel": "Choose which optional features to allow",
+    "essentialTitle": "Essential",
+    "essentialBody": "Cart, sign-in, language and theme. Always on.",
+    "analyticsTitle": "Analytics",
+    "analyticsBody": "Google Analytics and Meta Pixel, to see how visitors use the site and improve it.",
+    "assistantTitle": "AI assistant",
+    "assistantBody": "Lets you chat with Mishran's AI assistant. Stores a private ID and your chat for a limited time.",
+    "manage": "Privacy choices"
   }
 }

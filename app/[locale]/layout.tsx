@@ -17,6 +17,7 @@ import {
 } from "@/lib/storefront-layout-server";
 import {InlineScript} from "@/components/InlineScript";
 import {HtmlLangSync} from "@/components/layout/HtmlLangSync";
+import {ConsentBanner} from "@/components/consent/ConsentBanner";
 
 // Static rendering: enumerate the locales so every [locale] route below can
 // be prerendered. Without this, dynamic child segments (e.g. mithai/[slug])
@@ -82,6 +83,9 @@ export default async function LocaleLayout({children, params}: Props) {
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
+      {/* Consent banner — first in the DOM so keyboard users reach it right after "Skip to
+          content"; it is position:fixed, so it does not affect layout. See lib/consent.ts. */}
+      <ConsentBanner />
       {/* <html lang> — the root layout renders <html> with a static "en"
           because it cannot see the [locale] param (and reading headers there
           would force dynamic rendering for every page). Set the real locale

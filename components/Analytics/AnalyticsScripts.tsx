@@ -15,13 +15,12 @@
 // - If neither the global nor the env vars yield an ID, the whole component
 //   renders nothing — the layout must never 500 because of analytics.
 //
-// Loading strategy: `afterInteractive` (the next/script default) — scripts
-// load early but after page hydration so they don't block LCP.
+// Loading strategy: `afterInteractive` once consent exists, so scripts never block LCP.
 //
-// TODO: consent gate. Currently fires PageView on load. Wire a CMP/consent
-// check before pushing if/when GDPR or regional consent requires it.
+// Consent: nothing is loaded until the visitor accepts the analytics category in the sitewide
+// consent banner. GatedAnalytics (client) does the gating; see lib/consent.ts.
 
-import Script from "next/script";
+import {GatedAnalytics} from "@/components/Analytics/GatedAnalytics";
 import {getPayload} from "@/lib/payload-client";
 
 type AnalyticsGlobal = {
@@ -85,39 +84,6 @@ export async function AnalyticsScripts() {
 
   if (!hasGa4 && !hasPixel) return null;
 
-  return (
-    <>
-      {hasGa4 && (
-        <>
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}
-            strategy="afterInteractive"
-          />
-          <Script id="ga4-init" strategy="afterInteractive">
-            {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${ga4Id}');`}
-          </Script>
-        </>
-      )}
-
-      {hasPixel && (
-        <>
-          <Script id="meta-pixel-init" strategy="afterInteractive">
-            {`!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '${pixelId}');
-fbq('track', 'PageView');`}
-          </Script>
-        </>
-      )}
-    </>
-  );
+  // Scripts load only after the visitor accepts the analytics category (GatedAnalytics).
+  return <GatedAnalytics ga4Id={hasGa4 ? ga4Id : ""} pixelId={hasPixel ? pixelId : ""} />;
 }

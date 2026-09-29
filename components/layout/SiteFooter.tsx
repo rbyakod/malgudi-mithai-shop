@@ -10,6 +10,7 @@
 // next-intl's getTranslations once the footer namespace is localised.
 
 import {Link} from "@/i18n/navigation";
+import {ConsentPreferencesLink} from "@/components/consent/ConsentPreferencesLink";
 import {getPayload} from "@/lib/payload-client";
 import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
 import {FALLBACK_WHATSAPP, toWaDigits} from "@/lib/whatsapp";
@@ -159,6 +160,7 @@ export async function SiteFooter({layoutMode = "fixed"}: Props) {
             <Link href="/privacy" className="hover:text-gold">Privacy</Link>
             <Link href="/terms" className="hover:text-gold">Terms</Link>
             <Link href="/accessibility" className="hover:text-gold">Accessibility</Link>
+            <ConsentPreferencesLink className="hover:text-gold" />
             <span className="text-text-light-muted/70">Instagram · X · YouTube</span>
           </div>
         </div>

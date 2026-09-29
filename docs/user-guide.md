@@ -446,6 +446,25 @@ hours 9:00–21:00 IST, kitchens in Bengaluru), `/about`, `/privacy`,
 
 ---
 
+### Privacy choices (web)
+
+The first time someone opens the site, a **Your privacy choices** card appears at the bottom
+of the screen (bottom-left on a computer, full width on a phone) in English, Hindi or Kannada,
+matching the page language. It offers three equal buttons: **Accept all**, **Essential only**
+and **Choose**.
+
+- **Essential** (always on): cart, sign-in, language and theme.
+- **Analytics** (off until accepted): Google Analytics and Meta Pixel. Nothing from Google or
+  Meta is requested before the visitor accepts this.
+- **AI assistant** (off until accepted): reserved for the chat assistant. It stores a private
+  ID and the conversation for a limited time, and only starts after this is accepted.
+
+**Choose** shows the three categories with the optional two unticked. The choice is saved in one
+cookie (`mishran_consent`, one year) and the card does not come back. To change or withdraw a
+choice, tap **Privacy choices** in the footer. Withdrawing analytics switches tracking off
+straight away for that visit and fully on the next page load. The apps do not show this
+banner yet.
+
 ## 15. Staff & ops tools (web)
 
 Staff tools live behind the admin login at `/admin` — the pages below
@@ -494,6 +513,8 @@ ask you to sign in there first, then reload.
 
 So nobody hunts for what isn't there:
 
+- **Analytics numbers dropped after the consent banner** — GA4 and Meta Pixel now only count visitors
+  who accepted analytics, so compare new figures with older ones carefully.
 - **No guest checkout on web** — ordering there requires an account. Both
   apps let you browse and fill a cart without signing in; ordering asks.
 - **Web Build-a-gift is a quote form**, not an interactive box builder
