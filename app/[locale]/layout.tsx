@@ -17,6 +17,7 @@ import {
 } from "@/lib/storefront-layout-server";
 import {InlineScript} from "@/components/InlineScript";
 import {HtmlLangSync} from "@/components/layout/HtmlLangSync";
+import Script from "next/script";
 import {ConsentBanner} from "@/components/consent/ConsentBanner";
 
 // Static rendering: enumerate the locales so every [locale] route below can
@@ -86,6 +87,14 @@ export default async function LocaleLayout({children, params}: Props) {
       {/* Consent banner — first in the DOM so keyboard users reach it right after "Skip to
           content"; it is position:fixed, so it does not affect layout. See lib/consent.ts. */}
       <ConsentBanner />
+      {/* AI team (separate service, routed by nginx under /agent-team and /api/agents): stylesheets,
+          then the chat widget and the site-wide placements. Loaded lazily so they never delay the page;
+          the widget stays hidden until the visitor allows the AI assistant in the consent banner. */}
+      <link rel="stylesheet" href="/agent-team/css/agent-chat.css" precedence="default" />
+      <link rel="stylesheet" href="/agent-team/css/agent-layer.css" precedence="default" />
+      <link rel="stylesheet" href="/agent-team/theme.css" precedence="default" />
+      <Script src="/agent-team/js/agent-chat.js" strategy="lazyOnload" />
+      <Script src="/agent-team/js/agent-layer.js" strategy="lazyOnload" />
       {/* <html lang> — the root layout renders <html> with a static "en"
           because it cannot see the [locale] param (and reading headers there
           would force dynamic rendering for every page). Set the real locale
