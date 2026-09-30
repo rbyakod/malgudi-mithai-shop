@@ -7,6 +7,7 @@
 // help page), so the website, the apps and the order snapshot always agree. The read is cached for a short time:
 // a change in the admin reaches customers within about CACHE_MS.
 import { config as appConfig, type Config } from "../config";
+import { MAX_FEE_RUPEES, MAX_THRESHOLD_RUPEES, rupeesToPaiseWithin } from "./deliveryLimits";
 
 export interface DeliveryRules {
   fees: { freshPaise: number; shelfStablePaise: number };
@@ -14,9 +15,6 @@ export interface DeliveryRules {
 }
 
 export const CACHE_MS = 30_000;
-
-const rupeesToPaise = (v: unknown): number | null =>
-  typeof v === "number" && Number.isFinite(v) && v >= 0 ? Math.round(v * 100) : null;
 
 type EnvRules = Pick<
   Config,
@@ -26,17 +24,17 @@ type EnvRules = Pick<
   | "freeDeliveryThresholdShelfStablePaise"
 >;
 
-/** Pure: admin value if it is a valid amount, otherwise the server value, field by field. */
+/** Pure: admin value if it is a whole-rupee amount within the allowed range, otherwise the server value, field by field. */
 export function resolveDeliveryRules(global: unknown, env: EnvRules = appConfig): DeliveryRules {
   const g = (global ?? {}) as Record<string, unknown>;
   return {
     fees: {
-      freshPaise: rupeesToPaise(g.freshFee) ?? env.deliveryFeeFreshPaise,
-      shelfStablePaise: rupeesToPaise(g.shelfStableFee) ?? env.deliveryFeeShelfStablePaise,
+      freshPaise: rupeesToPaiseWithin(g.freshFee, MAX_FEE_RUPEES) ?? env.deliveryFeeFreshPaise,
+      shelfStablePaise: rupeesToPaiseWithin(g.shelfStableFee, MAX_FEE_RUPEES) ?? env.deliveryFeeShelfStablePaise,
     },
     freeThresholds: {
-      freshPaise: rupeesToPaise(g.freshFreeThreshold) ?? env.freeDeliveryThresholdFreshPaise,
-      shelfStablePaise: rupeesToPaise(g.shelfStableFreeThreshold) ?? env.freeDeliveryThresholdShelfStablePaise,
+      freshPaise: rupeesToPaiseWithin(g.freshFreeThreshold, MAX_THRESHOLD_RUPEES) ?? env.freeDeliveryThresholdFreshPaise,
+      shelfStablePaise: rupeesToPaiseWithin(g.shelfStableFreeThreshold, MAX_THRESHOLD_RUPEES) ?? env.freeDeliveryThresholdShelfStablePaise,
     },
   };
 }

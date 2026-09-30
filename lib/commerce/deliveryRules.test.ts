@@ -1,6 +1,7 @@
 // lib/commerce/deliveryRules.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { computeTotals } from "./pricing";
+import { MAX_FEE_RUPEES, MAX_THRESHOLD_RUPEES, validateRupees } from "./deliveryLimits";
 
 const { findGlobal } = vi.hoisted(() => ({ findGlobal: vi.fn() }));
 vi.mock("payload", () => ({ getPayload: vi.fn(async () => ({ findGlobal })) }));
@@ -45,6 +46,13 @@ describe("resolveDeliveryRules", () => {
     expect(r.freeThresholds.shelfStablePaise).toBe(0);
   });
 
+  it("ignores an amount outside the allowed range instead of charging it", () => {
+    const r = resolveDeliveryRules({ freshFee: 9999, shelfStableFee: 501, freshFreeThreshold: 100001, shelfStableFreeThreshold: 12.5 }, ENV);
+    expect(r.fees).toEqual({ freshPaise: 4900, shelfStablePaise: 9900 });
+    expect(r.freeThresholds).toEqual({ freshPaise: 99900, shelfStablePaise: 199900 });
+    expect(resolveDeliveryRules({ freshFee: 500, freshFreeThreshold: 100000 }, ENV).fees.freshPaise).toBe(50000);
+  });
+
   it("ignores values that are not a valid amount", () => {
     const r = resolveDeliveryRules({ freshFee: -5, shelfStableFee: "12", freshFreeThreshold: Number.NaN, shelfStableFreeThreshold: Infinity }, ENV);
     expect(r.fees).toEqual({ freshPaise: 4900, shelfStablePaise: 9900 });
@@ -84,5 +92,24 @@ describe("getDeliveryRules (cached read)", () => {
     const r = await getDeliveryRules(5_000_000);
     expect(r.fees.freshPaise).toBeGreaterThanOrEqual(0);
     expect(Number.isFinite(r.freeThresholds.shelfStablePaise)).toBe(true);
+  });
+});
+
+describe("admin field validation (validateRupees)", () => {
+  const fee = validateRupees(MAX_FEE_RUPEES);
+  it("allows empty (use the server value) and amounts in range, including 0", () => {
+    expect(fee(undefined)).toBe(true);
+    expect(fee(null)).toBe(true);
+    expect(fee(0)).toBe(true);
+    expect(fee(49)).toBe(true);
+    expect(fee(MAX_FEE_RUPEES)).toBe(true);
+    expect(validateRupees(MAX_THRESHOLD_RUPEES)(MAX_THRESHOLD_RUPEES)).toBe(true);
+  });
+  it("refuses negatives, amounts over the limit, and fractions", () => {
+    expect(fee(-5)).toMatch(/between ₹0 and ₹500/);
+    expect(fee(9999)).toMatch(/between ₹0 and ₹500/);
+    expect(fee(501)).toMatch(/between/);
+    expect(fee(12.5)).toMatch(/whole number/);
+    expect(validateRupees(MAX_THRESHOLD_RUPEES)(100001)).toMatch(/between ₹0 and ₹1,00,000/);
   });
 });
