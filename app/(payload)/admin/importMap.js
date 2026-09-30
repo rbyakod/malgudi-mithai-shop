@@ -34,6 +34,7 @@ import { default as default_7dfee13826e61b5022cfd145d1445e48 } from '../../../co
 import { default as default_165612c5ac185e0b8a39302fd0f462f1 } from '../../../components/payload-admin/graphics/CrestIcon'
 import { default as default_7729b2a8864a63c40bbd0abd0eb269db } from '../../../components/payload-admin/graphics/WordmarkLogo'
 import { default as default_8149a05a244bf8f960d46f90fbfe83ea } from '../../../components/payload-admin/theme/AdminThemeSwitcher'
+import { default as default_7ccdb297a7b6b60d618e1c50f18ca0c1 } from '../../../components/payload-admin/guide/AdminGuideLoader'
 import { default as default_894db55b335ad5790be9ddbbf798bd11 } from '../../../components/payload-admin/dashboard/MishranDashboard'
 import { default as default_c8fe12bff09c618035eb6c21cc73dea6 } from '../../../components/payload-admin/login/MishranLoginHero'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
@@ -76,6 +77,7 @@ export const importMap = {
   "./components/payload-admin/graphics/CrestIcon#default": default_165612c5ac185e0b8a39302fd0f462f1,
   "./components/payload-admin/graphics/WordmarkLogo#default": default_7729b2a8864a63c40bbd0abd0eb269db,
   "./components/payload-admin/theme/AdminThemeSwitcher#default": default_8149a05a244bf8f960d46f90fbfe83ea,
+  "./components/payload-admin/guide/AdminGuideLoader#default": default_7ccdb297a7b6b60d618e1c50f18ca0c1,
   "./components/payload-admin/dashboard/MishranDashboard#default": default_894db55b335ad5790be9ddbbf798bd11,
   "./components/payload-admin/login/MishranLoginHero#default": default_c8fe12bff09c618035eb6c21cc73dea6,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1

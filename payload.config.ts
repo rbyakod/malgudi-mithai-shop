@@ -31,6 +31,8 @@ const WordmarkLogoPath = "./components/payload-admin/graphics/WordmarkLogo";
 const MishranLoginHeroPath = "./components/payload-admin/login/MishranLoginHero";
 const MishranDashboardPath = "./components/payload-admin/dashboard/MishranDashboard";
 const AdminThemeSwitcherPath = "./components/payload-admin/theme/AdminThemeSwitcher";
+// Explain-only admin guide panel (agent team Admin Guide); see lib/admin-guide.ts.
+const AdminGuideLoaderPath = "./components/payload-admin/guide/AdminGuideLoader";
 // Audit D8: every edit view gets a Cancel that backs out (left of
 // Save/Publish). Slot keys differ by entity type — collections use
 // components.edit, globals use components.elements
@@ -172,7 +174,7 @@ export default buildConfig({
       // leaked into every edit form as a stray "Admin theme" field. The
       // sidebar (below the nav links) is its home — visible everywhere,
       // outside every form.
-      afterNavLinks: [AdminThemeSwitcherPath],
+      afterNavLinks: [AdminThemeSwitcherPath, AdminGuideLoaderPath],
     },
   },
   collections: [
