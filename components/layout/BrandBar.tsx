@@ -58,6 +58,7 @@ export async function BrandBar({layoutMode = "fixed"}: Props) {
             : "Handcrafted daily · Delivered fresh"}
         </p>
         <div className="brand-bar__meta flex flex-wrap items-center gap-x-4 gap-y-0.5 text-text-light-muted">
+          <span className="hidden sm:inline">3 kitchens · 1 promise</span>
           <a
             href={waHref}
             className="inline-flex items-center gap-1.5 font-medium text-text-light transition-colors hover:text-gold"
