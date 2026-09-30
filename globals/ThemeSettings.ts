@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { DEFAULT_THEME, THEMES } from "../lib/themes";
 
 export const ThemeSettings: GlobalConfig = {
   slug: "theme-settings",
@@ -9,6 +10,17 @@ export const ThemeSettings: GlobalConfig = {
     group: "04 Storefront",
   },
   fields: [
+    {
+      name: "webDefaultTheme",
+      type: "select",
+      label: "Website default theme",
+      defaultValue: DEFAULT_THEME,
+      admin: {
+        description:
+          "The look the website starts on for visitors who have not picked a theme themselves. A visitor's own choice in Theme Studio always wins. (The mobile apps use Brand Settings → Default theme instead.)",
+      },
+      options: THEMES.map((theme) => ({ label: theme.label, value: theme.id })),
+    },
     {
       name: "storefrontLayoutMode",
       type: "select",

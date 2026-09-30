@@ -182,3 +182,11 @@ export function normalizeTheme(value: string | null | undefined): Theme | null {
     ? (normalized as Theme)
     : null;
 }
+
+// The inline boot script that sets data-theme before first paint: the visitor's stored choice (Theme Studio) if
+// there is one, otherwise `defaultTheme`. The broader legacy migration map lives here so stored values still resolve.
+export function buildInitialThemeScript(defaultTheme: Theme = DEFAULT_THEME): string {
+  const fallback = VALID_THEMES.includes(defaultTheme) ? defaultTheme : DEFAULT_THEME;
+  const aliases = {festive: "diwali-saffron", heritage: "wedding-heritage", "heritage-2": "wedding-heritage", sage: "everyday-sage", navy: "mblue2", coinbase: "mblue2", ibm: "mblue2", myblue: "mblue2"};
+  return `(function(){try{var valid=${JSON.stringify(VALID_THEMES)};var aliases=${JSON.stringify(aliases)};var stored=localStorage.getItem("mithai-theme");var normalized=(stored&&aliases[stored])||stored||${JSON.stringify(fallback)};if(valid.indexOf(normalized)!==-1){document.documentElement.setAttribute("data-theme",normalized);}else{document.documentElement.setAttribute("data-theme",${JSON.stringify(fallback)});}}catch(e){}})()`;
+}

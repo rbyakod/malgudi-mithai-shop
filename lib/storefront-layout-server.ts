@@ -1,4 +1,5 @@
 import {getPayload} from "@/lib/payload-client";
+import {DEFAULT_THEME, normalizeTheme, type Theme} from "@/lib/themes";
 import {
   DEFAULT_PRODUCT_IMAGE_MOTION,
   DEFAULT_STOREFRONT_LAYOUT_MODE,
@@ -81,5 +82,16 @@ export async function readCatalogPageSize(): Promise<number> {
     );
   } catch {
     return normalizeCatalogPageSize(null);
+  }
+}
+
+/** The theme the website starts on for visitors who have not chosen one (Theme Settings → Website default theme). */
+export async function readWebDefaultTheme(): Promise<Theme> {
+  try {
+    const payload = await getPayload();
+    const global = await payload.findGlobal({slug: "theme-settings"});
+    return normalizeTheme((global as {webDefaultTheme?: unknown}).webDefaultTheme as string | undefined) ?? DEFAULT_THEME;
+  } catch {
+    return DEFAULT_THEME;
   }
 }

@@ -38,6 +38,11 @@ export const BrandSettings: GlobalConfig = {
     {
       name: "defaultTheme",
       type: "select",
+      label: "Default theme (mobile apps)",
+      admin: {
+        description:
+          "Used by the mobile apps only. The website's starting theme is set in Theme Settings → Website default theme.",
+      },
       options: ["mishran-default", "diwali-saffron", "wedding-heritage", "everyday-sage"],
       defaultValue: "mishran-default",
     },
