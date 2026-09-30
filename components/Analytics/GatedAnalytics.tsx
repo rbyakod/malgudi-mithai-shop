@@ -3,19 +3,36 @@
 // category (see lib/consent.ts). Nothing from Google or Meta is requested before that. If consent is
 // withdrawn later, tracking is switched off for the rest of the visit and takes full effect on the
 // next page load, because a loaded third-party script cannot be unloaded.
+//
+// Hotjar (session recordings) follows the same consent rule and is never started on pages that show personal or
+// payment details (lib/hotjar.ts). If the visitor moves into such a page after it started, the page content is
+// marked data-hj-suppress so it is not recorded.
 "use client";
 
-import {useEffect, useSyncExternalStore} from "react";
+import {useEffect, useState, useSyncExternalStore} from "react";
 import Script from "next/script";
+import {usePathname} from "next/navigation";
 import {consentSnapshot, parseConsent, subscribeConsent} from "@/lib/consent";
+import {hotjarSnippet, isHotjarExcluded, validHotjarId} from "@/lib/hotjar";
 
-type Props = {ga4Id: string; pixelId: string};
+type Props = {ga4Id: string; pixelId: string; hotjarId?: string};
 
 type TrackingWindow = Record<string, unknown> & {fbq?: (...args: unknown[]) => void};
 
-export function GatedAnalytics({ga4Id, pixelId}: Props) {
+export function GatedAnalytics({ga4Id, pixelId, hotjarId = ""}: Props) {
   const raw = useSyncExternalStore<string | null>(subscribeConsent, consentSnapshot, () => null);
   const granted = raw !== null && parseConsent(raw)?.analytics === true;
+  const pathname = usePathname();
+  // Only start Hotjar if the page the visit began on is one that may be recorded.
+  const [mayStartHotjar] = useState(() => !isHotjarExcluded(pathname));
+  const hj = validHotjarId(hotjarId);
+  const hotjarOn = granted && Boolean(hj) && mayStartHotjar;
+  const onExcludedPage = isHotjarExcluded(pathname);
+
+  useEffect(() => {
+    if (!hotjarOn) return;
+    document.body.toggleAttribute("data-hj-suppress", onExcludedPage);
+  }, [hotjarOn, onExcludedPage]);
 
   useEffect(() => {
     if (raw === null || granted) return;
@@ -42,6 +59,11 @@ gtag('js', new Date());
 gtag('config', '${ga4Id}');`}
           </Script>
         </>
+      )}
+      {hotjarOn && (
+        <Script id="hotjar-init" strategy="afterInteractive">
+          {hotjarSnippet(hj)}
+        </Script>
       )}
       {pixelId && (
         <Script id="meta-pixel-init" strategy="afterInteractive">

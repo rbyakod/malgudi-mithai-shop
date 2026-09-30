@@ -15,6 +15,8 @@
 // - If neither the global nor the env vars yield an ID, the whole component
 //   renders nothing — the layout must never 500 because of analytics.
 //
+// Hotjar (recordings) is included with the same consent rule; see GatedAnalytics and lib/hotjar.ts.
+//
 // Loading strategy: `afterInteractive` once consent exists, so scripts never block LCP.
 //
 // Consent: nothing is loaded until the visitor accepts the analytics category in the sitewide
@@ -22,10 +24,12 @@
 
 import {GatedAnalytics} from "@/components/Analytics/GatedAnalytics";
 import {getPayload} from "@/lib/payload-client";
+import {validHotjarId} from "@/lib/hotjar";
 
 type AnalyticsGlobal = {
   ga4Id?: string | null;
   metaPixelId?: string | null;
+  hotjarId?: string | null;
 };
 
 // Best-effort Payload read. Returns null on any error so the layout stays
@@ -79,11 +83,14 @@ export async function AnalyticsScripts() {
     warnFallback(usedGa4Fallback && usedPixelFallback ? "both" : usedGa4Fallback ? "ga4" : "pixel");
   }
 
+  // Hotjar: the admin's Analytics Settings, else NEXT_PUBLIC_HOTJAR_ID. Numbers only (it goes into a script).
+  const hotjarId = validHotjarId(settings?.hotjarId) || validHotjarId(process.env.NEXT_PUBLIC_HOTJAR_ID);
+
   const hasGa4 = isPresent(ga4Id);
   const hasPixel = isPresent(pixelId);
 
-  if (!hasGa4 && !hasPixel) return null;
+  if (!hasGa4 && !hasPixel && !hotjarId) return null;
 
   // Scripts load only after the visitor accepts the analytics category (GatedAnalytics).
-  return <GatedAnalytics ga4Id={hasGa4 ? ga4Id : ""} pixelId={hasPixel ? pixelId : ""} />;
+  return <GatedAnalytics ga4Id={hasGa4 ? ga4Id : ""} pixelId={hasPixel ? pixelId : ""} hotjarId={hotjarId} />;
 }
