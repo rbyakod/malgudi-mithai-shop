@@ -42,6 +42,8 @@ type FixtureProduct = {
 };
 
 let pincodeDocs: FixturePincode[] = [];
+// What the admin's "Delivery & fees" settings return (empty = nothing set, so the server values apply).
+let deliveryGlobal: Record<string, unknown> = {};
 let productById: Record<string, FixtureProduct> = {};
 
 vi.mock('payload', () => {
@@ -58,7 +60,10 @@ vi.mock('payload', () => {
   const create = vi.fn(async function () {
     throw new Error('estimate must never persist anything');
   });
-  const payloadStub = { find, findByID, create };
+  const findGlobal = vi.fn(async function () {
+    return deliveryGlobal;
+  });
+  const payloadStub = { find, findByID, create, findGlobal };
   const getPayload = vi.fn(async function () {
     return payloadStub;
   });
@@ -69,6 +74,7 @@ vi.mock('payload', () => {
 vi.mock('../../../../../../payload.config', () => ({ default: {} }));
 
 import { POST } from './route';
+import { clearDeliveryRulesCache } from '../../../../../../lib/commerce/deliveryRules';
 import { ApiError } from '../../../../../../lib/api/errors';
 
 import type { NextRequest } from 'next/server';
@@ -87,6 +93,8 @@ function guestReq(body: unknown, ip = '203.0.113.7'): Request {
 
 describe('POST /cart/estimate', () => {
   beforeEach(() => {
+    deliveryGlobal = {};
+    clearDeliveryRulesCache();
     pincodeDocs = [{ pincode: '560001', tier: 'shelf', city: 'Bengaluru', active: true }];
     productById = {
       p1: {
@@ -124,6 +132,27 @@ describe('POST /cart/estimate', () => {
       freeDeliveryThresholdInPaise: 99900,
       freeDeliveryEligible: false,
     });
+  });
+
+  it("uses the admin's Delivery & fees settings over the server values", async () => {
+    pincodeDocs = [{ pincode: '110001', tier: 'fresh', city: 'New Delhi', active: true }];
+    // ₹30 fee, free from ₹1,000: a ₹920 cart pays the admin's ₹30 (server default would be ₹49).
+    deliveryGlobal = { freshFee: 30, freshFreeThreshold: 1000 };
+    let res = await POST(asReq(guestReq({ items: [{ productId: 'p1', quantity: 1 }], pincode: '110001' })));
+    let body = await res.json();
+    expect(body.data.deliveryFeeInPaise).toBe(3000);
+    expect(body.data.freeDeliveryThresholdInPaise).toBe(100000);
+    expect(body.data.totalInPaise).toBe(95000);
+    expect(body.data.freeDeliveryEligible).toBe(false);
+
+    // The admin lowers the threshold to ₹500: the same cart now ships free.
+    deliveryGlobal = { freshFee: 30, freshFreeThreshold: 500 };
+    clearDeliveryRulesCache();
+    res = await POST(asReq(guestReq({ items: [{ productId: 'p1', quantity: 1 }], pincode: '110001' })));
+    body = await res.json();
+    expect(body.data.deliveryFeeInPaise).toBe(0);
+    expect(body.data.freeDeliveryEligible).toBe(true);
+    expect(body.data.totalInPaise).toBe(92000);
   });
 
   it('waives the fee and flags eligibility over the fresh threshold', async () => {

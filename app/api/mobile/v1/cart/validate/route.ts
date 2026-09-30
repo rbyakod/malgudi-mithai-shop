@@ -15,7 +15,7 @@ import {
   evaluateCoupon,
   type CouponRule,
 } from '../../../../../../lib/commerce/couponValidation';
-import { config as appConfig } from '../../../../../../lib/config';
+import { getDeliveryRules } from '../../../../../../lib/commerce/deliveryRules';
 
 // Cart validate — the pricing boundary of the checkout flow.
 //
@@ -135,17 +135,13 @@ export async function POST(req: NextRequest) {
       discountInPaise = evaluation.discountInPaise;
     }
 
+    // Fees and thresholds: the admin's Delivery & fees settings, else the server values.
+    const rules = await getDeliveryRules();
     const totals = computeTotals(
       items,
       pincodeTier,
-      {
-        freshPaise: appConfig.deliveryFeeFreshPaise,
-        shelfStablePaise: appConfig.deliveryFeeShelfStablePaise,
-      },
-      {
-        freshPaise: appConfig.freeDeliveryThresholdFreshPaise,
-        shelfStablePaise: appConfig.freeDeliveryThresholdShelfStablePaise,
-      },
+      rules.fees,
+      rules.freeThresholds,
       discountInPaise,
     );
 
@@ -181,10 +177,7 @@ export async function POST(req: NextRequest) {
       couponCode,
       // Threshold for the tier, so clients render "₹x more for free
       // delivery" from the server's number, never a baked-in constant.
-      freeDeliveryThresholdInPaise: freeDeliveryThresholdForTier(pincodeTier, {
-        freshPaise: appConfig.freeDeliveryThresholdFreshPaise,
-        shelfStablePaise: appConfig.freeDeliveryThresholdShelfStablePaise,
-      }),
+      freeDeliveryThresholdInPaise: freeDeliveryThresholdForTier(pincodeTier, rules.freeThresholds),
       expiresAt,
     });
   } catch (err) {

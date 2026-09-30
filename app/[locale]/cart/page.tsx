@@ -20,7 +20,7 @@ import {CartItems} from "@/components/commerce/CartItems";
 import {CartUpsellRail, type CartUpsellCard} from "@/components/cart/CartUpsellRail";
 import {CartDraftRestore} from "@/components/cart/CartDraftRestore";
 import {readWhatsappNumber} from "@/components/commerce/CommerceStub";
-import {config} from "@/lib/config";
+import {getDeliveryRules} from "@/lib/commerce/deliveryRules";
 import {getPayload} from "@/lib/payload-client";
 import {pdpHref} from "@/lib/verticals/pdpHref";
 import {fallbackDocImage, firstDocImage} from "@/lib/verticals/catalogMedia";
@@ -70,6 +70,8 @@ export default async function CartPage({params}: Props) {
   const t = await getTranslations("Cart");
   const whatsapp = (await readWhatsappNumber()) ?? FALLBACK_WHATSAPP;
   const upsellCards = await fetchUpsellCards(locale);
+  // Delivery fees and free-delivery thresholds: the admin's Delivery & fees settings, else the server values.
+  const rules = await getDeliveryRules();
 
   return (
     <section
@@ -102,14 +104,8 @@ export default async function CartPage({params}: Props) {
         </Suspense>
         <CartItems
           whatsapp={whatsapp}
-          fees={{
-            freshPaise: config.deliveryFeeFreshPaise,
-            shelfStablePaise: config.deliveryFeeShelfStablePaise,
-          }}
-          freeThresholds={{
-            freshPaise: config.freeDeliveryThresholdFreshPaise,
-            shelfStablePaise: config.freeDeliveryThresholdShelfStablePaise,
-          }}
+          fees={rules.fees}
+          freeThresholds={rules.freeThresholds}
         />
         <CartUpsellRail cards={upsellCards} />
       </div>

@@ -27,9 +27,9 @@ describe("globals", () => {
     expect(refetched.brandName).toBe("Test Brand");
   });
 
-  it("finds nav-settings global", async () => {
+  it("finds delivery-settings global", async () => {
     const payload = await getPayload();
-    const found = await payload.findGlobal({ slug: "nav-settings" });
+    const found = await payload.findGlobal({ slug: "delivery-settings" });
     expect(found).toBeDefined();
   });
 

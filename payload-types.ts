@@ -56,7 +56,7 @@ export type Collection =
 /** Global slugs registered in payload.config.ts. */
 export type Global =
   | "brand-settings"
-  | "nav-settings"
+  | "delivery-settings"
   | "theme-settings"
   | "analytics-settings"
   | "store-settings"

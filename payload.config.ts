@@ -74,7 +74,7 @@ import { CartDrafts } from "./collections/CartDrafts";
 import { Coupons } from "./collections/Coupons";
 // Globals (Task 8).
 import { BrandSettings } from "./globals/BrandSettings";
-import { NavSettings } from "./globals/NavSettings";
+import { DeliverySettings } from "./globals/DeliverySettings";
 import { ThemeSettings } from "./globals/ThemeSettings";
 import { AnalyticsSettings } from "./globals/AnalyticsSettings";
 import { StoreSettings } from "./globals/StoreSettings";
@@ -224,7 +224,7 @@ export default buildConfig({
   ].map(withCancelAction),
   globals: [
     BrandSettings,
-    NavSettings,
+    DeliverySettings,
     ThemeSettings,
     AnalyticsSettings,
     StoreSettings,

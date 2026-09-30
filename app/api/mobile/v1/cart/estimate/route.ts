@@ -9,7 +9,7 @@ import {
   resolvePricedCart,
   freeDeliveryThresholdForTier,
 } from '../../../../../../lib/commerce/resolveCart';
-import { config as appConfig } from '../../../../../../lib/config';
+import { getDeliveryRules } from '../../../../../../lib/commerce/deliveryRules';
 import { container } from '../../../../../../lib/container';
 
 // Cart estimate — the read-only pricing preview of /cart/validate
@@ -72,20 +72,15 @@ export async function POST(req: NextRequest) {
       enforceFreshTier: false,
     });
 
-    const thresholds = {
-      freshPaise: appConfig.freeDeliveryThresholdFreshPaise,
-      shelfStablePaise: appConfig.freeDeliveryThresholdShelfStablePaise,
-    };
+    const rules = await getDeliveryRules();
+    const thresholds = rules.freeThresholds;
     // A resolved tier prices its real fee. A null tier (no pincode sent,
     // or one we don't serve) has nothing to estimate against — zero fee,
     // null threshold, client shows its no-pincode copy.
     const fees =
       pincodeTier == null
         ? { freshPaise: 0, shelfStablePaise: 0 }
-        : {
-            freshPaise: appConfig.deliveryFeeFreshPaise,
-            shelfStablePaise: appConfig.deliveryFeeShelfStablePaise,
-          };
+        : rules.fees;
     const totals = computeTotals(items, pincodeTier, fees, thresholds);
 
     const threshold = freeDeliveryThresholdForTier(pincodeTier, thresholds);
