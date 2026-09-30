@@ -29,15 +29,19 @@ export function ConsentBanner() {
   const raw = useSyncExternalStore<string | null>(subscribeConsent, consentSnapshot, () => null);
   const stored = raw === null ? null : parseConsent(raw);
   const [reopened, setReopened] = useState(false);
+  const [assistantPrompt, setAssistantPrompt] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [draft, setDraft] = useState<ConsentChoice>(ESSENTIAL_ONLY);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
-    const onOpen = () => {
+    const onOpen = (event: Event) => {
       const current = parseConsent(consentSnapshot());
       setDraft(current ? {analytics: current.analytics, assistant: current.assistant} : ESSENTIAL_ONLY);
-      setExpanded(true);
+      // A visitor who tried to chat only needs the assistant question, not the whole preferences panel.
+      const reason = (event as CustomEvent<{reason?: string}>).detail?.reason;
+      setAssistantPrompt(reason === "assistant");
+      setExpanded(reason !== "assistant");
       setReopened(true);
     };
     window.addEventListener(CONSENT_OPEN_EVENT, onOpen);
@@ -56,7 +60,11 @@ export function ConsentBanner() {
     writeConsent(choice);
     setReopened(false);
     setExpanded(false);
+    setAssistantPrompt(false);
   };
+  const current = stored ? {analytics: stored.analytics, assistant: stored.assistant} : ESSENTIAL_ONLY;
+  // "Not now": keep whatever was chosen before; a first-time visitor who declines is recorded as essential only.
+  const declineAssistant = () => (stored ? (setReopened(false), setAssistantPrompt(false), setExpanded(false)) : save(ESSENTIAL_ONLY));
 
   return (
     <section
@@ -69,16 +77,36 @@ export function ConsentBanner() {
     >
       <div className="max-h-[85dvh] overflow-y-auto rounded-2xl border border-border-card bg-bg-card p-4 text-text-primary shadow-2xl">
         <h2 id="consent-title" ref={titleRef} tabIndex={-1} className="font-display text-lg font-semibold text-text-heading outline-none">
-          {t("title")}
+          {assistantPrompt ? t("assistantPromptTitle") : t("title")}
         </h2>
         <p id="consent-desc" className="mt-1 text-sm text-text-secondary">
-          {t("description")}{" "}
+          {assistantPrompt ? t("assistantPromptBody") : t("description")}{" "}
           <Link href="/privacy" className="underline underline-offset-2 hover:text-text-primary">
             {t("privacyLink")}
           </Link>
         </p>
 
-        {expanded ? (
+        {assistantPrompt ? (
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button type="button" className={buttonPrimary} onClick={() => save({...current, assistant: true})}>
+              {t("allowAssistant")}
+            </button>
+            <button type="button" className={buttonSecondary} onClick={declineAssistant}>
+              {t("notNow")}
+            </button>
+            <button
+              type="button"
+              className={buttonSecondary}
+              onClick={() => {
+                setDraft({...current, assistant: true});
+                setAssistantPrompt(false);
+                setExpanded(true);
+              }}
+            >
+              {t("choose")}
+            </button>
+          </div>
+        ) : expanded ? (
           <fieldset className="mt-3 space-y-3">
             <legend className="sr-only">{t("categoriesLabel")}</legend>
             <label className="flex items-start gap-3 text-sm">

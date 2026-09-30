@@ -854,6 +854,10 @@
     "analyticsBody": "Google Analytics and Meta Pixel, to see how visitors use the site and improve it.",
     "assistantTitle": "AI assistant",
     "assistantBody": "Lets you chat with Mishran's AI assistant. Stores a private ID and your chat for a limited time.",
-    "manage": "Privacy choices"
+    "manage": "Privacy choices",
+    "assistantPromptTitle": "Allow the AI assistant?",
+    "assistantPromptBody": "To chat with Mishran's AI assistant, we store a private ID and your conversation for a limited time. Nothing else changes: analytics stays as you set it.",
+    "allowAssistant": "Allow AI assistant",
+    "notNow": "Not now"
   }
 }

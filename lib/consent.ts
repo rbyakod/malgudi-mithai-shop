@@ -12,6 +12,7 @@
 //   - cookie  mishran_consent = encodeURIComponent(JSON.stringify({v, analytics, assistant, ts}))
 //   - event   window "mishran:consent"  (detail = the stored choice) fires after every change
 //   - event   window "mishran:consent-open"  asks the banner to reopen the preferences
+//             (detail.reason = "assistant" when a visitor tried to chat without allowing the assistant)
 //
 // Nothing here runs on the server: every function is a safe no-op without `document`.
 
@@ -85,7 +86,9 @@ export function consentSnapshot(): string {
   return match ? match.slice(CONSENT_COOKIE.length + 1) : "";
 }
 
-export function openConsentPreferences(): void {
+// `reason` (optional) says why it was opened: "assistant" means a visitor tried to use the AI assistant
+// and needs to allow it first; the banner then asks only that question.
+export function openConsentPreferences(reason?: string): void {
   if (typeof window === "undefined") return;
-  window.dispatchEvent(new Event(CONSENT_OPEN_EVENT));
+  window.dispatchEvent(new CustomEvent(CONSENT_OPEN_EVENT, {detail: reason ? {reason} : {}}));
 }

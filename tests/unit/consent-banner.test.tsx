@@ -5,7 +5,7 @@ import {vi} from "vitest";
 import messages from "@/messages/en.json";
 import {ConsentBanner} from "@/components/consent/ConsentBanner";
 import {ConsentPreferencesLink} from "@/components/consent/ConsentPreferencesLink";
-import {CONSENT_COOKIE, readConsent, writeConsent} from "@/lib/consent";
+import {CONSENT_COOKIE, openConsentPreferences, readConsent, writeConsent} from "@/lib/consent";
 
 vi.mock("@/i18n/navigation", () => ({
   Link: ({href, children, ...rest}: {href: string; children: React.ReactNode}) => (
@@ -97,5 +97,41 @@ describe("ConsentBanner", () => {
     renderBanner();
     const link = screen.getByRole("link", {name: "Read our privacy policy"}) as HTMLAnchorElement;
     expect(link.getAttribute("href")).toBe("/privacy");
+  });
+
+  it("asks only about the AI assistant when a visitor tries to chat, and keeps their analytics choice", () => {
+    writeConsent({analytics: true, assistant: false});
+    renderBanner();
+    expect(screen.queryByRole("dialog")).toBeNull();
+
+    act(() => openConsentPreferences("assistant"));
+    expect(screen.getByRole("dialog", {name: "Allow the AI assistant?"})).toBeTruthy();
+    expect(screen.queryByRole("checkbox")).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", {name: "Allow AI assistant"}));
+    expect(readConsent()).toMatchObject({analytics: true, assistant: true});
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("Not now: a first-time visitor is recorded as essential only; a returning one is left alone", () => {
+    renderBanner();
+    act(() => openConsentPreferences("assistant"));
+    fireEvent.click(screen.getByRole("button", {name: "Not now"}));
+    expect(readConsent()).toMatchObject({analytics: false, assistant: false});
+    expect(screen.queryByRole("dialog")).toBeNull();
+
+    clearCookie();
+    writeConsent({analytics: true, assistant: false});
+    act(() => openConsentPreferences("assistant"));
+    fireEvent.click(screen.getByRole("button", {name: "Not now"}));
+    expect(readConsent()).toMatchObject({analytics: true, assistant: false});
+  });
+
+  it("from the assistant prompt, Choose opens the full list with the assistant ticked for review", () => {
+    renderBanner();
+    act(() => openConsentPreferences("assistant"));
+    fireEvent.click(screen.getByRole("button", {name: "Choose"}));
+    expect((screen.getByRole("checkbox", {name: /AI assistant/}) as HTMLInputElement).checked).toBe(true);
+    expect((screen.getByRole("checkbox", {name: /Analytics/}) as HTMLInputElement).checked).toBe(false);
   });
 });

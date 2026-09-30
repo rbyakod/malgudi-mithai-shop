@@ -8,7 +8,7 @@ import {openConsentPreferences} from "@/lib/consent";
 export function ConsentPreferencesLink({className}: {className?: string}) {
   const t = useTranslations("Consent");
   return (
-    <button type="button" onClick={openConsentPreferences} className={className}>
+    <button type="button" onClick={() => openConsentPreferences()} className={className}>
       {t("manage")}
     </button>
   );
