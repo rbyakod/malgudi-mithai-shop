@@ -1106,11 +1106,11 @@
 
       <section id="storefront">
         <h2>Storefront Settings</h2>
-        <p class="section-copy">Storefront globals control brand presentation, navigation, home hero, theme direction, analytics, and store locations.</p>
+        <p class="section-copy">Storefront globals control brand presentation, home hero, theme direction, analytics, and the shop's location. (There is no Navigation Settings screen: the site menu is fixed in the site itself.) Delivery fees are in <strong>06 Commerce → Delivery &amp; fees</strong>.</p>
         <div class="feature-grid">
           <div class="feature">
             <h3>Brand Settings</h3>
-            <p>Controls logo, brand name, tagline, positioning, hero copy, and default theme.</p>
+            <p>Controls logo, brand name, tagline, positioning and hero copy. <strong>Default theme (mobile apps)</strong> is used by the mobile apps only; the website's starting theme is in Theme Settings.</p>
             <pre>{
   "brandName": "Mishran",
   "tagline": "Premium mithai, made with craft.",
@@ -1131,28 +1131,27 @@
 }</pre>
           </div>
           <div class="feature">
-            <h3>Navigation Settings</h3>
-            <p>Controls primary and utility navigation labels and links. Keep labels short and customer friendly.</p>
-          </div>
-          <div class="feature">
             <h3>Theme Settings</h3>
-            <p>Controls storefront theme tokens, layout mode, hero style, product image motion, theme switcher visibility, and catalog page size.</p>
+            <p>Controls the <strong>Website default theme</strong> (the look new visitors start on; a visitor's own choice in Theme Studio always wins), layout mode, hero style, product image motion, theme switcher visibility, and catalog page size (12 to 120, default 100).</p>
           </div>
           <div class="feature">
             <h3>Analytics Settings</h3>
-            <p>Stores GA4 ID, Meta Pixel ID, Hotjar ID, and WhatsApp number. Use exact IDs from each platform.</p>
+            <p>Stores GA4 ID, Meta Pixel ID, Hotjar ID, and the WhatsApp number. Use exact IDs from each platform. Changing the WhatsApp number redirects every WhatsApp link on the site immediately.</p>
+            <ul>
+              <li>GA4, the Meta Pixel and <strong>Hotjar</strong> load only after a visitor allows analytics in the privacy banner.</li>
+              <li>Hotjar records anonymous screen sessions and heatmaps so you can see where visitors click and get stuck. It is never started on checkout, account, sign-in or order-tracking pages. The Hotjar ID must be a number.</li>
+            </ul>
           </div>
           <div class="feature">
             <h3>Store Settings</h3>
-            <p>Stores physical locations, city, address, hours, delivery radius, latitude, and longitude.</p>
+            <p>The shop's location. The <strong>first store</strong> is the main one: its name, address, city and hours appear in the site footer, the top bar (city), the contact page and the search-engine data. Leave hours empty to publish none. Delivery areas are set in Serviceable pincodes, not here.</p>
             <pre>{
-  "name": "Mishran Indiranagar",
-  "city": "Bengaluru",
-  "address": "100 Feet Road, Indiranagar",
-  "hours": "10:00 AM to 9:00 PM",
-  "deliveryRadiusKm": 8,
-  "lat": 12.9784,
-  "lng": 77.6408
+  "name": "Mishran Sweets &amp; Restaurant",
+  "city": "Delhi",
+  "state": "Delhi",
+  "postalCode": "110009",
+  "address": "Main Market, H-4/3, Model Town Phase 2, Block H",
+  "hours": ""
 }</pre>
           </div>
         </div>
@@ -1173,6 +1172,16 @@
           <div class="feature">
             <h3>Delivery Areas</h3>
             <p>Serviceable pincodes decide whether Mishran can deliver fresh or shelf stable products to a location.</p>
+          </div>
+          <div class="feature">
+            <h3>Delivery &amp; fees</h3>
+            <p>Open <strong>06 Commerce → Delivery &amp; fees</strong>. Set the delivery fee and the "free delivery from" amount for fresh (same-city) and shelf-stable (courier) orders, in whole rupees. Only admins can change it.</p>
+            <ul>
+              <li>Leave a field empty to use the shop's standard value. Enter 0 as a free-delivery threshold to turn free delivery off.</li>
+              <li>Fees are limited to ₹0–₹500 and thresholds to ₹0–₹1,00,000; anything else is refused.</li>
+              <li>New carts use a change within about half a minute. Orders already placed keep the amount they were charged.</li>
+              <li>The page shows who changed it last, and earlier versions can be restored from its Versions tab.</li>
+            </ul>
           </div>
           <div class="feature">
             <h3>Devices and security</h3>

@@ -224,7 +224,9 @@ a running total. Carts persist on the device.
   - **Delivery estimate** in the cart itself, keyed off the pincode you
     checked: fresh tier (₹49, **free over ₹999**) or shelf-stable (₹99,
     **free over ₹1,999**), with a progress line ("Add ₹x more for free
-    delivery").
+    delivery"). These are the standard amounts; the shop can change them
+    in the admin (**Delivery & fees**), and the cart, the shipping page and
+    the apps always show the current ones.
   - **Upsell rail** — "Ships pan-India": shelf-stable best sellers you can
     add in one tap.
   - **"Email me this cart"** — saves your email so we can send you a
