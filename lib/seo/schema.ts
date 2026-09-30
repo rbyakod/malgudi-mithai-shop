@@ -7,7 +7,7 @@
 //     callers only emit the schema when a price parses).
 //   - `organizationSchema()` — static Organization, used on home / global.
 //   - `localBusinessSchema()` — LocalBusiness for the storefront itself
-//     (name/url/Bengaluru/₹₹/sameAs), emitted on the home page.
+//     (name/url/address from Store Settings/₹₹/sameAs), emitted on the home page.
 //   - `breadcrumbSchema(trail)` — BreadcrumbList, used on every PDP.
 //
 // Each builder returns a plain object. Callers embed it via:
@@ -110,26 +110,27 @@ export function organizationSchema(): Record<string, unknown> {
 
 /**
  * Static schema.org LocalBusiness — the storefront as a place: brand name,
- * site URL, Bengaluru address locality, ₹₹ price band, and the same social
+ * site URL, the address from the admin's Store Settings, ₹₹ price band, and the same social
  * profiles as the Organization schema. Emitted alongside the Organization
- * JSON-LD on the home page so local-intent queries ("mithai Bengaluru")
+ * JSON-LD on the home page so local-intent queries
  * have something honest to hold onto. No openingHours/telephone until the
  * real values exist — same no-invented-fields rule as everywhere else.
  */
-export function localBusinessSchema(): Record<string, unknown> {
+export function localBusinessSchema(store?: {name: string; city: string; state: string; postalCode: string; address: string} | null): Record<string, unknown> {
   const base = siteUrl();
+  // Only fields the owner has entered: no invented city, street or region (same no-invented-fields rule).
+  const address: Record<string, unknown> = {"@type": "PostalAddress", addressCountry: "IN"};
+  if (store?.address) address.streetAddress = store.address;
+  if (store?.city) address.addressLocality = store.city;
+  if (store?.state) address.addressRegion = store.state;
+  if (store?.postalCode) address.postalCode = store.postalCode;
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Mishran · Malgudi Sweets",
+    name: store?.name || "Mishran · Malgudi Sweets",
     url: base,
     image: `${base}/icon.png`,
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Bengaluru",
-      addressRegion: "Karnataka",
-      addressCountry: "IN",
-    },
+    address,
     priceRange: "₹₹",
     sameAs: [
       "https://instagram.com/mishran",

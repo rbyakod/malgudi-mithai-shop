@@ -31,12 +31,10 @@
     "dotLabel": "Go to slide"
   },
   "Home": {
-    "heroBadge": "Handcrafted in Bengaluru • Delivered fresh",
     "heroTitle": "Mithai that feels festive every single day.",
     "heroSubtitle": "Mishran reimagines classic Indian mithai with clean, modern flavours and boutique packaging — perfect for Diwali hampers, weddings, office gifting, or a sweet little Tuesday.",
     "heroPrimaryCta": "Order sweets",
     "heroSecondaryCta": "View gift boxes",
-    "heroNote": "Same‑day delivery in select Bengaluru pin codes.",
     "bestSellersLabel": "House favourites",
     "bestSellersTitle": "Our best‑selling mithai",
     "occasionsLabel": "For every celebration",
@@ -48,7 +46,6 @@
     "corporateLead": "From festive hampers to launch gifts and milestone celebrations, our corporate team helps you choose the right assortments, branding, and delivery plan.",
     "corporateFormTitle": "Tell us what you're planning",
     "corporateFormSubtitle": "Share a few details and our team will call you back within one business day.",
-    "footerLocation": "Indiranagar, Bengaluru",
     "footerPrivacy": "Privacy policy",
     "heroEyebrow": "A new house of Indian sweets",
     "heroHeadlineLine1": "A new house",
@@ -660,7 +657,7 @@
       "sections": {
         "s1": {
           "heading": "About these terms",
-          "p1": "These terms govern your use of the Mishran store and any orders you place through it. Mishran is a Malgudi Sweets brand, made and dispatched from our Bengaluru kitchens. By using the store you agree to them."
+          "p1": "These terms govern your use of the Mishran store and any orders you place through it. Mishran is a Malgudi Sweets brand, made and dispatched from our kitchens. By using the store you agree to them."
         },
         "s2": {
           "heading": "Ordering",
@@ -773,7 +770,7 @@
     "about": {
       "eyebrow": "Mishran · Our story",
       "title": "Our story",
-      "intro": "Modern Indian mithai from Bengaluru — the blend, the kitchens, and the people behind both.",
+      "intro": "Modern Indian mithai — the blend, the kitchens, and the people behind both.",
       "sections": {
         "s1": {
           "heading": "The name",
@@ -781,7 +778,7 @@
         },
         "s2": {
           "heading": "What we make",
-          "p1": "We make modern Indian mithai in small batches across our Bengaluru kitchens — the made-daily classics, festive boxes, and gifting — plus namkeen from our snack shelves and a small line of merchandise for people who cook."
+          "p1": "We make modern Indian mithai in small batches across our kitchens — the made-daily classics, festive boxes, and gifting — plus namkeen from our snack shelves and a small line of merchandise for people who cook."
         },
         "s3": {
           "heading": "Where it comes from",
@@ -808,8 +805,10 @@
       "corporateEyebrow": "Corporate",
       "corporateCta": "Corporate & bulk gifting",
       "corporateHint": "Festive boxes, client gifting, events →",
-      "addressHeading": "Kitchens",
-      "addressBody": "Our kitchens and dispatch are in Bengaluru, Karnataka. Fresh delivery serves the city; shelf-stable ships to serviceable pincodes.",
+      "addressHeading": "Find us",
+      "addressBody": "Find us at {address}. Fresh delivery serves the city; shelf-stable ships to serviceable pincodes.",
+      "addressBodyGeneric": "Fresh delivery serves the city; shelf-stable ships to serviceable pincodes.",
+      "storeHours": "Shop hours: {hours}",
       "hoursHeading": "Hours",
       "hoursBody": "WhatsApp: 9:00–21:00 IST, every day. Fresh delivery slots: 10:00–14:00 and 16:00–20:00."
     }

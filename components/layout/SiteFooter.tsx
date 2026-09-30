@@ -12,6 +12,7 @@
 import {Link} from "@/i18n/navigation";
 import {ConsentPreferencesLink} from "@/components/consent/ConsentPreferencesLink";
 import {getPayload} from "@/lib/payload-client";
+import {fullAddress, getPrimaryStore} from "@/lib/store-info";
 import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
 import {FALLBACK_WHATSAPP, toWaDigits} from "@/lib/whatsapp";
 
@@ -86,6 +87,7 @@ type Props = {
 
 export async function SiteFooter({layoutMode = "fixed"}: Props) {
   const whatsapp = await readWhatsappNumber();
+  const store = await getPrimaryStore();
   const waHref = toWaLink(whatsapp);
   const year = new Date().getFullYear();
   const railClassName = [
@@ -105,9 +107,16 @@ export async function SiteFooter({layoutMode = "fixed"}: Props) {
             Mishran · Malgudi Sweets
           </p>
           <p className="max-w-xs text-[11px] leading-relaxed text-text-light-muted">
-            Modern Indian mithai, handcrafted in small batches across our
-            Bengaluru kitchens. Delivered fresh, packaged with intent.
+            Modern Indian mithai, handcrafted in small batches. Delivered
+            fresh, packaged with intent.
           </p>
+          {store ? (
+            <address className="max-w-xs text-[11px] not-italic leading-relaxed text-text-light-muted">
+              {store.name ? <span className="block font-medium text-text-light">{store.name}</span> : null}
+              <span className="block">{fullAddress(store)}</span>
+              {store.hours ? <span className="block">Hours: {store.hours}</span> : null}
+            </address>
+          ) : null}
           <a
             href={waHref}
             target="_blank"

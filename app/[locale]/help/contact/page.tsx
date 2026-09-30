@@ -7,6 +7,7 @@
 
 import type {Metadata} from "next";
 import {getTranslations} from "next-intl/server";
+import {fullAddress, getPrimaryStore} from "@/lib/store-info";
 import {Link} from "@/i18n/navigation";
 import {getPayload} from "@/lib/payload-client";
 import {WhatsAppLink} from "@/components/commerce/WhatsAppLink";
@@ -40,6 +41,7 @@ export default async function ContactPage({params}: Props) {
   // Touch params so the page renders dynamically per locale.
   await params;
   const t = await getTranslations("Legal.contact");
+  const store = await getPrimaryStore();
 
   const whatsapp = (await readWhatsappNumber()) ?? FALLBACK_WHATSAPP;
   const digits = toWaDigits(whatsapp);
@@ -112,8 +114,15 @@ export default async function ContactPage({params}: Props) {
             {t("addressHeading")}
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-            {t("addressBody")}
+            {store?.address || store?.city
+              ? t("addressBody", {address: fullAddress(store)})
+              : t("addressBodyGeneric")}
           </p>
+          {store?.hours ? (
+            <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+              {t("storeHours", {hours: store.hours})}
+            </p>
+          ) : null}
         </div>
         <div>
           <h2 className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">

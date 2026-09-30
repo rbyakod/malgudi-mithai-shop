@@ -7,6 +7,7 @@
 // unavailable (e.g. during build without DB) so the layout never throws.
 
 import {getPayload} from "@/lib/payload-client";
+import {getPrimaryStore} from "@/lib/store-info";
 import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
 import {FALLBACK_WHATSAPP, toWaDigits} from "@/lib/whatsapp";
 
@@ -37,6 +38,7 @@ type Props = {
 
 export async function BrandBar({layoutMode = "fixed"}: Props) {
   const whatsapp = (await readWhatsappNumber()) ?? FALLBACK_WHATSAPP;
+  const store = await getPrimaryStore();
   const waHref = toWaLink(whatsapp);
   const railClassName = [
     "mx-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-1.5 text-[11px] sm:px-6",
@@ -51,10 +53,11 @@ export async function BrandBar({layoutMode = "fixed"}: Props) {
     >
       <div className={railClassName}>
         <p className="brand-bar__promise font-medium tracking-wide text-gold">
-          Handcrafted daily · Delivered fresh across Bengaluru
+          {store?.city
+            ? `Handcrafted daily · Delivered fresh across ${store.city}`
+            : "Handcrafted daily · Delivered fresh"}
         </p>
         <div className="brand-bar__meta flex flex-wrap items-center gap-x-4 gap-y-0.5 text-text-light-muted">
-          <span className="hidden sm:inline">3 kitchens · 1 promise</span>
           <a
             href={waHref}
             className="inline-flex items-center gap-1.5 font-medium text-text-light transition-colors hover:text-gold"
