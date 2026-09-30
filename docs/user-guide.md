@@ -483,6 +483,11 @@ ask you to sign in there first, then reload.
   captured Razorpay payments against a pasted settlement export; a
   **cash to collect** summary shows the outstanding COD total with a link
   into the orders console.
+- **Ask the admin guide** (every `/admin` page, bottom-right button): an
+  explain-only helper that says what a setting does and what changes if it
+  is altered. It cannot change anything or see orders and customers. Access
+  is limited to the owner (admin role) until shop staff are enabled by the
+  `ADMIN_GUIDE_ROLES` server setting. See `docs/admin-guide-helper.md`.
 
 ---
 
