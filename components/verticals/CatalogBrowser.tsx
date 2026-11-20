@@ -4,6 +4,7 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import Image from "next/image";
 import {Link} from "@/i18n/navigation";
 import {toast} from "sonner";
+import {splitPriceLabel} from "@/lib/ms-price";
 import {useCart} from "@/context/CartContext";
 import {track} from "@/lib/analytics";
 import {
@@ -98,64 +99,64 @@ export function CatalogBrowser({
   const lastVisible = Math.min(pageStart + pagedItems.length, visibleItems.length);
 
   if (items.length === 0) {
-    return (
-      <p className="mt-16 max-w-md text-sm italic leading-relaxed text-text-muted">
-        {emptyLabel}
-      </p>
-    );
+    return <p className="ms-body ms-muted mt-16">{emptyLabel}</p>;
   }
 
   return (
-    <div className="mt-10 space-y-8">
-      <div className="grid gap-3 rounded-2xl border border-border-card bg-bg-card p-4 md:grid-cols-[minmax(0,1fr)_12rem_10rem]">
-        <label className="grid gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-text-muted">
-          Search
+    <div className="mt-10 grid gap-8">
+      {/* Search, filter and sort: the design system's Field. */}
+      <div className="ms-form-grid ms-catalog-controls">
+        <div className="ms-fieldset">
+          <label htmlFor="catalog-search">Search</label>
           <input
+            id="catalog-search"
+            className="ms-input"
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
               setPage(1);
             }}
             placeholder="Search sweets, snacks, tags"
-            className="h-11 rounded-full border border-border-input bg-bg-control px-4 text-sm font-normal normal-case tracking-normal text-text-heading outline-none transition-colors placeholder:text-text-muted focus:border-primary"
           />
-        </label>
-        <label className="grid gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-text-muted">
-          Filter
+        </div>
+        <div className="ms-fieldset">
+          <label htmlFor="catalog-filter">Filter</label>
           <select
+            id="catalog-filter"
+            className="ms-input"
             value={tag}
             onChange={(event) => {
               setTag(event.target.value);
               setPage(1);
             }}
-            className="h-11 rounded-full border border-border-input bg-bg-control px-4 text-sm font-normal normal-case tracking-normal text-text-heading outline-none transition-colors focus:border-primary"
           >
             <option value="all">All</option>
             {tags.map((entry) => (
               <option key={entry} value={entry}>{entry}</option>
             ))}
           </select>
-        </label>
-        <label className="grid gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-text-muted">
-          Sort
+        </div>
+        <div className="ms-fieldset">
+          <label htmlFor="catalog-sort">Sort</label>
           <select
+            id="catalog-sort"
+            className="ms-input"
             value={sort}
             onChange={(event) => {
               setSort(event.target.value as SortKey);
               setPage(1);
             }}
-            className="h-11 rounded-full border border-border-input bg-bg-control px-4 text-sm font-normal normal-case tracking-normal text-text-heading outline-none transition-colors focus:border-primary"
           >
             <option value="featured">Featured</option>
             <option value="name-asc">A-Z</option>
             <option value="name-desc">Z-A</option>
           </select>
-        </label>
+        </div>
       </div>
 
       {visibleItems.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border-card bg-bg-card/50 p-8 text-center">
-          <p className="text-sm text-text-muted">No items match your search.</p>
+        <div className="ms-panel ms-stack ms-panel--line">
+          <p className="ms-body">No items match your search.</p>
           <button
             type="button"
             onClick={() => {
@@ -163,35 +164,35 @@ export function CatalogBrowser({
               setTag("all");
               setSort("featured");
             }}
-            className="mt-4 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-text-light transition-colors hover:bg-primary-hover"
+            className="ms-btn ms-btn-primary"
           >
             Clear filters
           </button>
         </div>
       ) : (
         <>
-          <div className="flex flex-col gap-3 border-y border-border-card py-3 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between">
-            <p>
+          <div className="ms-catalog-bar">
+            <p className="ms-caption ms-muted">
               Showing {firstVisible}-{lastVisible} of {visibleItems.length}
             </p>
             {pageCount > 1 ? (
-              <div className="flex items-center gap-2">
+              <div className="ms-row">
                 <button
                   type="button"
                   onClick={() => setPage((current) => Math.max(1, current - 1))}
                   disabled={currentPage === 1}
-                  className="rounded-full border border-border-input px-3 py-1.5 font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+                  className="ms-btn ms-btn-secondary"
                 >
                   Previous
                 </button>
-                <span className="min-w-20 text-center">
+                <span className="ms-weight">
                   Page {currentPage} of {pageCount}
                 </span>
                 <button
                   type="button"
                   onClick={() => setPage((current) => Math.min(pageCount, current + 1))}
                   disabled={currentPage === pageCount}
-                  className="rounded-full border border-border-input px-3 py-1.5 font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+                  className="ms-btn ms-btn-secondary"
                 >
                   Next
                 </button>
@@ -200,87 +201,81 @@ export function CatalogBrowser({
           </div>
 
           <ul className={gridClassName}>
-          {pagedItems.map((item) => (
+          {pagedItems.map((item) => {
+            const price = item.priceLabel ? splitPriceLabel(item.priceLabel) : null;
+            return (
             <li key={item.id} data-agent-card="catalog">
-              <article className="group flex h-full flex-col border-t border-border-card pt-5 transition-colors hover:bg-bg-accent/30">
-                <Link href={item.href} aria-label={item.title}>
-                  <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm border border-border-image bg-bg-accent">
+              {/* The design system's ProductCard, with Quick add and View under it. */}
+              <article className="ms-card ms-card--actions">
+                <Link href={item.href} aria-label={item.title} tabIndex={-1}>
+                  <figure className="ms-card-media ms-card-media--fill">
                     {item.image ? (
-                      <>
-                        <Image
-                          src={item.image}
-                          alt={item.title}
-                          fill
-                          sizes="(min-width: 1024px) 24rem, (min-width: 640px) 50vw, 100vw"
-                          className="object-cover kb-drift"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-tr from-bg-darker/35 via-transparent to-transparent" />
-                      </>
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        sizes="(min-width: 1024px) 24rem, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover kb-drift"
+                      />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-bg-card">
-                        <span className="flex h-24 w-24 items-center justify-center rounded-full border border-gold/40 bg-gold/15 font-display text-5xl font-light text-gold">
-                          {(item.title[0] ?? "M").toUpperCase()}
-                        </span>
-                      </div>
+                      <span aria-hidden="true" className="ms-card-glyph">
+                        {(item.title[0] ?? "M").toUpperCase()}
+                      </span>
                     )}
-                  </div>
+                  </figure>
                 </Link>
-                <div className="flex flex-1 flex-col pt-4">
-                  {item.tag ? (
-                    <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
-                      {item.tag}
-                    </p>
-                  ) : null}
-                  <Link href={item.href}>
-                    <h3 className="mt-2 font-display text-xl font-medium leading-snug tracking-tight text-text-heading">
-                      {item.title}
-                    </h3>
+                {item.tag ? <p className="ms-label ms-muted">{item.tag}</p> : null}
+                <Link href={item.href} className="ms-card-link">
+                  <h3 className="ms-title">{item.title}</h3>
+                </Link>
+                {item.description ? (
+                  <p className="ms-caption ms-clamp-2">{item.description}</p>
+                ) : null}
+                <div className="ms-card-meta">
+                  {price ? (
+                    <span className="ms-price">
+                      <span className="ms-rupee">₹</span>
+                      {price.amount}
+                      {price.unit ? <span className="ms-weight"> {price.unit}</span> : null}
+                    </span>
+                  ) : item.priceLabel ? (
+                    <span className="ms-caption">{item.priceLabel}</span>
+                  ) : <span />}
+                  {item.freshness ? <span className="ms-weight">{item.freshness}</span> : null}
+                </div>
+                <div className="ms-row ms-card-actions">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addItem({
+                        id: item.id,
+                        name: item.title,
+                        priceLabel: item.priceLabel,
+                        image: item.image ?? "",
+                      });
+                      setAddedItemId(item.id);
+                      if (addedTimerRef.current) {
+                        window.clearTimeout(addedTimerRef.current);
+                      }
+                      addedTimerRef.current = window.setTimeout(() => {
+                        setAddedItemId(null);
+                      }, 1800);
+                      toast.success(`${item.title} added to cart`);
+                      track("add_to_cart", {id: item.id, name: item.title, source: "catalog"});
+                    }}
+                    aria-live="polite"
+                    className="ms-btn ms-btn-primary"
+                  >
+                    {addedItemId === item.id ? "Added" : "Quick add"}
+                  </button>
+                  <Link href={item.href} className="ms-more">
+                    View
                   </Link>
-                  <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-text-muted">
-                    {item.priceLabel ? <span>{item.priceLabel}</span> : null}
-                    {item.freshness ? <span>{item.freshness}</span> : null}
-                  </div>
-                  {item.description ? (
-                    <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-text-muted">
-                      {item.description}
-                    </p>
-                  ) : null}
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        addItem({
-                          id: item.id,
-                          name: item.title,
-                          priceLabel: item.priceLabel,
-                          image: item.image ?? "",
-                        });
-                        setAddedItemId(item.id);
-                        if (addedTimerRef.current) {
-                          window.clearTimeout(addedTimerRef.current);
-                        }
-                        addedTimerRef.current = window.setTimeout(() => {
-                          setAddedItemId(null);
-                        }, 1800);
-                        toast.success(`${item.title} added to cart`);
-                        track("add_to_cart", {id: item.id, name: item.title, source: "catalog"});
-                      }}
-                      aria-live="polite"
-                      className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-text-light transition-colors hover:bg-primary-hover"
-                    >
-                      {addedItemId === item.id ? "Added" : "Quick add"}
-                    </button>
-                    <Link
-                      href={item.href}
-                      className="rounded-full border border-border-input px-4 py-2 text-xs font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary"
-                    >
-                      View
-                    </Link>
-                  </div>
                 </div>
               </article>
             </li>
-          ))}
+            );
+          })}
           </ul>
         </>
       )}

@@ -26,14 +26,14 @@ export function WhatsAppLink({href, whatsapp, ctaLabel, children}: Props) {
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => track("whatsapp_clicked", {route: pathname})}
-      className="group flex flex-col justify-between gap-3 rounded-2xl border border-border-card bg-bg-card p-6 transition-colors hover:border-primary"
+      className="ms-door"
     >
       <div className="flex items-center gap-2">
         <span
           aria-hidden="true"
           className="inline-block h-1.5 w-1.5 rounded-full bg-gold"
         />
-        <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-text-muted">
+        <span className="ms-label ms-muted">
           Talk to us
         </span>
       </div>

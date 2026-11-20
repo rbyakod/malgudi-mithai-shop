@@ -113,18 +113,18 @@ export function LeadForm({
     return (
       <aside
         aria-live="polite"
-        className="mt-10 border-t border-border-card bg-bg-card/60 px-6 py-10 text-center"
+        className="ms-panel ms-panel--line ms-stack mt-10"
       >
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
+        <p className="ms-label ms-muted">
           {t("thankYouEyebrow")}
         </p>
-        <h2 className="mt-3 font-display text-3xl font-light leading-tight text-text-heading sm:text-4xl">
+        <h2 className="ms-headline ms-maroon">
           {t("thankYouTitle")}
         </h2>
-        <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-text-muted">
+        <p className="ms-body">
           {t("thankYouBody")}
         </p>
-        <p className="mt-6 text-xs text-text-muted">
+        <p className="ms-caption ms-muted">
           {t("reference", {id: leadId})}
         </p>
       </aside>
@@ -134,22 +134,22 @@ export function LeadForm({
   return (
     <form
       action={formAction}
-      className="mt-10 space-y-8 border-t border-border-card pt-10"
+      className="ms-lead-form"
     >
       {(eyebrow || title || intro) && (
-        <header className="space-y-3">
+        <header className="ms-head">
           {eyebrow && (
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
+            <p className="ms-label">
               {eyebrow}
             </p>
           )}
           {title && (
-            <h2 className="font-display text-3xl font-light leading-tight text-text-heading sm:text-4xl">
+            <h2 className="ms-headline">
               {title}
             </h2>
           )}
           {intro && (
-            <p className="max-w-xl text-sm leading-relaxed text-text-muted">
+            <p className="ms-lead">
               {intro}
             </p>
           )}
@@ -159,7 +159,7 @@ export function LeadForm({
       {children}
 
       {mutation.isError && (
-        <p role="alert" className="text-sm text-primary">
+        <p role="alert" className="ms-error">
           {t("errorGeneric")}
         </p>
       )}
@@ -167,7 +167,7 @@ export function LeadForm({
       <button
         type="submit"
         disabled={mutation.isPending}
-        className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-text-light shadow-md transition hover:bg-primary-hover hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+        className="ms-btn ms-btn-primary"
       >
         {mutation.isPending ? t("submitting") : (submitLabel ?? t("submit"))}
       </button>

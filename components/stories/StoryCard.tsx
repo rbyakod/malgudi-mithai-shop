@@ -66,7 +66,7 @@ export function StoryCard({
         {/* Featured copy column */}
         <div className="flex flex-col justify-end">
           {pillarLabel ? (
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
+            <p className="ms-label ms-muted">
               {pillarLabel}
             </p>
           ) : null}

@@ -3,8 +3,8 @@
 // and corporate configurators stay visually consistent and the E2E
 // `getByLabel(/name/i)` selectors always hit a real <label>/<input> pair.
 //
-// Fieldset style is editorial — hairline divider above each group, label
-// set in caps tracking, asymmetric grid on sm+.
+// Styled as the Mishran Design System's Field: Mono capital labels above a
+// square, nutmeg-ruled input at 18px; each group a numbered step under a hairline.
 
 "use client";
 
@@ -24,23 +24,13 @@ export function FieldGroup({
   children: ReactNode;
 }) {
   return (
-    <fieldset className="border-t border-border-card pt-6">
-      <legend className="flex w-full items-baseline gap-3">
-        <span className="font-display text-xl font-light text-gold">
-          {numeral}
-        </span>
-        <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-text-secondary">
-          {label}
-        </span>
-        {hint && (
-          <span className="ml-auto text-[11px] italic text-text-muted">
-            {hint}
-          </span>
-        )}
+    <fieldset className="ms-lead-group">
+      <legend className="ms-lead-legend">
+        <span className="ms-step-n">{numeral}</span>
+        <span className="ms-label">{label}</span>
+        {hint && <span className="ms-hint">{hint}</span>}
       </legend>
-      <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-        {children}
-      </div>
+      <div className="ms-form-grid">{children}</div>
     </fieldset>
   );
 }
@@ -67,10 +57,10 @@ export function TextField({
   min?: number | string;
 }) {
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.16em] text-text-secondary">
+    <label className="ms-fieldset">
+      <span className="ms-field-label">
         {label}
-        {required && <span className="ml-0.5 text-primary">*</span>}
+        {required && <span className="ms-maroon" aria-hidden="true"> *</span>}
       </span>
       <input
         name={name}
@@ -80,7 +70,7 @@ export function TextField({
         placeholder={placeholder}
         pattern={pattern}
         min={min}
-        className="w-full rounded-xl border border-border-input bg-bg-control px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-breadcrumb/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+        className="ms-input"
       />
     </label>
   );
@@ -99,16 +89,16 @@ export function TextAreaField({
   rows?: number;
 }) {
   return (
-    <label className="block sm:col-span-2">
-      <span className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.16em] text-text-secondary">
+    <label className="ms-fieldset ms-field-wide">
+      <span className="ms-field-label">
         {label}
-        {required && <span className="ml-0.5 text-primary">*</span>}
+        {required && <span className="ms-maroon" aria-hidden="true"> *</span>}
       </span>
       <textarea
         name={name}
         required={required}
         rows={rows}
-        className="w-full resize-y rounded-xl border border-border-input bg-bg-control px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-breadcrumb/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+        className="ms-input ms-textarea"
       />
     </label>
   );

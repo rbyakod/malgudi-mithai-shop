@@ -55,7 +55,7 @@ export function StoryHero({
         {/* Left rail — pillar + title + excerpt + date */}
         <div className="order-2 lg:order-1">
           {pillarLabel ? (
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
+            <p className="ms-label ms-muted">
               {pillarLabel}
             </p>
           ) : null}

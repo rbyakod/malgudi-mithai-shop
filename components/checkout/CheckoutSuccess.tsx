@@ -39,13 +39,13 @@ export function CheckoutSuccess() {
       {orderId ? (
         <OrderDetail orderId={orderId} />
       ) : (
-        <div className="rounded-2xl border border-dashed border-border-card bg-bg-card/50 p-8 text-center">
+        <div className="ms-panel ms-panel--line ms-stack">
           <p className="text-sm italic leading-relaxed text-text-muted">
             {t("noOrder")}
           </p>
           <Link
             href="/account"
-            className="mt-5 inline-block text-[11px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline"
+            className="ms-more ms-maroon mt-5 inline-block"
           >
             {t("yourOrders")}
           </Link>

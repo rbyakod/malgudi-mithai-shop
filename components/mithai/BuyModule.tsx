@@ -107,33 +107,30 @@ export function BuyModule({
   }
 
   return (
-    <div className="mt-8">
-      {/* Price */}
-      <p className="font-display text-2xl font-medium text-text-heading">
-        <span data-testid="display-price">{priceLabel}</span>
-      </p>
-      <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.18em] text-text-muted">
-        {t("taxNote")}
-      </p>
+    <div className="ms-buy">
+      {/* Price: the design system's Price (Mono figures; the ₹ falls back to Tiro). */}
+      <div className="ms-stack ms-stack--tight">
+        <p className="ms-price ms-price--lg">
+          <span data-testid="display-price">{priceLabel}</span>
+        </p>
+        <p className="ms-weight ms-muted">{t("taxNote")}</p>
+      </div>
 
       {/* Delivery pincode */}
-      <div className="mt-6 border-t border-border-card pt-6">
+      <div className="ms-buy-row">
         <PincodeCheck />
       </div>
 
       {/* Pack size */}
       {packSizes.length > 0 ? (
-        <div className="mt-6 border-t border-border-card pt-6">
-          <p
-            className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80"
-            id="pack-size-label"
-          >
+        <div className="ms-buy-row">
+          <p className="ms-field-label" id="pack-size-label">
             {t("packSize.label")}
           </p>
           <div
             role="radiogroup"
             aria-labelledby="pack-size-label"
-            className="mt-3 flex flex-wrap gap-2"
+            className="ms-chip-row"
           >
             {packSizes.map((p) => {
               const isSelected = p.label === selected?.label;
@@ -145,11 +142,7 @@ export function BuyModule({
                   aria-checked={isSelected}
                   data-testid="pack-size"
                   onClick={() => setSelectedLabel(p.label)}
-                  className={`border px-4 py-2 font-display text-sm transition-colors ${
-                    isSelected
-                      ? "border-gold bg-bg-accent text-primary"
-                      : "border-border-card text-text-muted hover:border-gold/60 hover:text-text-heading"
-                  }`}
+                  className={`ms-btn ms-chip ${isSelected ? "ms-btn-primary" : "ms-btn-secondary"}`}
                 >
                   {p.label}
                 </button>
@@ -160,23 +153,23 @@ export function BuyModule({
       ) : null}
 
       {/* Quantity + CTAs */}
-      <div className="mt-6 border-t border-border-card pt-6">
-        <div className="flex flex-wrap items-center gap-6">
-          <div className="flex items-center border border-border-card">
+      <div className="ms-buy-row">
+        <div className="ms-row">
+          <div className="ms-qty">
             <button
               type="button"
               data-testid="qty-decrement"
               aria-label={t("qty.decrease")}
               onClick={() => setQty((q) => Math.max(1, q - 1))}
               disabled={qty <= 1}
-              className="px-3 py-2 font-display text-base text-primary disabled:opacity-40"
+              className="ms-qty-btn"
             >
               −
             </button>
             <span
               data-testid="qty-value"
               aria-live="polite"
-              className="min-w-8 text-center font-display text-base text-text-heading"
+              className="ms-qty-value"
             >
               {qty}
             </span>
@@ -185,7 +178,7 @@ export function BuyModule({
               data-testid="qty-increment"
               aria-label={t("qty.increase")}
               onClick={() => setQty((q) => Math.min(20, q + 1))}
-              className="px-3 py-2 font-display text-base text-primary"
+              className="ms-qty-btn"
             >
               +
             </button>
@@ -197,11 +190,8 @@ export function BuyModule({
             onClick={addToCart}
             disabled={pending}
             aria-live="polite"
-            className="inline-flex items-center gap-3 border-y border-gold/60 bg-bg-control px-6 py-3 font-display text-sm font-medium uppercase tracking-[0.18em] text-primary transition-colors hover:bg-bg-accent disabled:opacity-70"
+            className="ms-btn ms-btn-primary"
           >
-            <span aria-hidden="true" className="text-gold">
-              {added ? "✓" : "+"}
-            </span>
             <span>{added ? t("added") : t("addToCart")}</span>
           </button>
 
@@ -210,12 +200,9 @@ export function BuyModule({
             data-testid="buy-now"
             onClick={buyNow}
             disabled={pending}
-            className="border-y border-gold/60 bg-bg-accent px-6 py-3 font-display text-sm font-medium uppercase tracking-[0.18em] text-primary-hover transition-colors hover:bg-bg-control disabled:opacity-70"
+            className="ms-btn ms-btn-secondary"
           >
             {t("buyNow")}
-            <span className="ml-2 normal-case tracking-normal text-text-muted">
-              {priceLabel}
-            </span>
           </button>
 
           <a
@@ -223,24 +210,25 @@ export function BuyModule({
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => track("whatsapp_clicked", {source: "pdp", id: cartId})}
-            className="border-y border-border-card px-6 py-3 font-display text-sm font-medium uppercase tracking-[0.18em] text-text-secondary transition-colors hover:border-gold/60 hover:text-primary"
+            className="ms-more"
           >
             WhatsApp
           </a>
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border-card bg-bg-card/95 px-4 py-3 shadow-[0_-12px_40px_rgba(0,0,0,0.18)] backdrop-blur md:hidden">
+      {/* Sticky buy bar on phones; data-agent-avoid lifts the AI team's launcher above it. */}
+      <div data-agent-avoid="bottom" className="ms-buybar md:hidden">
         <div className={stickyRailClassName}>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-semibold text-text-heading">{name}</p>
-            <p className="text-[11px] text-text-muted">{qty} x {priceLabel}</p>
+            <p className="ms-buybar-name">{name}</p>
+            <p className="ms-caption ms-muted">{qty} x {priceLabel}</p>
           </div>
           <button
             type="button"
             onClick={addToCart}
             disabled={pending}
-            className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-text-light transition-colors hover:bg-primary-hover disabled:opacity-70"
+            className="ms-btn ms-btn-primary"
           >
             {added ? t("added") : t("addToCart")}
           </button>

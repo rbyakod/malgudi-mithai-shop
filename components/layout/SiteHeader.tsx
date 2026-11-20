@@ -157,12 +157,24 @@ export function SiteHeader() {
     <header className="ms-header sticky top-0 z-20">
       <div className="ms-wrap ms-header-in">
         <Link href="/" className="ms-header-logo" aria-label="Mishran, home">
-          {/* The supplied lockup, outlined: the name is never set in type. */}
+          {/* The supplied lockup, outlined: the name is never set in type. On phones the
+              design system's wordmark (the name without the crest, at the size the name has in
+              the 240px lockup) makes room for CART beside MENU. */}
           <Image
+            className="ms-logo-full"
             src="/brand/mishran-lockup-cream-on-maroon.svg"
             alt="Mishran"
             width={300}
             height={62}
+            unoptimized
+            priority
+          />
+          <Image
+            className="ms-logo-word"
+            src="/brand/mishran-wordmark-cream-on-maroon.svg"
+            alt="Mishran"
+            width={184}
+            height={25}
             unoptimized
             priority
           />
@@ -201,9 +213,13 @@ export function SiteHeader() {
               </option>
             ))}
           </select>
-          <Link href="/cart" className="ms-btn ms-btn-on-dark ms-cart-btn">
+          <Link
+            href="/cart"
+            className="ms-btn ms-btn-on-dark ms-cart-btn"
+            aria-label={count > 0 ? `${t("cart")}, ${t("cartCount", {count})}` : undefined}
+          >
             {t("cart")}
-            {count > 0 ? <span aria-label={`${count} items`}> · {count}</span> : null}
+            {count > 0 ? <span className="ms-count" aria-hidden="true">{count}</span> : null}
           </Link>
           <button
             type="button"
@@ -212,7 +228,9 @@ export function SiteHeader() {
             aria-expanded={menuOpen}
             aria-controls="ms-mobile-menu"
           >
-            {menuOpen ? "Close" : t("menu")}
+            {menuOpen ? t("close") : t("menu")}
+            {/* Under 360px there is no room for CART: the count rides on MENU instead. */}
+            {count > 0 && !menuOpen ? <span className="ms-count ms-menu-count" aria-hidden="true">{count}</span> : null}
           </button>
         </div>
       </div>
@@ -220,6 +238,29 @@ export function SiteHeader() {
       {/* Menu panel: the nav folds here below 1120px. */}
       <div id="ms-mobile-menu" className="ms-menu-panel" hidden={!menuOpen}>
         <nav className="ms-wrap ms-menu-in" aria-label="Mobile navigation">
+          {/* Cart and language first: the panel can be taller than a phone screen. */}
+          <div className="ms-menu-top">
+            <Link
+              href="/cart"
+              onClick={() => setMenuOpen(false)}
+              className="ms-btn ms-btn-on-dark"
+            >
+              {t("cart")}
+              {count > 0 ? ` · ${count}` : ""}
+            </Link>
+            <select
+              className="ms-locale ms-locale--panel"
+              value={locale}
+              onChange={(e) => handleLocaleChange(e.target.value)}
+              aria-label="Language"
+            >
+              {AVAILABLE_LOCALES.map((l) => (
+                <option key={l.code} value={l.code} lang={l.code}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <p className="ms-label">{navT("shop")}</p>
           <ul>
             {SHOP_NAV_LINKS.map((link) => {
@@ -271,26 +312,6 @@ export function SiteHeader() {
               );
             })}
           </ul>
-          <select
-            className="ms-locale ms-locale--panel"
-            value={locale}
-            onChange={(e) => handleLocaleChange(e.target.value)}
-            aria-label="Language"
-          >
-            {AVAILABLE_LOCALES.map((l) => (
-              <option key={l.code} value={l.code} lang={l.code}>
-                {l.label}
-              </option>
-            ))}
-          </select>
-          <Link
-            href="/cart"
-            onClick={() => setMenuOpen(false)}
-            className="ms-btn ms-btn-on-dark"
-          >
-            {t("cart")}
-            {count > 0 ? ` · ${count}` : ""}
-          </Link>
         </nav>
       </div>
     </header>

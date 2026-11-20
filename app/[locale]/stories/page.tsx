@@ -104,27 +104,16 @@ export default async function StoriesHub({params}: Props) {
   return (
     <section aria-labelledby="stories-hub-heading" className="pb-20 pt-10">
       <div className="mx-auto max-w-6xl px-1 sm:px-2 lg:px-3">
-        {/* Header — left rail + blurb column (mirrors VerticalHub) */}
-        <div className="grid gap-6 border-b border-border-card pb-10 lg:grid-cols-[0.45fr_0.55fr] lg:items-end">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-              {t("eyebrow")} · {itemCountLabel}
-            </p>
-            <h1
-              id="stories-hub-heading"
-              className="mt-3 font-display text-4xl font-light leading-tight tracking-tight text-text-heading sm:text-5xl"
-            >
-              {t("title")}
-            </h1>
-          </div>
-          <p className="max-w-md text-sm leading-relaxed text-text-muted">
-            {t("intro")}
-          </p>
-        </div>
+        {/* Header: the design system's SectionHead. */}
+        <header className="ms-head ms-hub-head">
+          <p className="ms-label ms-muted">{t("eyebrow")} · {itemCountLabel}</p>
+          <h1 id="stories-hub-heading" className="ms-headline">{t("title")}</h1>
+          <p className="ms-lead">{t("intro")}</p>
+        </header>
 
         {/* Body — or empty state */}
         {itemCount === 0 ? (
-          <p className="mt-16 max-w-md text-sm italic leading-relaxed text-text-muted">
+          <p className="ms-body ms-muted mt-16">
             {t("empty")}
           </p>
         ) : (

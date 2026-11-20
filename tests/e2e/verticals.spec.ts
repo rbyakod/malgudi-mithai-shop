@@ -42,7 +42,7 @@ test("qsr hub lists seeded item", async ({page}) => {
   await page.goto("/en/qsr");
 
   await expect(
-    page.getByRole("heading", {name: /qsr/i}).first(),
+    page.getByRole("heading", {name: /restaurant/i}).first(),
   ).toBeVisible();
 
   // Seeded item appears (scripts/seed.ts → qsr-menu-items/Chole Bhature).

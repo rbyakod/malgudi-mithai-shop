@@ -89,16 +89,10 @@ export function GiftBuilder({whatsapp}: Props) {
 
   return (
     <section className="mx-auto w-full max-w-5xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14 lg:px-8">
-      <header className="grid gap-6 border-b border-border-card pb-10 lg:grid-cols-[0.45fr_0.55fr] lg:items-end">
-        <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
-            Mishran gifts
-          </p>
-          <h1 className="mt-3 font-display text-4xl font-light leading-tight tracking-tight text-text-heading sm:text-5xl">
-            Build a gift
-          </h1>
-        </div>
-        <p className="max-w-md text-sm leading-relaxed text-text-muted">
+      <header className="ms-head ms-hub-head">
+        <p className="ms-label ms-muted">Mishran gifts</p>
+        <h1 className="ms-headline">Build a gift</h1>
+        <p className="ms-lead">
           Choose the occasion, box, budget, and delivery details. We will confirm the assortment and quote before packing.
         </p>
       </header>
@@ -110,7 +104,7 @@ export function GiftBuilder({whatsapp}: Props) {
             ["Dietary aware", "Mark nut-free, sugar-free, Jain, or custom notes."],
             ["Message card", "Add a short note and we will include it with the gift."],
           ].map(([title, body]) => (
-            <div key={title} className="rounded-2xl border border-border-card bg-bg-card p-5">
+            <div key={title} className="ms-panel ms-panel--line">
               <h2 className="text-sm font-semibold text-text-heading">{title}</h2>
               <p className="mt-2 text-xs leading-relaxed text-text-muted">{body}</p>
             </div>

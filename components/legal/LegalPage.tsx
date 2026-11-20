@@ -62,7 +62,7 @@ export async function LegalPage({namespace, values = {}}: Props) {
       className="mx-auto w-full max-w-3xl flex-1 pb-20 pt-10 sm:pt-14"
     >
       <header className="border-b border-border-card pb-10">
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
+        <p className="ms-label ms-muted">
           {t("eyebrow")}
         </p>
         <h1

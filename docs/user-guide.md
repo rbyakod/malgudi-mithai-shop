@@ -85,15 +85,24 @@ Hindi), square corners, no shadows or gradients. There is one look; the old
 theme switcher is gone.
 
 - **Announcement strip** on nutmeg: "Honest Indian mithai · From our own
-  dairy in Jhajjar", "3 kitchens · 1 promise" and the WhatsApp number.
+  dairy in Jhajjar", "3 kitchens · 1 promise" and the WhatsApp number. On
+  phones it keeps one line: "Honest Indian mithai" (WhatsApp is in the
+  footer).
 - **Header** on maroon: the Mishran lockup, the main links
   (**Gifting · Mithai · Our dairy · Restaurant · Visit**, with the AI team's
   **AI Team** menu before Visit), the language
   dropdown and a **CART** button that shows the item count. Below 1120px wide
-  the links fold into a **MENU** button that opens a panel with the main
-  links, **More from the house** (Build a box · Snacks · Boxes and thalis),
-  the story links, the language dropdown and the cart. On phones the cart
-  button lives in that panel.
+  the links fold into a **MENU** button. The menu opens with **Cart** and the
+  language dropdown at the top, then the main links, **More from the house**
+  (Build a box · Snacks · Boxes and thalis) and the story links; it scrolls
+  on its own when it is taller than the screen.
+- **On phones** the header shows the Mishran wordmark (the name without the
+  crest), a **CART** button with a round item count, and **MENU**. On the
+  smallest phones (under 360px wide) the count moves onto MENU and Cart is
+  the first item in the menu.
+- **The AI team's button** is a small round avatar in the corner on phones
+  (the agent's name and suggestion show on wider screens). On a product page
+  it sits above the sticky add-to-cart bar.
 - **Hero** on nutmeg: "Honest Indian mithai", the Mithai Library box, a
   **See the Mithai Library** button (Gifting) and a **Shop the counter** link
   (Mithai). The AI team's "What brings you here?" picker appears under these,
@@ -173,6 +182,15 @@ stores, not in the cart) · **QSR** (walk-in counter menu — no ordering) ·
 - **Offline**: both apps cache the mithai catalog — it opens instantly and
   keeps working without a network (refreshed in the background every 6
   hours). Snacks/QSR/Merch tabs need a connection.
+
+### How cards, product pages and forms look on web
+Product cards follow the design system's ProductCard: the photo on a nutmeg
+ground, the name in Mono capitals, the veg mark where the product is tagged
+vegetarian, and the price with its unit over a hairline. Search, filter and
+sort boxes and every enquiry form use the design system's square fields
+with labels above them; buttons are square, at least 44px tall on touch
+screens. Form fields use 16px text or larger, so iPhones do not zoom in
+when you tap one. The counter-menu page is titled **Restaurant**.
 
 ### Product cards elsewhere
 Snacks cards show MRP + pack weight; QSR cards show a veg/non-veg dot and

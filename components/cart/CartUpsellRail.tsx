@@ -77,7 +77,7 @@ export function CartUpsellRail({cards}: Props) {
     >
       <h2
         id="cart-upsell-heading"
-        className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold"
+        className="ms-label ms-muted"
       >
         {t("upsellTitle")}
       </h2>
@@ -95,7 +95,7 @@ export function CartUpsellRail({cards}: Props) {
               data-testid="cart-upsell-add"
               aria-label={t("upsellAddLabel", {name: card.name})}
               onClick={() => add(card)}
-              className="mt-4 self-start border border-border-input bg-bg-control px-4 py-2 text-[11px] font-medium uppercase tracking-[0.18em] text-text-secondary transition-colors hover:border-primary hover:text-primary"
+              className="ms-btn ms-btn-secondary mt-4 self-start"
             >
               {t("upsellAdd")}
             </button>

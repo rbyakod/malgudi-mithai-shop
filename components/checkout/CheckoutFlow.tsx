@@ -543,14 +543,14 @@ export function CheckoutFlow({whatsapp}: Props) {
           <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border-card pb-4">
             <h2
               id="checkout-slot-heading"
-              className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold"
+              className="ms-label ms-muted"
             >
               {t("slotHeading")}
             </h2>
             <button
               type="button"
               onClick={() => setPhase("address")}
-              className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline"
+              className="ms-more ms-maroon"
             >
               {t("changeAddress")}
             </button>
@@ -602,14 +602,14 @@ export function CheckoutFlow({whatsapp}: Props) {
           <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border-card pb-4">
             <h2
               id="checkout-summary-heading"
-              className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold"
+              className="ms-label ms-muted"
             >
               {t("summaryHeading")}
             </h2>
             <button
               type="button"
               onClick={() => setPhase(delivery.tier === "fresh" ? "slot" : "address")}
-              className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline"
+              className="ms-more ms-maroon"
             >
               {delivery.tier === "fresh" ? t("changeSlot") : t("changeAddress")}
             </button>
@@ -680,7 +680,7 @@ export function CheckoutFlow({whatsapp}: Props) {
                       data-testid="checkout-coupon-remove"
                       onClick={removeCoupon}
                       disabled={validating}
-                      className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline disabled:opacity-50"
+                      className="ms-more ms-maroon"
                     >
                       {t("couponRemove")}
                     </button>
@@ -695,7 +695,7 @@ export function CheckoutFlow({whatsapp}: Props) {
                   >
                     <label
                       htmlFor="checkout-coupon-input"
-                      className="text-[11px] font-medium uppercase tracking-[0.18em] text-text-secondary"
+                      className="ms-field-label"
                     >
                       {t("couponLabel")}
                     </label>
@@ -709,7 +709,7 @@ export function CheckoutFlow({whatsapp}: Props) {
                       autoComplete="off"
                       spellCheck={false}
                       disabled={validating}
-                      className="w-44 border border-border-input bg-bg-card px-3 py-2 text-sm uppercase tracking-[0.14em] text-text-heading placeholder:text-text-muted placeholder:normal-case placeholder:tracking-normal focus:border-gold focus:outline-none disabled:opacity-60"
+                      className="ms-input ms-input--code"
                     />
                     <button
                       type="submit"
@@ -766,7 +766,7 @@ export function CheckoutFlow({whatsapp}: Props) {
                 disabled={payBusy}
                 className="mt-8"
               >
-                <legend className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
+                <legend className="ms-label ms-muted">
                   {t("paymentMethodLabel")}
                 </legend>
                 <div className="mt-3 space-y-2">
@@ -779,7 +779,7 @@ export function CheckoutFlow({whatsapp}: Props) {
                       name="checkout-payment-method"
                       checked={paymentChoice === "online"}
                       onChange={() => setPaymentChoice("online")}
-                      className="mt-1 accent-gold"
+                      className="mt-1 ms-check"
                     />
                     <span>
                       {t("payOnline")}
@@ -797,7 +797,7 @@ export function CheckoutFlow({whatsapp}: Props) {
                       name="checkout-payment-method"
                       checked={paymentChoice === "upi"}
                       onChange={() => setPaymentChoice("upi")}
-                      className="mt-1 accent-gold"
+                      className="mt-1 ms-check"
                     />
                     <span>
                       {t("payUpi")}
@@ -815,7 +815,7 @@ export function CheckoutFlow({whatsapp}: Props) {
                       name="checkout-payment-method"
                       checked={paymentChoice === "cod"}
                       onChange={() => setPaymentChoice("cod")}
-                      className="mt-1 accent-gold"
+                      className="mt-1 ms-check"
                     />
                     <span>
                       {t("payCod")}
@@ -860,7 +860,7 @@ export function CheckoutFlow({whatsapp}: Props) {
               {payError ? (
                 <div
                   data-testid="checkout-pay-error"
-                  className="mt-6 rounded-2xl border border-border-card bg-bg-card p-5"
+                  className="ms-panel ms-panel--line mt-6"
                 >
                   <p className="text-sm leading-relaxed text-text-heading">
                     {t(`payErrors.${payError.reason}`)}
@@ -876,7 +876,7 @@ export function CheckoutFlow({whatsapp}: Props) {
                       data-testid="checkout-retry"
                       onClick={() => void pay()}
                       disabled={payBusy}
-                      className="rounded-full bg-primary px-5 py-2 text-xs font-semibold text-text-light transition-colors hover:bg-primary-hover disabled:opacity-70"
+                      className="ms-btn ms-btn-primary"
                     >
                       {t("retry")}
                     </button>
@@ -887,7 +887,7 @@ export function CheckoutFlow({whatsapp}: Props) {
                       onClick={() =>
                         track("whatsapp_clicked", {source: "checkout-pay-failed"})
                       }
-                      className="rounded-full border border-border-input px-5 py-2 text-xs font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary"
+                      className="ms-btn ms-btn-secondary"
                     >
                       {t("whatsappFallback")}
                     </a>

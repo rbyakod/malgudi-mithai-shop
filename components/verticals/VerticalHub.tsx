@@ -135,23 +135,12 @@ export async function VerticalHub({collection, vertical}: Props) {
   return (
     <section aria-labelledby="vertical-hub-heading" className="pb-20 pt-10">
       <div className={["mx-auto px-1 sm:px-2 lg:px-3", isFullWidth ? "max-w-none" : "max-w-6xl"].join(" ")}>
-        {/* Header — left rail + blurb column */}
-        <div className="grid gap-6 border-b border-border-card pb-10 lg:grid-cols-[0.45fr_0.55fr] lg:items-end">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-              {itemCountLabel}
-            </p>
-            <h1
-              id="vertical-hub-heading"
-              className="mt-3 font-display text-4xl font-light leading-tight tracking-tight text-text-heading sm:text-5xl"
-            >
-              {title}
-            </h1>
-          </div>
-          <p className="max-w-md text-sm leading-relaxed text-text-muted">
-            {blurb}
-          </p>
-        </div>
+        {/* Header: the design system's SectionHead. */}
+        <header className="ms-head ms-hub-head">
+          <p className="ms-label ms-muted">{itemCountLabel}</p>
+          <h1 id="vertical-hub-heading" className="ms-headline">{title}</h1>
+          <p className="ms-lead">{blurb}</p>
+        </header>
 
         <CatalogBrowser
           items={items}

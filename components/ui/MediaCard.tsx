@@ -1,107 +1,75 @@
 // components/ui/MediaCard.tsx
-// Editorial card for vertical hub listings.
-//
-// Design intent — avoid the generic e-commerce 3-up product card:
-// - Image treated as a framed editorial panel (gold hairline + tonal wash),
-//   not a stock-photo tile. When there's no image, fall back to a designed
-//   colour block (initial monogram + accent gradient) like VerticalPortals.
-// - Title in the project's display serif; "View" affordance in tracked
-//   uppercase gold, mirroring the read-more pattern in Pillars.tsx.
-// - Numerals not used here (the hub grid is the index); instead each card
-//   anchors on a thin gold rule under the title.
+// Card for vertical hub listings and rails, built as the Mishran Design System's
+// ProductCard: the picture on a nutmeg ground, an optional label, the name in Mono
+// capitals, an optional line, and the price (figures in Mono with a Tiro ₹) over a
+// hairline. A missing picture shows the nutmeg ground with the name's first letter.
+// The product-image drift (kb-drift) stays: it is switched off by reduced motion and
+// by Admin → Storefront settings → Product image motion.
 //
 // Server component — no client interactivity required.
 
 import Image from "next/image";
 import {Link} from "@/i18n/navigation";
+import {splitPriceLabel} from "@/lib/ms-price";
 
 type Props = {
   title: string;
   href: string;
   /** Absolute or root-relative URL of the media asset. Null renders the
-   *  designed colour-block fallback so the grid never breaks on missing
-   *  media (Task 7 seeds ship without images; Task 16 will backfill). */
+   *  nutmeg ground so the grid never breaks on missing media. */
   image?: string | null;
-  /** Optional eyebrow tag (e.g. category, family, type). */
+  /** Optional label above the name (e.g. category, family, type). */
   tag?: string | null;
-  /** Optional glyph for the fallback block. Defaults to first letter of
-   *  title. */
+  /** Optional glyph for the fallback ground. Defaults to first letter of title. */
   glyph?: string;
-  /** Optional price line under the title (e.g. "₹920 / 250 g"). */
+  /** Optional price line (e.g. "₹920 / 250 g"). */
   priceLabel?: string | null;
-  /** Optional one-or-two-line blurb under the price/title. */
+  /** Optional one-or-two-line blurb under the name. */
   blurb?: string | null;
 };
 
-export function MediaCard({
-  title,
-  href,
-  image,
-  tag,
-  glyph,
-  priceLabel,
-  blurb,
-}: Props) {
+export function MediaCard({title, href, image, tag, glyph, priceLabel, blurb}: Props) {
   const monogram = (glyph ?? title?.[0] ?? "·").toUpperCase();
+  const price = priceLabel ? splitPriceLabel(priceLabel) : null;
 
   return (
-    <Link
-      href={href}
-      aria-label={title}
-      className="group flex flex-col border-t border-border-card pt-5 transition-colors hover:bg-bg-accent/30"
-    >
-      {/* Framed image panel — or designed fallback */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm border border-border-image bg-bg-accent">
+    <Link href={href} aria-label={title} className="ms-card">
+      <figure className="ms-card-media ms-card-media--fill">
         {image ? (
-          <>
-            <Image
-              src={image}
-              alt=""
-              fill
-              sizes="(min-width: 1024px) 24rem, (min-width: 640px) 50vw, 100vw"
-              className="object-cover kb-drift"
-            />
-            <div className="absolute inset-0 bg-gradient-to-tr from-bg-darker/35 via-transparent to-transparent" />
-          </>
+          <Image
+            src={image}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 24rem, (min-width: 640px) 50vw, 100vw"
+            className="object-cover kb-drift"
+          />
         ) : (
-          <div
-            aria-hidden="true"
-            className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/25 via-gold/15 to-transparent"
-          >
-            <span className="font-display text-5xl font-light italic text-primary">
-              {monogram}
-            </span>
-          </div>
+          <span aria-hidden="true" className="ms-card-glyph">
+            {monogram}
+          </span>
         )}
-      </div>
+      </figure>
 
-      {/* Tag eyebrow (optional) */}
-      {tag ? (
-        <p className="mt-4 text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
-          {tag}
-        </p>
+      {tag ? <p className="ms-label ms-muted">{tag}</p> : null}
+
+      {/* Plain text so the hub tests can match the name. */}
+      <h3 className="ms-title">{title}</h3>
+
+      {blurb ? <p className="ms-caption ms-clamp-2">{blurb}</p> : null}
+
+      {price ? (
+        <div className="ms-card-meta">
+          <span className="ms-price">
+            <span className="ms-rupee">₹</span>
+            {price.amount}
+          </span>
+          {price.unit ? <span className="ms-weight">{price.unit}</span> : null}
+        </div>
+      ) : priceLabel ? (
+        <div className="ms-card-meta">
+          <span className="ms-caption">{priceLabel}</span>
+        </div>
       ) : null}
-
-      {/* Title — display serif, plain text so hub regex matches */}
-      <h3 className="mt-2 font-display text-xl font-medium leading-snug tracking-tight text-text-heading">
-        {title}
-      </h3>
-
-      {/* Optional price + blurb (mirrors the CatalogBrowser card meta) */}
-      {priceLabel ? (
-        <p className="mt-3 text-[11px] text-text-muted">{priceLabel}</p>
-      ) : null}
-      {blurb ? (
-        <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-text-muted">
-          {blurb}
-        </p>
-      ) : null}
-
-      {/* Thin gold rule + View affordance */}
-      <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-gold opacity-80 transition-opacity group-hover:opacity-100">
-        View
-        <span aria-hidden="true">&rarr;</span>
-      </span>
     </Link>
   );
 }

@@ -83,23 +83,12 @@ export default async function Page({params}: Props) {
           isFullWidth ? "max-w-none" : "max-w-6xl",
         ].join(" ")}
       >
-        {/* Header — left rail + blurb column (mirrors VerticalHub) */}
-        <div className="grid gap-6 border-b border-border-card pb-10 lg:grid-cols-[0.45fr_0.55fr] lg:items-end">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-              {tShared("itemCount", {count: items.length})}
-            </p>
-            <h1
-              id="mithai-hub-heading"
-              className="mt-3 font-display text-4xl font-light leading-tight tracking-tight text-text-heading sm:text-5xl"
-            >
-              {t("title")}
-            </h1>
-          </div>
-          <p className="max-w-md text-sm leading-relaxed text-text-muted">
-            {t("blurb")}
-          </p>
-        </div>
+        {/* Header: the design system's SectionHead. */}
+        <header className="ms-head ms-hub-head">
+          <p className="ms-label ms-muted">{tShared("itemCount", {count: items.length})}</p>
+          <h1 id="mithai-hub-heading" className="ms-headline">{t("title")}</h1>
+          <p className="ms-lead">{t("blurb")}</p>
+        </header>
 
         {/* useSearchParams needs a Suspense boundary on the client island. */}
         <Suspense>

@@ -125,68 +125,51 @@ export async function MithaiPDP({slug, locale}: Props) {
     },
   );
 
+  const isVeg = (doc!.dietaryTags ?? []).some((tag) => tag.toLowerCase() === "vegetarian");
+
   return (
     <article className="pb-24 pt-8" data-agent-section="product">
       <div className={["mx-auto px-1 sm:px-2 lg:px-3", isFullWidth ? "max-w-none" : "max-w-6xl"].join(" ")}>
         {/* Breadcrumb */}
         <nav
           aria-label="breadcrumb"
-          className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-text-breadcrumb"
+          className="ms-breadcrumb"
         >
-          <Link href="/" className="hover:text-primary">
-            {tShared("breadcrumbHome")}
-          </Link>
+          <Link href="/">{tShared("breadcrumbHome")}</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/mithai" className="hover:text-primary">
-            {tNav("mithai")}
-          </Link>
+          <Link href="/mithai">{tNav("mithai")}</Link>
           <span aria-hidden="true">/</span>
-          <span className="text-text-muted">{name}</span>
+          <span aria-current="page">{name}</span>
         </nav>
 
         {/* Header — buy column | image panel (image leads on mobile,
             lg:order-first restores text-left / image-right on desktop) */}
-        <div className="mt-10 grid gap-10 border-b border-border-card pb-12 lg:grid-cols-[0.5fr_0.5fr]">
-          {/* Image panel — or designed fallback */}
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm border border-border-image bg-bg-accent">
+        <div className="ms-pdp-top">
+          {/* Picture: 4:5 on a nutmeg ground, as the design system crops a hero. */}
+          <figure className="ms-pdp-media">
             {primaryImage ? (
-              <>
-                <Image
-                  src={primaryImage}
-                  alt={name}
-                  fill
-                  priority
-                  sizes="(min-width: 1024px) 32rem, 100vw"
-                  className="object-cover kb-drift"
-                />
-                <div className="absolute inset-0 bg-gradient-to-tr from-bg-darker/30 via-transparent to-transparent" />
-              </>
+              <Image
+                src={primaryImage}
+                alt={name}
+                fill
+                priority
+                sizes="(min-width: 1024px) 32rem, 100vw"
+                className="object-cover kb-drift"
+              />
             ) : (
-              <div
-                aria-hidden="true"
-                className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/25 via-gold/15 to-transparent"
-              >
-                <span className="font-display text-[8rem] font-light italic text-primary">
-                  {(name[0] ?? "·").toUpperCase()}
-                </span>
-              </div>
+              <span aria-hidden="true" className="ms-card-glyph ms-card-glyph--lg">
+                {(name[0] ?? "·").toUpperCase()}
+              </span>
             )}
-          </div>
+          </figure>
 
-          <div className="flex flex-col lg:order-first">
-            {doc!.family ? (
-              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-                {doc!.family}
-              </p>
-            ) : null}
-            <h1 className="mt-3 font-display text-4xl font-light leading-[1.05] tracking-tight text-text-heading sm:text-5xl">
-              {name}
-            </h1>
-            {freshnessLabel ? (
-              <p className="mt-4 text-sm italic leading-relaxed text-text-muted">
-                {freshnessLabel}
-              </p>
-            ) : null}
+          <div className="ms-pdp-buy">
+            {doc!.family ? <p className="ms-label ms-muted">{doc!.family}</p> : null}
+            <div className="ms-card-name">
+              {isVeg ? <span className="ms-veg" role="img" aria-label={t("trust.vegetarian")} /> : null}
+              <h1 className="ms-headline ms-maroon">{name}</h1>
+            </div>
+            {freshnessLabel ? <p className="ms-caption ms-muted">{freshnessLabel}</p> : null}
 
             <BuyModule
               productId={String(doc!.id)}
@@ -205,15 +188,15 @@ export async function MithaiPDP({slug, locale}: Props) {
             dietaryChips.length > 0 ? (
               <ul
                 data-testid="pdp-trust-strip"
-                className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border-card pt-5 text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80"
+                className="ms-tag-list"
               >
-                {freshnessLabel ? <li>{freshnessLabel}</li> : null}
+                {freshnessLabel ? <li className="ms-tag ms-tag-cream">{freshnessLabel}</li> : null}
                 {doc!.shelfLife ? (
-                  <li>{t("trust.shelfLife", {shelfLife: doc!.shelfLife})}</li>
+                  <li className="ms-tag ms-tag-cream">{t("trust.shelfLife", {shelfLife: doc!.shelfLife})}</li>
                 ) : null}
-                {doc!.leadTime ? <li>{doc!.leadTime}</li> : null}
+                {doc!.leadTime ? <li className="ms-tag ms-tag-cream">{doc!.leadTime}</li> : null}
                 {dietaryChips.map(({tag, label}) => (
-                  <li key={tag}>{label}</li>
+                  <li key={tag} className="ms-tag ms-tag-cream">{label}</li>
                 ))}
               </ul>
             ) : null}
@@ -221,33 +204,33 @@ export async function MithaiPDP({slug, locale}: Props) {
         </div>
 
         {/* Provenance strip — karigar · family · lead time */}
-        <dl className="mt-10 grid gap-x-8 gap-y-6 border-b border-border-card pb-12 sm:grid-cols-3">
+        <dl className="ms-pdp-facts">
           {karigarName ? (
-            <div className="sm:border-r sm:border-border-card sm:pr-8">
-              <dt className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
+            <div>
+              <dt className="ms-field-label">
                 {t("karigar")}
               </dt>
-              <dd className="mt-2 font-display text-lg text-text-heading">
+              <dd className="ms-body">
                 {karigarName}
               </dd>
             </div>
           ) : null}
           {doc!.leadTime ? (
-            <div className="sm:border-r sm:border-border-card sm:pr-8">
-              <dt className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
+            <div>
+              <dt className="ms-field-label">
                 {t("freshness")}
               </dt>
-              <dd className="mt-2 font-display text-lg text-text-heading">
+              <dd className="ms-body">
                 {doc!.leadTime}
               </dd>
             </div>
           ) : null}
           {doc!.shelfLife ? (
             <div>
-              <dt className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
+              <dt className="ms-field-label">
                 {t("shelfLife")}
               </dt>
-              <dd className="mt-2 font-display text-lg text-text-heading">
+              <dd className="ms-body">
                 {doc!.shelfLife}
               </dd>
             </div>
@@ -255,18 +238,14 @@ export async function MithaiPDP({slug, locale}: Props) {
         </dl>
 
         {/* Story + honest label column */}
-        <section className="mt-12 grid gap-10 lg:grid-cols-[0.6fr_0.4fr] lg:gap-16">
+        <section className="ms-pdp-story">
           <div>
             {storyText ? (
-              <div className={doc!.ingredients ? "mb-10" : undefined}>
+              <div className={["ms-stack", doc!.ingredients ? "mb-10" : ""].join(" ")}>
                 {storyText.split("\n").map((paragraph, i) => (
                   <p
                     key={i}
-                    className={
-                      i === 0
-                        ? "font-display text-2xl font-light italic leading-relaxed text-text-heading"
-                        : "mt-4 font-display text-xl font-light italic leading-relaxed text-text-muted"
-                    }
+                    className={i === 0 ? "ms-lead" : "ms-body ms-muted"}
                   >
                     {paragraph}
                   </p>
@@ -275,10 +254,10 @@ export async function MithaiPDP({slug, locale}: Props) {
             ) : null}
             {doc!.ingredients ? (
               <>
-                <h2 className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
+                <h2 className="ms-label ms-muted">
                   {t("ingredients")}
                 </h2>
-                <p className="mt-4 font-display text-xl font-light leading-relaxed text-text-heading">
+                <p className="ms-body">
                   {doc!.ingredients}
                 </p>
               </>
@@ -290,14 +269,14 @@ export async function MithaiPDP({slug, locale}: Props) {
           {(doc!.allergens?.length ?? 0) > 0 || doc!.storage ? (
             <aside
               data-testid="pdp-honest-label"
-              className="border-l border-border-card pl-6 lg:pl-10"
+              className="ms-pdp-label"
             >
               {doc!.allergens && doc!.allergens.length > 0 ? (
                 <div data-testid="pdp-allergens">
-                  <h2 className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
+                  <h2 className="ms-label ms-muted">
                     {t("allergens")}
                   </h2>
-                  <ul className="mt-4 space-y-1 text-sm text-text-muted">
+                  <ul className="ms-body ms-plain-list">
                     {doc!.allergens.map((a) => (
                       <li key={a}>{a}</li>
                     ))}
@@ -309,13 +288,13 @@ export async function MithaiPDP({slug, locale}: Props) {
                 <div data-testid="pdp-storage">
                   <h3
                     className={[
-                      "text-[11px] font-medium uppercase tracking-[0.22em] text-primary",
+                      "ms-label ms-muted",
                       (doc!.allergens?.length ?? 0) > 0 ? "mt-8" : "",
                     ].join(" ")}
                   >
                     {t("storage")}
                   </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-text-muted">
+                  <p className="ms-body">
                     {doc!.storage}
                   </p>
                 </div>

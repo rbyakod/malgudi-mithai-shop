@@ -105,12 +105,8 @@ function Chip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={[
-        "rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors",
-        active
-          ? "border-primary bg-primary text-text-light"
-          : "border-border-input bg-bg-control text-text-secondary hover:border-primary hover:text-primary",
-      ].join(" ")}
+      // The design system's Button: primary when chosen, secondary otherwise.
+      className={["ms-btn ms-chip", active ? "ms-btn-primary" : "ms-btn-secondary"].join(" ")}
     >
       {children}
     </button>
@@ -237,23 +233,25 @@ export function MithaiHubClient({
   ].join(" ");
 
   return (
-    <div className="mt-10 space-y-8">
-      {/* Controls — search input + freshness select (mirrors CatalogBrowser) */}
-      <div className="grid gap-3 rounded-2xl border border-border-card bg-bg-card p-4 md:grid-cols-[minmax(0,1fr)_14rem]">
-        <label className="grid gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-text-muted">
-          {tSearch("label")}
+    <div className="mt-10 grid gap-8">
+      {/* Controls — search input + freshness select: the design system's Field. */}
+      <div className="ms-form-grid ms-mithai-controls">
+        <div className="ms-fieldset">
+          <label htmlFor="mithai-search">{tSearch("label")}</label>
           <input
+            id="mithai-search"
             type="search"
             value={input}
             onChange={(event) => setInput(event.target.value)}
             placeholder={tSearch("placeholder")}
             data-testid="mithai-search-input"
-            className="h-11 rounded-full border border-border-input bg-bg-control px-4 text-sm font-normal normal-case tracking-normal text-text-heading outline-none transition-colors placeholder:text-text-muted focus:border-primary"
+            className="ms-input"
           />
-        </label>
-        <label className="grid gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-text-muted">
-          {t("freshnessLabel")}
+        </div>
+        <div className="ms-fieldset">
+          <label htmlFor="mithai-freshness">{t("freshnessLabel")}</label>
           <select
+            id="mithai-freshness"
             value={freshness}
             onChange={(event) =>
               updateParams({
@@ -262,7 +260,7 @@ export function MithaiHubClient({
               })
             }
             data-testid="mithai-freshness-select"
-            className="h-11 rounded-full border border-border-input bg-bg-control px-4 text-sm font-normal normal-case tracking-normal text-text-heading outline-none transition-colors focus:border-primary"
+            className="ms-input"
           >
             <option value={ALL}>{t("freshnessAll")}</option>
             {FRESHNESS_OPTIONS.map((option) => (
@@ -271,16 +269,16 @@ export function MithaiHubClient({
               </option>
             ))}
           </select>
-        </label>
+        </div>
       </div>
 
       {/* Family chips — the 5 canonical families */}
       <div
-        className="flex flex-wrap items-center gap-2"
+        className="ms-chip-row"
         role="group"
         aria-label={t("familyLabel")}
       >
-        <span className="mr-1 text-[10px] font-medium uppercase tracking-[0.22em] text-text-muted">
+        <span className="ms-label ms-muted">
           {t("familyLabel")}
         </span>
         <Chip active={family === ALL} onClick={() => updateParams({family: null})}>
@@ -299,7 +297,7 @@ export function MithaiHubClient({
 
       {/* Count line */}
       <p
-        className="border-y border-border-card py-3 text-xs text-text-muted"
+        className="ms-catalog-bar ms-caption ms-muted"
         data-testid="mithai-results-count"
       >
         {searching ? tSearch("searching") : t("count", {count: visible.length})}
@@ -307,8 +305,8 @@ export function MithaiHubClient({
 
       {/* Grid — or the empty state */}
       {visible.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border-card bg-bg-card/50 p-8 text-center">
-          <p className="text-sm text-text-muted">
+        <div className="ms-panel ms-stack ms-panel--line">
+          <p className="ms-body">
             {items.length === 0 ? emptyLabel : tSearch("noResults")}
           </p>
           {hasFilters ? (
@@ -318,7 +316,7 @@ export function MithaiHubClient({
                 setInput("");
                 updateParams({q: null, family: null, freshness: null});
               }}
-              className="mt-4 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-text-light transition-colors hover:bg-primary-hover"
+              className="ms-btn ms-btn-primary"
             >
               {tSearch("clear")}
             </button>

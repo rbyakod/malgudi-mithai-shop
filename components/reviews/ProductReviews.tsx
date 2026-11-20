@@ -95,7 +95,7 @@ export async function ProductReviews({productId, locale}: Props) {
     >
       <h2
         id="pdp-reviews-heading"
-        className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary"
+        className="ms-label ms-muted"
       >
         {t("title")}
       </h2>

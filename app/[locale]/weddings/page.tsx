@@ -17,23 +17,14 @@ export default async function WeddingPage({params}: Props) {
   const t = await getTranslations("Leads.weddings");
 
   return (
-    <main
-      id="main-content"
-      className="mx-auto w-full max-w-3xl flex-1 px-4 pb-20 pt-10 sm:px-6 sm:pt-14 lg:px-8"
-    >
-      <header className="space-y-4">
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
-          {t("eyebrow")}
-        </p>
-        <h1 className="font-display text-4xl font-light leading-tight tracking-tight text-text-heading sm:text-5xl">
-          {t("title")}
-        </h1>
-        <p className="max-w-xl text-sm leading-relaxed text-text-muted sm:text-base">
-          {t("intro")}
-        </p>
+    <div className="mx-auto w-full max-w-3xl flex-1 px-4 pb-20 pt-10 sm:px-6 sm:pt-14 lg:px-8">
+      <header className="ms-head ms-hub-head">
+        <p className="ms-label ms-muted">{t("eyebrow")}</p>
+        <h1 className="ms-headline">{t("title")}</h1>
+        <p className="ms-lead">{t("intro")}</p>
       </header>
 
       <WeddingConfigurator />
-    </main>
+    </div>
   );
 }

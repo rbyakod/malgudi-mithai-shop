@@ -204,7 +204,7 @@ img { max-width: 100%; }
 /* ------------------------------------------------------------------ SiteHeader */
 .ms-header { background: var(--brand-maroon); color: var(--brand-milk-cream); }
 .ms-header-in { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); min-height: var(--header-h); }
-.ms-header-logo { display: block; flex: none; }
+.ms-header-logo { display: flex; align-items: center; min-height: var(--tap-min); flex: none; }
 .ms-header-logo img { display: block; width: 300px; height: auto; }
 .ms-nav { display: flex; align-items: center; gap: var(--space-6); list-style: none; margin: 0; padding: 0; }
 .ms-nav a { display: block; font-family: var(--font-mono); font-weight: 500; font-size: 13px; line-height: 20px; letter-spacing: .24em;
@@ -482,4 +482,157 @@ main:has(> .ms-bleed) { max-width: none; padding: 0; }
   .ms-nav a, .ms-nav .al-team-btn { letter-spacing: .16em; }
   .ms-header-actions { gap: var(--space-3); }
   .ms-header-actions .ms-btn { padding: 0 calc(var(--space-4) - .2em) 0 var(--space-4); }
+}
+
+/* ================================================================== Phones and touch screens
+   The design system sets tap-min (48px) and phone type; the storefront's older pages still carry
+   Tailwind sizes from before it, so these rules bring them up without rewriting each page. */
+
+/* ---- Header on phones: the wordmark (the name at its size in the 240px lockup) makes room for
+   CART beside MENU. Under 360px there is no room for CART: its count rides on MENU. */
+.ms-header-logo .ms-logo-word { display: none; }   /* beats .ms-header-logo img { display: block } */
+.ms-count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; margin-left: var(--space-2);
+  border-radius: var(--radius-round); background: var(--brand-maroon); color: var(--brand-milk-cream);
+  font-family: var(--font-mono); font-size: 12px; line-height: 1; letter-spacing: 0; }
+.ms-menu-count { display: none; }
+@media (max-width: 640px) {
+  .ms-header-logo .ms-logo-full { display: none; }
+  .ms-header-logo .ms-logo-word { display: block; width: 184px; }
+  .ms-header-in { gap: var(--space-3); }
+  .ms-header-actions { gap: var(--space-2); }
+  .ms-header-actions .ms-btn { padding: 0 calc(var(--space-3) - .2em) 0 var(--space-3); }
+  .ms-header-actions .ms-btn.ms-cart-btn { display: inline-flex; }
+}
+@media (max-width: 359px) {
+  .ms-header-actions .ms-btn.ms-cart-btn { display: none; }
+  .ms-menu-count { display: inline-grid; }
+}
+
+/* ---- The menu panel scrolls inside itself (the page behind it is locked), and keeps its last
+   links clear of the bottom of the screen. */
+.ms-menu-panel:not([hidden]) { max-height: calc(100dvh - var(--header-h)); overflow-y: auto; overscroll-behavior: contain; }
+.ms-menu-in { padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0px)); }
+.ms-menu-top { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; width: 100%; margin-bottom: var(--space-3); }
+.ms-menu-top .ms-locale--panel { flex: 1 1 160px; }
+
+/* ---- The top strip keeps one line on phones. */
+@media (max-width: 640px) {
+  .ms-brandbar-more, .ms-brandbar-meta { display: none; }
+}
+
+/* ---- Form fields at 16px or more: iPhones zoom the page in on anything smaller. */
+@media (max-width: 1120px), (pointer: coarse) {
+  .ms-site input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), .ms-site select, .ms-site textarea { font-size: max(16px, 1em); }
+}
+
+/* ---- Tap targets: at least 44px on touch screens. Buttons and pill links grow; text links keep
+   their look and get an invisible 44px hit area. */
+@media (pointer: coarse), (max-width: 640px) {
+  .ms-site :where(main, .ms-footer, .ms-header) :is(button, [role="button"], a.rounded-full, a[class*="rounded-"][class*="border"], a[class*="rounded-"][class*="bg-"]) { min-height: 44px; }
+  .ms-site :where(main) :is(a.rounded-full, a[class*="rounded-"][class*="border"], a[class*="rounded-"][class*="bg-"]) { display: inline-flex; align-items: center; justify-content: center; }
+  .ms-site :where(main, .ms-footer) :is(.ms-more, .ms-card-link, nav[aria-label="Breadcrumb"] a, nav[aria-label="breadcrumb"] a, .ms-footer-links a, .ms-footer-legal a) { position: relative; }
+  .ms-site :where(main, .ms-footer) :is(.ms-more, .ms-card-link, nav[aria-label="Breadcrumb"] a, nav[aria-label="breadcrumb"] a, .ms-footer-links a, .ms-footer-legal a)::after {
+    content: ""; position: absolute; left: -4px; right: -4px; top: 50%; height: 44px; transform: translateY(-50%); }
+  .ms-links-row, .ms-row { row-gap: var(--space-4); }
+}
+
+/* ---- Small type on the older pages: their 10px and 11px labels rise to 12px on phones (the
+   design system's own labels are 13px). */
+@media (max-width: 640px) {
+  .ms-site .text-\[10px\], .ms-site .text-\[11px\] { font-size: 12px; line-height: 1.5; }
+}
+
+/* ---- ProductCard helpers for the storefront's shared card (components/ui/MediaCard.tsx) */
+.ms-card-media--fill { position: relative; }
+.ms-card-glyph { display: grid; place-items: center; width: 100%; height: 100%; color: var(--brand-milk-cream);
+  font-family: var(--font-mono); font-weight: 500; font-size: 48px; }
+.ms-catalog-controls { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); }
+.ms-mithai-controls { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+@media (max-width: 640px) { .ms-catalog-controls, .ms-mithai-controls { grid-template-columns: minmax(0, 1fr); } }
+.ms-catalog-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3);
+  border-block: 1px solid var(--line-on-cream); padding-block: var(--space-3); margin: 0; }
+.ms-chip-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.ms-chip { min-height: 44px; padding: 0 calc(var(--space-4) - .2em) 0 var(--space-4); font-size: 13px; }
+.ms-panel--line { box-shadow: inset 0 0 0 1px var(--line-on-cream); }
+.ms-card--actions .ms-card-actions { margin-top: var(--space-2); }
+.ms-card-link { display: block; color: inherit; text-decoration: none; }
+.ms-card-link:hover .ms-title { color: var(--brand-maroon); }
+.ms-hub-head { max-width: none; padding-bottom: var(--space-6); border-bottom: 1px solid var(--line-on-cream); }
+.ms-hub-head .ms-lead { max-width: var(--measure); }
+
+/* ---- Enquiry forms (components/ledger): the design system's Field, grouped in numbered steps. */
+.ms-lead-form { display: grid; gap: var(--space-7); margin-top: var(--space-7); padding-top: var(--space-7); border-top: 1px solid var(--line-on-cream); justify-items: start; }
+.ms-lead-form > * { width: 100%; }
+.ms-lead-form > .ms-btn { width: auto; }
+.ms-lead-group { border: 0; margin: 0; padding: var(--space-5) 0 0; border-top: 1px solid var(--line-on-cream); min-width: 0; }
+.ms-lead-legend { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); padding: 0; margin-bottom: var(--space-5); }
+.ms-lead-legend .ms-hint { margin-left: auto; }
+.ms-field-label { font-family: var(--font-mono); font-weight: 500; font-size: 12px; line-height: 16px; letter-spacing: .28em; text-transform: uppercase; color: var(--text-body); }
+.ms-field-wide { grid-column: 1 / -1; }
+.ms-textarea { resize: vertical; min-height: 120px; }
+
+/* ---- Older pages' uppercase tracked labels read as the design system's label: Mono capitals. */
+.ms-site :is(p, span, dt, h2, h3, label, legend, a)[class*="uppercase"][class*="tracking-["] { font-family: var(--font-mono); font-weight: 500; }
+
+/* ---- Product page (components/mithai): the design system's Hero crop, Price, Field and Button. */
+.ms-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); font-family: var(--font-mono); font-weight: 500;
+  font-size: 12px; line-height: 20px; letter-spacing: .24em; text-transform: uppercase; color: var(--text-muted); }
+.ms-breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.ms-breadcrumb a:hover { color: var(--brand-maroon); }
+.ms-breadcrumb [aria-current="page"] { color: var(--text-body); }
+.ms-pdp-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-8); align-items: start;
+  margin-top: var(--space-6); padding-bottom: var(--space-8); border-bottom: 1px solid var(--line-on-cream); }
+.ms-pdp-buy { display: grid; gap: var(--space-4); align-content: start; order: -1; min-width: 0; }
+.ms-pdp-media { position: relative; margin: 0; aspect-ratio: 4 / 5; overflow: hidden; background: var(--brand-nutmeg); }
+.ms-card-glyph--lg { font-size: 96px; }
+@media (max-width: 800px) { .ms-pdp-top { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); } .ms-pdp-buy { order: 0; } }
+.ms-tag-list { display: flex; flex-wrap: wrap; gap: var(--space-2); list-style: none; margin: 0; padding: var(--space-4) 0 0; border-top: 1px solid var(--line-on-cream); }
+.ms-pdp-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); margin: var(--space-7) 0 0;
+  padding-bottom: var(--space-7); border-bottom: 1px solid var(--line-on-cream); }
+.ms-pdp-facts > div { display: grid; gap: var(--space-2); }
+.ms-pdp-facts dd { margin: 0; }
+@media (max-width: 640px) { .ms-pdp-facts { grid-template-columns: minmax(0, 1fr); } }
+.ms-pdp-story { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--space-8); margin-top: var(--space-7); }
+@media (max-width: 800px) { .ms-pdp-story { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); } }
+.ms-pdp-label { display: grid; gap: var(--space-3); align-content: start; border-left: 1px solid var(--line-on-cream); padding-left: var(--space-6); }
+@media (max-width: 800px) { .ms-pdp-label { border-left: 0; border-top: 1px solid var(--line-on-cream); padding: var(--space-5) 0 0; } }
+.ms-plain-list { list-style: none; margin: 0; padding: 0; }
+.ms-buy { display: grid; gap: var(--space-5); margin-top: var(--space-3); }
+.ms-buy-row { display: grid; gap: var(--space-3); padding-top: var(--space-5); border-top: 1px solid var(--line-on-cream); }
+.ms-stack--tight { gap: var(--space-2); }
+.ms-price--lg { font-size: 28px; line-height: 36px; }
+.ms-row--between { justify-content: space-between; }
+.ms-row--tight { gap: var(--space-3); flex-wrap: nowrap; }
+.ms-input--pincode { width: 9.5rem; flex: none; }
+.ms-qty { display: inline-flex; align-items: stretch; border: 1px solid var(--brand-nutmeg); min-height: var(--tap-min); }
+.ms-qty-btn { min-width: var(--tap-min); border: 0; background: transparent; color: var(--brand-maroon); font-family: var(--font-mono); font-size: 20px; cursor: pointer; }
+.ms-qty-btn:disabled { opacity: .4; cursor: not-allowed; }
+.ms-qty-value { display: grid; place-items: center; min-width: 40px; font-family: var(--font-mono); font-size: 18px; }
+.ms-buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--brand-milk-cream); border-top: 1px solid var(--line-on-cream);
+  padding: var(--space-3) 0 calc(var(--space-3) + env(safe-area-inset-bottom, 0px)); }
+.ms-buybar-name { margin: 0; font-family: var(--font-mono); font-weight: 500; font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-body); }
+@media (min-width: 768px) { .ms-buybar { display: none; } }
+
+/* ---- Cart, checkout and account helpers */
+.ms-input--code { width: 11rem; text-transform: uppercase; letter-spacing: .14em; }
+.ms-input--code::placeholder { text-transform: none; letter-spacing: normal; }
+.ms-check { accent-color: var(--brand-maroon); width: 18px; height: 18px; }
+.ms-door .ms-label, .ms-door p { margin: 0; }
+
+/* ---- Header fit with a cart count (measured: the count badge pushed MENU off a 375px phone
+   and past 1280px desktops). */
+.ms-count { min-width: 18px; height: 18px; margin-left: 6px; font-size: 11px; }
+@media (max-width: 640px) {
+  .ms-header-in { gap: var(--space-2); }
+  .ms-header-actions { gap: 6px; }
+  .ms-header-actions .ms-btn { padding: 0 6px 0 8px; letter-spacing: .1em; }
+}
+@media (min-width: 1121px) and (max-width: 1440px) {
+  .ms-nav { gap: var(--space-3); }
+}
+@media (max-width: 374px) {
+  .ms-header-in { gap: 6px; }
+  .ms-header-actions { gap: 4px; }
+  .ms-header-actions .ms-btn { padding: 0 5px 0 6px; }
 }

@@ -67,7 +67,7 @@ export function LoyaltyCard() {
         <div>
           <h2
             id="loyalty-heading"
-            className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold"
+            className="ms-label ms-muted"
           >
             {t("eyebrow")}
           </h2>

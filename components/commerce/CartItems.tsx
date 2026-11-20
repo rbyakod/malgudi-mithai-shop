@@ -146,7 +146,7 @@ export function CartItems({whatsapp, fees, freeThresholds}: Props) {
 
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-border-card bg-bg-card/50 p-8 text-center">
+      <div className="ms-panel ms-panel--line ms-stack">
         <p className="text-sm italic leading-relaxed text-text-muted">
           {t("empty")}{" "}
           <Link
@@ -169,7 +169,7 @@ export function CartItems({whatsapp, fees, freeThresholds}: Props) {
             data-testid="cart-line"
             className="grid gap-4 rounded-2xl border border-border-card bg-bg-card p-4 sm:grid-cols-[5rem_1fr_auto]"
           >
-            <div className="relative h-20 w-20 overflow-hidden rounded-xl bg-bg-accent">
+            <div className="relative h-20 w-20 overflow-hidden bg-bg-accent">
               {item.image ? (
                 <Image
                   src={item.image}
@@ -213,27 +213,27 @@ export function CartItems({whatsapp, fees, freeThresholds}: Props) {
               <button
                 type="button"
                 onClick={() => removeItem(item.id)}
-                className="mt-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted transition-colors hover:text-primary"
+                className="ms-more ms-muted mt-3"
               >
                 {t("remove")}
               </button>
             </div>
             <div className="flex flex-col items-end justify-between gap-3">
-              <div className="flex items-center border border-border-card">
+              <div className="ms-qty">
                 <button
                   type="button"
                   aria-label={t("decrease")}
                   data-testid="cart-qty-decrement"
                   onClick={() => updateQuantity(item.id, item.quantity - 1)}
                   disabled={item.quantity <= 1}
-                  className="px-3 py-2 font-display text-base text-primary disabled:opacity-40"
+                  className="ms-qty-btn"
                 >
                   −
                 </button>
                 <span
                   data-testid="cart-qty-value"
                   aria-live="polite"
-                  className="min-w-8 text-center font-display text-base text-text-heading"
+                  className="ms-qty-value"
                 >
                   {item.quantity}
                 </span>
@@ -242,7 +242,7 @@ export function CartItems({whatsapp, fees, freeThresholds}: Props) {
                   aria-label={t("increase")}
                   data-testid="cart-qty-increment"
                   onClick={() => updateQuantity(item.id, Math.min(20, item.quantity + 1))}
-                  className="px-3 py-2 font-display text-base text-primary"
+                  className="ms-qty-btn"
                 >
                   +
                 </button>
@@ -255,9 +255,9 @@ export function CartItems({whatsapp, fees, freeThresholds}: Props) {
       {/* Estimate — the server snapshot at checkout is the pricing truth. */}
       <div
         data-testid="cart-estimate"
-        className="rounded-2xl border border-border-card bg-bg-card p-5"
+        className="ms-panel ms-panel--line"
       >
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
+        <p className="ms-label ms-muted">
           {t("estimateHeading")}
         </p>
         <dl className="mt-4 space-y-2 text-sm">
@@ -306,7 +306,7 @@ export function CartItems({whatsapp, fees, freeThresholds}: Props) {
             <dt className="font-display text-base">{t("estimateTotal")}</dt>
             <dd data-testid="cart-estimate-total" className="font-display text-base">
               {estimate.estimatedTotalInPaise === null ? (
-                <span className="rounded-full bg-gold px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-text-on-gold">
+                <span className="ms-tag ms-tag-maroon">
                   {t("onRequest")}
                 </span>
               ) : (
@@ -325,9 +325,9 @@ export function CartItems({whatsapp, fees, freeThresholds}: Props) {
           the CTAs block below stays the loud secondary channel. */}
       <div
         data-testid="cart-email-nudge"
-        className="rounded-2xl border border-border-card bg-bg-card p-5"
+        className="ms-panel ms-panel--line"
       >
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
+        <p className="ms-label ms-muted">
           {t("emailNudgeTitle")}
         </p>
         {emailState === "saved" ? (
@@ -358,12 +358,12 @@ export function CartItems({whatsapp, fees, freeThresholds}: Props) {
                   setEmail(e.target.value);
                   if (emailState === "invalid") setEmailState("idle");
                 }}
-                className="w-full rounded-full border border-border-input bg-bg-control px-4 py-2 text-sm text-text-heading placeholder:text-text-muted/70 focus:border-primary focus:outline-none"
+                className="ms-input"
               />
               <button
                 type="submit"
                 disabled={!consent || email.trim() === "" || emailState === "saving"}
-                className="shrink-0 rounded-full bg-primary px-5 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-text-light transition-colors hover:bg-primary-hover disabled:opacity-40"
+                className="ms-btn ms-btn-primary"
               >
                 {t("emailNudgeSubmit")}
               </button>
@@ -399,7 +399,7 @@ export function CartItems({whatsapp, fees, freeThresholds}: Props) {
           <button
             type="button"
             onClick={clear}
-            className="rounded-full border border-border-input px-4 py-2 text-xs font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary"
+            className="ms-btn ms-btn-secondary"
           >
             {t("clear")}
           </button>
@@ -408,14 +408,14 @@ export function CartItems({whatsapp, fees, freeThresholds}: Props) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => track("whatsapp_clicked", {source: "cart", items: items.length})}
-            className="rounded-full border border-border-input px-4 py-2 text-xs font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary"
+            className="ms-btn ms-btn-secondary"
           >
             {t("whatsapp")}
           </a>
           <Link
             href="/checkout"
             data-testid="proceed-to-checkout"
-            className="rounded-full bg-primary px-5 py-2 text-xs font-semibold text-text-light transition-colors hover:bg-primary-hover"
+            className="ms-btn ms-btn-primary"
           >
             {t("proceed")}
           </Link>

@@ -52,7 +52,7 @@ export function AccountView() {
           <div>
             <h2
               id="account-profile-heading"
-              className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold"
+              className="ms-label ms-muted"
             >
               {t("profileEyebrow")}
             </h2>

@@ -110,20 +110,18 @@ export function PincodeCheck() {
             : "";
 
   return (
-    <div>
-      <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">
-        {t("label")}
-      </p>
+    <div className="ms-stack ms-stack--tight">
+      <p className="ms-field-label">{t("label")}</p>
 
       {state.kind === "ok" || state.kind === "notServiceable" ? (
-        <div className="mt-2 flex items-baseline justify-between gap-4">
+        <div className="ms-row ms-row--between">
           <p
             data-testid="pincode-result"
             aria-live="polite"
             className={
               state.kind === "ok"
-                ? "text-sm leading-relaxed text-text-heading"
-                : "text-sm italic leading-relaxed text-text-muted"
+                ? "ms-body"
+                : "ms-body ms-muted"
             }
           >
             {resultAnnouncement}
@@ -131,14 +129,14 @@ export function PincodeCheck() {
           <button
             type="button"
             onClick={() => setState({kind: "idle"})}
-            className="shrink-0 text-[10px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline"
+            className="ms-btn ms-btn-secondary"
           >
             {t("change")}
           </button>
         </div>
       ) : (
-        <div className="mt-2">
-          <div className="flex items-stretch gap-3">
+        <div className="ms-stack ms-stack--tight">
+          <div className="ms-row ms-row--tight">
             <input
               data-testid="pincode-input"
               type="text"
@@ -154,19 +152,19 @@ export function PincodeCheck() {
               }}
               aria-label={t("label")}
               placeholder={t("placeholder")}
-              className="w-32 border-b border-gold/60 bg-transparent px-1 py-1.5 font-display text-base text-text-heading placeholder:text-text-muted/60 focus:border-gold focus:outline-none"
+              className="ms-input ms-input--pincode"
             />
             <button
               type="button"
               data-testid="pincode-check-button"
               onClick={check}
               disabled={state.kind === "checking"}
-              className="text-[10px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline disabled:opacity-60"
+              className="ms-btn ms-btn-secondary"
             >
               {state.kind === "checking" ? t("checking") : t("check")}
             </button>
           </div>
-          <p aria-live="polite" className="mt-2 min-h-5 text-xs italic text-text-muted">
+          <p aria-live="polite" className="ms-hint">
             {state.kind === "invalid" || state.kind === "error"
               ? resultAnnouncement
               : t("fallbackPromise")}

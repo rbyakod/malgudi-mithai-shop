@@ -51,7 +51,11 @@ export async function BrandBar({layoutMode = "fixed"}: Props) {
     >
       <div className={railClassName}>
         <p className="ms-brandbar-promise">
-          Honest Indian mithai <span aria-hidden="true">·</span> From our own dairy in Jhajjar
+          Honest Indian mithai
+          {/* On phones the strip keeps one line: the promise only. */}
+          <span className="ms-brandbar-more">
+            {" "}<span aria-hidden="true">·</span> From our own dairy in Jhajjar
+          </span>
         </p>
         <p className="ms-brandbar-meta">
           {/* Kept on purpose: the brand starts with one store and is expanding. */}

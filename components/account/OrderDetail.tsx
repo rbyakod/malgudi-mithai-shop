@@ -169,13 +169,13 @@ export function OrderDetail({orderId}: Props) {
 
   if (state === "missing" || !order) {
     return (
-      <div className="rounded-2xl border border-dashed border-border-card bg-bg-card/50 p-8 text-center">
+      <div className="ms-panel ms-panel--line ms-stack">
         <p className="text-sm italic leading-relaxed text-text-muted">
           {t("notFound")}
         </p>
         <Link
           href="/account"
-          className="mt-5 inline-block text-[11px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline"
+          className="ms-more ms-maroon mt-5 inline-block"
         >
           {t("backToAccount")}
         </Link>
@@ -207,7 +207,7 @@ export function OrderDetail({orderId}: Props) {
       <section aria-labelledby="order-items-heading">
         <h2
           id="order-items-heading"
-          className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold"
+          className="ms-label ms-muted"
         >
           {t("itemsHeading")}
         </h2>
@@ -247,7 +247,7 @@ export function OrderDetail({orderId}: Props) {
       <section aria-labelledby="order-totals-heading">
         <h2
           id="order-totals-heading"
-          className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold"
+          className="ms-label ms-muted"
         >
           {t("totalsHeading")}
         </h2>
@@ -286,7 +286,7 @@ export function OrderDetail({orderId}: Props) {
       <section aria-labelledby="order-again-heading">
         <h2
           id="order-again-heading"
-          className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold"
+          className="ms-label ms-muted"
         >
           {t("reorderHeading")}
         </h2>
@@ -317,7 +317,7 @@ export function OrderDetail({orderId}: Props) {
         <section aria-labelledby="order-reviews-heading">
           <h2
             id="order-reviews-heading"
-            className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold"
+            className="ms-label ms-muted"
           >
             {t("reviewsHeading")}
           </h2>

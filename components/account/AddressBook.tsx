@@ -202,7 +202,7 @@ export function AddressBook({variant = "full", selectedId, onSelect}: Props) {
       <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border-card pb-4">
         <h2
           id="address-book-heading"
-          className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold"
+          className="ms-label ms-muted"
         >
           {t("heading")}
         </h2>
@@ -210,7 +210,7 @@ export function AddressBook({variant = "full", selectedId, onSelect}: Props) {
           type="button"
           data-testid="address-add-toggle"
           onClick={() => setShowForm((v) => !v)}
-          className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary underline-offset-4 hover:underline"
+          className="ms-more ms-maroon"
         >
           {showForm ? t("cancel") : t("add")}
         </button>

@@ -79,21 +79,10 @@ export default async function CartPage({params}: Props) {
       className="mx-auto w-full max-w-4xl flex-1 px-4 pb-20 pt-10 sm:px-6 sm:pt-14 lg:px-8"
     >
       {/* Masthead — eyebrow + display-serif title + blurb (CommerceStub rhythm). */}
-      <header className="grid gap-6 border-b border-border-card pb-10 lg:grid-cols-[0.45fr_0.55fr] lg:items-end">
-        <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
-            {t("eyebrow")}
-          </p>
-          <h1
-            id="cart-heading"
-            className="mt-3 font-display text-4xl font-light leading-tight tracking-tight text-text-heading sm:text-5xl"
-          >
-            {t("title")}
-          </h1>
-        </div>
-        <p className="max-w-md text-sm leading-relaxed text-text-muted">
-          {t("blurb")}
-        </p>
+      <header className="ms-head ms-hub-head">
+        <p className="ms-label ms-muted">{t("eyebrow")}</p>
+        <h1 id="cart-heading" className="ms-headline">{t("title")}</h1>
+        <p className="ms-lead">{t("blurb")}</p>
       </header>
 
       <div className="mt-10 space-y-8">

@@ -61,26 +61,15 @@ export default async function GiftsHub({params}: Props) {
   return (
     <section aria-labelledby="gifts-hub-heading" data-agent-section="gifts" className="pb-20 pt-10">
       <div className="mx-auto max-w-6xl px-1 sm:px-2 lg:px-3">
-        {/* Header — left rail + blurb column (mirrors VerticalHub) */}
-        <div className="grid gap-6 border-b border-border-card pb-10 lg:grid-cols-[0.45fr_0.55fr] lg:items-end">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-              {t("itemCount", {count: docs.length})}
-            </p>
-            <h1
-              id="gifts-hub-heading"
-              className="mt-3 font-display text-4xl font-light leading-tight tracking-tight text-text-heading sm:text-5xl"
-            >
-              {t("title")}
-            </h1>
-          </div>
-          <p className="max-w-md text-sm leading-relaxed text-text-muted">
-            {t("blurb")}
-          </p>
-        </div>
+        {/* Header: the design system's SectionHead. */}
+        <header className="ms-head ms-hub-head">
+          <p className="ms-label ms-muted">{t("itemCount", {count: docs.length})}</p>
+          <h1 id="gifts-hub-heading" className="ms-headline">{t("title")}</h1>
+          <p className="ms-lead">{t("blurb")}</p>
+        </header>
 
         {docs.length === 0 ? (
-          <p className="mt-16 max-w-md text-sm italic leading-relaxed text-text-muted">
+          <p className="ms-body ms-muted mt-16">
             {t("empty")}
           </p>
         ) : (

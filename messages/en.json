@@ -6,7 +6,9 @@
     "occasions": "Occasions",
     "corporate": "Corporate",
     "orderNow": "Order now",
-    "cart": "Cart"
+    "cart": "Cart",
+    "close": "Close",
+    "cartCount": "{count, plural, one {# item} other {# items}}"
   },
   "Nav": {
     "shop": "Shop",
@@ -111,7 +113,7 @@
       "blurb": "The canon: kaju katli, motichoor, besan laddoo. Made by our karigars with milk from our own dairy in Jhajjar, in weights that suit a Tuesday or a thousand-box wedding."
     },
     "qsr": {
-      "title": "QSR",
+      "title": "Restaurant",
       "blurb": "Counter‑quick mithai and savouries from our high‑street kitchens. Walk in, take a box, carry on with your day."
     },
     "snacks": {

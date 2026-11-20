@@ -12,17 +12,6 @@ import {getPayload} from "@/lib/payload-client";
 import {getTranslations} from "next-intl/server";
 import {StoryCard} from "@/components/stories/StoryCard";
 
-const PILLAR_NUMERAL: Record<string, string> = {
-  farm: "I",
-  milk: "I",
-  karigar: "II",
-  karigari: "III",
-  packaging: "IV",
-  festival: "V",
-  regional: "VI",
-  recipe: "VII",
-  journal: "VIII",
-};
 
 type StoryDoc = {
   id: string | number;
@@ -65,7 +54,6 @@ export async function PillarListing({locale, storagePillar}: PillarListingProps)
   }
 
   const pillarLabel = t(`pillars.${storagePillar}` as const);
-  const numeral = PILLAR_NUMERAL[storagePillar] ?? "·";
   const itemCount = docs.length;
   const itemCountLabel = t("itemCount", {count: itemCount});
 
@@ -75,36 +63,21 @@ export async function PillarListing({locale, storagePillar}: PillarListingProps)
     <section aria-labelledby="stories-pillar-heading" className="pb-20 pt-10">
       <div className="mx-auto max-w-6xl px-1 sm:px-2 lg:px-3">
         {/* Header */}
-        <div className="grid gap-6 border-b border-border-card pb-10 lg:grid-cols-[0.45fr_0.55fr] lg:items-end">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-              {t("eyebrow")} · {itemCountLabel}
-            </p>
-            {/* Pillar masthead — numeral + label */}
-            <div className="mt-3 flex items-baseline gap-3">
-              <span
-                aria-hidden="true"
-                className="font-display text-3xl font-light italic text-gold"
-              >
-                {numeral}
-              </span>
-              <span className="h-px w-10 bg-gold/40" />
-              <h1
-                id="stories-pillar-heading"
-                className="font-display text-4xl font-light leading-tight tracking-tight text-text-heading sm:text-5xl"
-              >
-                {pillarLabel}
-              </h1>
-            </div>
-          </div>
-          <p className="max-w-md text-sm leading-relaxed text-text-muted">
-            {t("intro")}
+        {/* Header: the design system's SectionHead (the old numeral ornament is gone: the system's
+            only ornaments are the lockup's dot and the antique-gold hairline). */}
+        <header className="ms-head ms-hub-head">
+          <p className="ms-label ms-muted">
+            {t("eyebrow")} · {itemCountLabel}
           </p>
-        </div>
+          <h1 id="stories-pillar-heading" className="ms-headline">
+            {pillarLabel}
+          </h1>
+          <p className="ms-lead">{t("intro")}</p>
+        </header>
 
         {/* Body — or empty state */}
         {itemCount === 0 ? (
-          <p className="mt-16 max-w-md text-sm italic leading-relaxed text-text-muted">
+          <p className="ms-body ms-muted mt-16">
             {t("empty")}
           </p>
         ) : (

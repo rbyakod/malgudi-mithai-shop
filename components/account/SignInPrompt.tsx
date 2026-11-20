@@ -16,7 +16,7 @@ export function SignInPrompt({next}: Props) {
   const t = useTranslations("Account");
 
   return (
-    <div className="rounded-2xl border border-dashed border-border-card bg-bg-card/50 p-8 text-center">
+    <div className="ms-panel ms-panel--line ms-stack">
       <p className="text-sm italic leading-relaxed text-text-muted">
         {t("signInPrompt")}
       </p>
