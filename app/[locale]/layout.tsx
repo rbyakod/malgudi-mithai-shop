@@ -18,6 +18,7 @@ import {InlineScript} from "@/components/InlineScript";
 import {HtmlLangSync} from "@/components/layout/HtmlLangSync";
 import Script from "next/script";
 import {ConsentBanner} from "@/components/consent/ConsentBanner";
+import {ScrollState} from "@/components/layout/ScrollState";
 
 // Static rendering: enumerate the locales so every [locale] route below can
 // be prerendered. Without this, dynamic child segments (e.g. mithai/[slug])
@@ -84,6 +85,8 @@ export default async function LocaleLayout({children, params}: Props) {
       {/* Consent banner — first in the DOM so keyboard users reach it right after "Skip to
           content"; it is position:fixed, so it does not affect layout. See lib/consent.ts. */}
       <ConsentBanner />
+      {/* data-scrolling on <html> while scrolling down: the AI team bar shrinks to a circle. */}
+      <ScrollState />
       {/* AI team (separate service, routed by nginx under /agent-team and /api/agents): stylesheets,
           then the chat widget and the site-wide placements. Loaded lazily so they never delay the page;
           the widget stays hidden until the visitor allows the AI assistant in the consent banner. */}

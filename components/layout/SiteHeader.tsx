@@ -8,7 +8,7 @@
 import {useState, useEffect, useCallback, useRef} from "react";
 import Image from "next/image";
 import {useTranslations, useLocale} from "next-intl";
-import {Link, usePathname, useRouter} from "@/i18n/navigation";
+import {Link, usePathname} from "@/i18n/navigation";
 import {useCart} from "@/context/CartContext";
 import {
   NAV_LINKS,
@@ -114,7 +114,6 @@ export function SiteHeader() {
   const navT = useTranslations("Nav");
   const locale = useLocale();
   const pathname = usePathname();
-  const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const activeSection = useActiveSection(pathname);
@@ -148,9 +147,13 @@ export function SiteHeader() {
     (nextLocale: string) => {
       if (nextLocale === locale) return;
       track("locale_changed", {from: locale, to: nextLocale});
-      router.replace(pathname, {locale: nextLocale});
+      // A full page load (not a client-side switch) so the AI team's widget, which reads its
+      // wording once per page load, comes back in the new language too. Every URL carries
+      // its locale (localePrefix "always"), so the same page is /<locale><path>.
+      const path = pathname === "/" ? "" : pathname;
+      window.location.assign(`/${nextLocale}${path}${window.location.search}`);
     },
-    [locale, pathname, router]
+    [locale, pathname]
   );
 
   return (

@@ -100,9 +100,16 @@ theme switcher is gone.
   crest), a **CART** button with a round item count, and **MENU**. On the
   smallest phones (under 360px wide) the count moves onto MENU and Cart is
   the first item in the menu.
-- **The AI team's button** is a small round avatar in the corner on phones
-  (the agent's name and suggestion show on wider screens). On a product page
-  it sits above the sticky add-to-cart bar.
+- **The AI team's button** is a bar in the bottom corner that says what it
+  is and what it will help with: the agent's name over the question for the
+  section in view (for example "Mithai Guide · Which sweet suits me?"). On
+  phones it shrinks to a round avatar while you scroll down, and comes back a
+  second after you stop or as soon as you scroll up; tap it in either state
+  to chat. On a product page it sits above the sticky add-to-cart bar.
+- **The AI team speaks the page's language**: on the हिन्दी and ಕನ್ನಡ pages
+  its bar, section suggestions, "What brings you here?" picker, team menu and
+  agent names are in that language. Changing the language from the header
+  reloads the page so the AI team switches too.
 - **Hero** on nutmeg: "Honest Indian mithai", the Mithai Library box, a
   **See the Mithai Library** button (Gifting) and a **Shop the counter** link
   (Mithai). The AI team's "What brings you here?" picker appears under these,
