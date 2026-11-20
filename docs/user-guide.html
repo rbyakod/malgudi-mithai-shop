@@ -292,32 +292,39 @@
     <h2>3. Home</h2>
 
     <h3>Web</h3>
+    <p>The web storefront follows the <strong>Mishran Design System</strong> (Model Town,
+    Delhi brand book): six house colours (maroon, nutmeg, pistachio, deep gold, milk cream,
+    antique gold), two fonts from the logo (JetBrains Mono capitals for headings, labels,
+    buttons and prices; Tiro Devanagari Hindi for sentences and Hindi), square corners, no
+    shadows or gradients. There is one look; the old theme switcher is gone.</p>
     <ul>
-      <li>Announcement strip ("Handcrafted daily · Delivered fresh across Bengaluru") with the
-      WhatsApp number.</li>
-      <li><strong>Hero</strong> — featured products in a slow Ken Burns pan (a gentle
-      video-like drift, pure CSS). The shop ships two looks, and the owner picks between them
-      in <strong>Admin → Storefront settings</strong> to experiment with customers:
-        <ul>
-          <li><strong>Framed</strong> (default): editorial two-column hero with a rotating
-          product card that includes the price and its own
-          <strong>Add to cart</strong>.</li>
-          <li><strong>Cinematic</strong>: a full-width image band with the headline, gold
-          <strong>Explore mithai</strong> button, and a product chip (name + price +
-          <strong>Add to cart</strong>) over the photo.</li>
-        </ul>
-      Both auto-advance every 5 seconds and honor your device's reduced-motion setting
-      (autoplay and the drift stop entirely). The framed card pauses while you hover it —
-      handy right before clicking <strong>Add to cart</strong>; the cinematic band keeps
-      rotating even with the cursor resting on the photo, since the band fills most of the
-      screen (keyboard focus still pauses it).</li>
-      <li>Product photos across the shop (catalog cards, product pages, journal) carry the
-      same subtle always-on drift. It's a display effect only — photos never change content —
-      and it also switches off with reduced-motion or from
-      <strong>Admin → Storefront settings → Product image motion</strong>.</li>
-      <li><strong>"Find your Mishran"</strong> — the four verticals (Mithai · QSR · Snacks ·
-      Merch) as full-width cards.</li>
-      <li><strong>"Why Mishran"</strong> — the four promise cards, each linking into Stories.</li>
+      <li><strong>Announcement strip</strong> on nutmeg: "Honest Indian mithai · From our own
+      dairy in Jhajjar" and the WhatsApp number.</li>
+      <li><strong>Header</strong> on maroon: the Mishran lockup, the shop links (Mithai · Build
+      a gift · QSR · Snacks · Merch), the language dropdown and a <strong>CART</strong> button
+      that shows the item count in words. Below 1120px wide the links fold into a
+      <strong>MENU</strong> button that opens a panel with the shop and story links, the
+      language dropdown and the cart.</li>
+      <li><strong>Hero</strong> on nutmeg: "Honest Indian mithai", the Mithai Library box, and
+      buttons to <strong>See the Mithai Library</strong> (gifts) and <strong>Shop the
+      counter</strong> (mithai).</li>
+      <li><strong>Pichwai art band</strong>: the marigold Pichwai art with "<span lang="hi">मिश्रण</span>
+      means a blend" and an <strong>Our story</strong> button.</li>
+      <li><strong>The boxes</strong>: six gift boxes, each named for its Indian craft and place
+      (the scripts of India, lippan kaam, Pichwai, chakla, sanjhi, Banarasi zari). Every tile
+      opens Gifts.</li>
+      <li><strong>From Jhajjar to the counter</strong>: four steps from the dairy herd to the
+      counter, with a link to Our dairy (Stories → Farms).</li>
+      <li><strong>Order from the counter</strong>: four doors into the shop (Mithai, Gift
+      boxes, Build a box, Restaurant).</li>
+      <li><strong>Drop in</strong> on deep gold: the shop address and a <strong>See the
+      map</strong> link.</li>
+      <li><strong>Footer</strong> on nutmeg: the stacked lockup, the shop address, WhatsApp,
+      the link map, and the FSSAI licence number on every page.</li>
+      <li>Product photos keep the gentle drift effect described under the catalog; it switches
+      off with reduced-motion or from <strong>Admin → Storefront settings → Product image
+      motion</strong>. The admin hero settings (Framed/Cinematic) no longer change the web home
+      page.</li>
     </ul>
 
     <h3>iOS</h3>
@@ -622,6 +629,8 @@
     </div>
     <p>Default when no choice is made: your device language if it's one of the supported ones,
     else English. (A small amount of checkout/support copy is still English on the apps.)</p>
+    <p>On the web, Hindi and Kannada are set in the Tiro family (Tiro Devanagari Hindi, Tiro
+    Kannada) and are never letter-spaced, so conjuncts stay whole.</p>
   </section>
 
   <section id="s13">
@@ -695,8 +704,9 @@
       <li><strong>Payments in test</strong>: Razorpay runs in TEST mode — no real money moves.
       Use test cards/UPI from the Razorpay test dashboard.</li>
       <li><strong>What's intentionally still placeholder</strong>: WhatsApp/support numbers
-      (show +91 80000 00000 until the real one is configured), FSSAI licence ("pending" chip
-      in the web footer), occasion page content, and social links in the footer.</li>
+      (show +91 80000 00000 until the real one is configured), occasion page content, and
+      social links. The web footer now carries the FSSAI licence number from the design system
+      (13325008000711).</li>
     </ul>
   </section>
 

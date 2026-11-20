@@ -1,0 +1,449 @@
+/* Mishran Design System for the storefront.
+   Source: the Mishran Design System artifact (tokens.json + components/bundle.css).
+   1. Tokens, 2. the legacy --t-* theme vars pointed at the tokens so existing
+   Tailwind classes recolour without a rewrite, 3. global rules (square corners,
+   no shadows, Mono capitals for headings, Hindi never letter-spaced),
+   4. the system's ms- component classes. */
+
+@theme {
+  --radius-xs: 0px; --radius-sm: 0px; --radius-md: 0px; --radius-lg: 0px;
+  --radius-xl: 0px; --radius-2xl: 0px; --radius-3xl: 0px; --radius-4xl: 0px;
+}
+
+:root,
+:root[data-theme] {
+  --brand-maroon: #9D1B31;
+  --brand-nutmeg: #6D3D0C;
+  --brand-pistachio: #939358;
+  --brand-deep-gold: #BC7619;
+  --brand-milk-cream: #F7E9D5;
+  --brand-antique-gold: #DB9F35;
+  --text-body: var(--brand-nutmeg);
+  --text-muted: #895F34;
+  --text-on-dark: var(--brand-milk-cream);
+  --line-on-cream: #6D3D0C33;
+  --line-on-dark: #F7E9D54D;
+  --legal-veg-green: #1E7A3A;
+  --dye-library-espresso: #1E140B;
+  --dye-vitrine-navy: #2F3754;
+  --dye-pichwai-indigo: #243A6B;
+  --dye-parchin-majith: #5C202C;
+  --dye-chakla-crimson: #850E2B;
+  --dye-sanjhi-haldi: #F5A132;
+  --dye-zari-majith: #7A1C25;
+
+  --font-mono: var(--font-ms-mono, "JetBrains Mono"), var(--font-ms-serif, "Tiro Devanagari Hindi"), "Tiro Kannada", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-serif: var(--font-ms-serif, "Tiro Devanagari Hindi"), "Tiro Kannada", "Noto Serif Devanagari", Georgia, serif;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px;
+  --radius-0: 0px; --radius-tag: 2px; --radius-round: 9999px;
+  --focus-ring: 0 0 0 2px #F7E9D5, 0 0 0 4px #6D3D0C;
+  --page-max: 1280px; --measure: 40rem; --header-h: 72px; --tap-min: 48px;
+
+  /* Legacy theme vars, mapped onto the six house colours. */
+  --font-geist-sans: var(--font-serif);
+  --font-geist-mono: var(--font-mono);
+  --t-bg-page: var(--brand-milk-cream);
+  --t-bg-card: var(--brand-milk-cream);
+  --t-bg-accent: var(--brand-milk-cream);
+  --t-bg-control: var(--brand-milk-cream);
+  --t-bg-dark: var(--brand-nutmeg);
+  --t-bg-darker: var(--brand-nutmeg);
+  --t-primary: var(--brand-maroon);
+  --t-primary-hover: #7E1527;
+  --t-gold: var(--brand-antique-gold);
+  --t-gold-hover: var(--brand-deep-gold);
+  --t-text-primary: var(--brand-nutmeg);
+  --t-text-heading: var(--brand-maroon);
+  --t-text-on-gold: var(--brand-nutmeg);
+  --t-text-secondary: var(--brand-nutmeg);
+  --t-text-info: var(--text-muted);
+  --t-text-muted: var(--text-muted);
+  --t-text-breadcrumb: var(--text-muted);
+  --t-text-light: var(--brand-milk-cream);
+  --t-text-light-muted: var(--brand-milk-cream);
+  --t-border-card: var(--line-on-cream);
+  --t-border-input: var(--brand-nutmeg);
+  --t-border-image: var(--line-on-cream);
+  --t-gradient-gold: var(--brand-antique-gold);
+  --t-orb-primary-opacity: 0;
+  --t-orb-gold-opacity: 0;
+  --t-orb-secondary-opacity: 0;
+}
+
+/* ---- Global rules (storefront only: the body carries .ms-site) ---- */
+body.ms-site {
+  background: var(--brand-milk-cream);
+  color: var(--text-body);
+  font-family: var(--font-serif);
+}
+.ms-site h1, .ms-site h2, .ms-site h3, .ms-site h4 {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.ms-site .font-display { font-family: var(--font-mono); font-weight: 500; text-transform: uppercase; letter-spacing: .1em; }
+/* Buttons and pill links read as printed labels: Mono capitals, square. */
+.ms-site a.rounded-full, .ms-site button.rounded-full, .ms-site select, .ms-site input, .ms-site textarea { border-radius: 0; }
+.ms-site button, .ms-site a.rounded-full {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+}
+/* No shadows, glows or blurs: depth comes from colour fields. Rings stay for focus. */
+.ms-site [class*="shadow"] { --tw-shadow: 0 0 #0000 !important; }
+.ms-site [class*="backdrop-blur"] { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.ms-site [class*="bg-gradient"], .ms-site [class*="bg-linear"] { background-image: none !important; }
+.ms-site :focus-visible { outline: 2px solid transparent; box-shadow: var(--focus-ring); }
+/* Devanagari and Kannada are never letter-spaced or set in capitals: tracking breaks the conjuncts. */
+[lang="hi"], [lang="kn"], :lang(hi) *, :lang(kn) * { letter-spacing: normal !important; }
+[lang="hi"], [lang="kn"] { text-transform: none !important; }
+.page-bg { display: none; }
+@media (prefers-reduced-motion: reduce) { .ms-site * { transition: none !important; } }
+
+/* ---- Mishran components (from the design system's components/bundle.css) ---- */
+
+/* ------------------------------------------------------------------ base */
+/* Devanagari is never letter-spaced or set in capitals: tracking breaks the conjuncts. */
+[lang="hi"] { font-family: var(--font-serif); letter-spacing: normal !important; text-transform: none !important; }
+/* The Mono type styles from tokens.json are always capitals. */
+.display, .headline, .title, .label, .button { text-transform: uppercase; }
+.ms-mono { font-family: var(--font-mono); font-weight: 500; text-transform: uppercase; }
+.ms-rupee { font-family: var(--font-serif); font-size: 1.2em; line-height: 0; letter-spacing: 0; }
+img { max-width: 100%; }
+:focus-visible { outline: 2px solid transparent; outline-offset: 0; box-shadow: var(--focus-ring); }
+
+/* ------------------------------------------------------------------ layout */
+.ms-wrap {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding-left: max(var(--space-4), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--space-4), env(safe-area-inset-right, 0px));
+  box-sizing: border-box;
+}
+@media (min-width: 641px) { .ms-wrap { padding-left: var(--space-7); padding-right: var(--space-7); } }
+.ms-section { padding-block: var(--space-9); }
+@media (max-width: 640px) { .ms-section { padding-block: var(--space-8); } }
+.ms-measure { max-width: var(--measure); }
+
+/* ------------------------------------------------------------------ grounds
+   Every band of the page sits on one ground. Dye leads; milk-cream frames and carries reading. */
+.ms-on-cream     { background: var(--brand-milk-cream); color: var(--text-body); }
+.ms-on-maroon    { background: var(--brand-maroon); color: var(--brand-milk-cream); }
+.ms-on-nutmeg    { background: var(--brand-nutmeg); color: var(--brand-milk-cream); }
+.ms-on-pistachio { background: var(--brand-pistachio); color: var(--text-body); }   /* a field: words go on a .ms-panel */
+.ms-on-gold      { background: var(--brand-deep-gold); color: var(--brand-milk-cream); } /* a field: cream headlines 40px and up only */
+.ms-panel        { background: var(--brand-milk-cream); color: var(--text-body); padding: var(--space-6); }
+@media (min-width: 641px) { .ms-panel { padding: var(--space-7); } }
+
+/* ------------------------------------------------------------------ type helpers */
+.ms-label    { font-family: var(--font-mono); font-weight: 500; font-size: 13px; line-height: 20px; letter-spacing: .32em; text-transform: uppercase; margin: 0; }
+.ms-headline { font-family: var(--font-mono); font-weight: 500; font-size: 40px; line-height: 48px; letter-spacing: .10em; text-transform: uppercase; margin: 0; text-wrap: balance; }
+.ms-display  { font-family: var(--font-mono); font-weight: 500; font-size: 64px; line-height: 72px; letter-spacing: .10em; text-transform: uppercase; margin: 0; text-wrap: balance; }
+.ms-title    { font-family: var(--font-mono); font-weight: 500; font-size: 20px; line-height: 28px; letter-spacing: .10em; text-transform: uppercase; margin: 0; }
+.ms-lead     { font-family: var(--font-serif); font-size: 24px; line-height: 36px; margin: 0; }
+.ms-body     { font-family: var(--font-serif); font-size: 18px; line-height: 30px; margin: 0; }
+.ms-caption  { font-family: var(--font-serif); font-size: 15px; line-height: 24px; margin: 0; }
+.ms-hindi    { font-family: var(--font-serif); font-size: 56px; line-height: 80px; margin: 0; }
+.ms-muted    { color: var(--text-muted); }
+.ms-on-maroon .ms-muted, .ms-on-nutmeg .ms-muted { color: var(--brand-milk-cream); }
+@media (max-width: 640px) {
+  .ms-display  { font-size: 36px; line-height: 44px; }
+  .ms-headline { font-size: 28px; line-height: 36px; }
+  .ms-title    { font-size: 18px; line-height: 26px; }
+  .ms-lead     { font-size: 20px; line-height: 30px; }
+  .ms-hindi    { font-size: 40px; line-height: 56px; }
+}
+
+/* ------------------------------------------------------------------ links */
+.ms-link { color: var(--brand-maroon); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.ms-link:hover { color: var(--brand-nutmeg); }
+.ms-on-maroon .ms-link, .ms-on-nutmeg .ms-link { color: var(--brand-milk-cream); }
+.ms-more { font-family: var(--font-mono); font-weight: 500; font-size: 13px; line-height: 20px; letter-spacing: .24em; text-transform: uppercase;
+           color: inherit; text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+.ms-more:hover { border-bottom-color: transparent; }
+
+/* ------------------------------------------------------------------ Button */
+.ms-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: var(--tap-min); box-sizing: border-box;
+  padding: 0 calc(var(--space-6) - .2em) 0 var(--space-6);  /* trims the tracking after the last letter */
+  border: 1px solid transparent; border-radius: var(--radius-0);
+  font-family: var(--font-mono); font-weight: 500; font-size: 14px; line-height: 20px; letter-spacing: .2em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer; white-space: nowrap;
+}
+.ms-btn-primary   { background: var(--brand-maroon); color: var(--brand-milk-cream); }
+.ms-btn-primary:hover { background: var(--brand-nutmeg); }
+.ms-btn-secondary { background: transparent; color: var(--brand-nutmeg); border-color: var(--brand-nutmeg); }
+.ms-btn-secondary:hover { background: var(--brand-nutmeg); color: var(--brand-milk-cream); }
+.ms-btn-on-dark   { background: var(--brand-milk-cream); color: var(--brand-maroon); }
+.ms-btn-on-dark:hover { background: transparent; color: var(--brand-milk-cream); border-color: var(--brand-milk-cream); }
+.ms-btn[disabled], .ms-btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+
+/* ------------------------------------------------------------------ Tag */
+.ms-tag { display: inline-block; font-family: var(--font-mono); font-weight: 500; font-size: 11px; line-height: 16px; letter-spacing: .28em;
+          text-transform: uppercase; padding: 5px 9px 4px; border-radius: var(--radius-tag); }
+.ms-tag-nutmeg { background: var(--brand-nutmeg); color: var(--brand-milk-cream); }
+.ms-tag-maroon { background: var(--brand-maroon); color: var(--brand-milk-cream); }
+.ms-tag-cream  { background: var(--brand-milk-cream); color: var(--brand-nutmeg); box-shadow: inset 0 0 0 1px var(--brand-nutmeg); }
+
+/* ------------------------------------------------------------------ Price */
+.ms-price { font-family: var(--font-mono); font-weight: 500; font-size: 20px; line-height: 28px; letter-spacing: .02em; white-space: nowrap; }
+.ms-price .ms-rupee { margin-right: .02em; }
+.ms-weight { font-family: var(--font-mono); font-weight: 500; font-size: 13px; line-height: 20px; letter-spacing: .32em; text-transform: uppercase; }
+
+/* ------------------------------------------------------------------ Veg mark (FSSAI): the one green, never decoration */
+.ms-veg { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; box-sizing: border-box;
+          border: 1.5px solid var(--legal-veg-green); background: var(--brand-milk-cream); flex: none; }
+.ms-veg::after { content: ""; width: 8px; height: 8px; border-radius: var(--radius-round); background: var(--legal-veg-green); }
+
+/* ------------------------------------------------------------------ SiteHeader */
+.ms-header { background: var(--brand-maroon); color: var(--brand-milk-cream); }
+.ms-header-in { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); min-height: var(--header-h); }
+.ms-header-logo { display: block; flex: none; }
+.ms-header-logo img { display: block; width: 300px; height: auto; }
+.ms-nav { display: flex; align-items: center; gap: var(--space-6); list-style: none; margin: 0; padding: 0; }
+.ms-nav a { display: block; font-family: var(--font-mono); font-weight: 500; font-size: 13px; line-height: 20px; letter-spacing: .24em;
+            text-transform: uppercase; text-decoration: none; color: var(--brand-milk-cream); padding-block: var(--space-2);
+            border-bottom: 1px solid transparent; white-space: nowrap; }
+.ms-nav a:hover, .ms-nav a[aria-current="page"] { border-bottom-color: var(--brand-antique-gold); }
+.ms-header-actions { display: flex; align-items: center; gap: var(--space-4); }
+.ms-menu-btn { display: none; }
+/* The lockup, five links and ORDER need about 1100px: below that the links fold into MENU. */
+@media (max-width: 1120px) {
+  .ms-nav { display: none; }
+  .ms-menu-btn { display: inline-flex; }
+}
+@media (max-width: 640px) {
+  .ms-header-in { gap: var(--space-4); }
+  .ms-header-logo img { width: 240px; }                       /* the horizontal lockup's smallest */
+  .ms-header-actions .ms-btn:not(.ms-menu-btn) { display: none; }
+  .ms-menu-btn { padding: 0 10px 0 12px; }
+}
+
+/* ------------------------------------------------------------------ SectionHead */
+.ms-head { display: grid; gap: var(--space-3); max-width: 760px; }
+.ms-head .ms-label { color: var(--text-muted); }
+.ms-on-maroon .ms-head .ms-label, .ms-on-nutmeg .ms-head .ms-label { color: var(--brand-milk-cream); }
+.ms-head .ms-headline { color: var(--brand-maroon); }
+.ms-on-maroon .ms-head .ms-headline, .ms-on-nutmeg .ms-head .ms-headline, .ms-on-gold .ms-head .ms-headline { color: var(--brand-milk-cream); }
+.ms-head .ms-lead { margin-top: var(--space-2); }
+.ms-head .ms-rule { width: 48px; height: 1px; background: var(--brand-antique-gold); border: 0; margin: var(--space-2) 0 0; }
+
+/* ------------------------------------------------------------------ Hero */
+.ms-hero-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--space-8); align-items: center; padding-block: var(--space-9); }
+.ms-hero-media { margin: 0; }
+.ms-hero-media img { display: block; width: 100%; height: auto; }
+.ms-hero-media.ms-photo img { aspect-ratio: 4 / 5; object-fit: cover; }   /* photographs crop 4:5; pack renders keep their shape */
+.ms-hero-media figcaption { margin-top: var(--space-3); }
+.ms-hero-copy { display: grid; gap: var(--space-5); justify-items: start; }
+.ms-hero-copy .ms-hindi { color: var(--brand-antique-gold); line-height: 64px; }
+@media (max-width: 800px) {
+  .ms-hero-in { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); padding-block: var(--space-7) var(--space-8); }
+}
+
+/* ------------------------------------------------------------------ grids */
+.ms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-7) var(--space-5); }
+.ms-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }          /* six packs read as two rows of three */
+@media (max-width: 960px) { .ms-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .ms-grid-3 { grid-template-columns: minmax(0, 1fr); } }
+.ms-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-7); }  /* a field half + a panel half */
+@media (max-width: 800px) { .ms-split { grid-template-columns: minmax(0, 1fr); } .ms-split > :empty { display: none; } }
+.ms-form-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-5) var(--space-6); }
+@media (max-width: 640px) { .ms-form-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ------------------------------------------------------------------ ProductCard */
+.ms-card { display: grid; gap: var(--space-3); align-content: start; color: var(--text-body); text-decoration: none; }
+.ms-card-media { margin: 0 0 var(--space-2); background: var(--brand-nutmeg); aspect-ratio: 1 / 1; overflow: hidden; }
+.ms-card-media.ms-wide { aspect-ratio: 4 / 3; }   /* pack renders: the whole box stays in frame */
+.ms-card-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ms-card-name { display: flex; align-items: center; gap: var(--space-2); }
+.ms-card-hi { font-family: var(--font-serif); font-size: 22px; line-height: 32px; color: var(--brand-maroon); margin: 0; }
+.ms-card-meta { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4);
+                border-top: 1px solid var(--line-on-cream); padding-top: var(--space-3); margin-top: var(--space-1); }
+.ms-card .ms-caption { color: var(--text-muted); }
+
+/* ------------------------------------------------------------------ CraftStory: one pack, the craft it carries */
+.ms-craft { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: var(--space-8); align-items: center; }
+.ms-craft-media { margin: 0; }
+.ms-craft-media img { display: block; width: 100%; height: auto; }
+.ms-craft-copy { display: grid; gap: var(--space-4); justify-items: start; }
+.ms-craft-copy .ms-hindi { font-size: 44px; line-height: 64px; }
+.ms-craft-facts { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-2) var(--space-5); margin: var(--space-2) 0 0;
+                  border-top: 1px solid var(--line-on-dark); padding-top: var(--space-4); }
+.ms-on-cream .ms-craft-facts { border-top-color: var(--line-on-cream); }
+.ms-craft-facts dt { font-family: var(--font-mono); font-weight: 500; font-size: 12px; line-height: 24px; letter-spacing: .28em; text-transform: uppercase; }
+.ms-craft-facts dd { margin: 0; font-size: 16px; line-height: 24px; }
+.ms-dyes { display: flex; gap: var(--space-2); }
+.ms-dye { width: 28px; height: 28px; border-radius: var(--radius-round); box-shadow: inset 0 0 0 1px var(--line-on-dark); }
+.ms-craft-flip .ms-craft-media { order: 2; }
+@media (max-width: 800px) {
+  .ms-craft { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+  .ms-craft-flip .ms-craft-media { order: 0; }
+}
+
+/* ------------------------------------------------------------------ ColourField: a dye band with one big line */
+.ms-field-in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-7); align-items: end; padding-block: var(--space-9); }
+.ms-field-num { font-family: var(--font-mono); font-weight: 500; font-size: 112px; line-height: 104px; letter-spacing: .02em; color: var(--brand-antique-gold); margin: 0; white-space: nowrap; }
+@media (max-width: 800px) {
+  .ms-field-in { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); padding-block: var(--space-8); }
+  .ms-field-num { font-size: 72px; line-height: 72px; }
+}
+
+/* ------------------------------------------------------------------ Field (form input) */
+.ms-fieldset { display: grid; gap: var(--space-2); }
+.ms-fieldset label { font-family: var(--font-mono); font-weight: 500; font-size: 12px; line-height: 16px; letter-spacing: .28em; text-transform: uppercase; color: var(--text-body); }
+.ms-input { box-sizing: border-box; width: 100%; min-height: var(--tap-min); padding: 10px var(--space-4); border: 1px solid var(--brand-nutmeg);
+            border-radius: var(--radius-0); background: var(--brand-milk-cream); color: var(--text-body); font-family: var(--font-serif); font-size: 18px; line-height: 26px; }
+.ms-input::placeholder { color: var(--text-muted); opacity: 1; }
+.ms-input[aria-invalid="true"] { border-color: var(--brand-maroon); box-shadow: inset 0 0 0 1px var(--brand-maroon); }
+.ms-hint  { font-size: 15px; line-height: 22px; color: var(--text-muted); margin: 0; }
+.ms-error { font-size: 15px; line-height: 22px; color: var(--brand-maroon); margin: 0; }
+
+/* ------------------------------------------------------------------ SiteFooter */
+.ms-footer { background: var(--brand-nutmeg); color: var(--brand-milk-cream); }
+.ms-footer-in { display: grid; grid-template-columns: minmax(0, 4fr) repeat(3, minmax(0, 3fr)); gap: var(--space-7); padding-block: var(--space-8); }
+.ms-footer-logo img { display: block; width: 160px; height: auto; }
+.ms-footer h3 { font-family: var(--font-mono); font-weight: 500; font-size: 12px; line-height: 20px; letter-spacing: .28em; text-transform: uppercase; margin: 0 0 var(--space-3); }
+.ms-footer p, .ms-footer address { font-style: normal; font-size: 16px; line-height: 26px; margin: 0; }
+.ms-footer a { color: var(--brand-milk-cream); }
+.ms-footer-legal { border-top: 1px solid var(--line-on-dark); padding-block: var(--space-4) var(--space-6); display: flex; flex-wrap: wrap;
+                   justify-content: space-between; gap: var(--space-2) var(--space-5); }
+.ms-footer-legal p { font-size: 14px; line-height: 22px; }
+@media (max-width: 800px) { .ms-footer-in { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .ms-footer-brand { grid-column: 1 / -1; } }
+@media (max-width: 480px) { .ms-footer-in { grid-template-columns: minmax(0, 1fr); } }
+
+/* ------------------------------------------------------------------ ArtBand: a pack's own art, full-bleed, words on a cream panel */
+.ms-artband { position: relative; overflow: hidden; background: var(--brand-nutmeg); }
+.ms-artband-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.ms-artband-in { position: relative; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); padding-block: var(--space-9); }
+.ms-artband .ms-panel { grid-column: 2; display: grid; gap: var(--space-4); justify-items: start; }
+.ms-artband-left .ms-panel { grid-column: 1; }
+.ms-artband-credit { position: absolute; right: var(--space-4); bottom: var(--space-3); margin: 0; padding: 2px var(--space-2);
+                     background: var(--brand-milk-cream); color: var(--text-body); font-size: 13px; line-height: 20px; }
+@media (max-width: 800px) {
+  .ms-artband-in { grid-template-columns: minmax(0, 1fr); padding-block: 220px var(--space-6); }
+  .ms-artband .ms-panel, .ms-artband-left .ms-panel { grid-column: 1; }
+}
+
+/* ------------------------------------------------------------------ JourneySteps: a true sequence, numbered */
+.ms-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-5); list-style: none; margin: 0; padding: 0; }
+.ms-step { display: grid; gap: var(--space-3); align-content: start; }
+.ms-step-media { margin: 0 0 var(--space-2); aspect-ratio: 4 / 5; overflow: hidden; background: var(--brand-nutmeg); }
+.ms-step-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ms-step-n { font-family: var(--font-mono); font-weight: 500; font-size: 13px; line-height: 20px; letter-spacing: .32em; color: var(--text-muted); margin: 0; }
+.ms-on-maroon .ms-step-n, .ms-on-nutmeg .ms-step-n { color: var(--brand-antique-gold); }
+.ms-step .ms-title { margin: 0; }
+.ms-step .ms-caption { margin: 0; }
+@media (max-width: 960px) { .ms-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .ms-steps { grid-template-columns: minmax(0, 1fr); } }
+
+/* ------------------------------------------------------------------ BoxBuilder: box, mithai, ribbon, name */
+.ms-builder { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-8); align-items: start; }
+.ms-builder-steps { display: grid; }
+.ms-builder-step { display: grid; gap: var(--space-4); padding-block: var(--space-6); border-top: 1px solid var(--line-on-cream); }
+.ms-builder-step legend { padding: 0; }
+.ms-builder fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.ms-choice-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
+.ms-choice { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-2); border: 1px solid var(--line-on-cream);
+             background: var(--brand-milk-cream); color: var(--text-body); text-align: left; font: inherit; cursor: pointer; border-radius: var(--radius-0); }
+.ms-choice img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.ms-choice .ms-caption { color: var(--text-muted); }
+.ms-choice[aria-pressed="true"] { border-color: var(--brand-nutmeg); box-shadow: inset 0 0 0 1px var(--brand-nutmeg); }
+.ms-swatches { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.ms-swatch { width: 44px; height: 44px; padding: 0; border: 0; border-radius: var(--radius-round); cursor: pointer;
+             box-shadow: inset 0 0 0 1px var(--line-on-cream); }
+.ms-swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--brand-milk-cream), 0 0 0 4px var(--brand-nutmeg); }
+.ms-summary { position: sticky; top: calc(var(--header-h) + var(--space-4)); display: grid; gap: var(--space-4);
+              background: var(--brand-nutmeg); color: var(--text-on-dark); padding: var(--space-6); }
+.ms-summary dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-2) var(--space-4); margin: 0; }
+.ms-summary dt { font-family: var(--font-mono); font-weight: 500; font-size: 12px; line-height: 24px; letter-spacing: .28em; text-transform: uppercase; }
+.ms-summary dd { margin: 0; font-size: 16px; line-height: 24px; }
+/* The ribbon picker: each ribbon is a band carrying its own printed line (colours are the ribbons' own, set inline). */
+.ms-ribbons { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-3); }
+.ms-ribbon { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 var(--space-2); min-height: var(--tap-min);
+             padding: var(--space-1) var(--space-3); border: 0; border-radius: var(--radius-0); cursor: pointer; text-align: center;
+             font-family: var(--font-mono); font-weight: 500; font-size: 11px; line-height: 18px; letter-spacing: .14em; text-transform: uppercase; }
+.ms-ribbon [lang="hi"] { font-size: 15px; line-height: 20px; }
+.ms-ribbon-dot { width: 5px; height: 5px; border-radius: var(--radius-round); flex: none; }
+.ms-ribbon[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--brand-milk-cream), 0 0 0 4px var(--brand-nutmeg); }
+@media (max-width: 560px) { .ms-ribbons { grid-template-columns: minmax(0, 1fr); } }
+.ms-namecard { display: grid; place-items: center; min-height: 120px; padding: var(--space-5); background: var(--brand-milk-cream);
+               color: var(--text-body); box-shadow: inset 0 0 0 1px var(--line-on-cream); text-align: center; }
+.ms-namecard-name { font-family: var(--font-serif); font-style: italic; font-size: 32px; line-height: 44px; margin: 0; }
+@media (max-width: 960px) {
+  .ms-builder { grid-template-columns: minmax(0, 1fr); }
+  .ms-choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ms-summary { position: static; }
+}
+
+/* ------------------------------------------------------------------ preview helpers (design-system cards only) */
+.ms-demo { padding: var(--space-5); display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
+.ms-demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.ms-demo-col { padding: var(--space-5); display: grid; gap: var(--space-5); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .ms-btn, .ms-nav a, .ms-more, .ms-link { transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+}
+
+/* ------------------------------------------------------------------ Storefront additions to SiteHeader */
+.ms-header-logo img { max-width: 100%; }
+.ms-locale { min-height: 40px; padding: 0 var(--space-3); background: transparent; color: var(--brand-milk-cream);
+  border: 1px solid var(--line-on-dark); font-family: var(--font-serif); font-size: 15px; }
+.ms-locale option { color: var(--brand-nutmeg); background: var(--brand-milk-cream); }
+.ms-menu-panel { background: var(--brand-maroon); border-top: 1px solid var(--line-on-dark); }
+.ms-menu-in { display: grid; gap: var(--space-3); justify-items: start; padding-block: var(--space-5) var(--space-6); }
+.ms-menu-in ul { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; gap: var(--space-1); width: 100%; }
+.ms-menu-in a:not(.ms-btn) { display: flex; align-items: center; min-height: var(--tap-min); font-family: var(--font-mono); font-weight: 500;
+  font-size: 13px; letter-spacing: .24em; text-transform: uppercase; color: var(--brand-milk-cream); text-decoration: none;
+  border-bottom: 1px solid var(--line-on-dark); }
+.ms-menu-in a[aria-current="page"] { color: var(--brand-antique-gold); }
+.ms-menu-in .ms-label { color: var(--brand-milk-cream); margin: 0; }
+.ms-locale--panel { min-height: var(--tap-min); width: 100%; max-width: 320px; }
+@media (min-width: 1121px) { .ms-menu-panel { display: none; } }
+@media (max-width: 860px) { .ms-header-actions .ms-locale:not(.ms-locale--panel) { display: none; } }
+
+/* ------------------------------------------------------------------ BrandBar (utility strip above the header) */
+.ms-brandbar { background: var(--brand-nutmeg); color: var(--brand-milk-cream); border-bottom: 1px solid var(--line-on-dark); }
+.ms-brandbar-promise, .ms-brandbar-link { margin: 0; font-family: var(--font-mono); font-weight: 500; font-size: 11px; line-height: 16px;
+  letter-spacing: .28em; text-transform: uppercase; color: var(--brand-milk-cream); text-decoration: none; }
+.ms-brandbar-link:hover { color: var(--brand-antique-gold); }
+
+/* ------------------------------------------------------------------ Storefront SiteFooter: brand + four link columns */
+.ms-footer { margin-top: 0; }
+.ms-footer-in--cols { grid-template-columns: minmax(0, 3fr) repeat(4, minmax(0, 2fr)); gap: var(--space-6); }
+.ms-footer-brand { display: grid; gap: var(--space-4); align-content: start; }
+.ms-footer-head { font-family: var(--font-mono); font-weight: 500; font-size: 12px; line-height: 20px; letter-spacing: .28em !important;
+  text-transform: uppercase; margin: 0 0 var(--space-3); color: var(--brand-milk-cream); }
+.ms-footer-links { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); font-size: 16px; line-height: 26px; }
+.ms-footer-links a, .ms-footer-legal a { text-decoration: none; }
+.ms-footer-links a:hover, .ms-footer-legal a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.ms-footer-legal-links { display: flex; gap: var(--space-4); }
+@media (max-width: 960px) { .ms-footer-in--cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ms-footer-brand { grid-column: 1 / -1; } }
+@media (max-width: 480px) { .ms-footer-in--cols { grid-template-columns: minmax(0, 1fr); } }
+
+/* ------------------------------------------------------------------ Storefront page helpers */
+/* A page built from full-width bands escapes <main>'s padding and max width. */
+main:has(> .ms-bleed) { max-width: none; padding: 0; }
+.ms-row { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; }
+.ms-stack { display: grid; gap: var(--space-4); justify-items: start; }
+.ms-stack > * { margin: 0; }
+.ms-stack-lg { display: grid; gap: var(--space-7); }
+.ms-stack-lg > p { margin: 0; }
+.ms-maroon { color: var(--brand-maroon); }
+.ms-cream { color: var(--brand-milk-cream); }
+.ms-hindi--maroon { color: var(--brand-maroon); line-height: 64px; }
+.ms-address { font-style: normal; }
+.ms-field-in--center { align-items: center; }
+.ms-doors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); }
+@media (max-width: 960px) { .ms-doors { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .ms-doors { grid-template-columns: minmax(0, 1fr); } }
+.ms-door { display: grid; gap: var(--space-2); align-content: start; height: 100%; box-sizing: border-box; padding: var(--space-5);
+  border: 1px solid var(--line-on-cream); border-top: 2px solid var(--brand-maroon); color: var(--text-body); text-decoration: none;
+  transition: background-color 150ms, color 150ms; }
+.ms-door:hover { background: var(--brand-maroon); color: var(--brand-milk-cream); }
+.ms-door:hover .ms-muted { color: var(--brand-milk-cream); }

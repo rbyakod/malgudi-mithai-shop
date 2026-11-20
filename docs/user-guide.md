@@ -77,30 +77,39 @@ There are no passwords anywhere — you sign in with a phone number and a
 ## 3. Home
 
 ### Web
-- Announcement strip ("Handcrafted daily · Delivered fresh across
-  Bengaluru") with the WhatsApp number.
-- **Hero** — featured products in a slow Ken Burns pan (a gentle
-  video-like drift, pure CSS). The shop ships two looks, and the owner
-  picks between them in **Admin → Storefront settings** to experiment
-  with customers:
-  - **Framed** (default): editorial two-column hero with a rotating
-    product card that includes the price and its own **Add to cart**.
-  - **Cinematic**: a full-width image band with the headline, gold
-    **Explore mithai** button, and a product chip (name + price + **Add
-    to cart**) over the photo.
-  Both auto-advance every 5 seconds and honor your device's reduced-motion
-  setting (autoplay and the drift stop entirely). The framed card pauses
-  while you hover it — handy right before clicking **Add to cart**; the
-  cinematic band keeps rotating even with the cursor resting on the photo,
-  since the band fills most of the screen (keyboard focus still pauses it).
-- Product photos across the shop (catalog cards, product pages, journal)
-  carry the same subtle always-on drift. It's a display effect only —
-  photos never change content — and it also switches off with
-  reduced-motion or from **Admin → Storefront settings → Product image
-  motion**.
-- **"Find your Mishran"** — the four verticals (Mithai · QSR · Snacks ·
-  Merch) as full-width cards.
-- **"Why Mishran"** — the four promise cards, each linking into Stories.
+The web storefront follows the **Mishran Design System** (Model Town, Delhi
+brand book): six house colours (maroon, nutmeg, pistachio, deep gold, milk
+cream, antique gold), two fonts from the logo (JetBrains Mono capitals for
+headings, labels, buttons and prices; Tiro Devanagari Hindi for sentences and
+Hindi), square corners, no shadows or gradients. There is one look; the old
+theme switcher is gone.
+
+- **Announcement strip** on nutmeg: "Honest Indian mithai · From our own
+  dairy in Jhajjar" and the WhatsApp number.
+- **Header** on maroon: the Mishran lockup, the shop links (Mithai · Build a
+  gift · QSR · Snacks · Merch), the language dropdown and a **CART** button
+  that shows the item count in words. Below 1120px wide the links fold into
+  a **MENU** button that opens a panel with the shop and story links, the
+  language dropdown and the cart.
+- **Hero** on nutmeg: "Honest Indian mithai", the Mithai Library box, and
+  buttons to **See the Mithai Library** (gifts) and **Shop the counter**
+  (mithai).
+- **Pichwai art band**: the marigold Pichwai art with "मिश्रण means a blend"
+  and an **Our story** button.
+- **The boxes**: six gift boxes, each named for its Indian craft and place
+  (the scripts of India, lippan kaam, Pichwai, chakla, sanjhi, Banarasi
+  zari). Every tile opens Gifts.
+- **From Jhajjar to the counter**: four steps from the dairy herd to the
+  counter, with a link to Our dairy (Stories → Farms).
+- **Order from the counter**: four doors into the shop (Mithai, Gift boxes,
+  Build a box, Restaurant).
+- **Drop in** on deep gold: the shop address and a **See the map** link.
+- **Footer** on nutmeg: the stacked lockup, the shop address, WhatsApp, the
+  link map, and the FSSAI licence number on every page.
+- Product photos keep the gentle drift effect described under the catalog;
+  it switches off with reduced-motion or from **Admin → Storefront settings
+  → Product image motion**. The admin hero settings (Framed/Cinematic) no
+  longer change the web home page.
 
 ### iOS
 Top to bottom: announcement strip → **hero carousel** (auto-rotates every
@@ -412,6 +421,9 @@ Default when no choice is made: your device language if it's one of the
 supported ones, else English. (A small amount of checkout/support copy is
 still English on the apps.)
 
+On the web, Hindi and Kannada are set in the Tiro family (Tiro Devanagari
+Hindi, Tiro Kannada) and are never letter-spaced, so conjuncts stay whole.
+
 ---
 
 ## 13. Notifications, offline & platform extras
@@ -484,9 +496,9 @@ ask you to sign in there first, then reload.
 - **Payments in test**: Razorpay runs in TEST mode — no real money moves.
   Use test cards/UPI from the Razorpay test dashboard.
 - **What's intentionally still placeholder**: WhatsApp/support numbers
-  (show +91 80000 00000 until the real one is configured), FSSAI licence
-  ("pending" chip in the web footer), occasion page content, and social
-  links in the footer.
+  (show +91 80000 00000 until the real one is configured), occasion page
+  content, and social links. The web footer now carries the FSSAI licence
+  number from the design system (13325008000711).
 
 ---
 

@@ -1,6 +1,7 @@
 // components/layout/SiteFooter.tsx
-// Brand layout shell footer — server component. Renders link map per IA,
-// brand promise, FSSAI placeholder, social, WhatsApp CTA, and legal links.
+// Brand layout shell footer — server component. The Mishran Design System's
+// SiteFooter on nutmeg: stacked lockup, the shop, link map per IA, and the
+// FSSAI licence line on every page.
 //
 // This supersedes the original components/SiteFooter.tsx (which was a small
 // client component using useTranslations/useTheme). The new footer is a
@@ -9,6 +10,7 @@
 // is rendered inline; per-locale copy should be added in a follow-up via
 // next-intl's getTranslations once the footer namespace is localised.
 
+import Image from "next/image";
 import {Link} from "@/i18n/navigation";
 import {getPayload} from "@/lib/payload-client";
 import {isFullWidthLayout, type StorefrontLayoutMode} from "@/lib/storefront-layout";
@@ -88,53 +90,44 @@ export async function SiteFooter({layoutMode = "fixed"}: Props) {
   const waHref = toWaLink(whatsapp);
   const year = new Date().getFullYear();
   const railClassName = [
-    "mx-auto px-4 sm:px-6",
+    "mx-auto w-full px-4 sm:px-6",
     isFullWidthLayout(layoutMode) ? "max-w-none lg:px-10 2xl:px-14" : "max-w-6xl lg:px-8",
   ].join(" ");
 
   return (
-    <footer
-      className="site-footer mt-12 w-full border-t border-border-card bg-bg-darker text-text-light"
-      aria-label="Site footer"
-    >
-      <div className={`${railClassName} grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4`}>
-        {/* Brand column */}
-        <div className="space-y-3">
-          <p className="text-sm font-semibold tracking-wide text-gold">
-            Mishran · Malgudi Sweets
+    <footer className="site-footer ms-footer" aria-label="Site footer">
+      <div className={`${railClassName} ms-footer-in ms-footer-in--cols`}>
+        {/* Brand column: the stacked lockup, the shop, WhatsApp. */}
+        <div className="ms-footer-brand">
+          <div className="ms-footer-logo">
+            <Image
+              src="/brand/mishran-stacked-cream-on-nutmeg.svg"
+              alt="Mishran"
+              width={160}
+              height={169}
+              unoptimized
+            />
+          </div>
+          <address>
+            H-4/3, Main Market, Model Town-II, North Delhi, Delhi-110009
+          </address>
+          <p>
+            <a href={waHref} target="_blank" rel="noopener noreferrer">
+              WhatsApp {whatsapp}
+            </a>
           </p>
-          <p className="max-w-xs text-[11px] leading-relaxed text-text-light-muted">
-            Modern Indian mithai, handcrafted in small batches across our
-            Bengaluru kitchens. Delivered fresh, packaged with intent.
-          </p>
-          <a
-            href={waHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-full bg-gold px-4 py-1.5 text-[11px] font-semibold text-text-on-gold transition hover:bg-gold-hover"
-          >
-            <span aria-hidden="true" className="inline-block h-1.5 w-1.5 rounded-full bg-text-on-gold/70" />
-            Chat on WhatsApp
-          </a>
         </div>
 
         {/* Link columns */}
         {FOOTER_COLUMNS.map((col) => (
-          <nav key={col.heading} aria-label={col.heading} className="space-y-2">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-light-muted">
-              {col.heading}
-            </h2>
-            <ul className="space-y-1.5 text-xs">
+          <nav key={col.heading} aria-label={col.heading}>
+            <h2 className="ms-footer-head">{col.heading}</h2>
+            <ul className="ms-footer-links">
               {col.links.map((link) => (
-                <li key={link.href}>
+                <li key={`${col.heading}-${link.href}`}>
                   {/* Locale prefixing is handled by next-intl middleware for
                       in-app routes. */}
-                  <Link
-                    href={link.href}
-                    className="text-text-light-muted transition-colors hover:text-gold"
-                  >
-                    {link.label}
-                  </Link>
+                  <Link href={link.href}>{link.label}</Link>
                 </li>
               ))}
             </ul>
@@ -142,26 +135,15 @@ export async function SiteFooter({layoutMode = "fixed"}: Props) {
         ))}
       </div>
 
-      {/* Legal strip */}
-      <div className="border-t border-text-heading/40">
-        <div className={`${railClassName} flex flex-col items-start justify-between gap-2 py-4 text-[11px] text-text-light-muted sm:flex-row sm:items-center`}>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span>© {year} Mishran. All rights reserved.</span>
-            {/* FSSAI placeholder — replace once the licence number is final. */}
-            <span
-              className="inline-flex items-center gap-1 rounded-full border border-text-light-muted/40 px-2 py-0.5 text-[10px]"
-              title="FSSAI licence placeholder"
-            >
-              FSSAI — pending
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <Link href="/privacy" className="hover:text-gold">Privacy</Link>
-            <Link href="/terms" className="hover:text-gold">Terms</Link>
-            <Link href="/accessibility" className="hover:text-gold">Accessibility</Link>
-            <span className="text-text-light-muted/70">Instagram · X · YouTube</span>
-          </div>
-        </div>
+      {/* Legal strip: the FSSAI licence number is on every page. */}
+      <div className={`${railClassName} ms-footer-legal`}>
+        <p>© {year} Balanced Brands Private Limited</p>
+        <p>FSSAI Lic. No. 13325008000711</p>
+        <p className="ms-footer-legal-links">
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/accessibility">Accessibility</Link>
+        </p>
       </div>
     </footer>
   );

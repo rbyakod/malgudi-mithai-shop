@@ -3,7 +3,7 @@ import { normalizeTheme, DEFAULT_THEME, VALID_THEMES } from "@/lib/themes";
 
 describe("themes", () => {
   it("defaults to Malgudi Blue v2", () => {
-    expect(DEFAULT_THEME).toBe("mblue2");
+    expect(DEFAULT_THEME).toBe("mishran-default");
   });
 
   it("exposes 4 house themes + 4 extra palette themes", () => {

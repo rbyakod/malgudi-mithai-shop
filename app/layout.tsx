@@ -6,18 +6,35 @@ import {CartProvider} from "@/context/CartContext";
 import {AuthProvider} from "@/context/AuthContext";
 import {QueryProvider} from "@/context/QueryProvider";
 import {ThemeProvider} from "@/context/ThemeContext";
-import {PageBackground} from "@/components/PageBackground";
 import {AnalyticsScripts} from "@/components/Analytics/AnalyticsScripts";
 import {InlineScript} from "@/components/InlineScript";
-import {DEFAULT_THEME, THEMES} from "@/lib/themes";
+import {DEFAULT_THEME} from "@/lib/themes";
 import {Toaster} from "sonner";
+import localFont from "next/font/local";
 
-const validThemes = THEMES.map((theme) => theme.id);
-const initialThemeScript = `(function(){try{var valid=${JSON.stringify(validThemes)};var aliases=${JSON.stringify({festive:"diwali-saffron",heritage:"wedding-heritage","heritage-2":"wedding-heritage",sage:"everyday-sage",navy:"mblue2",coinbase:"mblue2",ibm:"mblue2",myblue:"mblue2"})};var stored=localStorage.getItem("mithai-theme");var normalized=(stored&&aliases[stored])||stored||${JSON.stringify(DEFAULT_THEME)};if(valid.indexOf(normalized)!==-1){document.documentElement.setAttribute("data-theme",normalized);}else{document.documentElement.setAttribute("data-theme",${JSON.stringify(DEFAULT_THEME)});}}catch(e){}})()`;
+// Mishran Design System: the two families inside the logo, self-hosted.
+const mishranMono = localFont({
+  src: "./fonts/JetBrainsMono-Medium.woff2",
+  weight: "500",
+  display: "swap",
+  variable: "--font-ms-mono",
+});
+const mishranSerif = localFont({
+  src: [
+    {path: "./fonts/TiroDevanagariHindi-Regular.woff2", weight: "400", style: "normal"},
+    {path: "./fonts/TiroDevanagariHindi-Italic.woff2", weight: "400", style: "italic"},
+  ],
+  display: "swap",
+  variable: "--font-ms-serif",
+});
+
+// The Mishran Design System has one look, so the stored theme choice is
+// ignored and the house theme is pinned before paint.
+const initialThemeScript = `document.documentElement.setAttribute("data-theme",${JSON.stringify(DEFAULT_THEME)})`;
 
 export const metadata: Metadata = {
   title: "Mishran",
-  description: "Modern Indian mithai, delivered fresh."
+  description: "Honest Indian mithai, made by hand with milk from our own dairy."
 };
 
 export default async function RootLayout({
@@ -32,8 +49,12 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${mishranMono.variable} ${mishranSerif.variable}`}
+    >
+      <body className="ms-site">
         {/* Theme init — server-rendered as text/javascript so it runs
             before paint (FOUC prevention). On hydration the type becomes
             text/plain so React does not re-execute it. InlineScript
@@ -46,12 +67,11 @@ export default async function RootLayout({
         />
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-text-light focus:shadow-lg"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-text-light focus:shadow-lg"
         >
           Skip to content
         </a>
         <ThemeProvider>
-          <PageBackground />
           <QueryProvider>
             <CartProvider>
               <AuthProvider>{children}</AuthProvider>

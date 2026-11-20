@@ -1,6 +1,6 @@
 // components/layout/BrandBar.tsx
-// Slim utility strip above the main header. Renders WhatsApp number, store
-// count, and freshness promise tagline.
+// Slim utility strip above the main header, on nutmeg: the house promise
+// and the WhatsApp number, in Mono capitals.
 //
 // Server component — reads the WhatsApp number from Payload's
 // `analytics-settings` global. Falls back to a placeholder when Payload is
@@ -39,36 +39,29 @@ export async function BrandBar({layoutMode = "fixed"}: Props) {
   const whatsapp = (await readWhatsappNumber()) ?? FALLBACK_WHATSAPP;
   const waHref = toWaLink(whatsapp);
   const railClassName = [
-    "mx-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-1.5 text-[11px] sm:px-6",
+    "mx-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-2 sm:px-6",
     isFullWidthLayout(layoutMode) ? "max-w-none lg:px-10 2xl:px-14" : "max-w-6xl lg:px-8",
   ].join(" ");
 
   return (
     <div
-      className="brand-bar w-full border-b border-border-card bg-bg-darker text-text-light"
+      className="brand-bar ms-brandbar"
       role="complementary"
       aria-label="Brand announcements"
     >
       <div className={railClassName}>
-        <p className="brand-bar__promise font-medium tracking-wide text-gold">
-          Handcrafted daily · Delivered fresh across Bengaluru
+        <p className="ms-brandbar-promise">
+          Honest Indian mithai <span aria-hidden="true">·</span> From our own dairy in Jhajjar
         </p>
-        <div className="brand-bar__meta flex flex-wrap items-center gap-x-4 gap-y-0.5 text-text-light-muted">
-          <span className="hidden sm:inline">3 kitchens · 1 promise</span>
-          <a
-            href={waHref}
-            className="inline-flex items-center gap-1.5 font-medium text-text-light transition-colors hover:text-gold"
-            // Open WhatsApp in a new tab; rel follows safe best-practice.
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span
-              aria-hidden="true"
-              className="inline-block h-1.5 w-1.5 rounded-full bg-gold"
-            />
-            {whatsapp}
-          </a>
-        </div>
+        <a
+          href={waHref}
+          className="ms-brandbar-link"
+          // Open WhatsApp in a new tab; rel follows safe best-practice.
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp {whatsapp}
+        </a>
       </div>
     </div>
   );
