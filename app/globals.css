@@ -1,5 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
+/* Tiro Kannada: the Tiro family's Kannada cut, for the kn locale. */
+@import url("https://fonts.googleapis.com/css2?family=Tiro+Kannada:ital@0;1&display=swap");
 @import "tailwindcss/index.css";
+@import "./mishran.css";
 
 /* ---- Theme: Mishran Default (canonical) ---- */
 

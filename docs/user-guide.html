@@ -190,7 +190,7 @@
     <h1>User Guide</h1>
     <p class="lede">Everything you can do on Mishran today — on the web, on iPhone, and on
     Android — and how to do it. Written for customers, testers, and the team.</p>
-    <p class="meta">Last updated: 2026-08-17 · Markdown source: <code>docs/user-guide.md</code></p>
+    <p class="meta">Last updated: 2026-11-20 · Markdown source: <code>docs/user-guide.md</code></p>
     <div class="note-box">
       <p class="box-title">Maintaining this guide (standing rule)</p>
       <p>Whenever a feature is added, changed, or removed on any platform, update this guide
@@ -292,32 +292,51 @@
     <h2>3. Home</h2>
 
     <h3>Web</h3>
+    <p>The web storefront follows the <strong>Mishran Design System</strong> (Model Town,
+    Delhi brand book): six house colours (maroon, nutmeg, pistachio, deep gold, milk cream,
+    antique gold), two fonts from the logo (JetBrains Mono capitals for headings, labels,
+    buttons and prices; Tiro Devanagari Hindi for sentences and Hindi), square corners, no
+    shadows or gradients. There is one look; the old theme switcher is gone.</p>
     <ul>
-      <li>Announcement strip ("Handcrafted daily · Delivered fresh across Bengaluru") with the
-      WhatsApp number.</li>
-      <li><strong>Hero</strong> — featured products in a slow Ken Burns pan (a gentle
-      video-like drift, pure CSS). The shop ships two looks, and the owner picks between them
-      in <strong>Admin → Storefront settings</strong> to experiment with customers:
-        <ul>
-          <li><strong>Framed</strong> (default): editorial two-column hero with a rotating
-          product card that includes the price and its own
-          <strong>Add to cart</strong>.</li>
-          <li><strong>Cinematic</strong>: a full-width image band with the headline, gold
-          <strong>Explore mithai</strong> button, and a product chip (name + price +
-          <strong>Add to cart</strong>) over the photo.</li>
-        </ul>
-      Both auto-advance every 5 seconds and honor your device's reduced-motion setting
-      (autoplay and the drift stop entirely). The framed card pauses while you hover it —
-      handy right before clicking <strong>Add to cart</strong>; the cinematic band keeps
-      rotating even with the cursor resting on the photo, since the band fills most of the
-      screen (keyboard focus still pauses it).</li>
-      <li>Product photos across the shop (catalog cards, product pages, journal) carry the
-      same subtle always-on drift. It's a display effect only — photos never change content —
-      and it also switches off with reduced-motion or from
-      <strong>Admin → Storefront settings → Product image motion</strong>.</li>
-      <li><strong>"Find your Mishran"</strong> — the four verticals (Mithai · QSR · Snacks ·
-      Merch) as full-width cards.</li>
-      <li><strong>"Why Mishran"</strong> — the four promise cards, each linking into Stories.</li>
+      <li><strong>Announcement strip</strong> on nutmeg: "Honest Indian mithai · From our own
+      dairy in Jhajjar", "3 kitchens · 1 promise" and the WhatsApp number.</li>
+      <li><strong>Header</strong> on maroon: the Mishran lockup, the main links
+      (<strong>Gifting · Mithai · Our dairy · Restaurant · Visit</strong>), the language
+      dropdown and a <strong>CART</strong> button that shows the item count. Below 1120px wide
+      the links fold into a <strong>MENU</strong> button that opens a panel with the main links,
+      <strong>More from the house</strong> (Build a box · Snacks · Boxes and thalis), the story
+      links, the language dropdown and the cart. On phones the cart button lives in that
+      panel.</li>
+      <li><strong>Hero</strong> on nutmeg: "Honest Indian mithai", the Mithai Library box, a
+      <strong>See the Mithai Library</strong> button (Gifting) and a <strong>Visit the
+      shop</strong> link.</li>
+      <li><strong>Pichwai art band</strong>: the marigold Pichwai art with "<span lang="hi">मिश्रण</span>
+      means a blend" and an <strong>Our story</strong> button.</li>
+      <li><strong>The boxes</strong>: six gift boxes, each named for its Indian craft and place
+      (the scripts of India, lippan kaam, Pichwai, parchin-kari, chakla, sanjhi), with
+      <strong>Gifting for</strong> links (Diwali, Weddings, The office, Every occasion). Every
+      tile opens Gifting.</li>
+      <li><strong>The chakla bhaji box</strong> on its own crimson: the craft's story, the box
+      size, its colours and a <strong>Plan a bhaji order</strong> link (Weddings).</li>
+      <li><strong>From Jhajjar to the counter</strong>: five steps (the herd, 4 a.m., 50 km,
+      khoya, the counter) with a link to Our dairy.</li>
+      <li><strong>Today at the counter</strong>: three mithai from the catalog, featured items
+      first, each with the veg mark, ingredients and price (items priced "on request" are
+      skipped). Tap a card for its product page.</li>
+      <li><strong>More from the house</strong>: doors to Mithai, Build a box, Restaurant and
+      Snacks, plus a Boxes and thalis link.</li>
+      <li><strong>Drop in</strong> on deep gold: the shop address (from Admin → Store
+      Settings), the opening hours when they are set, and a <strong>See the map</strong>
+      button.</li>
+      <li><strong>Footer</strong> on nutmeg: the stacked lockup, the shop address and hours,
+      WhatsApp, four link columns (Shop · The house · Help · Gifting for), the privacy links,
+      <strong>Privacy choices</strong>, and the FSSAI licence number on every page.</li>
+      <li>The home page is translated into <span lang="hi">हिन्दी</span> and
+      <span lang="kn">ಕನ್ನಡ</span> as well as English.</li>
+      <li>Product photos keep the gentle drift effect described under the catalog; it switches
+      off with reduced-motion or from <strong>Admin → Storefront settings → Product image
+      motion</strong>. The admin hero settings (Framed/Cinematic) no longer change the web home
+      page.</li>
     </ul>
 
     <h3>iOS</h3>
@@ -354,7 +373,7 @@
       the query in the URL, so a filtered view is shareable/bookmarkable.</li>
       <li><strong>Filters</strong>: family/category (Classic, Originals, Sugar-free, Regional,
       Seasonal) and dietary needs (Sugar-free, Eggless, Gluten-free on iOS; web adds a
-      <strong>Freshness</strong> filter: Made daily / Made to order / Batch frozen). Active
+      <strong>How it keeps</strong> filter: Made daily / Made to order / Batch frozen). Active
       filters show as removable chips.</li>
       <li><strong>Sort</strong>: <strong>Featured / Name A–Z / Name Z–A</strong> on the apps
       (remembered between launches); web's mithai grid follows the featured order, and the
@@ -434,7 +453,7 @@
       <li><strong>Web</strong> (<code>/cart</code>) is the most complete:
         <ul>
           <li><strong>Delivery estimate</strong> in the cart itself, keyed off the pincode you
-          checked: fresh tier (₹49, <strong>free over ₹999</strong>) or shelf-stable (₹99,
+          checked: local delivery, the "fresh" tier (₹49, <strong>free over ₹999</strong>) or shelf-stable (₹99,
           <strong>free over ₹1,999</strong>), with a progress line ("Add ₹x more for free
           delivery"). These are the standard amounts; the shop can change them in the admin
           (<strong>Delivery &amp; fees</strong>), and the cart, the shipping page and the apps always
@@ -624,6 +643,8 @@
     </div>
     <p>Default when no choice is made: your device language if it's one of the supported ones,
     else English. (A small amount of checkout/support copy is still English on the apps.)</p>
+    <p>On the web, Hindi and Kannada are set in the Tiro family (Tiro Devanagari Hindi, Tiro
+    Kannada) and are never letter-spaced, so conjuncts stay whole.</p>
   </section>
 
   <section id="s13">
@@ -650,9 +671,11 @@
 
   <section id="s14">
     <h2>14. Help &amp; legal (web)</h2>
-    <p><code>/help/shipping</code> (live fee and slot information), <code>/help/returns</code>
+    <p><code>/visit</code> (the shop: address and hours from Store Settings, a map link, the
+    counter downstairs and the restaurant upstairs, and a Contact us button),
+    <code>/help/shipping</code> (live fee and slot information), <code>/help/returns</code>
     (replacement-or-refund promise for perishables), <code>/help/contact</code> (WhatsApp hours
-    9:00–21:00 IST, kitchens in Bengaluru), <code>/about</code>, <code>/privacy</code>,
+    9:00–21:00 IST, the shop in Model Town, Delhi), <code>/about</code>, <code>/privacy</code>,
     <code>/terms</code>, <code>/accessibility</code>. The footer links all of these.</p>
   </section>
 
@@ -715,15 +738,16 @@
       build.</li>
       <li><strong>iOS</strong>: TestFlight invite pending App Store processing of build
       202608171042; until then, testing runs on the simulator.</li>
-      <li><strong>Delivery tiers for testing</strong>: Bengaluru pincodes are fresh-tier
+      <li><strong>Delivery tiers for testing</strong>: Delhi NCR pincodes are fresh-tier
       (same-day slots); most other serviceable pincodes are shelf-tier (a few days). Fresh-tier
       sweets can't ship to shelf-tier addresses — checkout will tell you to swap the items or
       the address.</li>
       <li><strong>Payments in test</strong>: Razorpay runs in TEST mode — no real money moves.
       Use test cards/UPI from the Razorpay test dashboard.</li>
       <li><strong>What's intentionally still placeholder</strong>: WhatsApp/support numbers
-      (show +91 80000 00000 until the real one is configured), FSSAI licence ("pending" chip
-      in the web footer), occasion page content, and social links in the footer.</li>
+      (show +91 80000 00000 until the real one is configured), occasion page content, and
+      social links. The web footer now carries the FSSAI licence number from the design system
+      (13325008000711).</li>
     </ul>
   </section>
 
@@ -752,7 +776,7 @@
   </main>
 
   <div class="footer">
-    Mishran · Malgudi Sweets — modern mithai house, Bengaluru. This guide covers the web
+    Mishran · Malgudi Sweets — mithai shop in Model Town, Delhi. This guide covers the web
     storefront, the iOS app, and the Android app. Keep it current with every feature change
     (see the standing rule at the top).
   </div>

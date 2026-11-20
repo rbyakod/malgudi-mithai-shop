@@ -114,7 +114,7 @@ final class DeliveryCheckModel {
         return slaDays == 1 ? "1 day" : "\(slaDays) days"
     }
 
-    /// Full result line: "Delivers to Bengaluru · Fresh · same-day".
+    /// Full result line: "Delivers to New Delhi · Fresh · same-day".
     nonisolated static func resultLine(_ result: DeliveryCheckResult) -> String {
         L(
             "product.delivery.result",

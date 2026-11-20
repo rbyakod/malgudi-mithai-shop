@@ -12,14 +12,19 @@
     "shop": "Shop",
     "learn": "Learn",
     "mithai": "Mithai",
-    "buildAGift": "Build a Gift",
-    "qsr": "QSR",
+    "buildAGift": "Build a box",
+    "qsr": "Restaurant",
     "snacks": "Snacks",
-    "merch": "Merch",
+    "merch": "Boxes and thalis",
     "stories": "Stories",
     "farms": "Farms",
     "karigars": "Karigars",
-    "journal": "Journal"
+    "journal": "Journal",
+    "gifting": "Gifting",
+    "ourDairy": "Our dairy",
+    "restaurant": "Restaurant",
+    "visit": "Visit",
+    "more": "More from the house"
   },
   "HeroRotator": {
     "regionLabel": "Featured products",
@@ -62,7 +67,7 @@
       "intro": "Each vertical carries the same milk‑first promise, dressed for the moment — a quiet Tuesday, a wedding mehendi, a corporate launch, or a hamper that travels across India.",
       "mithai": {
         "label": "Mithai",
-        "description": "The canon — kaju katli, motichoor, besan laddoo — finished fresh, in weights that suit a Tuesday or a thousand‑box wedding."
+        "description": "The canon: kaju katli, motichoor, besan laddoo, made by our karigars in weights that suit a Tuesday or a thousand-box wedding."
       },
       "qsr": {
         "label": "QSR",
@@ -84,7 +89,7 @@
       "readMore": "Read the story",
       "milkPurity": {
         "label": "Milk Purity",
-        "description": "Milk from our Jhajjar farm, boiled fresh each morning — no milk powder, no reconstituted cream, ever."
+        "description": "Milk from our own dairy in Jhajjar. We make our own khoya and chhena from it."
       },
       "karigarMastery": {
         "label": "Karigar Mastery",
@@ -103,7 +108,7 @@
   "Verticals": {
     "mithai": {
       "title": "Mithai",
-      "blurb": "The canon — kaju katli, motichoor, besan laddoo. Milk‑first recipes finished fresh by karigars, in weights that suit a Tuesday or a thousand‑box wedding."
+      "blurb": "The canon: kaju katli, motichoor, besan laddoo. Made by our karigars with milk from our own dairy in Jhajjar, in weights that suit a Tuesday or a thousand-box wedding."
     },
     "qsr": {
       "title": "QSR",
@@ -128,7 +133,7 @@
       "storage": "Storage",
       "story": "From the karigar's bench",
       "karigar": "Finished by",
-      "freshness": "Freshness",
+      "freshness": "How it keeps",
       "addToCart": "Add to draft cart",
       "added": "Added",
       "taxNote": "Inclusive of all taxes",
@@ -150,14 +155,14 @@
         "notServiceable": "We don't deliver to {pincode} yet — pan-India shipping coming soon.",
         "errorRetry": "Couldn't check — please try again.",
         "deliverTo": "Deliver to {pincode} · {city} · {tier} · {days, plural, =1 {1 day} other {# days}}",
-        "tierFresh": "Fresh",
+        "tierFresh": "Local delivery",
         "tierShelf": "Shelf",
         "fallbackPromise": "5–7 days delivery · Pan India shipping"
       },
       "trust": {
-        "freshDaily": "Made fresh each morning",
+        "freshDaily": "Made every morning",
         "freshToOrder": "Made to order, finished on request",
-        "frozen": "Finished fresh, frozen at peak",
+        "frozen": "Made, then frozen to keep",
         "shelfLife": "{shelfLife} shelf life",
         "vegetarian": "Vegetarian",
         "sugarFree": "Sugar-free"
@@ -222,8 +227,8 @@
       "regional": "Regional",
       "seasonal": "Seasonal"
     },
-    "freshnessLabel": "Freshness",
-    "freshnessAll": "Any freshness",
+    "freshnessLabel": "How it keeps",
+    "freshnessAll": "Any",
     "freshness": {
       "made-daily": "Made daily",
       "made-to-order": "Made to order",
@@ -338,7 +343,7 @@
     "estimateHeading": "Estimate",
     "estimateItems": "Items",
     "estimateDelivery": "Delivery",
-    "estimateDeliveryFresh": "Delivery · fresh tier",
+    "estimateDeliveryFresh": "Delivery · local",
     "estimateDeliveryShelf": "Delivery · shelf-stable",
     "estimateDeliveryUnknown": "Confirmed at checkout",
     "estimateTotal": "Estimated total",
@@ -366,7 +371,7 @@
   "Checkout": {
     "eyebrow": "Mishran · Commerce",
     "title": "Checkout",
-    "blurb": "Address, delivery, and payment — your order is priced fresh by our kitchen the moment you review it.",
+    "blurb": "Address, delivery and payment. Our kitchen prices your order the moment you review it.",
     "loading": "One moment…",
     "emptyCart": "Your cart is empty — taking you back to it.",
     "steps": {
@@ -383,7 +388,7 @@
     "slotToday": "Today",
     "slotTomorrow": "Tomorrow",
     "slotLabel": "{day} · {date} · {window}",
-    "slotNote": "Fresh-tier items are made daily — choose a slot at least a few hours out.",
+    "slotNote": "Local-delivery items are made every day, so choose a slot at least a few hours out.",
     "continue": "Continue",
     "summaryHeading": "Review & pay",
     "validating": "Pricing your order with our kitchen…",
@@ -412,7 +417,7 @@
     "whatsappFallback": "Finish on WhatsApp",
     "backToCart": "Back to cart",
     "razorpayName": "Mishran · Malgudi Sweets",
-    "razorpayDescription": "Fresh mithai, delivered",
+    "razorpayDescription": "Mithai from Mishran, Model Town",
     "errors": {
       "notServiceable": "We don't deliver to this pincode yet — pick another address or message us on WhatsApp.",
       "invalidPincode": "That pincode doesn't look right — edit the address and try again.",
@@ -500,7 +505,7 @@
       "invalidPhone": "Enter your phone number with the country code, e.g. +919876543210.",
       "invalidCode": "Enter the six-digit code we texted you.",
       "otpInvalid": "That code doesn't match. Check the six digits and try again.",
-      "otpExpired": "That code expired. Send a fresh one and try again.",
+      "otpExpired": "That code expired. Send a new one and try again.",
       "rateLimited": "Too many attempts — wait a little while before trying again.",
       "providerDown": "We can't send texts right now. Please try again in a few minutes.",
       "generic": "Something went wrong. Please try again."
@@ -553,7 +558,7 @@
     "setDefault": "Set default",
     "delete": "Delete",
     "deleteAria": "Delete address {line1}",
-    "badgeFresh": "Fresh-tier pincode — same-day and next-day slots.",
+    "badgeFresh": "Local-delivery pincode: same-day and next-day slots.",
     "badgeShelf": "Shelf-stable pincode — delivered in a few days.",
     "badgeOutside": "Outside our current delivery zones."
   },
@@ -657,7 +662,7 @@
       "sections": {
         "s1": {
           "heading": "About these terms",
-          "p1": "These terms govern your use of the Mishran store and any orders you place through it. Mishran is a Malgudi Sweets brand, made and dispatched from our kitchens. By using the store you agree to them."
+          "p1": "These terms govern your use of the Mishran store and any orders you place through it. Mishran is a Malgudi Sweets brand, made and dispatched from our shop in Model Town, Delhi. By using the store you agree to them."
         },
         "s2": {
           "heading": "Ordering",
@@ -669,7 +674,7 @@
         },
         "s4": {
           "heading": "Delivery",
-          "p1": "Fresh items deliver to serviceable pincodes in a same-day or next-day slot you choose at checkout. Shelf-stable items deliver within the timeline shown when you check your pincode. Someone should be available to receive the order — and refrigerate it where advised — during the chosen slot.",
+          "p1": "Local-delivery items deliver to serviceable pincodes in a same-day or next-day slot you choose at checkout. Shelf-stable items deliver within the timeline shown when you check your pincode. Someone should be available to receive the order — and refrigerate it where advised — during the chosen slot.",
           "p2": "We are not liable for delays caused by events outside our control, but when a delivery fails on our side we make it right — see Returns & refunds."
         },
         "s5": {
@@ -678,30 +683,30 @@
         },
         "s6": {
           "heading": "Perishability",
-          "p1": "Mithai is made fresh and is perishable. Consume it within the shelf life shown on the pack and refrigerate where advised. We cannot accept responsibility for items stored contrary to their instructions."
+          "p1": "Mithai is made by hand and is perishable. Consume it within the shelf life shown on the pack and refrigerate where advised. We cannot accept responsibility for items stored contrary to their instructions."
         },
         "s7": {
           "heading": "Changes and governing law",
-          "p1": "We may update these terms as the store evolves; the version in force is the one live on this page. These terms are governed by the laws of India, with jurisdiction in Bengaluru. Questions? Write to us on WhatsApp."
+          "p1": "We may update these terms as the store evolves; the version in force is the one live on this page. These terms are governed by the laws of India, with jurisdiction in Delhi. Questions? Write to us on WhatsApp."
         }
       }
     },
     "shipping": {
       "eyebrow": "Mishran · Help",
       "title": "Shipping & delivery",
-      "intro": "Where we deliver, what it costs ({freshFee} fresh / {shelfFee} shelf-stable), and when it arrives.",
+      "intro": "Where we deliver, what it costs ({freshFee} local / {shelfFee} shelf-stable), and when it arrives.",
       "sections": {
         "s1": {
           "heading": "Where we deliver",
-          "p1": "We deliver to serviceable pincodes — enter yours on any product page to see whether we reach you, which tier applies, and how long it takes. Fresh-tier pincodes get our made-daily range; everywhere else we ship shelf-stable boxes and gifting."
+          "p1": "We deliver to serviceable pincodes — enter yours on any product page to see whether we reach you, which tier applies, and how long it takes. Local-delivery pincodes get our made-daily range; everywhere else we ship shelf-stable boxes and gifting."
         },
         "s2": {
           "heading": "Delivery fees",
-          "p1": "A flat {freshFee} per order for fresh-tier delivery and {shelfFee} per order for shelf-stable — the same figures checkout charges, shown before you pay. No surge, no distance math."
+          "p1": "A flat {freshFee} per order for local delivery and {shelfFee} per order for shelf-stable — the same figures checkout charges, shown before you pay. No surge, no distance math."
         },
         "s3": {
-          "heading": "Fresh delivery slots",
-          "p1": "Fresh-tier orders arrive in a slot you choose at checkout: a morning window (10:00–14:00) or an evening window (16:00–20:00), same day or next day depending on when you order."
+          "heading": "Local delivery slots",
+          "p1": "Local-delivery orders arrive in a slot you choose at checkout: a morning window (10:00–14:00) or an evening window (16:00–20:00), same day or next day depending on when you order."
         },
         "s4": {
           "heading": "Shelf-stable delivery",
@@ -720,10 +725,10 @@
       "sections": {
         "s1": {
           "heading": "Our promise",
-          "p1": "Everything fresh is made the day it travels and packed to order. If what arrives isn't what you ordered, or arrives compromised, we want to hear about it the same day."
+          "p1": "Everything perishable is made the day it travels and packed to order. If what arrives isn't what you ordered, or arrives compromised, we want to hear about it the same day."
         },
         "s2": {
-          "heading": "Fresh and perishable items",
+          "heading": "Perishable items",
           "p1": "Because mithai is perishable, we can't accept returns in the usual sense. Instead: message us on WhatsApp within 24 hours of delivery with your order reference and a photo, and we will replace the item or refund it in full — your choice."
         },
         "s3": {
@@ -736,7 +741,7 @@
         },
         "s5": {
           "heading": "Cancellations",
-          "p1": "You can cancel any order before it is dispatched — message us on WhatsApp with your order reference. Once fresh items are out for delivery they can't be recalled, but the 24-hour promise above still applies."
+          "p1": "You can cancel any order before it is dispatched — message us on WhatsApp with your order reference. Once perishable items are out for delivery they can't be recalled, but the 24-hour promise above still applies."
         }
       }
     },
@@ -770,7 +775,7 @@
     "about": {
       "eyebrow": "Mishran · Our story",
       "title": "Our story",
-      "intro": "Modern Indian mithai — the blend, the kitchens, and the people behind both.",
+      "intro": "Honest Indian mithai from Model Town, Delhi — the blend, the karigars, and the dairy behind both.",
       "sections": {
         "s1": {
           "heading": "The name",
@@ -778,7 +783,7 @@
         },
         "s2": {
           "heading": "What we make",
-          "p1": "We make modern Indian mithai in small batches across our kitchens — the made-daily classics, festive boxes, and gifting — plus namkeen from our snack shelves and a small line of merchandise for people who cook."
+          "p1": "Our karigars make mithai by hand at our shop in Model Town, Delhi, with milk from our own dairy in Jhajjar — the made-daily classics, festive boxes, and gifting — plus namkeen from our snack shelves and a small line of merchandise for people who cook."
         },
         "s3": {
           "heading": "Where it comes from",
@@ -786,7 +791,7 @@
         },
         "s4": {
           "heading": "How it reaches you",
-          "p1": "Fresh items travel in slotted windows the day they're made, to pincodes our kitchen can honestly serve. Everything else is packed to keep, so distance doesn't mean staleness."
+          "p1": "Perishable items travel in slotted windows the day they're made, to pincodes our kitchen can honestly serve. Everything else is packed to keep, so distance doesn't mean staleness."
         },
         "s5": {
           "heading": "Come say hello",
@@ -806,11 +811,11 @@
       "corporateCta": "Corporate & bulk gifting",
       "corporateHint": "Festive boxes, client gifting, events →",
       "addressHeading": "Find us",
-      "addressBody": "Find us at {address}. Fresh delivery serves the city; shelf-stable ships to serviceable pincodes.",
-      "addressBodyGeneric": "Fresh delivery serves the city; shelf-stable ships to serviceable pincodes.",
+      "addressBody": "Find us at {address}. Local delivery serves the city; shelf-stable sweets ship to serviceable pincodes.",
+      "addressBodyGeneric": "Local delivery serves the city; shelf-stable sweets ship to serviceable pincodes.",
       "storeHours": "Shop hours: {hours}",
       "hoursHeading": "Hours",
-      "hoursBody": "WhatsApp: 9:00–21:00 IST, every day. Fresh delivery slots: 10:00–14:00 and 16:00–20:00."
+      "hoursBody": "WhatsApp: 9:00–21:00 IST, every day. Local delivery slots: 10:00–14:00 and 16:00–20:00."
     }
   },
   "Stories": {
@@ -858,5 +863,176 @@
     "assistantPromptBody": "To chat with Mishran's AI assistant, we store a private ID and your conversation for a limited time. Nothing else changes: analytics stays as you set it.",
     "allowAssistant": "Allow AI assistant",
     "notNow": "Not now"
+  },
+  "MsHome": {
+    "hero": {
+      "label": "Model Town · Delhi",
+      "title": "Honest Indian mithai",
+      "lead": "Made by hand by our karigars, with milk from our own dairy in Jhajjar.",
+      "cta": "See the Mithai Library",
+      "more": "Visit the shop",
+      "alt": "The Mithai Library open: eight small boxes in a drawer, each named in Devanagari and a second script."
+    },
+    "art": {
+      "title": "Our milk, our karigars, India's crafts",
+      "body": "मिश्रण means a blend. Ours is three things: milk from our own dairy in Jhajjar, the hands of our karigars, and boxes drawn from India's crafts.",
+      "cta": "Our story",
+      "credit": "The Pichwai card, from the Pichwai Selection"
+    },
+    "boxes": {
+      "label": "The boxes",
+      "title": "India's crafts, in a box of mithai",
+      "lead": "Each of our gift boxes is drawn from one Indian craft, and says where it comes from.",
+      "giftingFor": "Gifting for",
+      "all": "All the boxes",
+      "occasions": {
+        "diwali": "Diwali",
+        "weddings": "Weddings",
+        "office": "The office",
+        "occasions": "Every occasion"
+      },
+      "packs": {
+        "library": {
+          "place": "Eight sweets · eight regions",
+          "craft": "The scripts of India",
+          "box": "The Mithai Library, our signature box",
+          "alt": "The Mithai Library open: eight small boxes in a drawer."
+        },
+        "vitrine": {
+          "place": "Kutch · Gujarat",
+          "craft": "Lippan kaam",
+          "box": "The Vitrine, box of four",
+          "alt": "The Vitrine: a navy box whose lid is cut with a ring of small windows."
+        },
+        "pichwai": {
+          "place": "Nathdwara · Rajasthan",
+          "craft": "Pichwai",
+          "box": "The personalised box, N° 01",
+          "alt": "The Pichwai Selection lid: deep indigo, the word मिश्रण cut out and filled with marigold Pichwai painting."
+        },
+        "parchin": {
+          "place": "Agra · Uttar Pradesh",
+          "craft": "Parchin-kari",
+          "box": "The personalised box, N° 03",
+          "alt": "The Parchin-kari Selection: a majith-red lid with five cut arches showing blue-flowered inlay."
+        },
+        "chakla": {
+          "place": "Kathiawar · Gujarat",
+          "craft": "Chakla",
+          "box": "The bhaji box",
+          "alt": "The bhaji box with the chakla lid: crimson, indigo and mustard embroidery drawn on the lid."
+        },
+        "sanjhi": {
+          "place": "Braj · Uttar Pradesh",
+          "craft": "Sanjhi",
+          "box": "The motichoor laddoo box",
+          "alt": "The motichoor laddoo box: a haldi-yellow lid with a maroon sanjhi paper-cut."
+        }
+      }
+    },
+    "craft": {
+      "place": "Kathiawar · Gujarat",
+      "title": "Bhaji box, the chakla lid",
+      "body": "The lid follows a chakla from Kathiawar, made in the 1800s: an embroidered square of crimson, blue-black indigo and mustard, its mirrors laid in silver leaf and its lines in gold.",
+      "craftLabel": "Craft",
+      "craftValue": "Chakla, embroidery",
+      "sizeLabel": "Size",
+      "sizeValue": "Gift box, 14 x 11 in",
+      "coloursLabel": "Colours",
+      "cta": "Plan a bhaji order",
+      "alt": "The bhaji box with the chakla lid: crimson, indigo and mustard embroidery drawn on the lid, mirrors in silver leaf, the name in gold at the centre."
+    },
+    "journey": {
+      "label": "From our own dairy in Jhajjar",
+      "title": "From Jhajjar to the counter",
+      "more": "Our dairy",
+      "steps": {
+        "herd": {
+          "title": "The herd",
+          "text": "Our own cows and buffaloes, at Jhajjar. Our buffaloes are Murrah.",
+          "alt": "A painted Murrah buffalo."
+        },
+        "milking": {
+          "title": "4 a.m.",
+          "text": "Our buffaloes and cows are milked at 4 a.m., every day.",
+          "alt": "Hands milking a buffalo into a steel pail."
+        },
+        "distance": {
+          "title": "50 km",
+          "text": "That is why our dairy is here, 50 km from the shop.",
+          "alt": "The milk wall in our shop."
+        },
+        "khoya": {
+          "title": "Khoya",
+          "text": "We make our own khoya and chhena from that milk.",
+          "alt": "Milk cooking down to khoya."
+        },
+        "counter": {
+          "title": "The counter",
+          "text": "Our karigars make it into mithai, and it comes to the counter.",
+          "alt": "The kaju katli box."
+        }
+      }
+    },
+    "counter": {
+      "label": "Mithai from the counter",
+      "title": "Today at the counter",
+      "all": "All the mithai",
+      "details": "Details",
+      "veg": "Vegetarian"
+    },
+    "doors": {
+      "label": "More from the house",
+      "title": "The counter, the kitchen and the shelf",
+      "mithai": {
+        "title": "Mithai",
+        "text": "The counter, with today's prices."
+      },
+      "build": {
+        "title": "Build a box",
+        "text": "Choose the box and the mithai, and add their name."
+      },
+      "restaurant": {
+        "title": "Restaurant",
+        "text": "The kitchen upstairs, and what it serves."
+      },
+      "snacks": {
+        "title": "Snacks",
+        "text": "Namkeen and mathri, for chai and for travel."
+      },
+      "merch": {
+        "title": "Boxes and thalis",
+        "text": "The vessels, sold on their own."
+      }
+    },
+    "visit": {
+      "title": "Drop in",
+      "label": "The shop",
+      "floors": "The mithai counter downstairs, the restaurant upstairs.",
+      "hours": "Hours: {hours}",
+      "map": "See the map"
+    }
+  },
+  "Visit": {
+    "metaTitle": "Visit · Mishran, Model Town, Delhi",
+    "label": "Model Town · Delhi",
+    "title": "Visit the shop",
+    "lead": "The mithai counter downstairs, the restaurant upstairs. Both in Model Town, Delhi.",
+    "addressLabel": "Address",
+    "hoursLabel": "Hours",
+    "hoursUnset": "Opening hours are coming soon. Message us on WhatsApp before you travel.",
+    "map": "See the map",
+    "downstairsLabel": "Downstairs",
+    "downstairsTitle": "The mithai counter",
+    "downstairsText": "Mithai by weight, made by our karigars with milk from our own dairy in Jhajjar.",
+    "downstairsCta": "See the counter",
+    "upstairsLabel": "Upstairs",
+    "upstairsTitle": "The restaurant",
+    "upstairsText": "The kitchen's menu, for the table or to take home.",
+    "upstairsCta": "See the menu",
+    "askLabel": "Before you come",
+    "askTitle": "Ask us anything",
+    "askText": "Bulk orders, wedding boxes and office gifting are planned with the counter team.",
+    "askCta": "Contact us"
   }
 }

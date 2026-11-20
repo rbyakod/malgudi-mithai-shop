@@ -90,6 +90,7 @@ const HELP_PAGES: Hub[] = [
   {path: "help/shipping", priority: 0.4},
   {path: "help/returns", priority: 0.4},
   {path: "help/contact", priority: 0.4},
+  {path: "visit", priority: 0.6},
 ];
 
 const LEGAL_PAGES: Hub[] = [

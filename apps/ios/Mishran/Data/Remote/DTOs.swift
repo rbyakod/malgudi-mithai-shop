@@ -584,7 +584,7 @@ struct QsrItemDTO: Decodable, Equatable, Identifiable, Hashable {
     let veg: Bool?
     /// "mild" | "medium" | "hot" (collection select).
     let spiceLevel: String?
-    /// Plain store-slug strings, e.g. ["indiranagar"].
+    /// Plain store-slug strings, e.g. ["model-town"].
     let availableAtStores: [String]?
     let updatedAt: String?
 }

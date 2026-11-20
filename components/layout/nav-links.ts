@@ -7,10 +7,19 @@
 
 export type NavLink = {href: string; key: string};
 
+// The main navigation, as the Mishran Design System's website brief sets it:
+// Gifting · Mithai · Our dairy · Restaurant · Visit.
 export const SHOP_NAV_LINKS: readonly NavLink[] = [
+  {href: "/gifts", key: "nav.gifting"},
   {href: "/mithai", key: "nav.mithai"},
+  {href: "/stories/farms", key: "nav.ourDairy"},
+  {href: "/qsr", key: "nav.restaurant"},
+  {href: "/visit", key: "nav.visit"},
+] as const;
+
+// The rest of the shop: in the menu panel, the footer and the home page's doors.
+export const MORE_NAV_LINKS: readonly NavLink[] = [
   {href: "/build-a-gift", key: "nav.buildAGift"},
-  {href: "/qsr", key: "nav.qsr"},
   {href: "/snacks", key: "nav.snacks"},
   {href: "/merch", key: "nav.merch"},
 ] as const;
@@ -24,5 +33,6 @@ export const STORY_NAV_LINKS: readonly NavLink[] = [
 
 export const NAV_LINKS: readonly NavLink[] = [
   ...SHOP_NAV_LINKS,
+  ...MORE_NAV_LINKS,
   ...STORY_NAV_LINKS,
 ] as const;

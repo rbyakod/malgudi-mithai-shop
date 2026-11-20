@@ -8,7 +8,7 @@ Android — and how to do it. Written for customers, testers, and the team.
 > It is the record of what exists and how to use it — it must never drift
 > from shipped behavior.
 
-Last updated: 2026-08-17.
+Last updated: 2026-11-20.
 
 ---
 
@@ -77,30 +77,50 @@ There are no passwords anywhere — you sign in with a phone number and a
 ## 3. Home
 
 ### Web
-- Announcement strip ("Handcrafted daily · Delivered fresh across
-  Bengaluru") with the WhatsApp number.
-- **Hero** — featured products in a slow Ken Burns pan (a gentle
-  video-like drift, pure CSS). The shop ships two looks, and the owner
-  picks between them in **Admin → Storefront settings** to experiment
-  with customers:
-  - **Framed** (default): editorial two-column hero with a rotating
-    product card that includes the price and its own **Add to cart**.
-  - **Cinematic**: a full-width image band with the headline, gold
-    **Explore mithai** button, and a product chip (name + price + **Add
-    to cart**) over the photo.
-  Both auto-advance every 5 seconds and honor your device's reduced-motion
-  setting (autoplay and the drift stop entirely). The framed card pauses
-  while you hover it — handy right before clicking **Add to cart**; the
-  cinematic band keeps rotating even with the cursor resting on the photo,
-  since the band fills most of the screen (keyboard focus still pauses it).
-- Product photos across the shop (catalog cards, product pages, journal)
-  carry the same subtle always-on drift. It's a display effect only —
-  photos never change content — and it also switches off with
-  reduced-motion or from **Admin → Storefront settings → Product image
-  motion**.
-- **"Find your Mishran"** — the four verticals (Mithai · QSR · Snacks ·
-  Merch) as full-width cards.
-- **"Why Mishran"** — the four promise cards, each linking into Stories.
+The web storefront follows the **Mishran Design System** (Model Town, Delhi
+brand book): six house colours (maroon, nutmeg, pistachio, deep gold, milk
+cream, antique gold), two fonts from the logo (JetBrains Mono capitals for
+headings, labels, buttons and prices; Tiro Devanagari Hindi for sentences and
+Hindi), square corners, no shadows or gradients. There is one look; the old
+theme switcher is gone.
+
+- **Announcement strip** on nutmeg: "Honest Indian mithai · From our own
+  dairy in Jhajjar", "3 kitchens · 1 promise" and the WhatsApp number.
+- **Header** on maroon: the Mishran lockup, the main links
+  (**Gifting · Mithai · Our dairy · Restaurant · Visit**), the language
+  dropdown and a **CART** button that shows the item count. Below 1120px wide
+  the links fold into a **MENU** button that opens a panel with the main
+  links, **More from the house** (Build a box · Snacks · Boxes and thalis),
+  the story links, the language dropdown and the cart. On phones the cart
+  button lives in that panel.
+- **Hero** on nutmeg: "Honest Indian mithai", the Mithai Library box, a
+  **See the Mithai Library** button (Gifting) and a **Visit the shop** link.
+- **Pichwai art band**: the marigold Pichwai art with "मिश्रण means a blend"
+  and an **Our story** button.
+- **The boxes**: six gift boxes, each named for its Indian craft and place
+  (the scripts of India, lippan kaam, Pichwai, parchin-kari, chakla,
+  sanjhi), with **Gifting for** links (Diwali, Weddings, The office, Every
+  occasion). Every tile opens Gifting.
+- **The chakla bhaji box** on its own crimson: the craft's story, the box
+  size, its colours and a **Plan a bhaji order** link (Weddings).
+- **From Jhajjar to the counter**: five steps (the herd, 4 a.m., 50 km,
+  khoya, the counter) with a link to Our dairy.
+- **Today at the counter**: three mithai from the catalog, featured items
+  first, each with the veg mark, ingredients and price (items priced "on
+  request" are skipped). Tap a card for its product page.
+- **More from the house**: doors to Mithai, Build a box, Restaurant and
+  Snacks, plus a Boxes and thalis link.
+- **Drop in** on deep gold: the shop address (from Admin → Store Settings),
+  the opening hours when they are set, and a **See the map** button.
+- **Footer** on nutmeg: the stacked lockup, the shop address and hours,
+  WhatsApp, four link columns (Shop · The house · Help · Gifting for), the
+  privacy links, **Privacy choices**, and the FSSAI licence number on every
+  page.
+- The home page is translated into हिन्दी and ಕನ್ನಡ as well as English.
+- Product photos keep the gentle drift effect described under the catalog;
+  it switches off with reduced-motion or from **Admin → Storefront settings
+  → Product image motion**. The admin hero settings (Framed/Cinematic) no
+  longer change the web home page.
 
 ### iOS
 Top to bottom: announcement strip → **hero carousel** (auto-rotates every
@@ -139,7 +159,7 @@ stores, not in the cart) · **QSR** (walk-in counter menu — no ordering) ·
   shareable/bookmarkable.
 - **Filters**: family/category (Classic, Originals, Sugar-free, Regional,
   Seasonal) and dietary needs (Sugar-free, Eggless, Gluten-free on iOS;
-  web adds a **Freshness** filter: Made daily / Made to order / Batch
+  web adds a **How it keeps** filter: Made daily / Made to order / Batch
   frozen). Active filters show as removable chips.
 - **Sort**: **Featured / Name A–Z / Name Z–A** on the apps (remembered
   between launches); web's mithai grid follows the featured order, and the
@@ -222,7 +242,7 @@ a running total. Carts persist on the device.
 
 - **Web** (`/cart`) is the most complete:
   - **Delivery estimate** in the cart itself, keyed off the pincode you
-    checked: fresh tier (₹49, **free over ₹999**) or shelf-stable (₹99,
+    checked: local delivery, the "fresh" tier (₹49, **free over ₹999**) or shelf-stable (₹99,
     **free over ₹1,999**), with a progress line ("Add ₹x more for free
     delivery"). These are the standard amounts; the shop can change them
     in the admin (**Delivery & fees**), and the cart, the shipping page and
@@ -414,6 +434,9 @@ Default when no choice is made: your device language if it's one of the
 supported ones, else English. (A small amount of checkout/support copy is
 still English on the apps.)
 
+On the web, Hindi and Kannada are set in the Tiro family (Tiro Devanagari
+Hindi, Tiro Kannada) and are never letter-spaced, so conjuncts stay whole.
+
 ---
 
 ## 13. Notifications, offline & platform extras
@@ -441,9 +464,11 @@ still English on the apps.)
 
 ## 14. Help & legal (web)
 
+`/visit` (the shop: address and hours from Store Settings, a map link, the
+counter downstairs and the restaurant upstairs, and a Contact us button),
 `/help/shipping` (live fee and slot information), `/help/returns`
 (replacement-or-refund promise for perishables), `/help/contact` (WhatsApp
-hours 9:00–21:00 IST, kitchens in Bengaluru), `/about`, `/privacy`,
+hours 9:00–21:00 IST, the shop in Model Town, Delhi), `/about`, `/privacy`,
 `/terms`, `/accessibility`. The footer links all of these.
 
 ---
@@ -503,16 +528,16 @@ ask you to sign in there first, then reload.
   always serves the newest build.
 - **iOS**: TestFlight invite pending App Store processing of build
   202608171042; until then, testing runs on the simulator.
-- **Delivery tiers for testing**: Bengaluru pincodes are fresh-tier
+- **Delivery tiers for testing**: Delhi NCR pincodes are fresh-tier
   (same-day slots); most other serviceable pincodes are shelf-tier (a few
   days). Fresh-tier sweets can't ship to shelf-tier addresses — checkout
   will tell you to swap the items or the address.
 - **Payments in test**: Razorpay runs in TEST mode — no real money moves.
   Use test cards/UPI from the Razorpay test dashboard.
 - **What's intentionally still placeholder**: WhatsApp/support numbers
-  (show +91 80000 00000 until the real one is configured), FSSAI licence
-  ("pending" chip in the web footer), occasion page content, and social
-  links in the footer.
+  (show +91 80000 00000 until the real one is configured), occasion page
+  content, and social links. The web footer now carries the FSSAI licence
+  number from the design system (13325008000711).
 
 ---
 

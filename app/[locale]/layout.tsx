@@ -13,7 +13,6 @@ import {isFullWidthLayout} from "@/lib/storefront-layout";
 import {
   readProductImageMotion,
   readStorefrontLayoutMode,
-  readThemeSwitcherVisibility,
 } from "@/lib/storefront-layout-server";
 import {InlineScript} from "@/components/InlineScript";
 import {HtmlLangSync} from "@/components/layout/HtmlLangSync";
@@ -71,12 +70,10 @@ export default async function LocaleLayout({children, params}: Props) {
   setRequestLocale(locale);
 
   const messages = (await import(`../../messages/${locale}.json`)).default;
-  const [layoutMode, themeSwitcherVisibility, productImageMotion] =
-    await Promise.all([
-      readStorefrontLayoutMode(),
-      readThemeSwitcherVisibility(),
-      readProductImageMotion(),
-    ]);
+  const [layoutMode, productImageMotion] = await Promise.all([
+    readStorefrontLayoutMode(),
+    readProductImageMotion(),
+  ]);
   const mainClassName = [
     "mx-auto w-full flex-1 px-4 pb-16 pt-4 sm:px-6",
     isFullWidthLayout(layoutMode) ? "max-w-none lg:px-10 2xl:px-14" : "max-w-6xl lg:px-8",
@@ -115,10 +112,7 @@ export default async function LocaleLayout({children, params}: Props) {
         className="relative z-10 flex min-h-dvh flex-col text-text-primary"
       >
         <BrandBar layoutMode={layoutMode} />
-        <SiteHeader
-          layoutMode={layoutMode}
-          themeSwitcherVisibility={themeSwitcherVisibility}
-        />
+        <SiteHeader />
         <main id="main-content" className={mainClassName}>
           {children}
         </main>
