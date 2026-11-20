@@ -108,7 +108,7 @@ const seeds: Seed[] = [
                 {
                   type: "text",
                   format: 0,
-                  text: "The cows are milked before sunrise. By the time the kitchen in Bengaluru lights its first burner, the morning's milk is already on its way south — boiled down to kakvi within hours of leaving the byre. No milk powder, no reconstituted cream, ever. That single non-negotiable is why a Mishran katli tastes the way it does: clean, browned, and unmistakably itself.",
+                  text: "Our cows and buffaloes are milked at 4 a.m., every day, at our own dairy in Jhajjar, 50 km from the shop in Model Town. We make our own khoya and chhena from that milk. No milk powder, no reconstituted cream, ever. That single non-negotiable is why a Mishran katli tastes the way it does: clean, browned, and unmistakably itself.",
                   detail: 0,
                   mode: "normal",
                   style: "",

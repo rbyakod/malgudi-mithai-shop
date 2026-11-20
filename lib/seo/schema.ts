@@ -7,7 +7,7 @@
 //     callers only emit the schema when a price parses).
 //   - `organizationSchema()` — static Organization, used on home / global.
 //   - `localBusinessSchema()` — LocalBusiness for the storefront itself
-//     (name/url/Bengaluru/₹₹/sameAs), emitted on the home page.
+//     (name/url/Model Town Delhi/₹₹/sameAs), emitted on the home page.
 //   - `breadcrumbSchema(trail)` — BreadcrumbList, used on every PDP.
 //
 // Each builder returns a plain object. Callers embed it via:
@@ -110,9 +110,9 @@ export function organizationSchema(): Record<string, unknown> {
 
 /**
  * Static schema.org LocalBusiness — the storefront as a place: brand name,
- * site URL, Bengaluru address locality, ₹₹ price band, and the same social
+ * site URL, the Model Town (Delhi) shop address, ₹₹ price band, and the same social
  * profiles as the Organization schema. Emitted alongside the Organization
- * JSON-LD on the home page so local-intent queries ("mithai Bengaluru")
+ * JSON-LD on the home page so local-intent queries ("mithai Model Town")
  * have something honest to hold onto. No openingHours/telephone until the
  * real values exist — same no-invented-fields rule as everywhere else.
  */
@@ -126,8 +126,10 @@ export function localBusinessSchema(): Record<string, unknown> {
     image: `${base}/icon.png`,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Bengaluru",
-      addressRegion: "Karnataka",
+      streetAddress: "H-4/3, Main Market, Model Town-II",
+      addressLocality: "Delhi",
+      addressRegion: "Delhi",
+      postalCode: "110009",
       addressCountry: "IN",
     },
     priceRange: "₹₹",

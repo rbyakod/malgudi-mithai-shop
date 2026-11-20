@@ -453,7 +453,7 @@ Hindi, Tiro Kannada) and are never letter-spaced, so conjuncts stay whole.
 
 `/help/shipping` (live fee and slot information), `/help/returns`
 (replacement-or-refund promise for perishables), `/help/contact` (WhatsApp
-hours 9:00–21:00 IST, kitchens in Bengaluru), `/about`, `/privacy`,
+hours 9:00–21:00 IST, the shop in Model Town, Delhi), `/about`, `/privacy`,
 `/terms`, `/accessibility`. The footer links all of these.
 
 ---
@@ -489,7 +489,7 @@ ask you to sign in there first, then reload.
   always serves the newest build.
 - **iOS**: TestFlight invite pending App Store processing of build
   202608171042; until then, testing runs on the simulator.
-- **Delivery tiers for testing**: Bengaluru pincodes are fresh-tier
+- **Delivery tiers for testing**: Delhi NCR pincodes are fresh-tier
   (same-day slots); most other serviceable pincodes are shelf-tier (a few
   days). Fresh-tier sweets can't ship to shelf-tier addresses — checkout
   will tell you to swap the items or the address.

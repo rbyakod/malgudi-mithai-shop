@@ -17,7 +17,7 @@ export default async function Page({params}: Props) {
 
   // JSON-LD — safe: input is JSON.stringify of plain objects built from
   // static brand defaults; `<` is escaped to prevent script-context
-  // breakout. Organization (global) + LocalBusiness (Bengaluru storefront)
+  // breakout. Organization (global) + LocalBusiness (the Model Town, Delhi shop)
   // for local-intent queries, as a valid top-level JSON array.
   const homeJsonLd = JSON.stringify([
     organizationSchema(),
