@@ -74,18 +74,22 @@ export async function MishranHome({store}: Props) {
 
   return (
     <div className="ms-bleed">
-      {/* Hero: nutmeg, the Mithai Library. */}
-      <section className="ms-on-nutmeg">
+      {/* Hero: nutmeg, the Mithai Library.
+          The aria-labelledby ids on this page's sections are also the AI team's hooks
+          (mishran-agents data/experience.default.json): it tracks which section is in view
+          to change its suggestions, mounts its "What brings you here?" picker after the
+          hero's ".mt-10.flex" row, and relabels the hero link to /mithai. Keep them. */}
+      <section className="ms-on-nutmeg" aria-labelledby="brand-hero-heading">
         <div className="ms-wrap ms-hero-in">
           <div className="ms-hero-copy">
             <p className="ms-label">{t("hero.label")}</p>
-            <h1 className="ms-display">{t("hero.title")}</h1>
+            <h1 id="brand-hero-heading" className="ms-display">{t("hero.title")}</h1>
             <p className="ms-lead">{t("hero.lead")}</p>
-            <div className="ms-row">
+            <div className="ms-row ms-hero-actions mt-10 flex">
               <Link className="ms-btn ms-btn-on-dark" href="/gifts">
                 {t("hero.cta")}
               </Link>
-              <Link className="ms-more" href="/visit">
+              <Link className="ms-more" href="/mithai">
                 {t("hero.more")}
               </Link>
             </div>
@@ -104,14 +108,14 @@ export async function MishranHome({store}: Props) {
       </section>
 
       {/* ArtBand: the Pichwai marigolds; मिश्रण means a blend. */}
-      <section className="ms-artband">
+      <section className="ms-artband" aria-labelledby="pillars-heading">
         <Image className="ms-artband-img" src={packSrc("marigold")} alt="" fill sizes="100vw" />
         <div className="ms-wrap ms-artband-in">
           <div className="ms-panel ms-stack">
             <p className="ms-hindi ms-hindi--maroon" lang="hi">
               मिश्रण
             </p>
-            <h2 className="ms-headline ms-maroon">{t("art.title")}</h2>
+            <h2 id="pillars-heading" className="ms-headline ms-maroon">{t("art.title")}</h2>
             <p className="ms-body">{t("art.body")}</p>
             <Link className="ms-btn ms-btn-primary" href="/stories">
               {t("art.cta")}
@@ -122,11 +126,11 @@ export async function MishranHome({store}: Props) {
       </section>
 
       {/* Crafts grid: one tile per pack, with the occasions as text links. */}
-      <section className="ms-on-cream ms-section">
+      <section className="ms-on-cream ms-section" aria-labelledby="gifts-hub-heading">
         <div className="ms-wrap ms-stack-lg">
           <header className="ms-head">
             <p className="ms-label">{t("boxes.label")}</p>
-            <h2 className="ms-headline">{t("boxes.title")}</h2>
+            <h2 id="gifts-hub-heading" className="ms-headline">{t("boxes.title")}</h2>
             <p className="ms-lead">{t("boxes.lead")}</p>
             <p className="ms-links-row">
               <span className="ms-label ms-muted">{t("boxes.giftingFor")}</span>
@@ -164,7 +168,7 @@ export async function MishranHome({store}: Props) {
       </section>
 
       {/* CraftStory: the season's box, on its own dye. */}
-      <section className="ms-section ms-on-dye-chakla">
+      <section className="ms-section ms-on-dye-chakla" aria-labelledby="occasions-hub-heading">
         <div className="ms-wrap ms-craft">
           <figure className="ms-craft-media">
             <Image
@@ -180,7 +184,7 @@ export async function MishranHome({store}: Props) {
             <p className="ms-hindi ms-gold" lang="hi">
               चाकला
             </p>
-            <h2 className="ms-headline">{t("craft.title")}</h2>
+            <h2 id="occasions-hub-heading" className="ms-headline">{t("craft.title")}</h2>
             <p className="ms-body">{t("craft.body")}</p>
             <dl className="ms-craft-facts">
               <dt>{t("craft.craftLabel")}</dt>
@@ -241,11 +245,11 @@ export async function MishranHome({store}: Props) {
       <CounterPicks />
 
       {/* Doors into the rest of the house. */}
-      <section className="ms-on-cream ms-section ms-section--tight-top">
+      <section className="ms-on-cream ms-section ms-section--tight-top" aria-labelledby="verticals-heading">
         <div className="ms-wrap ms-stack-lg">
           <header className="ms-head">
             <p className="ms-label">{t("doors.label")}</p>
-            <h2 className="ms-title ms-maroon">{t("doors.title")}</h2>
+            <h2 id="verticals-heading" className="ms-title ms-maroon">{t("doors.title")}</h2>
           </header>
           <ul className="ms-doors">
             {DOORS.map((door, i) => (

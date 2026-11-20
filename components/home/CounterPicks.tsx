@@ -73,11 +73,12 @@ export async function CounterPicks() {
   const t = await getTranslations("MsHome.counter");
 
   return (
-    <section className="ms-on-cream ms-section">
+    // mithai-hub-heading is also the AI team's hook for its Mithai Guide suggestions.
+    <section className="ms-on-cream ms-section" aria-labelledby="mithai-hub-heading">
       <div className="ms-wrap ms-stack-lg">
         <header className="ms-head">
           <p className="ms-label">{t("label")}</p>
-          <h2 className="ms-headline">{t("title")}</h2>
+          <h2 id="mithai-hub-heading" className="ms-headline">{t("title")}</h2>
         </header>
         <div className="ms-grid ms-grid-3">
           {picks.map((p) => (

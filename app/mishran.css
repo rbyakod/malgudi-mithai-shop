@@ -468,3 +468,22 @@ main:has(> .ms-bleed) { max-width: none; padding: 0; }
    text-muted; on the dark grounds they keep the antique gold. */
 .ms-site .text-gold { color: var(--text-muted); }
 .ms-site :is(.bg-bg-dark, .bg-bg-darker, .bg-primary, .ms-on-maroon, .ms-on-nutmeg, .ms-header, .ms-footer, .ms-brandbar) .text-gold { color: var(--brand-antique-gold); }
+
+/* The hero's action row carries "mt-10 flex" only as the AI team's mount hook
+   (its picker is inserted after it); the design system's spacing stays. */
+.ms-hero-copy > .ms-hero-actions { margin-top: 0; }
+
+/* The AI team adds an "AI Team" item to the main nav, so the header carries six links,
+   the language select and CART. Set that item in the nav's own type, and tighten the
+   header between the fold (1120px) and 1440px so nothing runs past the window. */
+.ms-nav .al-team-btn { font-family: var(--font-mono); font-weight: 500; font-size: 13px; line-height: 20px; letter-spacing: .24em;
+  text-transform: uppercase; color: var(--brand-milk-cream); background: transparent; border: 0; padding: var(--space-2) 0; cursor: pointer; white-space: nowrap; }
+@media (min-width: 1121px) and (max-width: 1440px) {
+  .ms-header .ms-wrap { padding-left: var(--space-6); padding-right: var(--space-6); }
+  .ms-header-in { gap: var(--space-4); }
+  .ms-header-logo img { width: 240px; }   /* the lockup's smallest */
+  .ms-nav { gap: var(--space-4); }
+  .ms-nav a, .ms-nav .al-team-btn { letter-spacing: .16em; }
+  .ms-header-actions { gap: var(--space-3); }
+  .ms-header-actions .ms-btn { padding: 0 calc(var(--space-4) - .2em) 0 var(--space-4); }
+}

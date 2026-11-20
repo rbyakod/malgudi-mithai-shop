@@ -87,14 +87,17 @@ theme switcher is gone.
 - **Announcement strip** on nutmeg: "Honest Indian mithai · From our own
   dairy in Jhajjar", "3 kitchens · 1 promise" and the WhatsApp number.
 - **Header** on maroon: the Mishran lockup, the main links
-  (**Gifting · Mithai · Our dairy · Restaurant · Visit**), the language
+  (**Gifting · Mithai · Our dairy · Restaurant · Visit**, with the AI team's
+  **AI Team** menu before Visit), the language
   dropdown and a **CART** button that shows the item count. Below 1120px wide
   the links fold into a **MENU** button that opens a panel with the main
   links, **More from the house** (Build a box · Snacks · Boxes and thalis),
   the story links, the language dropdown and the cart. On phones the cart
   button lives in that panel.
 - **Hero** on nutmeg: "Honest Indian mithai", the Mithai Library box, a
-  **See the Mithai Library** button (Gifting) and a **Visit the shop** link.
+  **See the Mithai Library** button (Gifting) and a **Shop the counter** link
+  (Mithai). The AI team's "What brings you here?" picker appears under these,
+  and its suggestions change as you scroll from section to section.
 - **Pichwai art band**: the marigold Pichwai art with "मिश्रण means a blend"
   and an **Our story** button.
 - **The boxes**: six gift boxes, each named for its Indian craft and place
