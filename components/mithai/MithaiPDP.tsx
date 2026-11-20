@@ -126,7 +126,7 @@ export async function MithaiPDP({slug, locale}: Props) {
   );
 
   return (
-    <article className="pb-24 pt-8">
+    <article className="pb-24 pt-8" data-agent-section="product">
       <div className={["mx-auto px-1 sm:px-2 lg:px-3", isFullWidth ? "max-w-none" : "max-w-6xl"].join(" ")}>
         {/* Breadcrumb */}
         <nav

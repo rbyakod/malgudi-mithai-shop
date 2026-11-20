@@ -59,7 +59,7 @@ export default async function GiftsHub({params}: Props) {
   const docs = await fetchGifts();
 
   return (
-    <section aria-labelledby="gifts-hub-heading" className="pb-20 pt-10">
+    <section aria-labelledby="gifts-hub-heading" data-agent-section="gifts" className="pb-20 pt-10">
       <div className="mx-auto max-w-6xl px-1 sm:px-2 lg:px-3">
         {/* Header — left rail + blurb column (mirrors VerticalHub) */}
         <div className="grid gap-6 border-b border-border-card pb-10 lg:grid-cols-[0.45fr_0.55fr] lg:items-end">
@@ -89,7 +89,7 @@ export default async function GiftsHub({params}: Props) {
             data-testid="gifts-grid"
           >
             {docs.map((doc) => (
-              <li key={String(doc.id)}>
+              <li key={String(doc.id)} data-agent-card="gifts">
                 <MediaCard
                   title={doc.name ?? "Untitled"}
                   href={pdpHref(doc as Record<string, unknown>, "gift-boxes")}

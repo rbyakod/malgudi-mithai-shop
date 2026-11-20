@@ -73,8 +73,8 @@ export async function CounterPicks() {
   const t = await getTranslations("MsHome.counter");
 
   return (
-    // mithai-hub-heading is also the AI team's hook for its Mithai Guide suggestions.
-    <section className="ms-on-cream ms-section" aria-labelledby="mithai-hub-heading">
+    // data-agent-section is the AI team's hook for its Mithai Guide suggestions.
+    <section className="ms-on-cream ms-section" aria-labelledby="mithai-hub-heading" data-agent-section="mithai">
       <div className="ms-wrap ms-stack-lg">
         <header className="ms-head">
           <p className="ms-label">{t("label")}</p>

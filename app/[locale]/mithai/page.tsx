@@ -76,7 +76,7 @@ export default async function Page({params}: Props) {
   });
 
   return (
-    <section aria-labelledby="mithai-hub-heading" className="pb-20 pt-10">
+    <section aria-labelledby="mithai-hub-heading" data-agent-section="mithai" className="pb-20 pt-10">
       <div
         className={[
           "mx-auto px-1 sm:px-2 lg:px-3",

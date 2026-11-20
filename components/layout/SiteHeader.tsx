@@ -170,13 +170,15 @@ export function SiteHeader() {
 
         <nav aria-label="Main navigation">
           <ul className="ms-nav">
-            {SHOP_NAV_LINKS.map((link) => {
+            {SHOP_NAV_LINKS.map((link, i) => {
               const active = isActiveLink(link.href, pathname, activeSection);
               // nav keys are namespaced (e.g. "nav.mithai"); useTranslations
               // takes a namespace, so strip the prefix.
               const label = navT(link.key.replace(/^nav\./, ""));
+              // The AI team puts its "AI Team" menu before the item marked nav-end.
+              const last = i === SHOP_NAV_LINKS.length - 1;
               return (
-                <li key={link.href}>
+                <li key={link.href} data-agent-mount={last ? "nav-end" : undefined}>
                   <Link href={link.href} aria-current={active ? "page" : undefined}>
                     {label}
                   </Link>

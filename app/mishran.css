@@ -469,10 +469,6 @@ main:has(> .ms-bleed) { max-width: none; padding: 0; }
 .ms-site .text-gold { color: var(--text-muted); }
 .ms-site :is(.bg-bg-dark, .bg-bg-darker, .bg-primary, .ms-on-maroon, .ms-on-nutmeg, .ms-header, .ms-footer, .ms-brandbar) .text-gold { color: var(--brand-antique-gold); }
 
-/* The hero's action row carries "mt-10 flex" only as the AI team's mount hook
-   (its picker is inserted after it); the design system's spacing stays. */
-.ms-hero-copy > .ms-hero-actions { margin-top: 0; }
-
 /* The AI team adds an "AI Team" item to the main nav, so the header carries six links,
    the language select and CART. Set that item in the nav's own type, and tighten the
    header between the fold (1120px) and 1440px so nothing runs past the window. */

@@ -201,7 +201,7 @@ export function CatalogBrowser({
 
           <ul className={gridClassName}>
           {pagedItems.map((item) => (
-            <li key={item.id}>
+            <li key={item.id} data-agent-card="catalog">
               <article className="group flex h-full flex-col border-t border-border-card pt-5 transition-colors hover:bg-bg-accent/30">
                 <Link href={item.href} aria-label={item.title}>
                   <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm border border-border-image bg-bg-accent">

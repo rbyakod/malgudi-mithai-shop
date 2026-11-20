@@ -327,7 +327,7 @@ export function MithaiHubClient({
       ) : (
         <ul className={gridClassName}>
           {visible.map((item) => (
-            <li key={item.id}>
+            <li key={item.id} data-agent-card="catalog">
               <MediaCard
                 title={item.title}
                 href={item.href}

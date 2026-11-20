@@ -75,21 +75,21 @@ export async function MishranHome({store}: Props) {
   return (
     <div className="ms-bleed">
       {/* Hero: nutmeg, the Mithai Library.
-          The aria-labelledby ids on this page's sections are also the AI team's hooks
-          (mishran-agents data/experience.default.json): it tracks which section is in view
-          to change its suggestions, mounts its "What brings you here?" picker after the
-          hero's ".mt-10.flex" row, and relabels the hero link to /mithai. Keep them. */}
-      <section className="ms-on-nutmeg" aria-labelledby="brand-hero-heading">
+          data-agent-section / data-agent-mount are the AI team's hooks (mishran-agents
+          data/experience.default.json): it tracks which section is in view to change its
+          suggestions, puts its "What brings you here?" picker after the who-after row, and
+          relabels the hero-cta link. Keep them when the layout changes. */}
+      <section className="ms-on-nutmeg" aria-labelledby="brand-hero-heading" data-agent-section="home">
         <div className="ms-wrap ms-hero-in">
           <div className="ms-hero-copy">
             <p className="ms-label">{t("hero.label")}</p>
             <h1 id="brand-hero-heading" className="ms-display">{t("hero.title")}</h1>
             <p className="ms-lead">{t("hero.lead")}</p>
-            <div className="ms-row ms-hero-actions mt-10 flex">
+            <div className="ms-row" data-agent-mount="who-after">
               <Link className="ms-btn ms-btn-on-dark" href="/gifts">
                 {t("hero.cta")}
               </Link>
-              <Link className="ms-more" href="/mithai">
+              <Link className="ms-more" href="/mithai" data-agent-mount="hero-cta">
                 {t("hero.more")}
               </Link>
             </div>
@@ -108,7 +108,7 @@ export async function MishranHome({store}: Props) {
       </section>
 
       {/* ArtBand: the Pichwai marigolds; मिश्रण means a blend. */}
-      <section className="ms-artband" aria-labelledby="pillars-heading">
+      <section className="ms-artband" aria-labelledby="pillars-heading" data-agent-section="pillars">
         <Image className="ms-artband-img" src={packSrc("marigold")} alt="" fill sizes="100vw" />
         <div className="ms-wrap ms-artband-in">
           <div className="ms-panel ms-stack">
@@ -126,7 +126,7 @@ export async function MishranHome({store}: Props) {
       </section>
 
       {/* Crafts grid: one tile per pack, with the occasions as text links. */}
-      <section className="ms-on-cream ms-section" aria-labelledby="gifts-hub-heading">
+      <section className="ms-on-cream ms-section" aria-labelledby="gifts-hub-heading" data-agent-section="gifts">
         <div className="ms-wrap ms-stack-lg">
           <header className="ms-head">
             <p className="ms-label">{t("boxes.label")}</p>
@@ -168,7 +168,7 @@ export async function MishranHome({store}: Props) {
       </section>
 
       {/* CraftStory: the season's box, on its own dye. */}
-      <section className="ms-section ms-on-dye-chakla" aria-labelledby="occasions-hub-heading">
+      <section className="ms-section ms-on-dye-chakla" aria-labelledby="occasions-hub-heading" data-agent-section="occasions">
         <div className="ms-wrap ms-craft">
           <figure className="ms-craft-media">
             <Image
@@ -245,7 +245,7 @@ export async function MishranHome({store}: Props) {
       <CounterPicks />
 
       {/* Doors into the rest of the house. */}
-      <section className="ms-on-cream ms-section ms-section--tight-top" aria-labelledby="verticals-heading">
+      <section className="ms-on-cream ms-section ms-section--tight-top" aria-labelledby="verticals-heading" data-agent-section="verticals">
         <div className="ms-wrap ms-stack-lg">
           <header className="ms-head">
             <p className="ms-label">{t("doors.label")}</p>
